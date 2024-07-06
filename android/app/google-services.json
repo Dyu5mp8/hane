@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "15841456633",
+    "project_id": "hane-73789",
+    "storage_bucket": "hane-73789.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15841456633:android:e4e95ede0eadb93c87cd28",
+        "android_client_info": {
+          "package_name": "com.team2106.hane"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBma7jWfpWnJSTUS_762oJimM5sp1Cm5OU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
