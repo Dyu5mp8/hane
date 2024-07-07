@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Module1.dart';
 import 'Module2.dart';
-import 'firestore_example.dart';
+import 'Module3.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -37,15 +37,15 @@ class HomePage extends StatelessWidget {
               },
               child: Text('Module Two'),
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => FirestoreExample()),
-            //     );
-            //   },
-            //   child: Text('Firestore Example'),
-            // ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FirestoreExample()),
+                );
+              },
+              child: Text('Firestore Example'),
+            ),
               
 
           ],
