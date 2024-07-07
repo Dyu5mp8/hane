@@ -16,7 +16,7 @@ class _FirestoreExampleState extends State<FirestoreExample> {
     ;
 
     final data1 = <String, dynamic>{
-      "brand_names" : ["Amoxicillin", "Moxatag"],
+      "brand_name" : "Amoxil",
       "generic": "Amoxicillin",
       "max_dose": null,
       "min_dose": null,
@@ -25,7 +25,7 @@ class _FirestoreExampleState extends State<FirestoreExample> {
     medications.doc("amoxicillin").set(data1);
 
     final data2 = <String, dynamic>{
-      "brand_names" : ["Advil", "Motrin"],
+      "brand_name" : "Advil",
       "generic": "Ibuprofen",
       "max_dose": 800,
       "min_dose": 200,
@@ -34,7 +34,7 @@ class _FirestoreExampleState extends State<FirestoreExample> {
     medications.doc("ibuprofen").set(data2);
 
     final data3 = <String, dynamic>{
-      "brand_names" : ["Glucophage", "Glumetza"],
+      "brand_name" : "Glucophage",
       "generic": "Metformin",
       "max_dose": 2000,
       "min_dose": 500,
