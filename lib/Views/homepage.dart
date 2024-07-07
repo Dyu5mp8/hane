@@ -37,15 +37,15 @@ class HomePage extends StatelessWidget {
               },
               child: Text('Module Two'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => FirestoreExample()),
-                );
-              },
-              child: Text('Firestore Example'),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => FirestoreExample()),
+            //     );
+            //   },
+            //   child: Text('Firestore Example'),
+            // ),
               
 
           ],
