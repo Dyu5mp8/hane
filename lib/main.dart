@@ -4,7 +4,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 
-void main() => runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // Ensure your firebase_options.dart file is properly set up.
+  );
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
