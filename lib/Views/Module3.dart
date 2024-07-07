@@ -9,70 +9,52 @@ class FirestoreExample extends StatefulWidget {
 class _FirestoreExampleState extends State<FirestoreExample> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  void addCityData() async {
-    final cities = db.collection("cities");
+  void addMedicationData() async {
+    final medications = db.collection("users")
+    .doc("master")
+    .collection("medications")
+    ;
 
     final data1 = <String, dynamic>{
-      "name": "San Francisco",
-      "state": "CA",
-      "country": "USA",
-      "capital": false,
-      "population": 860000,
-      "regions": ["west_coast", "norcal"]
+      "brand_names" : ["Amoxicillin", "Moxatag"],
+      "generic": "Amoxicillin",
+      "max_dose": null,
+      "min_dose": null,
+      "fixed_dose_mg": 500,
     };
-    cities.doc("SF").set(data1);
+    medications.doc("amoxicillin").set(data1);
 
     final data2 = <String, dynamic>{
-      "name": "Los Angeles",
-      "state": "CA",
-      "country": "USA",
-      "capital": false,
-      "population": 3900000,
-      "regions": ["west_coast", "socal"],
+      "brand_names" : ["Advil", "Motrin"],
+      "generic": "Ibuprofen",
+      "max_dose": 800,
+      "min_dose": 200,
+      "fixed_dose_mg": null,
     };
-    cities.doc("LA").set(data2);
+    medications.doc("ibuprofen").set(data2);
 
     final data3 = <String, dynamic>{
-      "name": "Washington D.C.",
-      "state": null,
-      "country": "USA",
-      "capital": true,
-      "population": 680000,
-      "regions": ["east_coast"]
+      "brand_names" : ["Glucophage", "Glumetza"],
+      "generic": "Metformin",
+      "max_dose": 2000,
+      "min_dose": 500,
+      "fixed_dose_mg": 500,
     };
-    cities.doc("DC").set(data3);
+    medications.doc("metformin").set(data3);
 
-    final data4 = <String, dynamic>{
-      "name": "Tokyo",
-      "state": null,
-      "country": "Japan",
-      "capital": true,
-      "population": 9000000,
-      "regions": ["kanto", "honshu"]
-    };
-    cities.doc("TOK").set(data4);
 
-    final data5 = <String, dynamic>{
-      "name": "Beijing",
-      "state": null,
-      "country": "China",
-      "capital": true,
-      "population": 21500000,
-      "regions": ["jingjinji", "hebei"],
-    };
-    cities.doc("BJ").set(data5);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add City Data'),
+        title: Text('Add medications Data'),
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: addCityData,
-          child: Text('Add Cities to Firestore'),
+          onPressed: addMedicationData,
+          child: Text('Add medications to Firestore'),
         ),
       ),
     );

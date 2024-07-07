@@ -7,7 +7,12 @@ class ItemListPage extends StatefulWidget {
 }
 
 class _ItemListPageState extends State<ItemListPage> {
-  List<Map<String, String>> mockData = [
+  final String user = 'master';
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+
+  List<Map<String, String>> 
+  
+  mockData = [
     {
       'name': 'Amoxicillin',
       'indication': 'Bacterial Infection',
