@@ -8,11 +8,11 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: const Text('Home Page'),
       ),
       body: Center(
         child: GridView(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 30,
             mainAxisSpacing: 10,
@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => ItemListPage()),
                 );
               },
-              child: Text('Module One'),
+              child: const Text('Module One'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => ModuleTwo()),
                 );
               },
-              child: Text('Module Two'),
+              child: const Text('Module Two'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => FirestoreExample()),
                 );
               },
-              child: Text('Firestore Example'),
+              child: const Text('Firestore Example'),
             ),
               
 
