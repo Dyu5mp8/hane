@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hane/models/medication.dart';
 import 'package:hane/Views/Helpers/medication_list_row.dart';
 
@@ -21,34 +24,50 @@ class _ItemListPageState extends State<ItemListPage> {
   @override
   Widget build(BuildContext context) {
     
-    final scrollableList = 
-    
-    SafeArea(
-    child: ListView.builder(
-      itemCount: medications.length,
-      itemBuilder: (context, index) {
-        return MedicationListRow(medications[index] as Medication);
-      },
-    ),
-    );
-    
-  
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Medications List'),
-      ),
-      body: SafeArea(
+    final scrollableList =     
+        SafeArea(
         child: ListView.builder(
           itemCount: medications.length,
           itemBuilder: (context, index) {
             return MedicationListRow(medications[index] as Medication);
-          }
+          },
+        ),
+        );
+    
+    final searchField = 
+    Container(
+      padding: EdgeInsets.only(left: 10.0, right: 10.0),
+      child:
+      TextField(
+        decoration: InputDecoration(
+          isDense: true,
           
-           )
-     
-  
-    )
+          // labelText: 'Sök',
+          hintText: 'Sök efter läkemedel',
+          prefixIcon: Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+           
+            
+
+          ),
+        ),
+
+      ),
+    );
+
+    return Scaffold(
+
+      appBar: AppBar(
+        title: Text('Medications List'),
+      ),
+      body: Column(children: [
+        searchField,
+        Expanded(child: scrollableList),
+        Text("hej")
+
+      ],)
+      
     );
   }
 Future<void> getMedications() async {

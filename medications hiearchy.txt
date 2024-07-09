@@ -1,0 +1,37 @@
+Medication: 
+
+name str
+concentration [str]
+contraindidication str
+adult_indications [Indication]
+ped_indications [Indication]
+notes: str
+
+
+Indication:
+name: str 
+bolus: [BolusDosage]
+infusion: [ContinuedDosage]
+notes: str
+
+BolusDosage:
+instruction: str
+administration_route: str
+dose : [fixed: Dose, min: Dose, max: Dose]
+weight_based_dose : [fixed: Dose, min: Dose, max: Dose]
+
+ContinuedDosage:
+instruction: str
+administration_route: str
+dose : [fixed: Dose, min: Dose, max: Dose]
+weight_based_dose : [fixed: Dose, min: Dose, max: Dose]
+time_unit: "str"
+
+
+Dose
+amount: Double
+unit: Str
+
+
+
+
