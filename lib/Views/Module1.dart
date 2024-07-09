@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hane/models/medication.dart';
 import 'package:hane/Views/Helpers/medication_list_row.dart';
-import 'package:hane/Services/FirestoreService.dart';
 
 class ItemListPage extends StatefulWidget {
   @override
@@ -52,14 +51,31 @@ class _ItemListPageState extends State<ItemListPage> {
     )
     );
   }
-Future getMedications() async {
+Future<void> getMedications() async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
   var medicationsCollection = db.collection("users").doc(user).collection("medications");
-  var snapshot = await medicationsCollection.get();
 
-        setState(() {
-          medications = List.from(snapshot.docs.map((doc) => Medication.fromSnapshot(doc)));
-              });
+  try {
+    // Attempt to get the medications from the cache
+    var snapshot = await medicationsCollection.get(const GetOptions(source: Source.cache));
+    // Check if the snapshot has any documents; if not, fetch from the server
+    if (snapshot.docs.isEmpty) {
+      snapshot = await medicationsCollection.get(const GetOptions(source: Source.server));
+    }
+
+
+    // Update state with medications, whether from cache or server
+    setState(() {
+      medications = List.from(snapshot.docs.map((doc) => Medication.fromSnapshot(doc.data())));
+    });
+  } catch (e) {
+    // If fetching from the cache fails, fetch from the server
+    var snapshot = await medicationsCollection.get(const GetOptions(source: Source.server));
+    setState(() {
+      medications = List.from(snapshot.docs.map((doc) => Medication.fromSnapshot(doc.data())));
+    });
   }
+}
 
 }
 
