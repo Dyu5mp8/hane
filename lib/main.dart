@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'Views/homepage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:hane/Services/FirestoreService.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 void main() async {
@@ -10,8 +10,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Ensure your firebase_options.dart file is properly set up.
   );
-  FirestoreService();
-  
+  var firestore = FirebaseFirestore.instance;
+  firestore.settings = const Settings(persistenceEnabled: true, 
+  cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+   
   runApp(MyApp());
 }
 
