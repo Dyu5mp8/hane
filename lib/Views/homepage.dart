@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hane/Views/medication_list_view.dart';
 // import 'Module1.dart';
 import 'Module2.dart';
 import 'Module3.dart';
@@ -8,7 +9,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Page'),
+        title: const Text('Hane'),
+        toolbarHeight: 80,
       ),
       body: Center(
         child: GridView(
@@ -19,15 +21,15 @@ class HomePage extends StatelessWidget {
             childAspectRatio: 1,
           ), 
           children: <Widget>[
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (context) => ItemListPage()),
-            //     );
-            //   },
-            //   child: const Text('Module One'),
-            // ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MedicationListView()),
+                );
+              },
+              child: const Text('Läkemedel'),
+            ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
