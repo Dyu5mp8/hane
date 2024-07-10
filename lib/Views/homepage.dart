@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FirestoreExample()),
+                  MaterialPageRoute(builder: (context) => ModuleThree()),
                 );
               },
               child: const Text('Firestore Example'),

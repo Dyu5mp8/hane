@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/models/medication.dart';
+import 'package:hane/models/medication/medication.dart';
 import 'package:hane/Views/medication_detail_view.dart';
 
 class MedicationListRow extends StatelessWidget {
@@ -18,7 +18,7 @@ class MedicationListRow extends StatelessWidget {
             Text(_medication.notes ?? ''), // Same here
           ],
         ),
-        trailing: Text((_medication.dosage ?? 0).toString()),
+        trailing: Text("hej"),
         onTap: () {
           Navigator.push(
             context,

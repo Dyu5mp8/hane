@@ -85,13 +85,13 @@ Future<void> getMedications() async {
 
     // Update state with medications, whether from cache or server
     setState(() {
-      medications = List.from(snapshot.docs.map((doc) => Medication.fromSnapshot(doc.data())));
+      medications = List.from(snapshot.docs.map((doc) => Medication.fromFirestore(doc.data())));
     });
   } catch (e) {
     // If fetching from the cache fails, fetch from the server
     var snapshot = await medicationsCollection.get(const GetOptions(source: Source.server));
     setState(() {
-      medications = List.from(snapshot.docs.map((doc) => Medication.fromSnapshot(doc.data())));
+      medications = List.from(snapshot.docs.map((doc) => Medication.fromFirestore(doc.data())));
     });
   }
 }

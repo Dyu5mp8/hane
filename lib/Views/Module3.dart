@@ -1,114 +1,104 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-
-
-class FirestoreExample extends StatefulWidget {
+import 'package:hane/models/medication/medication.dart';
+import 'package:hane/models/medication/indication.dart';
+import 'package:hane/models/medication/bolus_dosage.dart';
+import 'package:hane/models/medication/continuous_dosage.dart';
+import 'package:hane/models/medication/dose.dart';
+import 'package:flutter/material.dart';
+class ModuleThree extends StatefulWidget {
   @override
-  _FirestoreExampleState createState() => _FirestoreExampleState();
+  State<ModuleThree> createState() => _ModuleThreeState();
 }
 
-class _FirestoreExampleState extends State<FirestoreExample> {
-  final FirebaseFirestore db = FirebaseFirestore.instance;
+class _ModuleThreeState extends State<ModuleThree> {
+  List medications = [];
 
-  void addMedicationData() async {
-    final medications = db.collection("users")
-    .doc("master")
-    .collection("medications")
-    ;
-
-    final data1 = <String, dynamic>{
-      "brand_name" : "Amoxil",
-      "generic": "Amoxicillin",
-      "max_dose": null,
-      "min_dose": null,
-      "fixed_dose_mg": 500,
-    };
-    medications.doc("amoxicillin").set(data1);
-
-    final data2 = <String, dynamic>{
-      "brand_name" : "Advil",
-      "generic": "Ibuprofen",
-      "max_dose": 800,
-      "min_dose": 200,
-      "fixed_dose_mg": null,
-    };
-    medications.doc("ibuprofen").set(data2);
-
-    final data3 = <String, dynamic>{
-      "brand_name" : "Glucophage",
-      "generic": "Metformin",
-      "max_dose": 2000,
-      "min_dose": 500,
-      "fixed_dose_mg": 500,
-    };
-    medications.doc("metformin").set(data3);
-
-
+  void getMedications() {
+    medications = createTestMedications();
   }
-  void addMedicationData_test() async {
 
-  CollectionReference medications = FirebaseFirestore.instance
-      .collection("users")
-      .doc("master")
-      .collection("medications");
+List<Medication> createTestMedications() {
+  var medications = [
+    // Medication 1: Simple case with one adult indication and minimal fields
+    Medication(
+      name: "amoxicillin",
+      concentration: ["500mg", "250mg"],
+      adultIndications: [
+        Indication(
+          name: "Bacterial Infection",
+          bolus: [
+            BolusDosage(
+              instruction: "Take one tablet every 8 hours",
+              
+              dose: {'fixed': Dose(amount: 500.0, unit: 'mg')},
+              weightBasedDose: {'max': Dose(amount: 1000.0, unit: 'mg')},
+            )
+          ],
+          notes: "Complete full prescription even if feeling better"
+        )
+      ],
+      notes: "Used to treat a wide variety of bacterial infections."
+    ),
+    
+    // Medication 2: Includes both adult and pediatric indications
+    Medication(
+      name: "Ibuprofen",
+      concentration: ["200mg"],
+      adultIndications: [
+        Indication(
+          name: "Pain Relief",
+          bolus: [
+            BolusDosage(
+              instruction: "Take with food or milk",
+              administrationRoute: "Oral",
+              dose: {'fixed': Dose(amount: 400.0, unit: 'mg')},
+              weightBasedDose: {'max': Dose(amount: 800.0, unit: 'mg')},
+            )
+          ],
+          notes: "Avoid exceeding 3200 mg per day."
+        )
+      ],
+      pedIndications: [
+        Indication(
+          name: "Fever Reduction",
+          bolus: [
+            BolusDosage(
+              instruction: "Use measuring spoon or cup",
+              administrationRoute: "Oral",
+              dose: {'fixed': Dose(amount: 200.0, unit: 'mg')},
+            )
+          ],
+          notes: "Consult doctor for children under 6 months."
+        )
+      ],
+      notes: "Can cause stomach upset, take with food or milk."
+    ),
 
-  // Create sample basic medication data
-  List<Map<String, dynamic>> medicationData = [
-    {
-      'name': 'Amoxicillin',
-      'concentration': ['250mg/5ml', '500mg/5ml'],
-      'contraindication': 'Allergy to penicillin',
-      'adult_indications': [
-        {
-          'name': 'Bacterial Infection',
-          'bolus': [
-            {
-              'instruction': 'Take one tablet twice a day',
-              'administration_route': 'Oral',
-              'dose': {
-                'fixed': {'amount': 500, 'unit': 'mg'}
-              }
-            }
+    // Medication 3: More complex case with multiple doses and continuous dosage
+    Medication(
+      name: "Diazepam",
+      concentration: ["5mg/ml"],
+      adultIndications: [
+        Indication(
+          name: "Anxiety Relief",
+          infusion: [
+            ContinuousDosage(
+              instruction: "Administer slowly over 3 hours",
+              administrationRoute: "IV",
+              dose: {'fixed': Dose(amount: 10.0, unit: 'mg')},
+              weightBasedDose: {'min': Dose(amount: 0.2, unit: 'mg/kg')},
+              timeUnit: "hour"
+            )
           ],
-          'notes': 'Monitor for allergic reactions'
-        }
+          notes: "Monitor patient's respiratory function"
+        )
       ],
-      'notes': 'Used to treat a variety of bacterial infections'
-    },
-    {
-      'name': 'Ibuprofen',
-      'concentration': ['200mg', '400mg'],
-      'adult_indications': [
-        {
-          'name': 'Pain Relief',
-          'bolus': [
-            {
-              'instruction': 'Take one tablet every 4-6 hours as needed',
-              'administration_route': 'Oral',
-              'dose': {
-                'fixed': {'amount': 400, 'unit': 'mg'}
-              }
-            }
-          ],
-          'notes': 'Do not exceed 3200 mg per day'
-        }
-      ],
-      'notes': 'Nonsteroidal anti-inflammatory drug (NSAID)'
-    }
+      notes: "Use caution with other CNS depressants."
+    )
   ];
 
-  // Add each medication entry to Firestore
-  try {
-    for (var med in medicationData) {
-      await medications.add(med);
-      print("Medication ${med['name']} added successfully!");
-    }
-  } catch (e) {
-    print("Error adding medications: $e");
-  }
-  }
-
+  return medications;
+}
 
   @override
   Widget build(BuildContext context) {
@@ -117,11 +107,40 @@ class _FirestoreExampleState extends State<FirestoreExample> {
         title: Text('Add medications Data'),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: addMedicationData_test,
-          child: Text('Add medications to Firestore'),
+        child: Column(children: [
+           ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  // Presumably, createTestMedications is a method that returns a list of Medications
+                  medications = createTestMedications(); 
+                });
+              },
+              child: Text('Create list of medications'),
+            ),
+  
+        for (var medication in medications) 
+          Text(medication.name + medication.adultIndications[0].name),
+
+        ElevatedButton(
+          onPressed: uploadTestMedications,
+          child: Text('upload medications to Firestore'),
         ),
+
+        ],)
       ),
     );
   }
+  Future<void> uploadTestMedications() async {
+  var medications = createTestMedications();
+  var db = FirebaseFirestore.instance;
+  CollectionReference medicationsCollection = db.collection('users').doc('master').collection('medications');
+  try {
+    for (var medication in medications) {
+      await medicationsCollection.doc(medication.name).set(medication.toJson());
+    }
+    print("All medications added successfully!");
+  } catch (e) {
+    print("Error adding medications: $e");
+  }
+}
 }

@@ -1,4 +1,4 @@
-import 'package:hane/models/medication.dart';
+import 'package:hane/models/medication/medication.dart';
 import 'package:flutter/material.dart';
 
 class MedicationDetailView extends StatelessWidget {
