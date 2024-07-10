@@ -7,18 +7,29 @@ class MedicationListRow extends StatelessWidget {
 
   MedicationListRow(this._medication);
 
+
   @override
   Widget build(BuildContext context) {
+    // If the medication name is null, return a list tile with a message.
+    if (_medication.name == null){
+      return const ListTile(
+        
+        title: Text("Felaktig data"),
+      );
+      }
+
+
+    else {
      return ListTile(
-        title: Text(_medication.name??''),
+        title: Text(_medication.name!),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(_medication.notes ?? ''), // Handles null by showing an empty string
-            Text(_medication.notes ?? ''), // Same here
-          ],
+          if (_medication.category != null) 
+          Text(_medication.category!),
+    ],
         ),
-        trailing: Text("hej"),
+
         onTap: () {
           Navigator.push(
             context,
@@ -28,5 +39,6 @@ class MedicationListRow extends StatelessWidget {
           );
         }
       );
+  }
   }
 } 

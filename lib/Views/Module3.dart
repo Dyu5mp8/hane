@@ -94,6 +94,24 @@ List<Medication> createTestMedications() {
         )
       ],
       notes: "Use caution with other CNS depressants."
+    ),
+    Medication(
+      name: 'adrenalin',
+      concentration: ['0.1 mg/ml'],
+      category: 'Cirkulation',
+      adultIndications: [
+        Indication(
+          name: 'Anafylaxi',
+    
+          bolus: [
+            BolusDosage(
+              instruction: 'Ge IM vid misstanke om anafylaxi',
+              dose: {'fixed': Dose(amount: 0.3, unit: 'mg'), 'max': Dose(amount: 0.5, unit: 'mg')},
+            )
+          ],
+          notes: 'Ge ofta'
+        )
+      ],
     )
   ];
 

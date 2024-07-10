@@ -15,7 +15,7 @@ class MedicationDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         
-        Text(medication.name, style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 45.0)),
+        Text(medication.name??"", style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 45.0)),
         Container(
           width: 80.0,
           child: new Divider(color: const Color.fromARGB(255, 175, 76, 76)),
@@ -29,7 +29,7 @@ class MedicationDetailView extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Expanded(flex: 1, child: Text(medication.name)),
+            Expanded(flex: 1, child: Text(medication.name!)),
             Expanded(
                 flex: 6,
                 child: Padding(
@@ -82,7 +82,7 @@ class MedicationDetailView extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(medication.name),
+        title: Text(medication.name!),
       ),
       body: Column(
         children: <Widget>[
