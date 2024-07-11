@@ -82,8 +82,8 @@ class contraindicationRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         
         children: [
-        Text("Contraindications", style: TextStyle(fontSize: 16),),
-        Text("No contraindications", style: TextStyle(fontSize: 12),)
+        Text("Kontraindikationer", style: TextStyle(fontSize: 16),),
+        Text("ischemi takykardi bla bla", style: TextStyle(fontSize: 12),)
 
       ],)
     );
@@ -106,8 +106,8 @@ class noteRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         
         children: [
-        Text("Notes", style: TextStyle(fontSize: 16),),
-        Text("No notes", style: TextStyle(fontSize: 12),)
+        Text('Anteckningar', style: TextStyle(fontSize: 16),),
+        Text('bla bla bla bla bla bla bla bla', style: TextStyle(fontSize: 12),)
 
       ],)
     );

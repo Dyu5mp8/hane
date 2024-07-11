@@ -5,4 +5,8 @@
 - [ ] work on version control user vs master list.
 - [ ] Consider using typesense
 
-#
+# Medication detail view
+- [ ] Banner header
+- [ ] Horizontal tabs
+- [ ] Notes and indication detail views
+- [ ] Adult/ped toggle

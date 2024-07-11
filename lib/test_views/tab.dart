@@ -12,7 +12,8 @@ class TestTab extends StatelessWidget {
 
      return Scaffold(
         appBar: AppBar(
-          title: Text('Custom Tabs Example'),
+
+          title: Text('Adrenalin'),
           
         ),
         body: 
@@ -22,7 +23,7 @@ class TestTab extends StatelessWidget {
           children: [
             overviewBox(),
             indicationTab(),
-            indicationBox()
+            Expanded(child: indicationBox()) //bottom box should extend down.
             
           ],
         ),
@@ -68,7 +69,7 @@ class indicationTab extends StatelessWidget {
             tabs: [
                   
             Tab(text: 'Anafylaxi'),
-            Tab(text: 'Tab 2',),
+            Tab(text: 'Hjärtstopp',),
             Tab(text: 'Tab 3',),
             Tab(text: 'Tab 4',),
             Tab(text: 'tab5'),
