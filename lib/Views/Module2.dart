@@ -5,10 +5,46 @@ class ModuleTwo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Module Two'),
+        centerTitle: true,
+        title: Text(
+          'Expansion Tile'
+        ),
       ),
-      body: Center(
-        child: Text('Welcome to Module Two!'),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Title',
+              ),
+            ),  
+            
+            ExpansionTile(
+              expandedAlignment: Alignment.center,
+              
+              title: TextFormField(
+
+                initialValue: 'amimox',
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                ),
+              ),
+              children: <Widget>[
+                ListTile(
+                  title: TextField(),
+                ),
+                ListTile(
+                  title: TextField(),
+                ),
+                ListTile(
+                  title: TextField(),
+                ),
+              ],
+            ),
+            ExpansionTile(title: TextField()),
+          ],
+        ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:hane/Views/medication_list_view.dart';
 // import 'Module1.dart';
 import 'Module2.dart';
 import 'Module3.dart';
+import 'package:hane/test_views/tab.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -34,7 +35,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ModuleTwo()),
+                  MaterialPageRoute(builder: (context) => TestTab()),
                 );
               },
               child: const Text('Module Two'),
