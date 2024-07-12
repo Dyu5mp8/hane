@@ -2,117 +2,109 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:hane/models/medication/medication.dart';
+import 'package:provider/provider.dart';
 
 class OverviewBox extends StatelessWidget {
 
-  final String titleText;
-  final String? categoryText;
-  final List<String>? concentrationTextList;
-  final String? contraindicationText;
-  final String? noteText;
+ 
+  Widget basicInfoRow(BuildContext context, Medication medication) {
 
-  OverviewBox({
-    super.key,
-    required this.titleText,
-    this.categoryText,
-    this.concentrationTextList,
-    this.contraindicationText,
-    this.noteText
+        return Container(
+          height: 100,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.red,
+          padding: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 240,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                  Text(medication.name!, style: Theme.of(context).textTheme.headlineLarge),
+                  if (medication.category != null) Text(medication.category!)
+                
+                ],),
+              ),
+              Flexible(
+                child: Column(
+                
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                  Text("10002222222 mg/ml"),
+                  Text("50,000 E/mikroliter"),
+                
+                ],),
+              ),
+            ],
+          )
+        );
+      }
 
-  });
+  
 
-  Widget basicInfoRow(BuildContext context) {
-    return Container(
-      height: 100,
-      width: MediaQuery.of(context).size.width,
-      color: Colors.red,
-      padding: EdgeInsets.all(10),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 240,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-              Text(titleText, style: Theme.of(context).textTheme.headlineLarge),
-              if (categoryText != null) Text(categoryText as String)
+
+
+  Widget contraindicationRow(BuildContext context,Medication medication) {
+  
+      return Container(
+        height: 100,
+        width: MediaQuery.of(context).size.width,
+        color: Colors.red,
+        padding: EdgeInsets.all(10),
+
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          
+          children: [
+          Text("Kontraindikationer", style: TextStyle(fontSize: 16),),
+          medication.contraindication != null ? Text(medication.contraindication!) : Text('Ingen angedd kontraindikation')
+        ],)
+      );
+    }
+  
+
+
+  Widget noteRow(BuildContext context, Medication medication) {
+
+        return Container(
+          height: 100,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.red,
+          padding: EdgeInsets.all(10),
+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             
-            ],),
-          ),
-          Flexible(
-            child: Column(
-            
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-              Text("10002222222 mg/ml"),
-              Text("50,000 E/mikroliter"),
-            
-            ],),
-          ),
-        ],
-      )
-    );
-  }
+            children: [
+            Text('Anteckningar', style: TextStyle(fontSize: 16),),
+            medication.notes != null ? Text(medication.notes!) : Text(""),
+          
+              ElevatedButton(onPressed: (){ medication.notes = "hejhej";}, child: Text("Spara"))
+              ,
 
 
-
-  Widget contraindicationRow(BuildContext context) {
-
-  return Container(
-    height: 100,
-    width: MediaQuery.of(context).size.width,
-    color: Colors.red,
-    padding: EdgeInsets.all(10),
-
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      
-      children: [
-      Text("Kontraindikationer", style: TextStyle(fontSize: 16),),
-      contraindicationText != null ? Text(contraindicationText!) : Text('Ingen angedd kontraindikation')
-    ],)
-  );
-  }
-
-
-
-  Widget noteRow(BuildContext context) {
-    return
-  Container(
-      height: 100,
-      width: MediaQuery.of(context).size.width,
-      color: Colors.red,
-      padding: EdgeInsets.all(10),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        
-        children: [
-        Text('Anteckningar', style: TextStyle(fontSize: 16),),
-        noteText != null ? Text(noteText!) : Text("")
-
-      ],)
-    );
-  }
-
-
+          ],)
+        );
+      }
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      width: MediaQuery.of(context).size.width,
-      color: Colors.red,
-      child: Column(
-        children: [ 
-        basicInfoRow(context),
-        noteRow(context),
-        contraindicationRow(context)
-        ]
-    )
+Widget build(BuildContext context) {
+
+    return Consumer<Medication>(
+      builder: (context, medication, child) {
+        return Container(
+          color: Colors.white, // Assuming a more neutral background for the whole box
+          child: Column(
+            children: [
+              basicInfoRow(context, medication),
+              noteRow(context, medication),
+              contraindicationRow(context, medication)
+            ],
+          ),
+        );
+      },
     );
-  }
+
 }
-
-
-    
+}
 

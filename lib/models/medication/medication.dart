@@ -1,13 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:hane/models/medication/indication.dart';
 
-class Medication {
-  final String? name;
+class Medication extends ChangeNotifier {
+  String? name;
   final String? category;
   final List<String>? concentration;
   final String? contraindication;
   final List<Indication>? adultIndications;
   final List<Indication>? pedIndications;
-  final String? notes;
+  String? notes;
 
   Medication({
     required this.name,
@@ -18,6 +19,16 @@ class Medication {
     this.pedIndications,
     this.notes,
   });
+
+  void setName(String name) {
+    this.name = name;
+    notifyListeners();
+  }
+
+  set notes(String notes) {
+    this.notes = notes;
+    notifyListeners();
+  }
 
   // Convert a Medication instance to a Map
   Map<String, dynamic> toJson() {

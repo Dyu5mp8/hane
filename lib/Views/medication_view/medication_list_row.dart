@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/medication_detail_view.dart';
+import 'package:provider/provider.dart';
 
 class MedicationListRow extends StatelessWidget {
   final Medication _medication;
@@ -34,8 +35,11 @@ class MedicationListRow extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MedicationDetailView(medication: _medication),
+              builder: (context) =>  ChangeNotifierProvider(
+      create: (context) => _medication,
+      child: MedicationDetailView(medication: _medication),
             ),
+          ),
           );
         }
       );
