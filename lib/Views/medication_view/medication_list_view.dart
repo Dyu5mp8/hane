@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hane/models/medication/medication.dart';
-import 'package:hane/Views/Helpers/medication_list_row.dart';
+import 'package:hane/Views/medication_view/medication_list_row.dart';
 import 'package:hane/utils/error_alert.dart';
 
 class MedicationListView extends StatefulWidget {

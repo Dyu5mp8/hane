@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'Views/homepage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -9,6 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Ensure your firebase_options.dart file is properly set up.
   );
@@ -24,6 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Module App',
+      
     
        theme: ThemeData(
     useMaterial3: true,

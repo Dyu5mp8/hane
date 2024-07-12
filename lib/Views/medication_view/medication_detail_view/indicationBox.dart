@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 
-class indicationBox extends StatelessWidget {
-  indicationBox({
+class IndicationBox extends StatelessWidget {
+  IndicationBox({
     super.key,
   });
 
@@ -11,9 +11,11 @@ var dosages = ["vid livshotande allergi: ge 0.3mg iv.", "vid anafylaxi: ge 0.3mg
 
   @override
 Widget build(BuildContext context) {
-  return Container(
-    height: MediaQuery.of(context).size.height * 0.5,
+  return Expanded(
+    child: Container(
+    
     width: MediaQuery.of(context).size.width,
+    
 
     color: Colors.red,
     padding: EdgeInsets.all(10),
@@ -28,7 +30,7 @@ Widget build(BuildContext context) {
         ),
         
         Expanded(
-          child: SafeArea(
+         
             child: ListView.builder(
               itemCount: dosages.length,
               itemBuilder: (context, index)
@@ -43,13 +45,14 @@ Widget build(BuildContext context) {
                 ]);
             
             }),
-          ),
+          
         )
         
 
         
       ],
     ),
+  ),
   );
 }
 }

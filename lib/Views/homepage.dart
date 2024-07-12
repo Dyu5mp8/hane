@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hane/Views/medication_list_view.dart';
+import 'package:hane/Views/medication_view/medication_list_view.dart';
 // import 'Module1.dart';
 import 'Module2.dart';
 import 'Module3.dart';
-import 'package:hane/test_views/tab.dart';
+
 
 class HomePage extends StatelessWidget {
   @override
@@ -31,15 +31,15 @@ class HomePage extends StatelessWidget {
               },
               child: const Text('Läkemedel'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TestTab()),
-                );
-              },
-              child: const Text('Module Two'),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(builder: (context) => ()),
+            //     );
+            //   },
+            //   child: const Text('Module Two'),
+            // ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
