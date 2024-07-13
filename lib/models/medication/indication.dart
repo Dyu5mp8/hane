@@ -7,6 +7,7 @@ class Indication {
   final List<ContinuousDosage>? infusion;
   final String? notes;
 
+
   Indication({
     required this.name,
     this.bolus,
@@ -33,4 +34,9 @@ class Indication {
       notes: map['notes'] as String?,
     );
   }
+
+int get totalDosageInstructions => (bolus?.length ?? 0) + (infusion?.length ?? 0);
+
+List get bolusDosages => (bolus ?? []);
+
 }

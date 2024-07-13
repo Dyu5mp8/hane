@@ -79,9 +79,9 @@ class OverviewBox extends StatelessWidget {
             children: [
             Text('Anteckningar', style: TextStyle(fontSize: 16),),
             medication.notes != null ? Text(medication.notes!) : Text(""),
-          
-              ElevatedButton(onPressed: (){ medication.notes = medication.name;}, child: Text("Spara"))
-              ,
+          //Testing state
+              // ElevatedButton(onPressed: (){ medication.notes = medication.name;}, child: Text("Spara"))
+              // ,
 
 
           ],)
@@ -94,6 +94,7 @@ Widget build(BuildContext context) {
       builder: (context, medication, child) {
         return Container(
           color: Colors.white, // Assuming a more neutral background for the whole box
+
           child: Column(
             children: [
               basicInfoRow(context, medication),
