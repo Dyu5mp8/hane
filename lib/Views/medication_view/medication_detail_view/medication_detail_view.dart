@@ -25,7 +25,8 @@ class MedicationDetailView extends StatelessWidget {
           children: <Widget>[
             OverviewBox(),
             IndicationTab(),
-            IndicationBox(),
+           if (medication.adultIndications != null && medication.adultIndications!.isNotEmpty) 
+            IndicationBox()  
           ],
         ),
       ),

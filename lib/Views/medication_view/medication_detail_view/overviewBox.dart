@@ -80,7 +80,7 @@ class OverviewBox extends StatelessWidget {
             Text('Anteckningar', style: TextStyle(fontSize: 16),),
             medication.notes != null ? Text(medication.notes!) : Text(""),
           
-              ElevatedButton(onPressed: (){ medication.notes = "hejhej";}, child: Text("Spara"))
+              ElevatedButton(onPressed: (){ medication.notes = medication.name;}, child: Text("Spara"))
               ,
 
 
