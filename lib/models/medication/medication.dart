@@ -81,7 +81,13 @@ class Medication extends ChangeNotifier {
     }
   }
   
-
+void addIndication(Indication indication) {
+    if (_adultIndications == null) {
+      _adultIndications = [];
+    }
+    _adultIndications!.add(indication);
+    notifyListeners();
+  }
 
   // Convert a Medication instance to a Map
   Map<String, dynamic> toJson() {
