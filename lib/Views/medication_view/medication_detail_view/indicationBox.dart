@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart';
+import 'package:hane/models/medication/bolus_dosage.dart';
 import 'package:hane/models/medication/indication.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:provider/provider.dart';
+import  'package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart';
 
 class IndicationBox extends StatelessWidget {
   const IndicationBox({super.key});
@@ -85,8 +88,13 @@ class _IndicationTabView extends StatelessWidget {
 
 class _IndicationDetails extends StatelessWidget {
   final Indication indication;
+  final DosageViewHandler dosageViewHandler = DosageViewHandler();
 
-  const _IndicationDetails({required this.indication});
+  _IndicationDetails({required this.indication});
+
+  
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +110,9 @@ class _IndicationDetails extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(indication.dosages?[index].instruction?? 'No instruction available'),
-                  const Divider(),
+                  Text(dosageViewHandler.showDosage(indication.dosages![index])),
+                  const SizedBox(height: 20),
+               
                 ],
               );
             },

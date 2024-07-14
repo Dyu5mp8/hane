@@ -22,9 +22,9 @@ List<Medication> createTestMedications() {
     // Medication 1: Simple case with one adult indication and minimal fields
     Medication(
       name: "milrinon",
-      contraindication: "Hypotension, ökad kardiell syrgaskonsumtion, takykardi, ",
+      contraindication: "Hypotenad kardiell syrgaskons, takykardi, ",
       concentrations: [{"value": 0.05, "unit": "mg/ml"}, {"value": 0.1, "unit": "mg/ml"}],
-      notes: "<0,375 μg/kn β1-effekt, blodtrycksstegring, ökad CO och EF.",
+      notes: "<0,375 μg/kn β1-awdasdawdadwadawdawdawddawdawdadsdasdwdawdsdeffekt, blodtrycksstegring, ökad CO och EF.",
       indications: [
         Indication(
           name: "Cirkulatorisk chock",

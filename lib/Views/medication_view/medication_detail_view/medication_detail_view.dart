@@ -16,20 +16,18 @@ class MedicationDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  
      return ChangeNotifierProvider<Medication>.value(
       value: medication,
       child: Scaffold(
-    
         appBar: AppBar(
           title: Text(medication.name ?? 'Medication Details'),
         ),
         body: Column(
           children: <Widget>[
             OverviewBox(),
-  
+            
 
-           if (medication.indications != null && medication.indications!.isNotEmpty) 
+           if (medication.adultIndications != null && medication.adultIndications!.isNotEmpty) 
             IndicationBox()
           ],
         ),

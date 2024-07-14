@@ -9,50 +9,42 @@ import 'package:hane/Views/medication_view/medication_edit_view/medicationEditVi
 
 class OverviewBox extends StatelessWidget {
 
-
   Widget basicInfoRow(BuildContext context, Medication medication) {
     final editButton = editButtontoView(destination: MedicationEditView(medication: medication));
 
-        return ConstrainedBox(
-          constraints:BoxConstraints(
-            maxHeight: 400,
-          ),
-          child: SingleChildScrollView(
-            child: Container(
-              height: 100,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 240,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      Row(
-                        children: [
-                          Text(medication.name!, style: Theme.of(context).textTheme.headlineLarge),
-                          editButton
-                          ],
-                      ),
-                      if (medication.category != null) Text(medication.category!)
-                    
-                    ],),
+        return Container(
+          height: 100,
+          width: MediaQuery.of(context).size.width,
+          color: Colors.white,
+          padding: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 240,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                  Row(
+                    children: [
+                      Text(medication.name!, style: Theme.of(context).textTheme.headlineLarge),
+                      editButton
+                      ],
                   ),
-                  if (medication.concentrationText != null)
-                  Flexible(
-                    child: Column(
-                    
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: 
-                        medication.concentrationText!
-                    ,),
-                  ),
-                ],
-              )
-            ),
-          ),
+                  if (medication.category != null) Text(medication.category!)
+                
+                ],),
+              ),
+              if (medication.concentrationText != null)
+              Flexible(
+                child: Column(
+                
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: 
+                    medication.concentrationText!
+                ,),
+              ),
+            ],
+          )
         );
       }
 
@@ -63,7 +55,6 @@ class OverviewBox extends StatelessWidget {
   Widget contraindicationRow(BuildContext context,Medication medication) {
   
       return Container(
-        height: 100,
         width: MediaQuery.of(context).size.width,
         color: Colors.white,
         padding: EdgeInsets.all(10),
@@ -83,7 +74,6 @@ class OverviewBox extends StatelessWidget {
   Widget noteRow(BuildContext context, Medication medication) {
 
         return Container(
-          height: 100,
           width: MediaQuery.of(context).size.width,
           color: Colors.white,
           padding: EdgeInsets.all(10),
@@ -104,20 +94,30 @@ class OverviewBox extends StatelessWidget {
       }
   @override
 Widget build(BuildContext context) {
+  
 
     return Consumer<Medication>(
       builder: (context, medication, child) {
-        return Container(
-          color: Colors.white, 
+        return ConstrainedBox(
+              constraints:BoxConstraints(
+                maxHeight: 350,
+              ),
 
-          child: Column(
-            children: [
+              child: SingleChildScrollView(
+                
+                child: Container(
+                        color: Colors.white, 
+              
+                        child: Column(
+                          children: [
               basicInfoRow(context, medication),
               noteRow(context, medication),
               contraindicationRow(context, medication)
-            ],
-          ),
-        );
+                          ],
+                        ),
+                      )
+              ),
+            );
       },
     );
 
