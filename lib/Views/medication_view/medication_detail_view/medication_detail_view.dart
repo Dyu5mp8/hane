@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/indicationBox.dart';
@@ -15,17 +16,20 @@ class MedicationDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  
      return ChangeNotifierProvider<Medication>.value(
       value: medication,
       child: Scaffold(
+    
         appBar: AppBar(
           title: Text(medication.name ?? 'Medication Details'),
         ),
         body: Column(
           children: <Widget>[
             OverviewBox(),
+  
 
-           if (medication.adultIndications != null && medication.adultIndications!.isNotEmpty) 
+           if (medication.indications != null && medication.indications!.isNotEmpty) 
             IndicationBox()
           ],
         ),

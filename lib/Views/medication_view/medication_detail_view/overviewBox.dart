@@ -13,40 +13,46 @@ class OverviewBox extends StatelessWidget {
   Widget basicInfoRow(BuildContext context, Medication medication) {
     final editButton = editButtontoView(destination: MedicationEditView(medication: medication));
 
-        return Container(
-          height: 100,
-          width: MediaQuery.of(context).size.width,
-          color: Colors.white,
-          padding: EdgeInsets.all(10),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 240,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                  Row(
-                    children: [
-                      Text(medication.name!, style: Theme.of(context).textTheme.headlineLarge),
-                      editButton
-                      ],
+        return ConstrainedBox(
+          constraints:BoxConstraints(
+            maxHeight: 400,
+          ),
+          child: SingleChildScrollView(
+            child: Container(
+              height: 100,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white,
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 240,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Row(
+                        children: [
+                          Text(medication.name!, style: Theme.of(context).textTheme.headlineLarge),
+                          editButton
+                          ],
+                      ),
+                      if (medication.category != null) Text(medication.category!)
+                    
+                    ],),
                   ),
-                  if (medication.category != null) Text(medication.category!)
-                
-                ],),
-              ),
-              Flexible(
-                child: Column(
-                
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                  Text("10002222222 mg/ml"),
-                  Text("50,000 E/mikroliter"),
-                
-                ],),
-              ),
-            ],
-          )
+                  if (medication.concentrationText != null)
+                  Flexible(
+                    child: Column(
+                    
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: 
+                        medication.concentrationText!
+                    ,),
+                  ),
+                ],
+              )
+            ),
+          ),
         );
       }
 

@@ -1,28 +1,28 @@
+
 import 'package:flutter/material.dart';
+import 'package:hane/models/medication/concentration.dart';
 import 'package:hane/models/medication/indication.dart';
 class Medication extends ChangeNotifier {
   String? _name;
   String? _category;
-  List<String>? _concentration;
+  List<Map<String, dynamic>>? _concentrations;
   String? _contraindication;
-  List<Indication>? _adultIndications;
-  List<Indication>? _pedIndications;
+  List<Indication>? _indications;
+
   String? _notes;
 
   Medication({
     String? name,
     String? category,
-    List<String>? concentration,
+    List<Map<String, dynamic>>? concentrations,
     String? contraindication,
-    List<Indication>? adultIndications,
-    List<Indication>? pedIndications,
+    List<Indication>? indications,
     String? notes,
   })  : _name = name,
         _category = category,
-        _concentration = concentration,
+        _concentrations = concentrations,
         _contraindication = contraindication,
-        _adultIndications = adultIndications,
-        _pedIndications = pedIndications,
+        _indications = indications,
         _notes = notes;
 
   String? get name => _name;
@@ -48,14 +48,13 @@ class Medication extends ChangeNotifier {
       notifyListeners();
     }
   }
+List<Text> get concentrationText {
+  // Assuming each map in the list has 'value' as double and 'description' as String
+  var conc = _concentrations?.map((map) => Text('${map['value']} ${map['unit']}')).toList();
+  return conc ?? [];
+}
 
-  List<String>? get concentration => _concentration; 
-  set concentration(List<String>? newConcentration) {
-    if (_concentration != newConcentration) {
-      _concentration = newConcentration;
-      notifyListeners();
-    }
-  }
+
 
   String? get contraindication => _contraindication;
   set contraindication(String? newContraindication) {
@@ -65,27 +64,27 @@ class Medication extends ChangeNotifier {
     }
   } 
 
-  List<Indication>? get adultIndications => _adultIndications; 
-  set adultIndications(List<Indication>? newAdultIndications) {
-    if (_adultIndications != newAdultIndications) {
-      _adultIndications = newAdultIndications;
-      notifyListeners();
-    }
-  }   
-
-  List<Indication>? get pedIndications => _pedIndications;    
-  set pedIndications(List<Indication>? newPedIndications) {
-    if (_pedIndications != newPedIndications) {
-      _pedIndications = newPedIndications;
+  List<Indication>? get indications => _indications ?? [];
+  set indications(List<Indication>? newIndications) {
+    if (_indications != newIndications) {
+      _indications = newIndications;
       notifyListeners();
     }
   }
   
-void addIndication(Indication indication) {
-    if (_adultIndications == null) {
-      _adultIndications = [];
+  List<Indication>? get adultIndications {
+    var adult = _indications?.where((ind) => !ind.isPediatric).toList();
+    return adult ?? [];
+  }
+
+  List<Indication>? get pedIndications {
+      var ped = _indications?.where((ind) => ind.isPediatric).toList();
+      return ped ?? [];
     }
-    _adultIndications!.add(indication);
+
+void addIndication(Indication indication) {
+    this.indications = this.indications ?? [];
+    indications!.add(indication);
     notifyListeners();
   }
 
@@ -94,10 +93,9 @@ void addIndication(Indication indication) {
     return {
       'name': _name,
       'category': _category,
-      'concentration': _concentration,
+      'concentrations': _concentrations,
       'contraindication': _contraindication,
-      'adultIndications': _adultIndications?.map((ind) => ind.toJson()).toList(),
-      'pedIndications': _pedIndications?.map((ind) => ind.toJson()).toList(),
+      'indications': indications?.map((ind) => ind.toJson()).toList(),
       'notes': _notes,
     };
   } 
@@ -107,10 +105,11 @@ void addIndication(Indication indication) {
     return Medication(
       name: map['name'] as String?,
       category: map['category'] as String?,
-      concentration: map['concentration'] != null ? List<String>.from(map['concentration']) : null,
+      concentrations: (map['concentrations'] as List<dynamic>?)
+          ?.map((item) => item as Map<String, dynamic>)
+          .toList() ?? [],
       contraindication: map['contraindication'] as String?,
-      adultIndications: (map['adultIndications'] as List?)?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>)).toList(),
-      pedIndications: (map['pedIndications'] as List?)?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>)).toList(),
+      indications: (map['indications'] as List?)?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>)).toList(),
       notes: map['notes'] as String?,
     );
   }

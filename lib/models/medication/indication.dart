@@ -3,15 +3,15 @@ import 'package:hane/models/medication/continuous_dosage.dart';
 
 class Indication {
   final String name;
-  final List<BolusDosage>? bolus;
-  final List<ContinuousDosage>? infusion;
+  final List<Dosage>? dosages;
   final String? notes;
+  bool isPediatric;
 
 
   Indication({
     required this.name,
-    this.bolus,
-    this.infusion,
+    required this.isPediatric,
+    this.dosages,
     this.notes,
   });
 
@@ -19,8 +19,7 @@ class Indication {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'bolus': bolus?.map((b) => b.toJson()).toList(),
-      'infusion': infusion?.map((i) => i.toJson()).toList(),
+      'dosages': dosages?.map((b) => b.toJson()).toList(),
       'notes': notes,
     };
   }
@@ -29,14 +28,12 @@ class Indication {
   factory Indication.fromFirestore(Map<String, dynamic> map) {
     return Indication(
       name: map['name'] as String,
-      bolus: map['bolus'] != null ? (map['bolus'] as List).map((item) => BolusDosage.fromFirestore(item as Map<String, dynamic>)).toList() : null,
-      infusion: map['infusion'] != null ? (map['infusion'] as List).map((item) => ContinuousDosage.fromFirestore(item as Map<String, dynamic>)).toList() : null,
+      dosages: map['dosages'] != null ? (map['dosages'] as List).map((item) => Dosage.fromFirestore(item as Map<String, dynamic>)).toList() : null,
       notes: map['notes'] as String?,
+      isPediatric: map['isPediatric'] ?? false,
     );
   }
 
-int get totalDosageInstructions => (bolus?.length ?? 0) + (infusion?.length ?? 0);
-
-List get bolusDosages => (bolus ?? []);
+int get totalDosageInstructions => (dosages?.length ?? 0);
 
 }

@@ -21,99 +21,38 @@ List<Medication> createTestMedications() {
   var medications = [
     // Medication 1: Simple case with one adult indication and minimal fields
     Medication(
-      name: "amoxicillin",
-      concentration: ["500mg", "250mg"],
-      adultIndications: [
+      name: "milrinon",
+      contraindication: "Hypotension, ökad kardiell syrgaskonsumtion, takykardi, ",
+      concentrations: [{"value": 0.05, "unit": "mg/ml"}, {"value": 0.1, "unit": "mg/ml"}],
+      notes: "<0,375 μg/kn β1-effekt, blodtrycksstegring, ökad CO och EF.",
+      indications: [
         Indication(
-          name: "Bacterial Infection",
-          bolus: [
-            BolusDosage(
-              instruction: "Take one tablet every 8 hours",
-              
-              dose: {'fixed': Dose(amount: 500.0, unit: 'mg')},
-              weightBasedDose: {'max': Dose(amount: 1000.0, unit: 'mg')},
+          name: "Cirkulatorisk chock",
+          isPediatric: false,
+          dosages: [
+            Dosage(
+              instruction: 
+                  "Ge därefter kontinuerlig infusion",
+              administrationRoute: "IV",
+              lowerLimitDose: Dose(amount: 0.37,unit: 'mikrog/kg/min'),
+              higherLimitDose: Dose(amount: 0.75, unit: 'mikrog/kg/min'),
+              maxDose: Dose(amount: 1.0, unit: 'mg'),
+            ),
+              Dosage(
+                instruction: "bolusdos initialt",
+                administrationRoute: "IV",
+                dose: Dose(amount: 50.0, unit: 'mikrog/kg'),
             )
           ],
-          notes: "Complete full prescription even if feeling better"
         )
-      ],
-      notes: "Used to treat a wide variety of bacterial infections."
-    ),
+      ]
+              
+
+    )];
     
     // Medication 2: Includes both adult and pediatric indications
-    Medication(
-      name: "Ibuprofen",
-      concentration: ["200mg"],
-      adultIndications: [
-        Indication(
-          name: "Pain Relief",
-          bolus: [
-            BolusDosage(
-              instruction: "Take with food or milk",
-              administrationRoute: "Oral",
-              dose: {'fixed': Dose(amount: 400.0, unit: 'mg')},
-              weightBasedDose: {'max': Dose(amount: 800.0, unit: 'mg')},
-            )
-          ],
-          notes: "Avoid exceeding 3200 mg per day."
-        )
-      ],
-      pedIndications: [
-        Indication(
-          name: "Fever Reduction",
-          bolus: [
-            BolusDosage(
-              instruction: "Use measuring spoon or cup",
-              administrationRoute: "Oral",
-              dose: {'fixed': Dose(amount: 200.0, unit: 'mg')},
-            )
-          ],
-          notes: "Consult doctor for children under 6 months."
-        )
-      ],
-      notes: "Can cause stomach upset, take with food or milk."
-    ),
 
-    // Medication 3: More complex case with multiple doses and continuous dosage
-    Medication(
-      name: "Diazepam",
-      concentration: ["5mg/ml"],
-      adultIndications: [
-        Indication(
-          name: "Anxiety Relief",
-          infusion: [
-            ContinuousDosage(
-              instruction: "Administer slowly over 3 hours",
-              administrationRoute: "IV",
-              dose: {'fixed': Dose(amount: 10.0, unit: 'mg')},
-              weightBasedDose: {'min': Dose(amount: 0.2, unit: 'mg/kg')},
-              timeUnit: "hour"
-            )
-          ],
-          notes: "Monitor patient's respiratory function"
-        )
-      ],
-      notes: "Use caution with other CNS depressants."
-    ),
-    Medication(
-      name: 'adrenalin',
-      concentration: ['0.1 mg/ml'],
-      category: 'Cirkulation',
-      adultIndications: [
-        Indication(
-          name: 'Anafylaxi',
-    
-          bolus: [
-            BolusDosage(
-              instruction: 'Ge IM vid misstanke om anafylaxi',
-              dose: {'fixed': Dose(amount: 0.3, unit: 'mg'), 'max': Dose(amount: 0.5, unit: 'mg')},
-            )
-          ],
-          notes: 'Ge ofta'
-        )
-      ],
-    )
-  ];
+
 
   return medications;
 }
@@ -137,7 +76,7 @@ List<Medication> createTestMedications() {
             ),
   
         for (var medication in medications) 
-          Text(medication.name + medication.adultIndications[0].name),
+          Text(medication.name + medication.adultIndications[0].name + medication.indications[0].name),
 
         ElevatedButton(
           onPressed: uploadTestMedications,
@@ -158,7 +97,7 @@ List<Medication> createTestMedications() {
     }
     print("All medications added successfully!");
   } catch (e) {
-    print("Error adding medications: $e");
-  }
+   
+}
 }
 }

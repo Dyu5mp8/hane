@@ -10,29 +10,30 @@ class IndicationBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Medication>(
       builder: (context, medication, child) {
-        if (medication.adultIndications == null || medication.adultIndications!.isEmpty) {
+        print(medication.indications);
+        if (medication.indications == null || medication.indications!.isEmpty) {
           return const Text('No indications available');
         }
-        return _IndicationView(adultIndications: medication.adultIndications!);
+        return _IndicationView(indications: medication.indications!);
       },
     );
   }
 }
 
 class _IndicationView extends StatelessWidget {
-  final List<Indication> adultIndications;
+  final List<Indication> indications;
 
-  const _IndicationView({required this.adultIndications});
+  const _IndicationView({required this.indications});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: DefaultTabController(
-        length: adultIndications.length,
+        length: indications.length,
         child: Column(
           children: [
-            _IndicationTabs(adultIndications: adultIndications),
-            _IndicationTabView(adultIndications: adultIndications),
+            _IndicationTabs(indications: indications),
+            _IndicationTabView(indications: indications),
             AddIndicationButton(),
           ],
         ),
@@ -42,9 +43,9 @@ class _IndicationView extends StatelessWidget {
 }
 
 class _IndicationTabs extends StatelessWidget {
-  final List<Indication> adultIndications;
+  final List<Indication> indications;
 
-  const _IndicationTabs({required this.adultIndications});
+  const _IndicationTabs({required this.indications});
 
   @override
   Widget build(BuildContext context) {
@@ -61,22 +62,22 @@ class _IndicationTabs extends StatelessWidget {
           color: Colors.lightBlue,
           border: Border.all(color: Colors.black, width: 0.4),
         ),
-        tabs: adultIndications.map((indication) => Tab(text: indication.name)).toList(),
+        tabs: indications.map((indication) => Tab(text: indication.name)).toList(),
       ),
     );
   }
 }
 
 class _IndicationTabView extends StatelessWidget {
-  final List<Indication> adultIndications;
+  final List<Indication> indications;
 
-  const _IndicationTabView({required this.adultIndications});
+  const _IndicationTabView({required this.indications});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: TabBarView(
-        children: adultIndications.map((indication) => _IndicationDetails(indication: indication)).toList(),
+        children: indications.map((indication) => _IndicationDetails(indication: indication)).toList(),
       ),
     );
   }
@@ -96,12 +97,12 @@ class _IndicationDetails extends StatelessWidget {
         const SizedBox(height: 40),
         Expanded(
           child: ListView.builder(
-            itemCount: indication.bolusDosages.length,
+            itemCount: indication.dosages?.length,
             itemBuilder: (context, index) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(indication.bolusDosages[index].instruction),
+                  Text(indication.dosages?[index].instruction?? 'No instruction available'),
                   const Divider(),
                 ],
               );
@@ -121,7 +122,7 @@ class AddIndicationButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         final medication = Provider.of<Medication>(context, listen: false);
-        medication.addIndication(Indication(name: 'New indication'));
+        medication.addIndication(Indication(name: 'New indication', isPediatric: false));
       },
       child: const Text('Add indication'),
     );
