@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hane/Views/medication_view/medication_edit_view/medicationEditView.dart';
 
 
 
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Module App',
+
       
     
        theme: ThemeData(
@@ -55,6 +57,10 @@ class MyApp extends StatelessWidget {
     ),
   ),
       home: HomePage(),
+      routes: {
+
+    // Add more routes here
+  },
     );
   }
 }

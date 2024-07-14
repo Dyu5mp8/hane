@@ -3,16 +3,20 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:provider/provider.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/medication_detail_view.dart';
+import 'package:hane/Views/medication_view/Helpers/editButton.dart';
+import 'package:hane/Views/medication_view/medication_edit_view/medicationEditView.dart';
 
 class OverviewBox extends StatelessWidget {
 
- 
+
   Widget basicInfoRow(BuildContext context, Medication medication) {
+    final editButton = editButtontoView(destination: MedicationEditView(medication: medication));
 
         return Container(
           height: 100,
           width: MediaQuery.of(context).size.width,
-          color: Colors.red,
+          color: Colors.white,
           padding: EdgeInsets.all(10),
           child: Row(
             children: [
@@ -21,7 +25,12 @@ class OverviewBox extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                  Text(medication.name!, style: Theme.of(context).textTheme.headlineLarge),
+                  Row(
+                    children: [
+                      Text(medication.name!, style: Theme.of(context).textTheme.headlineLarge),
+                      editButton
+                      ],
+                  ),
                   if (medication.category != null) Text(medication.category!)
                 
                 ],),
@@ -50,7 +59,7 @@ class OverviewBox extends StatelessWidget {
       return Container(
         height: 100,
         width: MediaQuery.of(context).size.width,
-        color: Colors.red,
+        color: Colors.white,
         padding: EdgeInsets.all(10),
 
         child: Column(
@@ -70,7 +79,7 @@ class OverviewBox extends StatelessWidget {
         return Container(
           height: 100,
           width: MediaQuery.of(context).size.width,
-          color: Colors.red,
+          color: Colors.white,
           padding: EdgeInsets.all(10),
 
           child: Column(
@@ -93,7 +102,7 @@ Widget build(BuildContext context) {
     return Consumer<Medication>(
       builder: (context, medication, child) {
         return Container(
-          color: Colors.white, // Assuming a more neutral background for the whole box
+          color: Colors.white, 
 
           child: Column(
             children: [
