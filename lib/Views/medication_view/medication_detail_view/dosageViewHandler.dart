@@ -6,44 +6,59 @@ import "package:hane/models/medication/dose.dart";
 
 
 
-  class DosageViewHandler {
-    final Dosage dosage;
-    DoseConverter _doseConverter = DoseConverter();
+ class DosageViewHandler {
+  final Dosage dosage;
+  final bool shouldConvertDoses;
+  DoseConverter _doseConverter;
 
-    DosageViewHandler( {
-      required this.dosage
-    }
+  DosageViewHandler({
+    required this.dosage,
+    required DoseConverter doseConverter,
+    this.shouldConvertDoses = false,
+  }) : _doseConverter = DoseConverter();
+ 
+
+
+  Dosage _convertDosage(Dosage dosage){
+
+    return Dosage(
+      dose: shouldConvertDoses ? _doseConverter.convert(dosage.dose) : dosage.dose,
+
+      lowerLimitDose: shouldConvertDoses ? _doseConverter.convert(dosage.lowerLimitDose) : dosage.lowerLimitDose,
+      
+      higherLimitDose: shouldConvertDoses ? _doseConverter.convert(dosage.higherLimitDose) : dosage.higherLimitDose,
+      maxDose: shouldConvertDoses ? _doseConverter.convert(dosage.maxDose) : dosage.maxDose,
+      instruction: dosage.instruction,
+      administrationRoute: dosage.administrationRoute,
     );
-
-  set doseConverter(DoseConverter doseConverter) {
-    _doseConverter = doseConverter;
-  } 
-
-  Dose dose() {
-    
-    return dosage.dose!;
   }
+  
 
 
-    
+
 
   String showDosage(Dosage dosage) {
+    var dose = shouldConvertDoses ? _doseConverter.convert(dosage.dose) : dosage.dose;
+    var lowerLimitDose = shouldConvertDoses ? _doseConverter.convert(dosage.lowerLimitDose) : dosage.lowerLimitDose;
+    var higherLimitDose = shouldConvertDoses ? _doseConverter.convert(dosage.higherLimitDose) : dosage.higherLimitDose;
+    var maxDose = shouldConvertDoses ? _doseConverter.convert(dosage.maxDose) : dosage.maxDose;
+
     // Using buffer for efficient string concatenation
     StringBuffer doseString = StringBuffer();
     if (dosage.instruction != null) {
       doseString.write(dosage.instruction);
     }
     // Adding the basic dose information if available
-    if (dosage.dose != null) {
-      doseString.write("${dosage.dose!.amount} ${dosage.dose!.unit}");
+    if (dose != null) {
+      doseString.write("${dose.amount} ${dose.unit}");
     }
 
     // Range display if both limits are available
-    if (dosage.lowerLimitDose != null && dosage.higherLimitDose != null) {
+    if (lowerLimitDose != null && higherLimitDose != null) {
       if (doseString.isNotEmpty) {
         doseString.write(" (");
       }
-      doseString.write("${dosage.lowerLimitDose!.amount} ${dosage.lowerLimitDose!.unit} - ${dosage.higherLimitDose!.amount} ${dosage.higherLimitDose!.unit}");
+      doseString.write("${lowerLimitDose.amount} ${lowerLimitDose.unit} - ${higherLimitDose.amount} ${higherLimitDose.unit}");
       if (doseString.toString().contains("(")) {
         doseString.write(")");
       }
