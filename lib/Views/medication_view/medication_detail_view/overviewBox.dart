@@ -11,6 +11,7 @@ class OverviewBox extends StatelessWidget {
 
   Widget basicInfoRow(BuildContext context, Medication medication) {
     final editButton = editButtontoView(destination: MedicationEditView(medication: medication));
+    List<Record>? concentrations = medication.concentrations;
 
         return Container(
           height: 100,
@@ -34,18 +35,16 @@ class OverviewBox extends StatelessWidget {
                 
                 ],),
               ),
-              if (medication.concentrationText != null)
-              Flexible(
-                child: Column(
-                
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: 
-                    medication.concentrationText!
-                ,),
+              if (concentrations != null)
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: medication.getConcentrationsAsString()!.map((conc) => Text(conc)).toList()
               ),
-            ],
-          )
-        );
+            )
+            ]
+              ),
+          );
       }
 
   

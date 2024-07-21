@@ -5,7 +5,7 @@ import 'package:hane/models/medication/indication.dart';
 class Medication extends ChangeNotifier {
   String? _name;
   String? _category;
-  List<Map<String, dynamic>>? _concentrations;
+  List<({double amount, String unit})>? _concentrations;
   String? _contraindication;
   List<Indication>? _indications;
 
@@ -14,7 +14,7 @@ class Medication extends ChangeNotifier {
   Medication({
     String? name,
     String? category,
-    List<Map<String, dynamic>>? concentrations,
+   List<({double amount, String unit})>? concentrations,
     String? contraindication,
     List<Indication>? indications,
     String? notes,
@@ -48,13 +48,13 @@ class Medication extends ChangeNotifier {
       notifyListeners();
     }
   }
-List<Text> get concentrationText {
-  // Assuming each map in the list has 'value' as double and 'description' as String
-  var conc = _concentrations?.map((map) => Text('${map['value']} ${map['unit']}')).toList();
-  return conc ?? [];
-}
 
+  List<({double amount, String unit})>? get concentrations => _concentrations;
 
+  List<String>? getConcentrationsAsString() {
+
+    return _concentrations?.map((conc) => "${conc.amount} ${conc.unit}").toList();
+  }
 
   String? get contraindication => _contraindication;
   set contraindication(String? newContraindication) {
@@ -105,9 +105,7 @@ void addIndication(Indication indication) {
     return Medication(
       name: map['name'] as String?,
       category: map['category'] as String?,
-      concentrations: (map['concentrations'] as List<dynamic>?)
-          ?.map((item) => item as Map<String, dynamic>)
-          .toList() ?? [],
+      concentrations: map['concentrations'] as List<({double amount, String unit})>?,
       contraindication: map['contraindication'] as String?,
       indications: (map['indications'] as List?)?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>)).toList(),
       notes: map['notes'] as String?,

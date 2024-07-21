@@ -5,7 +5,7 @@ class UnitParser{
   UnitParser();
 
   
-  static Map<String, String> getUnits(String unitInput){
+  static Map<String, String> getUnitsAsMap(String unitInput){
     Map validUnits = UnitValidator.validUnits;
 
       Map<String, String> unitMap = {};

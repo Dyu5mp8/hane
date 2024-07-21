@@ -1,5 +1,4 @@
 import "dart:ffi";
-
 import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart";
 import "package:hane/models/medication/bolus_dosage.dart";
 import "package:hane/models/medication/dose.dart";
@@ -8,37 +7,25 @@ import "package:hane/models/medication/dose.dart";
 
  class DosageViewHandler {
   final Dosage dosage;
-  final bool shouldConvertDoses;
-  DoseConverter _doseConverter;
+  DoseConverter? converter;
+
+
 
   DosageViewHandler({
     required this.dosage,
-    required DoseConverter doseConverter,
-    this.shouldConvertDoses = false,
-  }) : _doseConverter = DoseConverter();
+    this.converter
+  });
  
-
-
-  Dosage _convertDosage(Dosage dosage){
-
-    return Dosage(
-      dose: shouldConvertDoses ? _doseConverter.convert(dosage.dose) : dosage.dose,
-
-      lowerLimitDose: shouldConvertDoses ? _doseConverter.convert(dosage.lowerLimitDose) : dosage.lowerLimitDose,
-      
-      higherLimitDose: shouldConvertDoses ? _doseConverter.convert(dosage.higherLimitDose) : dosage.higherLimitDose,
-      maxDose: shouldConvertDoses ? _doseConverter.convert(dosage.maxDose) : dosage.maxDose,
-      instruction: dosage.instruction,
-      administrationRoute: dosage.administrationRoute,
-    );
-  }
-  
-
 
 
 
   String showDosage(Dosage dosage) {
-    var dose = shouldConvertDoses ? _doseConverter.convert(dosage.dose) : dosage.dose;
+    if (dosage.dose != null){
+      var dose = converter?.getConverted(dose) ?? dosage.dose;}
+    
+    
+
+
     var lowerLimitDose = shouldConvertDoses ? _doseConverter.convert(dosage.lowerLimitDose) : dosage.lowerLimitDose;
     var higherLimitDose = shouldConvertDoses ? _doseConverter.convert(dosage.higherLimitDose) : dosage.higherLimitDose;
     var maxDose = shouldConvertDoses ? _doseConverter.convert(dosage.maxDose) : dosage.maxDose;

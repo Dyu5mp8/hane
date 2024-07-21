@@ -1,72 +1,50 @@
-
 import "package:hane/models/medication/dose.dart";
-
+import "package:hane/utils/UnitService.dart";
 
 class DoseConverter {
-  static final DoseConverter _singleton = DoseConverter._internal();
+  Dose dose;
+  double? patientWeight;
+  String? infusionTimeUnit;
+  ({double amount, String unit})? concentration;
+  Dose? convertedDose;
+  Map<String, String>? units;
 
-  factory DoseConverter() {
-    return _singleton;
-  }
-
-  DoseConverter._internal();
-
-  Dose convert(Dose originalDose) {
-
-    return Dose(amount: originalDose.amount / 1000, unit: "grams");
-  }
-}
+  DoseConverter(
+      {required this.dose,
+      this.patientWeight,
+      this.infusionTimeUnit,
+      this.concentration})
+      : units = UnitParser.getUnitsAsMap(dose.unit);
 
 
-enum  SubstanceUnit { mg, g, mikrog, IE, E, ng, mmol}
-enum TimeUnit { h, min}
-
-class DoseConverter{
   
-  bool convertingTime = false;
-  bool convertingWeight = false;
-  bool convertingConcentration = false;
+   convertedByWeight(double value, Map units, double conversionWeight) {
+    value = value * conversionWeight;
+    units.remove("patientWeight");
+
+    return (value, units);
+  }
+  
+  (double, Map) convertedByTime(double value, Map fromUnits, String toUnit) {
+
+    Map <String, double> validTimeUnits = {
+      "h": 1,
+      "min": 60
+    };
+
+    if (fromUnits == null || !validTimeUnits.containsKey(fromUnits["time"]) || !validTimeUnits.containsKey(toUnit)) {
+    Exception("$fromUnits is not an valid unit");
+  }
+    double factor = validTimeUnits[fromUnits["time"]]! / validTimeUnits[toUnit]!;
+    value = value * factor;
+    var newUnits = fromUnits;
+    newUnits["time"] = toUnit;
 
 
-  void setConversionMode({
-    bool convertingTime = false, 
-    bool convertingWeight = false, 
-    bool convertingConcentration = false,
-  }) {
-    // Set the conversion mode
-    this.convertingTime = convertingTime;
-    this.convertingWeight = convertingWeight;
-    this.convertingConcentration = convertingConcentration;
+    return (value, newUnits);
   }
 
-
-  final Map<SubstanceUnit, double> conversionFactors = {
-    SubstanceUnit.mg: 1.0,
-    SubstanceUnit.g: 1000.0,
-    SubstanceUnit.mikrog: 0.001,
-    SubstanceUnit.IE: 1.0,
-    SubstanceUnit.E: 1.0,
-    SubstanceUnit.ng: 0.000001,
-    SubstanceUnit.mmol: 1.0,
-  };
-
-final Map<TimeUnit, String> timeUnitStrings = {
-    TimeUnit.h: 'h',
-    TimeUnit.min: 'min',
-  };  
-
-List<dynamic> parseUnit(String unitString) {
-    var units = unitString.split('/');
-    return units.map((u) => Unit.values.firstWhere((e) => e.toString().split('.').last == u, orElse: () => null)).whereType<Unit>().toList();
-  }
-
-Dose convert(Dose? dose) {  
-  var parts = parseUnit(dose.unit);
-
-  return 
-
-}
-
-
-
+//   (double, Map) convertedByConcentration(double value, Map fromUnits, String toUnit) {
+// Awaiting implementaiton
+// }
 }
