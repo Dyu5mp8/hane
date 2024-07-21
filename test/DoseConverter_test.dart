@@ -1,69 +1,56 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart';import 'package:hane/models/medication/dose.dart';
-import 'package:hane/utils/UnitService.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart';
 
-void main() {
+import 'package:hane/models/medication/dose.dart';
+
+void main(){
+
   group('DoseConverter', () {
-        Dose dose = Dose(amount: 5.0, unit: 'mg/kg/min');
+
+
+    test('test convertedByConcentration method', () {
+      Dose dose = Dose(amount: 5.0, unit: 'mg/min');
       DoseConverter converter = DoseConverter(
         dose: dose,
-        patientWeight: 70,
+        patientWeight: 80,
         infusionTimeUnit: 'h',
         concentration: (amount: 5, unit:'mg/ml'),
       );
-    test('initializes with all parameters', () {
-      Dose dose = Dose(amount: 5.0, unit: 'mg/kg/min');
+
     
-      print("ojoj ${converter.convertedByTime(5, {"mass": "kg", "time": "min"}, "h")}");
-      expect(converter.dose.amount, 5.0);
-      expect(converter.dose.unit, 'mg/kg/min');
-      expect(converter.patientWeight, 70);
-      expect(converter.infusionTimeUnit, 'h');
-      expect(converter.concentration, (amount: 5.0, unit: 'mg/ml'));
-      expect(converter.units, UnitParser.getUnitsAsMap('mg/kg/min'));
-    });
 
 
-    test("test dose parser", () {
+      var result = converter.convertedByConcentration(5, {"substance": "mg","patientWeight": "kg", "time": "min"}, (amount: 5, unit: 'mg/ml'));
+      print (result);
 
-      Dose dose = Dose(amount: 5.0, unit: 'mg/kg/min');
-      var result = UnitParser.getUnitsAsMap(dose.unit);
+      result = converter.convertedByTime(result.$1, result.$2, "h");
+
       print(result);
-      var afterWeightConversion = converter.convertedByWeight(5, result, 70);
 
-      print(afterWeightConversion);
-      print(afterWeightConversion.$2);
-      var afterTimeConversion = converter.convertedByTime(afterWeightConversion.$1, afterWeightConversion.$2, "h");
+      result = converter.convertedByWeight(result.$1, result.$2, 50);
 
-      print(afterTimeConversion);
+      print(result);
+
+      result =converter.convertedByTime(result.$1, result.$2, "min");
+
+      print(result);
 
       
-
-
     });
-
-    test('initializes with only dose', () {
-      Dose dose = Dose(amount: 5.0, unit: 'mg/kg/min');
-      DoseConverter converter = DoseConverter(dose: dose);
-
-      expect(converter.dose.amount, 5.0);
-      expect(converter.dose.unit, 'mg/kg/min');
-      expect(converter.patientWeight, isNull);
-      expect(converter.infusionTimeUnit, isNull);
-      expect(converter.concentration, isNull);
-      expect(converter.units, UnitParser.getUnitsAsMap('mg/kg/min'));
-    });
-
-    test('testPrint method prints expected values', () {
-      Dose dose = Dose(amount: 5.0, unit: 'mg/kg/min');
+    test("testing whole method", () {
+      Dose dose = Dose(amount: 5.0, unit: 'mg/min');
       DoseConverter converter = DoseConverter(
         dose: dose,
-        patientWeight: 70,
+        patientWeight: 80,
         infusionTimeUnit: 'h',
-        concentration: (amount: 5, unit: 'mg/ml'),
+        concentration: (amount: 5, unit:'mg/ml'),
       );
 
+      var result = converter.convertDose(convertWeight: 50, convertTime: "h", convertConcentration: (amount: 5, unit: 'mg/ml'));
+      print("${result.amount} ${result.unit}");
     });
+  
   });
+
 }

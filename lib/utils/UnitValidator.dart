@@ -14,17 +14,36 @@ class UnitValidator {
       "s" : "time",
       "min" : "time",
       "h" : "time",
-      "d" : "time"};
+      "d" : "time",
+      "IE" : "unitunit",
+      "E" : "unitunit",
+      "FE" : "unitunit",
+      "mmol" : "molar",
+      };
 
 
   static get validUnits => _validUnits;
 
-  static isPatientWeightUnit(String str) => str == "kg";
+static validSubstanceUnits() {
+  return Map.fromEntries(
+    _validUnits.entries.where((entry) =>(entry.value == "unitunit"|| entry.value == "molar")|| entry.value == "mass")
+  );
+}
 
-  static isMassUnit(String str) {
-    Set<String> units = {"g", "mg", "mikrog", "ng"};
+static validTimeUnits() {
+  return Map.fromEntries(
+    _validUnits.entries.where((entry) => entry.value == "time")
+  );
+}
 
-    return units.contains(str);
+static validVolumeUnits() {
+  return Map.fromEntries(
+    _validUnits.entries.where((entry) => entry.value == "volume")
+  );
+}
+
+static isSubstanceUnit(String str) {
+    return validSubstanceUnits().keys.contains(str);
   }
 
   static isVolumeUnit(String str) {
@@ -36,4 +55,15 @@ class UnitValidator {
     Set<String> units = {"s", "min", "h", "d"};
     return units.contains(str);
   }
+
+  static isValidUnit(String str) {
+    return _validUnits.containsKey(str);
+  }
+
+  static isValidUnitType(String str) {
+    return _validUnits.containsValue(str);
+  }
+
+
+
 }

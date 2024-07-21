@@ -2,30 +2,51 @@ import "package:hane/models/medication/dose.dart";
 import "package:hane/utils/UnitService.dart";
 
 class DoseConverter {
-  Dose dose;
-  double? patientWeight;
-  String? infusionTimeUnit;
-  ({double amount, String unit})? concentration;
-  Dose? convertedDose;
-  Map<String, String>? units;
 
-  DoseConverter(
-      {required this.dose,
-      this.patientWeight,
-      this.infusionTimeUnit,
-      this.concentration})
-      : units = UnitParser.getUnitsAsMap(dose.unit);
+  static double? patientWeight;
 
-
+// exposed method
   
-   convertedByWeight(double value, Map units, double conversionWeight) {
-    value = value * conversionWeight;
-    units.remove("patientWeight");
+  static Dose convertDose({required Dose dose, double? convertWeight, String? convertTime, ({double amount, String unit})? convertConcentration}) {
+    double value = dose.amount;
+    Map fromUnits = UnitParser.getDoseUnitsAsMap(dose.unit);
 
-    return (value, units);
+
+    if (convertWeight != null && fromUnits.containsKey("patientWeight")) {
+      var result = convertedByWeight(value, fromUnits, convertWeight);
+      value = result.$1;
+      fromUnits = result.$2;
+    }
+
+    if (convertTime != null && fromUnits.containsKey("time")) {
+      var result = convertedByTime(value, fromUnits, convertTime);
+      value = result.$1;
+      fromUnits = result.$2;
+    }
+
+    if (convertConcentration != null) {
+      var result = convertedByConcentration(value, fromUnits, convertConcentration);
+      value = result.$1;
+      fromUnits = result.$2;
+    }
+
+    return UnitParser.calculatedDose(value, fromUnits);
+  }
+
+
+// The following methods are used to convert the dose to the desired unit
+
+   static convertedByWeight(double value, Map fromUnits, double conversionWeight) {
+    patientWeight = conversionWeight;
+    final newValue = value * conversionWeight;
+    
+    fromUnits.remove("patientWeight");
+    final newUnits = fromUnits;
+
+    return (newValue, newUnits);
   }
   
-  (double, Map) convertedByTime(double value, Map fromUnits, String toUnit) {
+  static (double, Map) convertedByTime(double value, Map fromUnits, String toUnit) {
 
     Map <String, double> validTimeUnits = {
       "h": 1,
@@ -35,16 +56,30 @@ class DoseConverter {
     if (fromUnits == null || !validTimeUnits.containsKey(fromUnits["time"]) || !validTimeUnits.containsKey(toUnit)) {
     Exception("$fromUnits is not an valid unit");
   }
+    if (validTimeUnits[fromUnits["time"]] != null ||  validTimeUnits[toUnit] != null) { 
+      throw Exception("$fromUnits or $toUnit is not a valid unit");
+    }
+    
     double factor = validTimeUnits[fromUnits["time"]]! / validTimeUnits[toUnit]!;
-    value = value * factor;
+    var newValue = value * factor;
     var newUnits = fromUnits;
     newUnits["time"] = toUnit;
 
-
-    return (value, newUnits);
+    return (newValue, newUnits);
   }
 
-//   (double, Map) convertedByConcentration(double value, Map fromUnits, String toUnit) {
-// Awaiting implementaiton
-// }
+  static (double, Map) convertedByConcentration(double value, Map fromUnits, ({double amount, String unit}) concentration) {
+
+    final concentrationUnitMap = UnitParser.getConcentrationsUnitsAsMap(concentration.unit); 
+    double substanceConversionFactor = UnitParser.getUnitConversionFactor(fromUnit: concentrationUnitMap["substance"] , toUnit: fromUnits["substance"]);
+
+    var newValue = value/concentration.amount * substanceConversionFactor;  
+
+    fromUnits["substance"] = concentrationUnitMap["volume"];
+    var newUnits = fromUnits;
+   
+
+    return (newValue, newUnits);
+
+}
 }
