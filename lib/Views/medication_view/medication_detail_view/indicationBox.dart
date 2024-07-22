@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/dosage_snippet.dart';
 import 'package:hane/models/medication/bolus_dosage.dart';
 import 'package:hane/models/medication/indication.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:provider/provider.dart';
-import  'package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart';
+
 
 class IndicationBox extends StatelessWidget {
   const IndicationBox({super.key});
@@ -88,7 +89,6 @@ class _IndicationTabView extends StatelessWidget {
 
 class _IndicationDetails extends StatelessWidget {
   final Indication indication;
-  final DosageViewHandler dosageViewHandler = DosageViewHandler();
 
   _IndicationDetails({required this.indication});
 
@@ -110,7 +110,8 @@ class _IndicationDetails extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(dosageViewHandler.showDosage(indication.dosages![index])),
+                  if (indication.dosages != null)
+                  DosageSnippet(dosage: indication.dosages![index]),
                   const SizedBox(height: 20),
                
                 ],

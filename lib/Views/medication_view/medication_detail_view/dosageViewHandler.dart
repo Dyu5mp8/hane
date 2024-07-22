@@ -1,62 +1,65 @@
 import "dart:ffi";
+import "package:flutter/foundation.dart";
 import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart";
 import "package:hane/models/medication/bolus_dosage.dart";
 import "package:hane/models/medication/dose.dart";
+import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart";
 
 
 
  class DosageViewHandler {
   final Dosage dosage;
-  DoseConverter? converter;
+  double? conversionWeight;
+  String? conversionTime;
+  ({double amount, String unit})? conversionConcentration;
 
 
-
-  DosageViewHandler({
+  DosageViewHandler(Key? key, {
+  
     required this.dosage,
-    this.converter
+    this.conversionWeight,
+    this.conversionTime,
+    this.conversionConcentration,
   });
- 
 
+  String showDosage() {
+    bool shouldConvertDoses = (conversionWeight != null || conversionTime != null || conversionConcentration != null);
 
+    Dose? convertIfNeeded(Dose? dose) {
+      if (dose == null) return null;
+      return shouldConvertDoses
+          ? DoseConverter.convertDose(
+              dose: dose,
+              convertWeight: conversionWeight,
+              convertTime: conversionTime,
+              convertConcentration: conversionConcentration,
+            )
+          : dose;
+    }
 
-  String showDosage(Dosage dosage) {
-    if (dosage.dose != null){
-      var dose = converter?.getConverted(dose) ?? dosage.dose;}
-    
-    
+    Dose? dose = convertIfNeeded(dosage.dose);
+    Dose? lowerLimitDose = convertIfNeeded(dosage.lowerLimitDose);
+    Dose? higherLimitDose = convertIfNeeded(dosage.higherLimitDose);
+    Dose? maxDose = convertIfNeeded(dosage.maxDose);
 
-
-    var lowerLimitDose = shouldConvertDoses ? _doseConverter.convert(dosage.lowerLimitDose) : dosage.lowerLimitDose;
-    var higherLimitDose = shouldConvertDoses ? _doseConverter.convert(dosage.higherLimitDose) : dosage.higherLimitDose;
-    var maxDose = shouldConvertDoses ? _doseConverter.convert(dosage.maxDose) : dosage.maxDose;
-
-    // Using buffer for efficient string concatenation
     StringBuffer doseString = StringBuffer();
     if (dosage.instruction != null) {
       doseString.write(dosage.instruction);
     }
-    // Adding the basic dose information if available
     if (dose != null) {
+      if (doseString.isNotEmpty) doseString.write(": ");
       doseString.write("${dose.amount} ${dose.unit}");
     }
-
-    // Range display if both limits are available
     if (lowerLimitDose != null && higherLimitDose != null) {
-      if (doseString.isNotEmpty) {
-        doseString.write(" (");
-      }
+      if (doseString.isNotEmpty) doseString.write(" (");
       doseString.write("${lowerLimitDose.amount} ${lowerLimitDose.unit} - ${higherLimitDose.amount} ${higherLimitDose.unit}");
-      if (doseString.toString().contains("(")) {
-        doseString.write(")");
-      }
+      if (doseString.toString().contains("(")) doseString.write(")");
     }
 
-    // Compose final message
-    String result = "${dosage.instruction}: ${dosage.administrationRoute} ${doseString.toString()}.";
+    String result = "${doseString.toString()} ${dosage.administrationRoute ?? ''}.".trim();
 
-    // Append max dose if available
-    if (dosage.maxDose != null) {
-      result += " Maxdos: ${dosage.maxDose!.amount} ${dosage.maxDose!.unit}.";
+    if (maxDose != null) {
+      result += " Max dose: ${maxDose.amount} ${maxDose.unit}.";
     }
 
     return result;

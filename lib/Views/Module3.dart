@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hane/models/medication/concentration.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:hane/models/medication/indication.dart';
 import 'package:hane/models/medication/bolus_dosage.dart';
 import 'package:hane/models/medication/continuous_dosage.dart';
 import 'package:hane/models/medication/dose.dart';
 import 'package:flutter/material.dart';
+import 'package:hane/models/medication/concentration.dart';
 class ModuleThree extends StatefulWidget {
   @override
   State<ModuleThree> createState() => _ModuleThreeState();
@@ -23,7 +25,7 @@ List<Medication> createTestMedications() {
     Medication(
       name: "milrinon",
       contraindication: "Hypotenad kardiell syrgaskons, takykardi, ",
-      concentrations: [(amount: 0.05 ,unit: "mg/ml"), (amount: 0.1, unit: "mg/ml")],
+      concentrations: [Concentration(amount: 1.0, unit: 'mg/ml'), Concentration(amount: 0.5, unit: 'mg/ml'), Concentration(amount: 0.25, unit: 'mg/ml')],
       notes: "<0,375 μg/kn β1-awdasdawdadwadawdawdawddawdawdadsdasdwdawdsdeffekt, blodtrycksstegring, ökad CO och EF.",
       indications: [
         Indication(

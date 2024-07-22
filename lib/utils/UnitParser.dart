@@ -5,6 +5,7 @@ import "package:hane/utils/UnitValidator.dart";
 class UnitParser{
   
   UnitParser();
+
     static getUnitConversionFactor({required String fromUnit, required String toUnit}){
 
     if (UnitValidator.validUnits[fromUnit] != (UnitValidator.validUnits[toUnit])){

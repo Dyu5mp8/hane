@@ -1,13 +1,13 @@
-class DrugConcentration {
+class Concentration {
   final double amount;
   final String unit;
 
-  DrugConcentration({required this.amount, required this.unit});
+Concentration({required this.amount, required this.unit});
 
-  factory DrugConcentration.fromJson(Map<String, dynamic> json) {
-    return DrugConcentration(
-      amount: json['amount'],
-      unit: json['unit'],
+ factory Concentration.fromMap(Map<String, dynamic> map) {
+    return Concentration(
+      amount: map['amount'] as double,
+      unit: map['unit'] as String,
     );
   }
 

@@ -21,8 +21,18 @@ void main() {
     test("testing validSubstanceUnits", () {
       print(UnitValidator.validSubstanceUnits());
     });
+    test("isvalidconcentration", () {
+      print(UnitValidator.isValidConcentrationUnit("mg/ml"));
+      print(UnitValidator.isValidConcentrationUnit("E/ml"));
+      print(UnitValidator.isValidConcentrationUnit("ml/kg"));
 
-  }
-  );
-  
+
+
+
+    });
+
+    }
+    
+    
+    );
   }

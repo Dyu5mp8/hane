@@ -2,10 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:hane/models/medication/concentration.dart';
 import 'package:hane/models/medication/indication.dart';
+
+export 'package:hane/models/medication/concentration.dart';
+
 class Medication extends ChangeNotifier {
   String? _name;
   String? _category;
-  List<({double amount, String unit})>? _concentrations;
+  List<Concentration>? _concentrations;
   String? _contraindication;
   List<Indication>? _indications;
 
@@ -14,7 +17,7 @@ class Medication extends ChangeNotifier {
   Medication({
     String? name,
     String? category,
-   List<({double amount, String unit})>? concentrations,
+   List<Concentration>? concentrations,
     String? contraindication,
     List<Indication>? indications,
     String? notes,
@@ -49,7 +52,7 @@ class Medication extends ChangeNotifier {
     }
   }
 
-  List<({double amount, String unit})>? get concentrations => _concentrations;
+  List<Concentration>? get concentrations => _concentrations;
 
   List<String>? getConcentrationsAsString() {
 
@@ -93,22 +96,27 @@ void addIndication(Indication indication) {
     return {
       'name': _name,
       'category': _category,
-      'concentrations': _concentrations,
+      'concentrations': concentrations?.map((c) => c.toJson()).toList(),
       'contraindication': _contraindication,
       'indications': indications?.map((ind) => ind.toJson()).toList(),
       'notes': _notes,
     };
   } 
 
+
   // Factory constructor to create a Medication from a Map
   factory Medication.fromFirestore(Map<String, dynamic> map) {
     return Medication(
       name: map['name'] as String?,
       category: map['category'] as String?,
-      concentrations: map['concentrations'] as List<({double amount, String unit})>?,
+      concentrations: (map['concentrations'] as List<dynamic>?)?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
+        .toList(),
       contraindication: map['contraindication'] as String?,
       indications: (map['indications'] as List?)?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>)).toList(),
       notes: map['notes'] as String?,
     );
   }
+
+
+
 }

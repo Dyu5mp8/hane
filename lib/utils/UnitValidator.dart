@@ -30,6 +30,7 @@ static validSubstanceUnits() {
   );
 }
 
+
 static validTimeUnits() {
   return Map.fromEntries(
     _validUnits.entries.where((entry) => entry.value == "time")
@@ -64,6 +65,14 @@ static isSubstanceUnit(String str) {
     return _validUnits.containsValue(str);
   }
 
+  static isValidConcentrationUnit(String str) {
+   List units = str.split("/");
+   if (units.length != 2) {
+     return false;
+   }
+    return isSubstanceUnit(units[0]) && isVolumeUnit(units[1]);
+
+  }
 
 
 }

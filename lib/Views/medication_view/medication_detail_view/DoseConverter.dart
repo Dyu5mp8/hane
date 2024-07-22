@@ -56,7 +56,7 @@ class DoseConverter {
     if (fromUnits == null || !validTimeUnits.containsKey(fromUnits["time"]) || !validTimeUnits.containsKey(toUnit)) {
     Exception("$fromUnits is not an valid unit");
   }
-    if (validTimeUnits[fromUnits["time"]] != null ||  validTimeUnits[toUnit] != null) { 
+    if (validTimeUnits[fromUnits["time"]] == null ||  validTimeUnits[toUnit] == null) { 
       throw Exception("$fromUnits or $toUnit is not a valid unit");
     }
     

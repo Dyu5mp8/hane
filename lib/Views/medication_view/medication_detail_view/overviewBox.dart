@@ -3,15 +3,15 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:provider/provider.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/medication_detail_view.dart';
 import 'package:hane/Views/medication_view/Helpers/editButton.dart';
 import 'package:hane/Views/medication_view/medication_edit_view/medicationEditView.dart';
+
 
 class OverviewBox extends StatelessWidget {
 
   Widget basicInfoRow(BuildContext context, Medication medication) {
     final editButton = editButtontoView(destination: MedicationEditView(medication: medication));
-    List<Record>? concentrations = medication.concentrations;
+    List<Concentration>? concentrations = medication.concentrations;
 
         return Container(
           height: 100,
@@ -98,7 +98,7 @@ Widget build(BuildContext context) {
     return Consumer<Medication>(
       builder: (context, medication, child) {
         return ConstrainedBox(
-              constraints:BoxConstraints(
+              constraints: const BoxConstraints(
                 maxHeight: 350,
               ),
 
