@@ -4,6 +4,7 @@ import 'package:hane/models/medication/concentration.dart';
 import 'package:hane/models/medication/indication.dart';
 
 export 'package:hane/models/medication/concentration.dart';
+export 'package:hane/models/medication/dose.dart';
 
 class Medication extends ChangeNotifier {
   String? _name;

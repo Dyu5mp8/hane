@@ -30,6 +30,9 @@ static validSubstanceUnits() {
   );
 }
 
+static containsPatientWeightUnit(String str) {
+  return _validUnits[str] == "patientWeight";
+}
 
 static validTimeUnits() {
   return Map.fromEntries(

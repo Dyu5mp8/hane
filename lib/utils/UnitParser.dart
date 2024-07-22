@@ -108,7 +108,6 @@ class UnitParser{
       if (parts.length > 3){
         throw Exception("Not a valid unit : more than 4 units");
       }
-      print(UnitValidator.isSubstanceUnit(parts[0]));
       if (!UnitValidator.isSubstanceUnit(parts[0])){  
         throw Exception("Not a valid unit : $parts[0]");
       } 

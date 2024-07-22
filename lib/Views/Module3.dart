@@ -50,11 +50,59 @@ List<Medication> createTestMedications() {
       ]
               
 
-    )];
+    ),
+
+    // Medication 2: More complex case with multiple indications and concentrations
+    Medication(
+      name:"Furosemide",
+      contraindication: "Anuri, svår hypokalemi, svår hypovolemi, svår dehydrering",
+      concentrations: [Concentration(amount: 10.0, unit: 'mg/ml'), Concentration(amount: 5.0, unit: 'mg/ml'), Concentration(amount: 2.0, unit: 'mg/ml')],
+      notes: ("Furosemid är ett kraftigt diuretikum som verkar snabbt och kortvarigt. Effekten inträder inom 5 minuter och varar i 2-3 timmar. "),
+      indications: [
+        Indication(
+          name: "Lungödem",
+          isPediatric: false,
+          dosages: [
+            Dosage(
+              instruction: "Ge som kontinuerlig infusion",
+              administrationRoute: "IV",
+              lowerLimitDose: Dose(amount: 0.1, unit: 'mg/kg/h'),
+              higherLimitDose: Dose(amount: 0.4, unit: 'mg/kg/h'),
+              maxDose: Dose(amount: 4.0, unit: 'mg'),
+            ),
+            Dosage(
+              instruction: "Ge som kontinuerlig infusion",
+              administrationRoute: "IV",
+              lowerLimitDose: Dose(amount: 0.1, unit: 'mg/kg/h'),
+              higherLimitDose: Dose(amount: 0.4, unit: 'mg/kg/h'),
+              maxDose: Dose(amount: 4.0, unit: 'mg'),
+            ),
+          ],
+        ),
+        Indication(
+          name: "Hypertensiv kris",
+          isPediatric: false,
+          dosages: [
+            Dosage(
+              instruction: "Ge som kontinuerlig infusion",
+              administrationRoute: "IV",
+              lowerLimitDose: Dose(amount: 0.1, unit: 'mg/kg/h'),
+              higherLimitDose: Dose(amount: 0.4, unit: 'mg/kg/h'),
+              maxDose: Dose(amount: 4.0, unit: 'mg'),
+            ),
+            Dosage(
+              instruction: "Ge som kontinuerlig infusion",
+              administrationRoute: "IV",
+              lowerLimitDose: Dose(amount: 0.1, unit: 'mg/kg/h'),
+              higherLimitDose: Dose(amount: 0.4, unit: 'mg/kg/h'),
+              maxDose: Dose(amount: 4.0, unit: 'mg'),
+            ),
+          ],
+        ),
+      ],  
+    )
+    ];
     
-    // Medication 2: Includes both adult and pediatric indications
-
-
 
   return medications;
 }

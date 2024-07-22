@@ -14,11 +14,10 @@ class IndicationBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Medication>(
       builder: (context, medication, child) {
-        print(medication.indications);
         if (medication.indications == null || medication.indications!.isEmpty) {
           return const Text('No indications available');
         }
-        return _IndicationView(indications: medication.indications!);
+        return _IndicationView(indications: medication.indications!, concentrations: medication.concentrations);
       },
     );
   }
@@ -26,8 +25,9 @@ class IndicationBox extends StatelessWidget {
 
 class _IndicationView extends StatelessWidget {
   final List<Indication> indications;
+  final List<Concentration>? concentrations;
 
-  const _IndicationView({required this.indications});
+  const _IndicationView({required this.indications, this.concentrations});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class _IndicationView extends StatelessWidget {
         child: Column(
           children: [
             _IndicationTabs(indications: indications),
-            _IndicationTabView(indications: indications),
+            _IndicationTabView(indications: indications, concentrations: concentrations),
             AddIndicationButton(),
           ],
         ),
@@ -74,14 +74,15 @@ class _IndicationTabs extends StatelessWidget {
 
 class _IndicationTabView extends StatelessWidget {
   final List<Indication> indications;
+  final List<Concentration>? concentrations;
 
-  const _IndicationTabView({required this.indications});
+  const _IndicationTabView({required this.indications, this.concentrations});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: TabBarView(
-        children: indications.map((indication) => _IndicationDetails(indication: indication)).toList(),
+        children: indications.map((indication) => _IndicationDetails(indication: indication, concentrations: concentrations,)).toList(),
       ),
     );
   }
@@ -89,13 +90,14 @@ class _IndicationTabView extends StatelessWidget {
 
 class _IndicationDetails extends StatelessWidget {
   final Indication indication;
+  final List<Concentration>? concentrations;
 
-  _IndicationDetails({required this.indication});
+  _IndicationDetails({
+    required this.indication,
+    this.concentrations,
+    });
 
   
-
-
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -111,8 +113,15 @@ class _IndicationDetails extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (indication.dosages != null)
-                  DosageSnippet(dosage: indication.dosages![index]),
-                  const SizedBox(height: 20),
+                  DosageSnippet(dosage: indication.dosages![index], 
+                  dosageViewHandler: (DosageViewHandler(
+                      super.key,
+                      dosage: indication.dosages![index],
+                      availableConcentrations: concentrations
+                  )
+                    )
+                  ),
+                 
                
                 ],
               );

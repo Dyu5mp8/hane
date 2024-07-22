@@ -1,9 +1,10 @@
-import "dart:ffi";
 import "package:flutter/foundation.dart";
 import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart";
 import "package:hane/models/medication/bolus_dosage.dart";
-import "package:hane/models/medication/dose.dart";
-import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart";
+import "package:hane/models/medication/medication.dart";
+import "package:hane/utils/UnitParser.dart";
+import "package:hane/utils/UnitService.dart";
+
 
 
 
@@ -11,7 +12,9 @@ import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.
   final Dosage dosage;
   double? conversionWeight;
   String? conversionTime;
-  ({double amount, String unit})? conversionConcentration;
+  Concentration? conversionConcentration;
+  List<Concentration>? availableConcentrations;
+
 
 
   DosageViewHandler(Key? key, {
@@ -20,7 +23,55 @@ import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.
     this.conversionWeight,
     this.conversionTime,
     this.conversionConcentration,
+    this.availableConcentrations
   });
+
+  
+  ({bool weight, bool time, bool concentration}) ableToConvert () {
+
+    int _weightConversions = 0;
+    int _timeConversions = 0;
+    int _concentrationConversions = 0;
+    print("running ableToConvert");
+    print("availableConcentrations $availableConcentrations");
+    List<Dose?> doseList = [dosage.dose, dosage.lowerLimitDose, dosage.higherLimitDose, dosage.maxDose];
+    print("printing doseList $doseList");
+
+    for (Dose? dose in doseList) {
+      if (dose != null){
+        var doseUnits = UnitParser.getDoseUnitsAsMap(dose.unit);
+
+        if (doseUnits.containsKey("time")) {
+          _timeConversions++;
+        }
+
+        if (doseUnits.containsKey("patientWeight")){
+          _weightConversions++;
+        }
+        
+        if (availableConcentrations != null) {
+          var concentrationSubstanceUnits = availableConcentrations!.map((conc) => UnitParser.getConcentrationsUnitsAsMap(conc.unit)["substance"]);
+          if (concentrationSubstanceUnits.contains(doseUnits["substance"])) {
+            _concentrationConversions++;
+          }
+          
+
+        }
+      }
+
+
+
+
+
+    }
+
+
+
+    return (weight: _weightConversions > 0, time: _timeConversions > 0, concentration: _concentrationConversions > 0);
+
+  }
+
+  
 
   String showDosage() {
     bool shouldConvertDoses = (conversionWeight != null || conversionTime != null || conversionConcentration != null);
@@ -65,3 +116,4 @@ import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.
     return result;
   }
 }
+ 

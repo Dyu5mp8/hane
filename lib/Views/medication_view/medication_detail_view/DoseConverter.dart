@@ -1,4 +1,5 @@
 import "package:hane/models/medication/dose.dart";
+import "package:hane/models/medication/medication.dart";
 import "package:hane/utils/UnitService.dart";
 
 class DoseConverter {
@@ -7,7 +8,7 @@ class DoseConverter {
 
 // exposed method
   
-  static Dose convertDose({required Dose dose, double? convertWeight, String? convertTime, ({double amount, String unit})? convertConcentration}) {
+  static Dose convertDose({required Dose dose, double? convertWeight, String? convertTime, Concentration? convertConcentration}) {
     double value = dose.amount;
     Map fromUnits = UnitParser.getDoseUnitsAsMap(dose.unit);
 
@@ -68,7 +69,7 @@ class DoseConverter {
     return (newValue, newUnits);
   }
 
-  static (double, Map) convertedByConcentration(double value, Map fromUnits, ({double amount, String unit}) concentration) {
+  static (double, Map) convertedByConcentration(double value, Map fromUnits, Concentration concentration) {
 
     final concentrationUnitMap = UnitParser.getConcentrationsUnitsAsMap(concentration.unit); 
     double substanceConversionFactor = UnitParser.getUnitConversionFactor(fromUnit: concentrationUnitMap["substance"] , toUnit: fromUnits["substance"]);
