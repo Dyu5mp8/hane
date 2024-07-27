@@ -1,14 +1,12 @@
-import 'package:flutter/widgets.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/indicationBox.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/indication_tab.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/overviewBox.dart';
 import 'package:provider/provider.dart';
 class MedicationDetailView extends StatelessWidget {
   final Medication medication;
 
-  MedicationDetailView({required this.medication});
+  const MedicationDetailView({super.key, required this.medication});
 
   
 
@@ -28,7 +26,7 @@ class MedicationDetailView extends StatelessWidget {
             
 
            if (medication.adultIndications != null && medication.adultIndications!.isNotEmpty) 
-            IndicationBox()
+            const IndicationBox()
           ],
         ),
       ),

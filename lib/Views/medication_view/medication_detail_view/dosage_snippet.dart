@@ -1,134 +1,180 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/concentration_picker.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/conversion_option_miniature.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/weight_slider.dart';
 import 'package:hane/models/medication/bolus_dosage.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hane/models/medication/medication.dart';
+
 
 class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
   final DosageViewHandler dosageViewHandler;
 
-  
-
-
-  DosageSnippet({
-    Key? key,
-    required this.dosage,
-    required this.dosageViewHandler
-  }) : super(key: key);
+  DosageSnippet(
+      {Key? key, required this.dosage, required this.dosageViewHandler})
+      : super(key: key);
 
   @override
-  _DosageSnippetState createState() => _DosageSnippetState();
+  DosageSnippetState createState() => DosageSnippetState();
 }
 
-class _DosageSnippetState extends State<DosageSnippet> with SingleTickerProviderStateMixin{
+class DosageSnippetState extends State<DosageSnippet> with SingleTickerProviderStateMixin {
   late final controller = SlidableController(this);
 
+  bool shouldShowWeightSlider = false;
 
-  @override
-  Widget build(BuildContext context) {
-    return
-       Slidable(
-              // Specify a key if the Slidable is dismissible.
-              key: const ValueKey(0),
+  //setting pt weight to 70 or the static variable
+  double _weightSliderValue = DoseConverter.patientWeight ?? 70;
 
-              // The start action pane is the one at the left or the top side.
-              startActionPane: ActionPane(
-                // A motion is a widget used to control how the pane animates.
-                motion: const ScrollMotion(),
-
-                // A pane can dismiss the Slidable.
-                dismissible: DismissiblePane(onDismissed: () {}),
-
-                // All actions are defined in the children parameter.
-                children: const [
-                  // A SlidableAction can have an icon and/or a label.
-                  SlidableAction(
-                    onPressed: null,
-                    backgroundColor: Color(0xFFFE4A49),
-                    foregroundColor: Colors.white,
-                    icon: Icons.delete,
-                    label: 'Delete',
-                  ),
-                  SlidableAction(
-                    onPressed: null,
-                    backgroundColor: Color(0xFF21B7CA),
-                    foregroundColor: Colors.white,
-                    icon: Icons.share,
-                    label: 'Share',
-                  ),
-                ],
-              ),
-
-              // The end action pane is the one at the right or the bottom side.
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                children: [
-                  SlidableAction(
-                    // An action can be bigger than the others.
-                    flex: 2,
-                    onPressed: (_) => controller.openEndActionPane(),
-                    backgroundColor: const Color(0xFF7BC043),
-                    foregroundColor: Colors.white,
-                    icon: Icons.archive,
-                    label: 'Archive',
-                  ),
-                  SlidableAction(
-                    onPressed: (_) => controller.close(),
-                   backgroundColor: const Color(0xFF0392CF),
-                    foregroundColor: Colors.white,
-                    icon: Icons.save,
-                    label: 'Save',
-                  ),
-                ],
-              ),
-
-              // The child of the Slidable is what the user sees when the
-              // component is not dragged.
-              child: ListTile(
-                trailing:  SizedBox(
-                  width: 50,
-                  child: ConversionOptionMinature(dosageViewHandler: widget.dosageViewHandler),
-                ),
-                dense: true,
-                title: Text(widget.dosageViewHandler.showDosage()),
-                        
-      ),
-              );
-            
+  setConversionWeight(double weight) {
+    setState(() {
+      widget.dosageViewHandler.conversionWeight = weight;
+    });
   }
+
+
+  void _showWeightSlider(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return WeightSlider(
+        initialWeight: _weightSliderValue,
+        onWeightSet: (newWeight) {
+          setState(() {
+            setConversionWeight(newWeight);
+          });
+        },
+      );
+    }
+  );
 }
 
-class ConversionOptionMinature extends StatelessWidget {
-  final DosageViewHandler dosageViewHandler;
-  final double iconSize; 
-
-
-  const ConversionOptionMinature({
-    required this.dosageViewHandler,
-    this.iconSize = 15.0,  // Default value set here.
+void _showConcentrationPicker(BuildContext context) {
+  showModalBottomSheet(context: context, builder: (BuildContext context){
+    return ConcentrationPicker(
+      concentrations: widget.dosageViewHandler.availableConcentrations!,
+      onConcentrationSet: (newConcentration){
+        setState(() {
+          widget.dosageViewHandler.conversionConcentration = newConcentration;
+        });
+      },
+    );
   });
+  }
+
+
+  _conversionButtonText(
+      String setText, String resetText, dynamic? conversionAdress) {
+    if (conversionAdress == null) {
+      return setText;
+    } else {
+      return resetText;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("building conversion option minature");
 
-
+    if (shouldShowWeightSlider) {
       return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.end,
-
         children: [
-          if (dosageViewHandler.ableToConvert().concentration) Icon(Icons.medication_liquid, size: iconSize),
-          if (dosageViewHandler.ableToConvert().time) Icon(Icons.timer_rounded,size: iconSize),
-          if (dosageViewHandler.ableToConvert().weight) Icon(Icons.scale, size: iconSize),
-          
+          Expanded(
+              child: Slider(
+            value: _weightSliderValue,
+            min: 0,
+            max: 200,
+            onChanged: (value) {
+              setState(() {
+                _weightSliderValue = value;
+              });
+            },
+          )),
+          SizedBox(
+              width: 50,
+              child: Text("${_weightSliderValue.round().toString()} kg")),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                setConversionWeight(_weightSliderValue);
+                shouldShowWeightSlider = false;
+              });
+            },
+            child: Text("OK"),
+          ),
         ],
       );
+    } else {
+      return Slidable(
+        // Specify a key if the Slidable is dismissible.
+        key: const ValueKey(0),
 
+        // The end action pane is the one at the right or the bottom side.
+        endActionPane: ActionPane(
+          motion: const ScrollMotion(),
+          children: [
+        SlidableAction(
+          flex: 1,
+          onPressed: (_) {
+            if (widget.dosageViewHandler.conversionWeight == null) {
+              _showWeightSlider(context);
+            } else {
+              setState(() {
+                widget.dosageViewHandler.conversionWeight = null;
+              });
+            }
+          },
+          backgroundColor: const Color(0xFF7BC043),
+          foregroundColor: Colors.white,
+          icon: Icons.scale,
+          label: _conversionButtonText("Set Weight", "Reset", widget.dosageViewHandler.conversionWeight),
+        ),
+        if (widget.dosageViewHandler.ableToConvert().concentration)
+        SlidableAction(
+          flex: 1,
+          onPressed: (_) {
+            if (widget.dosageViewHandler.conversionConcentration == null) {
+              _showConcentrationPicker(context);
+            } else {
+              setState(() {
+                widget.dosageViewHandler.conversionConcentration = null;
+              });
+            }
+          },
+          backgroundColor: const Color(0xFF7BC043),
+          foregroundColor: Colors.white,
+          icon: Icons.medication_liquid,
+          label: _conversionButtonText("Set Concentration", "Reset", widget.dosageViewHandler.conversionConcentration),
+        ),
+        // Include other actions as necessary
+      ],
+        ),
+
+        // The child of the Slidable is what the user sees when the
+        // component is not dragged.
+
+        child: ListTile(
+          contentPadding: EdgeInsets.only(left: 10, right: 10),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+                color: Color.fromARGB(255, 117, 117, 117), width: 0.2),
+          ),
+          minTileHeight: 80,
+          trailing: SizedBox(
+            width: 80,
+            child: Container(
+              alignment: Alignment.topRight,
+              child: ConversionOptionMinature(
+                  dosageViewHandler: widget.dosageViewHandler),
+            ),
+          ),
+          dense: true,
+          title: Text(
+            widget.dosageViewHandler.showDosage(),
+          ),
+        ),
+      );
+    }
   }
 }

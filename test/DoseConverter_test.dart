@@ -22,19 +22,14 @@ void main(){
 
 
       var result = converter.convertedByConcentration(5, {"substance": "mg","patientWeight": "kg", "time": "min"}, (amount: 5, unit: 'mg/ml'));
-      print (result);
+
 
       result = converter.convertedByTime(result.$1, result.$2, "h");
 
-      print(result);
-
       result = converter.convertedByWeight(result.$1, result.$2, 50);
 
-      print(result);
 
       result =converter.convertedByTime(result.$1, result.$2, "min");
-
-      print(result);
 
       
     });

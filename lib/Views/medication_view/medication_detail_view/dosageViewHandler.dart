@@ -32,10 +32,9 @@ import "package:hane/utils/UnitService.dart";
     int _weightConversions = 0;
     int _timeConversions = 0;
     int _concentrationConversions = 0;
-    print("running ableToConvert");
-    print("availableConcentrations $availableConcentrations");
+
     List<Dose?> doseList = [dosage.dose, dosage.lowerLimitDose, dosage.higherLimitDose, dosage.maxDose];
-    print("printing doseList $doseList");
+
 
     for (Dose? dose in doseList) {
       if (dose != null){
@@ -71,7 +70,9 @@ import "package:hane/utils/UnitService.dart";
 
   }
 
-  
+  void setConversionWeight(double weight) {
+    conversionWeight = weight;
+  }
 
   String showDosage() {
     bool shouldConvertDoses = (conversionWeight != null || conversionTime != null || conversionConcentration != null);
@@ -99,18 +100,18 @@ import "package:hane/utils/UnitService.dart";
     }
     if (dose != null) {
       if (doseString.isNotEmpty) doseString.write(": ");
-      doseString.write("${dose.amount} ${dose.unit}");
+      doseString.write("${dose.amount.toStringAsPrecision(3)} ${dose.unit}");
     }
     if (lowerLimitDose != null && higherLimitDose != null) {
       if (doseString.isNotEmpty) doseString.write(" (");
-      doseString.write("${lowerLimitDose.amount} ${lowerLimitDose.unit} - ${higherLimitDose.amount} ${higherLimitDose.unit}");
+      doseString.write("${lowerLimitDose.amount.toStringAsPrecision(3)} ${lowerLimitDose.unit} - ${higherLimitDose.amount.toStringAsPrecision(3)} ${higherLimitDose.unit}");
       if (doseString.toString().contains("(")) doseString.write(")");
     }
 
     String result = "${doseString.toString()} ${dosage.administrationRoute ?? ''}.".trim();
 
     if (maxDose != null) {
-      result += " Max dose: ${maxDose.amount} ${maxDose.unit}.";
+      result += " Max dose: ${maxDose.amount.toStringAsPrecision(3)} ${maxDose.unit}.";
     }
 
     return result;
