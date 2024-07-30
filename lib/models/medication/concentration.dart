@@ -5,8 +5,9 @@ class Concentration {
 Concentration({required this.amount, required this.unit});
 
  factory Concentration.fromMap(Map<String, dynamic> map) {
+    num amount = map['amount'] as num;
     return Concentration(
-      amount: map['amount'] as double,
+      amount: amount.toDouble(),
       unit: map['unit'] as String,
     );
   }

@@ -6,8 +6,9 @@ class Dose {
 
 // Factory constructor to create a Dose from a Map
   factory Dose.fromFirestore(Map<String, dynamic> map) {
+    num amount = map['amount'] as num;
     return Dose(
-      amount: map['amount'] as double,
+      amount: amount.toDouble(),
       unit: map['unit'] as String,
     );
   }
