@@ -14,6 +14,7 @@ class MedicationDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
      return ChangeNotifierProvider<Medication>.value(
       value: medication,
       child: Scaffold(

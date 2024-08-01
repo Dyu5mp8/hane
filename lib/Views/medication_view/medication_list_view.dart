@@ -68,7 +68,7 @@ class _ItemListPageState extends State<MedicationListView> {
         child: Column(children: [
           searchField,
           Expanded(child: scrollableList),
-          Text("hej")
+
         
         ],),
       )
@@ -93,7 +93,7 @@ Future<void> getMedications({bool forceFromServer = true}) async {
 
     if (snapshot.metadata.isFromCache && forceFromServer == true) {
       showErrorDialog(context,  "Kunde inte hämta ny data från servern. Försök igen senare.");
-    } 
+    }   
 
     // Check if the snapshot has any documents; if not, fetch from the server
     if (snapshot.docs.isEmpty) {

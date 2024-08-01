@@ -95,6 +95,7 @@ Widget build(BuildContext context) {
 
     return Consumer<Medication>(
       builder: (context, medication, child) {
+
         return ConstrainedBox(
               constraints: const BoxConstraints(
                 maxHeight: 350,

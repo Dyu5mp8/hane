@@ -77,6 +77,7 @@ void _showConcentrationPicker(BuildContext context) {
   @override
   Widget build(BuildContext context) {
 
+
     if (shouldShowWeightSlider) {
       return Row(
         children: [

@@ -40,15 +40,11 @@ void main(){
      
 
 
-      print(dosageViewHandler.showDosage());
-
 
     });
 
     test("should convert", (){
 
-      print(dosageViewHandler.ableToConvert());
-      print(dosageViewHandler.ableToConvert().time);
 
 
 

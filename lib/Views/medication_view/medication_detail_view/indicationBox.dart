@@ -13,7 +13,10 @@ class IndicationBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Medication>(
       builder: (context, medication, child) {
-        if (medication.indications == null || medication.indications!.isEmpty) {
+        if (medication.indications == null){
+          return const Text('No indications available');
+        }
+        if (medication.indications!.isEmpty){
           return const Text('No indications available');
         }
         return _IndicationView(indications: medication.indications!, concentrations: medication.concentrations);
@@ -30,6 +33,7 @@ class _IndicationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Expanded(
       child: DefaultTabController(
         length: indications.length,
@@ -52,6 +56,7 @@ class _IndicationTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       height: 30,
       child: TabBar(
@@ -79,6 +84,7 @@ class _IndicationTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Expanded(
       child: TabBarView(
         children: indications.map((indication) => _IndicationDetails(indication: indication, concentrations: concentrations,)).toList(),
@@ -99,19 +105,24 @@ class _IndicationDetails extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(indication.name, style: Theme.of(context).textTheme.headlineSmall),
+        if (indication.notes != null) Text(indication.notes!),
         const SizedBox(height: 40),
+        if (indication.dosages != null)
         Expanded(
           child: ListView.builder(
             itemCount: indication.dosages?.length,
             itemBuilder: (context, index) {
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (indication.dosages != null)
+                  
                   DosageSnippet(dosage: indication.dosages![index], 
                   dosageViewHandler: (DosageViewHandler(
                       super.key,
