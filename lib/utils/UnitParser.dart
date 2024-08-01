@@ -74,7 +74,6 @@ class UnitParser{
     }
   
     static getConcentrationsUnitsAsMap(String unitInput){
-    Map validUnits = UnitValidator.validUnits;
 
     Map<String, String> unitMap = {};
 
