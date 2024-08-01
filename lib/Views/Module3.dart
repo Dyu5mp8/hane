@@ -1,12 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hane/models/medication/concentration.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:hane/models/medication/indication.dart';
 import 'package:hane/models/medication/bolus_dosage.dart';
-import 'package:hane/models/medication/continuous_dosage.dart';
-import 'package:hane/models/medication/dose.dart';
 import 'package:flutter/material.dart';
-import 'package:hane/models/medication/concentration.dart';
+
 class ModuleThree extends StatefulWidget {
   @override
   State<ModuleThree> createState() => _ModuleThreeState();
@@ -36,14 +33,14 @@ List<Medication> createTestMedications() {
               instruction: 
                   "Ge därefter kontinuerlig infusion",
               administrationRoute: "IV",
-              lowerLimitDose: Dose(amount: 0.37,unit: 'mikrog/kg/min'),
-              higherLimitDose: Dose(amount: 0.75, unit: 'mikrog/kg/min'),
-              maxDose: Dose(amount: 1.0, unit: 'mg'),
+              lowerLimitDose: Dose.fromString(amount: 0.37,unit: 'mikrog/kg/min'),
+              higherLimitDose: Dose.fromString(amount: 0.75, unit: 'mikrog/kg/min'),
+              maxDose: Dose.fromString(amount: 1.0, unit: 'mg'),
             ),
               Dosage(
                 instruction: "bolusdos initialt",
                 administrationRoute: "IV",
-                dose: Dose(amount: 50.0, unit: 'mikrog/kg'),
+                dose: Dose.fromString(amount: 50.0, unit: 'mikrog/kg'),
             )
           ],
         )
@@ -66,16 +63,16 @@ List<Medication> createTestMedications() {
             Dosage(
               instruction: "Ge som kontinuerlig infusion",
               administrationRoute: "IV",
-              lowerLimitDose: Dose(amount: 0.1, unit: 'mg/kg/h'),
-              higherLimitDose: Dose(amount: 0.4, unit: 'mg/kg/h'),
-              maxDose: Dose(amount: 4.0, unit: 'mg'),
+              lowerLimitDose: Dose.fromString(amount: 0.1, unit: 'mg/kg/h'),
+              higherLimitDose: Dose.fromString(amount: 0.4, unit: 'mg/kg/h'),
+              maxDose: Dose.fromString(amount: 4.0, unit: 'mg'),
             ),
             Dosage(
               instruction: "Ge som kontinuerlig infusion",
               administrationRoute: "IV",
-              lowerLimitDose: Dose(amount: 0.1, unit: 'mg/kg/h'),
-              higherLimitDose: Dose(amount: 0.4, unit: 'mg/kg/h'),
-              maxDose: Dose(amount: 4.0, unit: 'mg'),
+              lowerLimitDose: Dose.fromString(amount: 0.1, unit: 'mg/kg/h'),
+              higherLimitDose: Dose.fromString(amount: 0.4, unit: 'mg/kg/h'),
+              maxDose: Dose.fromString(amount: 4.0, unit: 'mg'),
             ),
           ],
         ),
@@ -86,16 +83,16 @@ List<Medication> createTestMedications() {
             Dosage(
               instruction: "Ge som kontinuerlig infusion",
               administrationRoute: "IV",
-              lowerLimitDose: Dose(amount: 0.1, unit: 'mg/kg/h'),
-              higherLimitDose: Dose(amount: 0.4, unit: 'mg/kg/h'),
-              maxDose: Dose(amount: 4.0, unit: 'mg'),
+              lowerLimitDose: Dose.fromString(amount: 0.1, unit: 'mg/kg/h'),
+              higherLimitDose: Dose.fromString(amount: 0.4, unit: 'mg/kg/h'),
+              maxDose: Dose.fromString(amount: 4.0, unit: 'mg'),
             ),
             Dosage(
               instruction: "Ge som kontinuerlig infusion",
               administrationRoute: "IV",
-              lowerLimitDose: Dose(amount: 0.1, unit: 'mg/kg/h'),
-              higherLimitDose: Dose(amount: 0.4, unit: 'mg/kg/h'),
-              maxDose: Dose(amount: 4.0, unit: 'mg'),
+              lowerLimitDose: Dose.fromString(amount: 0.1, unit: 'mg/kg/h'),
+              higherLimitDose: Dose.fromString(amount: 0.4, unit: 'mg/kg/h'),
+              maxDose: Dose.fromString(amount: 4.0, unit: 'mg'),
             ),
           ],
         ),

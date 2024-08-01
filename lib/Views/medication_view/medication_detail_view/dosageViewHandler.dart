@@ -1,5 +1,4 @@
 import "package:flutter/foundation.dart";
-import "package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart";
 import "package:hane/models/medication/bolus_dosage.dart";
 import "package:hane/models/medication/medication.dart";
 import "package:hane/utils/UnitParser.dart";
@@ -28,6 +27,7 @@ import "package:hane/utils/UnitService.dart";
 
   
   ({bool weight, bool time, bool concentration}) ableToConvert () {
+    
 
     int _weightConversions = 0;
     int _timeConversions = 0;
@@ -38,19 +38,18 @@ import "package:hane/utils/UnitService.dart";
 
     for (Dose? dose in doseList) {
       if (dose != null){
-        var doseUnits = UnitParser.getDoseUnitsAsMap(dose.unit);
 
-        if (doseUnits.containsKey("time")) {
+        if (dose.units.containsKey("time")) {
           _timeConversions++;
         }
 
-        if (doseUnits.containsKey("patientWeight")){
+        if (dose.units.containsKey("patientWeight")){
           _weightConversions++;
         }
         
         if (availableConcentrations != null) {
           var concentrationSubstanceUnits = availableConcentrations!.map((conc) => UnitParser.getConcentrationsUnitsAsMap(conc.unit)["substance"]);
-          if (concentrationSubstanceUnits.contains(doseUnits["substance"])) {
+          if (concentrationSubstanceUnits.contains(dose.units["substance"])) {
             _concentrationConversions++;
           }
           
@@ -80,8 +79,7 @@ import "package:hane/utils/UnitService.dart";
     Dose? convertIfNeeded(Dose? dose) {
       if (dose == null) return null;
       return shouldConvertDoses
-          ? DoseConverter.convertDose(
-              dose: dose,
+          ? dose.convertedBy(
               convertWeight: conversionWeight,
               convertTime: conversionTime,
               convertConcentration: conversionConcentration,
@@ -100,21 +98,23 @@ import "package:hane/utils/UnitService.dart";
     }
     if (dose != null) {
       if (doseString.isNotEmpty) doseString.write(": ");
-      doseString.write("${dose.amount.toStringAsPrecision(3)} ${dose.unit}");
+      doseString.write("${dose.amount.toStringAsPrecision(3)} ${dose.unitString()}");
     }
     if (lowerLimitDose != null && higherLimitDose != null) {
       if (doseString.isNotEmpty) doseString.write(" (");
-      doseString.write("${lowerLimitDose.amount.toStringAsPrecision(3)} ${lowerLimitDose.unit} - ${higherLimitDose.amount.toStringAsPrecision(3)} ${higherLimitDose.unit}");
+      doseString.write("${lowerLimitDose.amount.toStringAsPrecision(3)} ${lowerLimitDose.unitString()} - ${higherLimitDose.amount.toStringAsPrecision(3)} ${higherLimitDose.unitString()}");
       if (doseString.toString().contains("(")) doseString.write(")");
     }
 
     String result = "${doseString.toString()} ${dosage.administrationRoute ?? ''}.".trim();
 
     if (maxDose != null) {
-      result += " Max dose: ${maxDose.amount.toStringAsPrecision(3)} ${maxDose.unit}.";
+      result += " Max dose: ${maxDose.amount.toStringAsPrecision(3)} ${maxDose.unitString()}.";
     }
 
     return result;
   }
+
+  
 }
  

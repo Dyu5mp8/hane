@@ -98,45 +98,5 @@ class UnitParser{
     return unitMap;
     }
 
-  static Map<String, String> getDoseUnitsAsMap(String unitInput){
-    Map validUnits = UnitValidator.validUnits;
 
-      Map<String, String> unitMap = {};
-
-      List<String> parts = unitInput.split('/');
-      if (parts.length > 3){
-        throw Exception("Not a valid unit : more than 4 units");
-      }
-      if (!UnitValidator.isSubstanceUnit(parts[0])){  
-        throw Exception("Not a valid unit : $parts[0]");
-      } 
-
-      else{
-
-        unitMap["substance"] = parts[0];
-      } 
-      for (final part in parts.sublist(1)){
-        if (validUnits.keys.contains((part))){
-          unitMap[validUnits[part]] = part;
-        }
-        else {
-          throw Exception("Not a valid unit");
-       
-        }
-    }
-      
-
-      
-return unitMap;
-
-      }
-
-
-static Dose calculatedDose(double value, Map units){
-
-    String unit = units.values.toList().join('/');
-    
-    return Dose(amount: value, unit: unit);
-
-}
 }

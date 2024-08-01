@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/concentration_picker.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/conversion_option_miniature.dart';
 import 'package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart';
@@ -26,7 +25,7 @@ class DosageSnippetState extends State<DosageSnippet> with SingleTickerProviderS
   bool shouldShowWeightSlider = false;
 
   //setting pt weight to 70 or the static variable
-  double _weightSliderValue = DoseConverter.patientWeight ?? 70;
+  double _weightSliderValue = 70;
 
   setConversionWeight(double weight) {
     setState(() {
