@@ -15,6 +15,7 @@ class Indication {
     this.notes,
   });
 
+
   // Convert an Indication instance to a Map
   Map<String, dynamic> toJson() {
     return {
