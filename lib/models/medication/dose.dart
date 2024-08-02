@@ -12,9 +12,9 @@ class Dose {
 
   Dose.fromString({required double amount, required String unit}) : this.amount = amount, units = _getDoseUnitsAsMap(unit); 
 
-String unitString() {
-  return units.values.join('/');
-}
+  String unitString() {
+    return units.values.join('/');
+  }
 
  static Map<String, String> _getDoseUnitsAsMap(String unitInput){
     Map validUnits = UnitValidator.validUnits;
@@ -66,29 +66,35 @@ String unitString() {
 
    
   Dose convertedBy({double? convertWeight, String? convertTime, Concentration? convertConcentration}) {
-    Dose convertedDose = Dose(amount: amount, units: units);
-    Map fromUnits = convertedDose.units;
-    double value = convertedDose.amount;
+    Map<String,String> fromUnits = Map.from(units);
+    double value = amount;
+
+
 
 
     if (convertWeight != null && fromUnits.containsKey("patientWeight")) {
       var result = _convertedByWeight(value, fromUnits, convertWeight);
       value = result.$1;
       fromUnits = result.$2;
+      print(fromUnits);
+      print(this.units);
     }
 
     if (convertTime != null && fromUnits.containsKey("time")) {
       var result = _convertedByTime(value, fromUnits, convertTime);
       value = result.$1;
       fromUnits = result.$2;
+      print(fromUnits);
     }
 
     if (convertConcentration != null) {
       var result = _convertedByConcentration(value, fromUnits, convertConcentration);
       value = result.$1;
       fromUnits = result.$2 as Map<String, String>;
+      print(fromUnits);
     }
-    return convertedDose;
+
+    return Dose(amount: value, units: fromUnits); 
   }
 
 
