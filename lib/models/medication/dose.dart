@@ -11,7 +11,7 @@ class Dose {
   // Constructor to create a Dose from a string representation
   Dose.fromString({required double amount, required String unit})
       : this.amount = amount,
-        units = _getDoseUnitsAsMap(unit);
+        units = getDoseUnitsAsMap(unit);
 
   // Get the unit string representation
   String unitString() {
@@ -24,7 +24,7 @@ class Dose {
   }
 
   // Get the dose units as a map
-  static Map<String, String> _getDoseUnitsAsMap(String unitInput) {
+  static Map<String, String> getDoseUnitsAsMap(String unitInput) {
     Map validUnits = UnitValidator.validUnits;
 
     Map<String, String> unitMap = {};
@@ -121,7 +121,7 @@ class Dose {
 
   // Convert the dose by time
   _convertedByTime(double value, Map fromUnits, String toUnit) {
-    Map<String, double> validTimeUnits = {"h": 1, "min": 60};
+    Map<String, double> validTimeUnits = {"h": 1, "min": 60, "d": 1 / 24};
 
     if (fromUnits == null ||
         !validTimeUnits.containsKey(fromUnits["time"]) ||
@@ -161,7 +161,7 @@ class Dose {
 
   // Scale the dose
   (double, Map) _scaledDose(double value, Map fromUnits) {
-    List<String> units = ["g", "mg", "microg"];
+    List<String> units = ["g", "mg", "mikrog"];
 
     // Check if the substance unit is valid
     if (fromUnits["substance"] == null ||

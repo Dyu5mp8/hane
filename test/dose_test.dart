@@ -8,19 +8,19 @@ void main() {
       Dose dose = Dose(
         amount: 20000.0,
         units: {
-          "substance": "gs",
+          "substance": "g",
           "time": "h"
         }
       );
-    print(dose.toString());
+    print(dose);
 
     Concentration concentration = Concentration(
       amount: 5.0,
-      unit: "mg/l"
+      unit: "mg/ml"
     );
     Dose convertedDose = dose.convertedBy(convertTime: "min", convertConcentration: concentration);
 
-    print(convertedDose.toString());
+    print(convertedDose);
     
       // 
     });
