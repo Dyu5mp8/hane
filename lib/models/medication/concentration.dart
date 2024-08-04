@@ -18,4 +18,9 @@ Concentration({required this.amount, required this.unit});
       'unit': unit,
     };
   }
+
+  @override
+  String toString() {
+    return "$amount $unit";
+  }
 }

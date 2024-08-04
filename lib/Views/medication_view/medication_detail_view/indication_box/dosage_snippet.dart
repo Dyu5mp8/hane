@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/concentration_picker.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/conversion_option_miniature.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/time_picker.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/weight_slider.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/conversion_modal/concentration_picker.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/indication_box/conversion_option_miniature.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/indication_box/dosageViewHandler.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/conversion_modal/time_picker.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/conversion_modal/weight_slider.dart';
 import 'package:hane/models/medication/bolus_dosage.dart';
 
 class DosageSnippet extends StatefulWidget {
@@ -36,6 +36,7 @@ class DosageSnippetState extends State<DosageSnippet>
 
   void _showWeightSlider(BuildContext context) {
     showModalBottomSheet(
+      isDismissible: true,
         context: context,
         builder: (BuildContext context) {
           return WeightSlider(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/dosage_snippet.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/indication_box/dosageViewHandler.dart';
+import 'package:hane/Views/medication_view/medication_detail_view/indication_box/dosage_snippet.dart';
 import 'package:hane/models/medication/indication.dart';
 import 'package:hane/models/medication/medication.dart';
 import 'package:provider/provider.dart';

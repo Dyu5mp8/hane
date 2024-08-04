@@ -19,25 +19,28 @@ class _TimePickerState extends State<TimePicker> {
     return Container(
       padding: const EdgeInsets.all(20),
       height: 200,
+      width: MediaQuery.of(context).size.width,
       child: Column(
         children: [
           Text("Välj tidsenhet",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          DropdownButton<String>(
-              value: _currentTimeUnit,
-              onChanged: (String? newValue) {
-                if (newValue != null) {
-                  setState(() {
-                    _currentTimeUnit = newValue;
-                  });
-                }
-              },
-              items: timeUnits.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList()),
+
+          SegmentedButton<String>(
+            showSelectedIcon: false,
+            segments: timeUnits.map((String value) {
+              return ButtonSegment<String>(
+                value: value,
+                label: Text(value),
+              );
+            }).toList(),
+            selected: {_currentTimeUnit},
+            onSelectionChanged: (newSelection) {
+              setState(() {
+                _currentTimeUnit = newSelection.first;
+              });
+            },
+          ),
+
           ElevatedButton(
               onPressed: () {
                 widget.onTimeUnitSet(_currentTimeUnit);

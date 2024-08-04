@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:hane/Views/medication_view/medication_detail_view/dosageViewHandler.dart";
+import "package:hane/Views/medication_view/medication_detail_view/indication_box/dosageViewHandler.dart";
 
 
 class ConversionOptionMinature extends StatelessWidget {
@@ -8,7 +8,7 @@ class ConversionOptionMinature extends StatelessWidget {
 
   const ConversionOptionMinature({
     required this.dosageViewHandler,
-    this.iconSize = 15.0, // Default value set here.
+    this.iconSize = 17.0, // Default value set here.
   });
 
   @override
@@ -25,12 +25,12 @@ class ConversionOptionMinature extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        if (dosageViewHandler.ableToConvert().concentration ||
-            dosageViewHandler.ableToConvert().time ||
-            dosageViewHandler.ableToConvert().weight)
-          Icon(Icons.swipe_left, size: iconSize, color: Colors.black),
+        // if (dosageViewHandler.ableToConvert().concentration ||
+        //     dosageViewHandler.ableToConvert().time ||
+        //     dosageViewHandler.ableToConvert().weight)
+        //   Icon(Icons.swipe_left, size: iconSize, color: Colors.black),
         if (dosageViewHandler.ableToConvert().concentration)
-          Icon(Icons.medication_liquid,
+          Icon(Icons.vaccines,
               size: iconSize,
               color: _isConvertingConcentration ? Colors.green : Colors.grey),
         if (dosageViewHandler.ableToConvert().time)
