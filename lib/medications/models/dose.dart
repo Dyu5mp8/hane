@@ -1,5 +1,5 @@
-import 'package:hane/models/medication/medication.dart';
-import 'package:hane/models/medication/concentration.dart';
+import 'package:hane/medications/models/medication.dart';
+import 'package:hane/medications/models/concentration.dart';
 import 'package:hane/utils/UnitService.dart';
 
 class Dose {

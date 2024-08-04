@@ -1,13 +1,14 @@
 
 import 'package:flutter/material.dart';
-import 'package:hane/models/medication/concentration.dart';
-import 'package:hane/models/medication/indication.dart';
+import 'package:hane/medications/models/concentration.dart';
+import 'package:hane/medications/models/indication.dart';
 
-export 'package:hane/models/medication/concentration.dart';
-export 'package:hane/models/medication/dose.dart';
+export 'package:hane/medications/models/concentration.dart';
+export 'package:hane/medications/models/dose.dart';
 
 class Medication extends ChangeNotifier {
   String? _name;
+  List<dynamic>? _brandNames;
   String? _category;
   List<Concentration>? _concentrations;
   String? _contraindication;
@@ -17,6 +18,7 @@ class Medication extends ChangeNotifier {
 
   Medication({
     String? name,
+    List<dynamic>? brandNames,
     String? category,
    List<Concentration>? concentrations,
     String? contraindication,
@@ -27,7 +29,8 @@ class Medication extends ChangeNotifier {
         _concentrations = concentrations,
         _contraindication = contraindication,
         _indications = indications,
-        _notes = notes;
+        _notes = notes,
+        _brandNames = brandNames;
 
   String? get name => _name;
   set name(String? newName) {
@@ -41,6 +44,14 @@ class Medication extends ChangeNotifier {
   set notes(String? newNotes) {
     if (_notes != newNotes) {
       _notes = newNotes;
+      notifyListeners();
+    }
+  }
+
+  List<dynamic>? get brandNames => _brandNames;
+  set brandNames(List<dynamic>? newBrandNames) {
+    if (_brandNames != newBrandNames) {
+      _brandNames = newBrandNames;
       notifyListeners();
     }
   }
@@ -96,6 +107,7 @@ void addIndication(Indication indication) {
   Map<String, dynamic> toJson() {
     return {
       'name': _name,
+      'brandNames': _brandNames,
       'category': _category,
       'concentrations': concentrations?.map((c) => c.toJson()).toList(),
       'contraindication': _contraindication,
@@ -112,6 +124,7 @@ void addIndication(Indication indication) {
       category: map['category'] as String?,
       concentrations: (map['concentrations'] as List<dynamic>?)?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
         .toList(),
+      brandNames:(map['brandNames'] as List<dynamic>?),
       contraindication: map['contraindication'] as String?,
       indications: (map['indications'] as List?)?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>)).toList(),
       notes: map['notes'] as String?,

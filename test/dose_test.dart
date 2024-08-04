@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hane/models/medication/medication.dart';
+import 'package:hane/medications/models/medication.dart';
 
 void main() {
   group('dose', () {

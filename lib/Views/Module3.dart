@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hane/models/medication/medication.dart';
-import 'package:hane/models/medication/indication.dart';
-import 'package:hane/models/medication/bolus_dosage.dart';
+import 'package:hane/medications/models/medication.dart';
+import 'package:hane/medications/models/indication.dart';
+import 'package:hane/medications/models/bolus_dosage.dart';
 import 'package:flutter/material.dart';
 
 class ModuleThree extends StatefulWidget {

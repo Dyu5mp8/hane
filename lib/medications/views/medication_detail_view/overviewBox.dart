@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/models/medication/medication.dart';
+import 'package:hane/medications/models/medication.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/Views/medication_view/Helpers/editButton.dart';
 import 'package:hane/Views/medication_view/medication_edit_view/medicationEditView.dart';
@@ -29,6 +29,7 @@ class OverviewBox extends StatelessWidget {
                       editButton
                       ],
                   ),
+                  if (medication.brandNames != null) Text(medication.brandNames!.join(", "), style: TextStyle(fontSize: 14,fontStyle: FontStyle.italic)),
                   if (medication.category != null) Text(medication.category!)
                 
                 ],),
@@ -44,7 +45,22 @@ class OverviewBox extends StatelessWidget {
               ),
           );
       }
+  Widget brandNameRow(BuildContext context, Medication medication) {
+  
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      color: Colors.white,
+      padding: EdgeInsets.all(10),
 
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        
+        children: [
+        Text("namn", style: TextStyle(fontSize: 16),),
+        medication.brandNames != null ? Text(medication.brandNames!.join(", ")) : Text('sss')
+      ],)
+    );
+  }
   
 
 
@@ -66,7 +82,10 @@ class OverviewBox extends StatelessWidget {
       );
     }
   
-
+  // Widget brandNameRow(BuildContext context, Medication medication) {
+  
+  // //   implement brandNameRow
+  //   }
 
   Widget noteRow(BuildContext context, Medication medication) {
 

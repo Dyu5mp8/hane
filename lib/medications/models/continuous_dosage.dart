@@ -1,4 +1,4 @@
-import 'package:hane/models/medication/dose.dart';
+import 'package:hane/medications/models/dose.dart';
 
 class ContinuousDosage {
   final String? instruction;

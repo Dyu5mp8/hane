@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/conversion_modal/concentration_picker.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/indication_box/conversion_option_miniature.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/indication_box/dosageViewHandler.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/conversion_modal/time_picker.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/conversion_modal/weight_slider.dart';
-import 'package:hane/models/medication/bolus_dosage.dart';
+import 'package:hane/medications/ui_components/concentration_picker.dart';
+import 'package:hane/medications/ui_components/conversion_option_miniature.dart';
+import 'package:hane/medications/controllers/dosageViewHandler.dart';
+import 'package:hane/medications/ui_components/time_picker.dart';
+import 'package:hane/medications/ui_components/weight_slider.dart';
+import 'package:hane/medications/models/bolus_dosage.dart';
 
 class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
@@ -124,9 +124,11 @@ class DosageSnippetState extends State<DosageSnippet>
       return Slidable(
         // Specify a key if the Slidable is dismissible.
         key: const ValueKey(0),
+        
 
         // The end action pane is the one at the right or the bottom side.
         endActionPane: ActionPane(
+          
           motion: const ScrollMotion(),
           children: [
             if (widget.dosageViewHandler.ableToConvert().weight)
@@ -208,7 +210,7 @@ class DosageSnippetState extends State<DosageSnippet>
           ),
           dense: true,
           title: Text(
-            widget.dosageViewHandler.showDosage(),
+            widget.dosageViewHandler.showDosage(), style: Theme.of(context).textTheme.displaySmall,
           ),
         ),
       );

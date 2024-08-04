@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart';
 
-import 'package:hane/models/medication/dose.dart';
+import 'package:hane/medications/models/dose.dart';
 
 void main(){
 

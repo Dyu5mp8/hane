@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/models/medication/concentration.dart';
+import 'package:hane/medications/models/concentration.dart';
 
 import 'package:flutter/material.dart';
 
@@ -35,7 +35,7 @@ class _ConcentrationPickerState extends State<ConcentrationPicker> {
       height: 200,
       child: Column(
         children: [
-          Text("Adjust Concentration",
+          Text("Välj koncentration",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           SegmentedButton<Concentration>(
               showSelectedIcon: false,

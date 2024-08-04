@@ -1,6 +1,6 @@
 import "package:flutter/foundation.dart";
-import "package:hane/models/medication/bolus_dosage.dart";
-import "package:hane/models/medication/medication.dart";
+import "package:hane/medications/models/bolus_dosage.dart";
+import "package:hane/medications/models/medication.dart";
 import "package:hane/utils/UnitParser.dart";
 import "package:hane/utils/UnitService.dart";
 

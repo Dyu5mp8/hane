@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:hane/models/medication/medication.dart';
+import 'package:hane/medications/models/medication.dart';
 class MedicationEditView extends StatefulWidget {
   @override
   final Medication medication; 

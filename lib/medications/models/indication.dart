@@ -1,5 +1,5 @@
-import 'package:hane/models/medication/bolus_dosage.dart';
-import 'package:hane/models/medication/continuous_dosage.dart';
+import 'package:hane/medications/models/bolus_dosage.dart';
+import 'package:hane/medications/models/continuous_dosage.dart';
 
 class Indication {
   final String name;

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hane/models/medication/bolus_dosage.dart';
-import 'package:hane/models/medication/dose.dart';
-import 'package:hane/models/medication/indication.dart';
-import 'package:hane/models/medication/medication.dart';
+import 'package:hane/medications/models/bolus_dosage.dart';
+import 'package:hane/medications/models/dose.dart';
+import 'package:hane/medications/models/indication.dart';
+import 'package:hane/medications/models/medication.dart';
 
 
 

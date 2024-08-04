@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/indication_box/dosageViewHandler.dart';
-import 'package:hane/Views/medication_view/medication_detail_view/indication_box/dosage_snippet.dart';
-import 'package:hane/models/medication/indication.dart';
-import 'package:hane/models/medication/medication.dart';
+import 'package:hane/medications/controllers/dosageViewHandler.dart';
+import 'package:hane/medications/ui_components/dosage_snippet.dart';
+import 'package:hane/medications/models/indication.dart';
+import 'package:hane/medications/models/medication.dart';
 import 'package:provider/provider.dart';
 
 
@@ -106,40 +106,43 @@ class _IndicationDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(indication.name, style: Theme.of(context).textTheme.headlineSmall),
-        if (indication.notes != null) Text(indication.notes!),
-        const SizedBox(height: 40),
-        if (indication.dosages != null)
-        Expanded(
-          child: ListView.builder(
-            itemCount: indication.dosages?.length,
-            itemBuilder: (context, index) {
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (indication.dosages != null)
-                  
-                  DosageSnippet(dosage: indication.dosages![index], 
-                  dosageViewHandler: (DosageViewHandler(
-                      super.key,
-                      dosage: indication.dosages![index],
-                      availableConcentrations: concentrations,
-                     
-                  )
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(indication.name, style: Theme.of(context).textTheme.headlineSmall),
+          if (indication.notes != null) Text(indication.notes!),
+          const SizedBox(height: 40),
+          if (indication.dosages != null)
+          Expanded(
+            child: ListView.builder(
+              itemCount: indication.dosages?.length,
+              itemBuilder: (context, index) {
+      
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (indication.dosages != null)
+                    
+                    DosageSnippet(dosage: indication.dosages![index], 
+                    dosageViewHandler: (DosageViewHandler(
+                        super.key,
+                        dosage: indication.dosages![index],
+                        availableConcentrations: concentrations,
+                       
+                    )
+                      ),
                     ),
-                  ),
+                   
                  
-               
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
