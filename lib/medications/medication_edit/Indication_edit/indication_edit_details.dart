@@ -130,6 +130,7 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
                           dosageForm: DosageDetailForm(
                             dosage: Dosage(
                                 instruction: "",
+                                administrationRoute: "",
                                 dose: null,
                                 lowerLimitDose: null,
                                 higherLimitDose: null,

@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
-import "package:web_app/models/medication/dose.dart";
-import "package:web_app/models/medication/medication.dart";
-import "package:web_app/validation/validate_dosage_save.dart" as val;
+import "package:hane/medications/models/medication.dart";
+import "package:hane/utils/UnitParser.dart";
+import "package:hane/utils/validate_dosage_save.dart" as val;
 
 
 class DosageDetailForm{
@@ -31,13 +31,13 @@ DosageDetailForm({Dosage? dosage, required this.onSave}){
   instructionController.text = this.dosage.instruction ?? "";
   administrationRouteController.text = this.dosage.administrationRoute ?? "";
   doseAmountController.text = this.dosage.dose?.amount.toString() ?? "";
-  doseUnitController.text = this.dosage.dose?.unit ?? "";
+  doseUnitController.text = this.dosage.dose?.unitString() ?? "";
   lowerLimitDoseAmountController.text = this.dosage.lowerLimitDose?.amount.toString() ?? "";
-  lowerLimitDoseUnitController.text = this.dosage.lowerLimitDose?.unit ?? "";
+  lowerLimitDoseUnitController.text = this.dosage.lowerLimitDose?.unitString() ?? "";
   higherLimitDoseAmountController.text = this.dosage.higherLimitDose?.amount.toString() ?? "";
-  higherLimitDoseUnitController.text = this.dosage.higherLimitDose?.unit ?? "";
+  higherLimitDoseUnitController.text = this.dosage.higherLimitDose?.unitString() ?? "";
   maxDoseamountController.text = this.dosage.maxDose?.amount.toString() ?? "";
-  maxDoseUnitController.text = this.dosage.maxDose?.unit ?? "";
+  maxDoseUnitController.text = this.dosage.maxDose?.unitString() ?? "";
       }
       
 
@@ -65,18 +65,11 @@ String? validateDosageFields(String ? value){
   return "Ange antingen ett giltig dos eller ett giltigt dosintervall";
 }
 
-double normalizeDouble(String value){
-
-value = value.replaceAll(",", ".");
-return double.parse(value);
-
-}
-
 Dose? createDose(String amount, String unit){
   if (amount.isEmpty || unit.isEmpty){
     return null;
   }
-  return Dose(amount: normalizeDouble(amount), unit: unit);
+  return Dose(amount: UnitParser.normalizeDouble(amount), units: Dose.getDoseUnitsAsMap(unit));
 }   
 
 
@@ -97,6 +90,7 @@ Dosage updatedDosage = Dosage(
   higherLimitDose: higherLimitDose,
   maxDose: maxDose,
 );
+print(updatedDosage);
 onSave(updatedDosage);
 
 

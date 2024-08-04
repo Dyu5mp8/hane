@@ -44,6 +44,7 @@ class Medication extends ChangeNotifier {
 
   String? get notes => _notes;
   set notes(String? newNotes) {
+    print(_notes);
     if (_notes != newNotes) {
       _notes = newNotes;
       notifyListeners();
@@ -66,7 +67,17 @@ class Medication extends ChangeNotifier {
     }
   }
 
+
+
   List<Concentration>? get concentrations => _concentrations;
+
+  set concentrations(List<Concentration>? newConcentrations) {
+    if (_concentrations != newConcentrations) {
+      _concentrations = newConcentrations;
+      
+      notifyListeners();
+    }
+  }
 
   List<String>? getConcentrationsAsString() {
 
@@ -80,6 +91,10 @@ class Medication extends ChangeNotifier {
       notifyListeners();
     }
   } 
+
+  void updateMedication() {
+    notifyListeners();
+  }
 
   List<Indication>? get indications => _indications ?? [];
   set indications(List<Indication>? newIndications) {

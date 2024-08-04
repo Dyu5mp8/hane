@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_edit_widget.dart';
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_form.dart';
+import 'package:hane/medications/medication_edit/brand_name_edit/brand_name_form.dart';
+import 'package:hane/medications/medication_edit/brand_name_edit/brand_name_widget.dart';
 import 'package:hane/medications/medication_edit/indication_edit_widget.dart';
 import 'package:hane/medications/medication_edit/indication_widget_form.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
@@ -24,6 +26,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Text("Redigera läkemedel"),
@@ -66,6 +69,14 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                     hintText: 'Ange anteckningar',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  child: BrandNameWidget(
+                    brandNameForm: BrandNameForm(brandNames: widget.medicationForm.brandNames),
+                  ),
+
+              
                 ),
                 Container(
                   padding: EdgeInsets.all(10),

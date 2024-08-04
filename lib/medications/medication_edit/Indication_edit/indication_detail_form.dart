@@ -16,6 +16,7 @@ IndicationDetailForm({Indication? indication, required this.onSave}) {
 
 
   void saveIndication() {
+    print("saving");
     Indication newIndication = Indication(
       name: nameController.text, 
       notes: notesController.text, 
@@ -26,8 +27,13 @@ IndicationDetailForm({Indication? indication, required this.onSave}) {
   }
 
   void addDosage(Dosage dosage) {
-    (indication.dosages ==null) ? indication.dosages = [] : indication.dosages!.add(dosage);
+  if (indication.dosages == null) {
+    // Creating a growable list
+    indication.dosages = [];  // Equivalent to List.empty(growable: true)
+
   }
+  indication.dosages!.add(dosage);
+}
 
 
 }

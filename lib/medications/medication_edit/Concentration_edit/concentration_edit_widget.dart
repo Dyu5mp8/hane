@@ -88,7 +88,7 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
               labelStyle:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
               backgroundColor: Colors.blue,
-              label: Text('${concentration.amount} ${concentration.unit}'),
+              label: Text(concentration.toString()),
               onDeleted: () {
                 setState(() {
                   concentrationForm.removeConcentration(concentration);

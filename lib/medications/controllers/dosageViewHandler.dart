@@ -98,18 +98,18 @@ import "package:hane/utils/UnitService.dart";
     }
     if (dose != null) {
       if (doseString.isNotEmpty) doseString.write(": ");
-      doseString.write("${dose.amount.toStringAsPrecision(3)} ${dose.unitString()}");
+      doseString.write(dose.toString());
     }
     if (lowerLimitDose != null && higherLimitDose != null) {
       if (doseString.isNotEmpty) doseString.write(" (");
-      doseString.write("${lowerLimitDose.amount.toStringAsPrecision(3)} ${lowerLimitDose.unitString()} - ${higherLimitDose.amount.toStringAsPrecision(3)} ${higherLimitDose.unitString()}");
+      doseString.write("${lowerLimitDose.toString()} - ${higherLimitDose.toString()}");
       if (doseString.toString().contains("(")) doseString.write(")");
     }
 
     String result = "${doseString.toString()} ${dosage.administrationRoute ?? ''}.".trim();
 
     if (maxDose != null) {
-      result += " Max dose: ${maxDose.amount.toStringAsPrecision(3)} ${maxDose.unitString()}.";
+      result += " Max dose: ${maxDose.toString()}.";
     }
 
     return result;

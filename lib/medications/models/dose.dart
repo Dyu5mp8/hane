@@ -1,6 +1,7 @@
 import 'package:hane/medications/models/medication.dart';
 import 'package:hane/medications/models/concentration.dart';
 import 'package:hane/utils/UnitService.dart';
+import 'package:hane/utils/smart_rounder.dart';
 
 class Dose {
   final double amount;
@@ -20,7 +21,7 @@ class Dose {
 
   @override
   String toString() {
-    return "$amount ${unitString()}";
+    return "${smartRound(amount)} ${unitString()}";
   }
 
   // Get the dose units as a map

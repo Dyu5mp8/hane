@@ -10,7 +10,7 @@ void main() async {
 
   
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // Ensure your firebase_options.dart file is properly set up.
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   var firestore = FirebaseFirestore.instance;
   firestore.settings = const Settings(persistenceEnabled: true, 
@@ -21,7 +21,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

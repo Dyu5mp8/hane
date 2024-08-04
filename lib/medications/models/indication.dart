@@ -3,7 +3,7 @@ import 'package:hane/medications/models/bolus_dosage.dart';
 
 class Indication {
   final String name;
-  final List<Dosage>? dosages;
+  List<Dosage>? dosages;
   final String? notes;
   bool isPediatric;
 
@@ -35,11 +35,7 @@ class Indication {
     );
   }
 
-set dosages (List<Dosage>? newDosages) {
-    if (dosages != newDosages) {
-      dosages = newDosages;
-    }
-  }
+
 
 int get totalDosageInstructions => (dosages?.length ?? 0);
 

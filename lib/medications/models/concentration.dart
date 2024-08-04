@@ -19,6 +19,18 @@ Concentration({required this.amount, required this.unit});
     };
   }
 
+  set amount(double newAmount) {
+    if (amount != newAmount) {
+      amount = newAmount;
+    }
+  }
+
+  set unit(String newUnit) {
+    if (unit != newUnit) {
+      unit = newUnit;
+    }
+  }
+
   @override
   String toString() {
     return "$amount $unit";

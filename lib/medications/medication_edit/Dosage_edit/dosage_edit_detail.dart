@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
-import "package:web_app/medication_edit/Dosage_edit/dosage_detail_form.dart";
-import "package:web_app/validation/validate_dosage_save.dart" as val;
-import "package:web_app/models/medication/medication.dart";
+import "package:hane/medications/medication_edit/Dosage_edit/dosage_detail_form.dart";
+import "package:hane/utils/validate_dosage_save.dart" as val;
+
 
 class DosageEditDetail extends StatefulWidget {
   final DosageDetailForm dosageForm;

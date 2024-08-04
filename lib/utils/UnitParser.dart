@@ -7,7 +7,7 @@ class UnitParser{
   UnitParser();
 
     static getUnitConversionFactor({required String fromUnit, required String toUnit}){
-
+      print(UnitValidator.validUnits[fromUnit]);
     if (UnitValidator.validUnits[fromUnit] != (UnitValidator.validUnits[toUnit])){
 
       throw Exception("Both units must be of the same type");
@@ -34,7 +34,7 @@ class UnitParser{
         "E": 1,
         "FE": 1,
       };
-      return {conversionFactorMap[fromUnit] / conversionFactorMap[toUnit]};
+      return conversionFactorMap[fromUnit] / conversionFactorMap[toUnit];
     }
 
     if (UnitValidator.validUnits[fromUnit] == "molar"){
@@ -42,7 +42,7 @@ class UnitParser{
       {
         "mmol": 1,
       };
-      return {conversionFactorMap[fromUnit] / conversionFactorMap[toUnit]};
+      return conversionFactorMap[fromUnit] / conversionFactorMap[toUnit];
     }
 
     if (UnitValidator.validUnits[fromUnit] == "volume"){
@@ -53,7 +53,7 @@ class UnitParser{
         "l": 1000,
       };
 
-       return {conversionFactorMap[fromUnit] / conversionFactorMap[toUnit]};
+       return conversionFactorMap[fromUnit] / conversionFactorMap[toUnit];
     } 
 
     if (UnitValidator.validUnits[fromUnit] == "time"){
@@ -64,7 +64,7 @@ class UnitParser{
         "h": 3600,
         "d": 86400,
       };
-       return {conversionFactorMap[fromUnit] / conversionFactorMap[toUnit]};
+       return conversionFactorMap[fromUnit] / conversionFactorMap[toUnit];
     }
 
     else {
@@ -98,5 +98,11 @@ class UnitParser{
     return unitMap;
     }
 
+ static double normalizeDouble(String value){
+
+value = value.replaceAll(",", ".");
+return double.parse(value);
+
+}
 
 }

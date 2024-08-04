@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/Views/medication_view/medication_list_view.dart';
+import 'package:hane/medications/views/medication_list_view/medication_list_view.dart';
 // import 'Module1.dart';
 import 'Module2.dart';
 import 'Module3.dart';

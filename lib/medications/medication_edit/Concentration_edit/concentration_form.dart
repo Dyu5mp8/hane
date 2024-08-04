@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
-import "package:web_app/models/medication/medication.dart";
+import "package:hane/medications/models/medication.dart";
+import "package:hane/utils/UnitParser.dart";
 
 class ConcentrationForm {
 
@@ -11,7 +12,7 @@ class ConcentrationForm {
 
   void addConcentration() {
       concentrations.add(Concentration(
-        amount: double.parse(concentrationAmountController.text),
+        amount: UnitParser.normalizeDouble(concentrationAmountController.text),
         unit: concentrationUnitController.text,
       ));
       concentrationAmountController.clear();
