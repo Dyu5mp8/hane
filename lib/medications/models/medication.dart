@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hane/medications/models/concentration.dart';
 import 'package:hane/medications/models/indication.dart';
 
+export 'package:hane/medications/models/bolus_dosage.dart';
+export 'package:hane/medications/models/indication.dart';
 export 'package:hane/medications/models/concentration.dart';
 export 'package:hane/medications/models/dose.dart';
 

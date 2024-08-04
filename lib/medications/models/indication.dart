@@ -1,5 +1,5 @@
 import 'package:hane/medications/models/bolus_dosage.dart';
-import 'package:hane/medications/models/continuous_dosage.dart';
+
 
 class Indication {
   final String name;
@@ -33,6 +33,12 @@ class Indication {
       notes: map['notes'] as String?,
       isPediatric: map['isPediatric'] ?? false,
     );
+  }
+
+set dosages (List<Dosage>? newDosages) {
+    if (dosages != newDosages) {
+      dosages = newDosages;
+    }
   }
 
 int get totalDosageInstructions => (dosages?.length ?? 0);
