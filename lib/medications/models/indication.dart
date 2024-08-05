@@ -1,4 +1,4 @@
-import 'package:hane/medications/models/bolus_dosage.dart';
+import 'package:hane/medications/models/dosage.dart';
 
 
 class Indication {

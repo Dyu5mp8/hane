@@ -4,7 +4,7 @@ import "package:hane/medications/medication_edit/brand_name_edit/brand_name_form
 class BrandNameWidget extends StatefulWidget {
   final BrandNameForm brandNameForm;
 
-  BrandNameWidget({
+  const BrandNameWidget({super.key, 
     required this.brandNameForm
   });
 
@@ -18,13 +18,13 @@ class _BrandNameWidgetState extends State<BrandNameWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Add Brand Name'),
+        const Text('Add Brand Name'),
         Row(
           children: <Widget>[
             Expanded(
               child: TextFormField(
                 controller: widget.brandNameForm.brandNameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Brand Name',
                   hintText: 'Enter brand name',
                   floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -32,7 +32,7 @@ class _BrandNameWidgetState extends State<BrandNameWidget> {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.add),
+              icon: const Icon(Icons.add),
               onPressed: () {
                 setState(() {
                   widget.brandNameForm.addBrandName();
@@ -45,7 +45,7 @@ class _BrandNameWidgetState extends State<BrandNameWidget> {
         ),
 
         Container(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Wrap(
             spacing: 8,
             runSpacing: 8,

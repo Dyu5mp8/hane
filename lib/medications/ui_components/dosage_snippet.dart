@@ -5,7 +5,7 @@ import 'package:hane/medications/ui_components/conversion_option_miniature.dart'
 import 'package:hane/medications/controllers/dosageViewHandler.dart';
 import 'package:hane/medications/ui_components/time_picker.dart';
 import 'package:hane/medications/ui_components/weight_slider.dart';
-import 'package:hane/medications/models/bolus_dosage.dart';
+import 'package:hane/medications/models/dosage.dart';
 
 class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
@@ -82,7 +82,7 @@ class DosageSnippetState extends State<DosageSnippet>
   }
 
   _conversionButtonText(
-      String setText, String resetText, dynamic? conversionAdress) {
+      String setText, String resetText, dynamic conversionAdress) {
     if (conversionAdress == null) {
       return setText;
     } else {
@@ -116,7 +116,7 @@ class DosageSnippetState extends State<DosageSnippet>
                 shouldShowWeightSlider = false;
               });
             },
-            child: Text("OK"),
+            child: const Text("OK"),
           ),
         ],
       );
@@ -194,8 +194,8 @@ class DosageSnippetState extends State<DosageSnippet>
         // component is not dragged.
 
         child: ListTile(
-          contentPadding: EdgeInsets.only(left: 10, right: 10),
-          shape: RoundedRectangleBorder(
+          contentPadding: const EdgeInsets.only(left: 10, right: 10),
+          shape: const RoundedRectangleBorder(
             side: BorderSide(
                 color: Color.fromARGB(255, 117, 117, 117), width: 0.2),
           ),

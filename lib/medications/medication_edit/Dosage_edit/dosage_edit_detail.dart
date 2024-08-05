@@ -15,7 +15,7 @@ class DosageEditDetail extends StatefulWidget {
 }
 
 class _DosageEditDetailState extends State<DosageEditDetail> {
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   double formTextSize = 16.0;
   double formErrorTextSize = 8.0;
@@ -35,7 +35,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Redigera dosering"),
+      title: const Text("Redigera dosering"),
       content: Container(
         width: 500,
         child: SingleChildScrollView(
@@ -136,11 +136,11 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text("Avbryt"),
+          child: const Text("Avbryt"),
         ),
         ElevatedButton(
           onPressed: _saveForm,
-          child: Text("Spara"),
+          child: const Text("Spara"),
         ),
       ],
     );

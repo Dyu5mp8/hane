@@ -1,72 +1,60 @@
 import "package:flutter/foundation.dart";
-import "package:hane/medications/models/bolus_dosage.dart";
 import "package:hane/medications/models/medication.dart";
 import "package:hane/utils/UnitParser.dart";
 import "package:hane/utils/UnitService.dart";
 
-
-
-
- class DosageViewHandler {
+class DosageViewHandler {
   final Dosage dosage;
   double? conversionWeight;
   String? conversionTime;
   Concentration? conversionConcentration;
   List<Concentration>? availableConcentrations;
 
+  DosageViewHandler(Key? key,
+      {required this.dosage,
+      this.conversionWeight,
+      this.conversionTime,
+      this.conversionConcentration,
+      this.availableConcentrations});
 
+  ({bool weight, bool time, bool concentration}) ableToConvert() {
+    int weightConversions = 0;
+    int timeConversions = 0;
+    int concentrationConversions = 0;
 
-  DosageViewHandler(Key? key, {
-  
-    required this.dosage,
-    this.conversionWeight,
-    this.conversionTime,
-    this.conversionConcentration,
-    this.availableConcentrations
-  });
-
-  
-  ({bool weight, bool time, bool concentration}) ableToConvert () {
-    
-
-    int _weightConversions = 0;
-    int _timeConversions = 0;
-    int _concentrationConversions = 0;
-
-    List<Dose?> doseList = [dosage.dose, dosage.lowerLimitDose, dosage.higherLimitDose, dosage.maxDose];
-
+    List<Dose?> doseList = [
+      dosage.dose,
+      dosage.lowerLimitDose,
+      dosage.higherLimitDose,
+      dosage.maxDose
+    ];
 
     for (Dose? dose in doseList) {
-      if (dose != null){
-
+      if (dose != null) {
         if (dose.units.containsKey("time")) {
-          _timeConversions++;
+          timeConversions++;
         }
 
-        if (dose.units.containsKey("patientWeight")){
-          _weightConversions++;
+        if (dose.units.containsKey("patientWeight")) {
+          weightConversions++;
         }
-        
+
         if (availableConcentrations != null) {
-          var concentrationSubstanceUnits = availableConcentrations!.map((conc) => UnitParser.getConcentrationsUnitsAsMap(conc.unit)["substance"]);
+          var concentrationSubstanceUnits = availableConcentrations!.map(
+              (conc) => UnitParser.getConcentrationsUnitsAsMap(
+                  conc.unit)["substance"]);
           if (concentrationSubstanceUnits.contains(dose.units["substance"])) {
-            _concentrationConversions++;
+            concentrationConversions++;
           }
-          
-
         }
       }
-
-
-
-
-
     }
 
-
-
-    return (weight: _weightConversions > 0, time: _timeConversions > 0, concentration: _concentrationConversions > 0);
-
+    return (
+      weight: weightConversions > 0,
+      time: timeConversions > 0,
+      concentration: concentrationConversions > 0
+    );
   }
 
   void setConversionWeight(double weight) {
@@ -74,7 +62,9 @@ import "package:hane/utils/UnitService.dart";
   }
 
   String showDosage() {
-    bool shouldConvertDoses = (conversionWeight != null || conversionTime != null || conversionConcentration != null);
+    bool shouldConvertDoses = (conversionWeight != null ||
+        conversionTime != null ||
+        conversionConcentration != null);
 
     Dose? convertIfNeeded(Dose? dose) {
       if (dose == null) return null;
@@ -102,11 +92,13 @@ import "package:hane/utils/UnitService.dart";
     }
     if (lowerLimitDose != null && higherLimitDose != null) {
       if (doseString.isNotEmpty) doseString.write(" (");
-      doseString.write("${lowerLimitDose.toString()} - ${higherLimitDose.toString()}");
+      doseString.write(
+          "${lowerLimitDose.toString()} - ${higherLimitDose.toString()}");
       if (doseString.toString().contains("(")) doseString.write(")");
     }
 
-    String result = "${doseString.toString()} ${dosage.administrationRoute ?? ''}.".trim();
+    String result =
+        "${doseString.toString()} ${dosage.administrationRoute ?? ''}.".trim();
 
     if (maxDose != null) {
       result += " Max dose: ${maxDose.toString()}.";
@@ -114,7 +106,4 @@ import "package:hane/utils/UnitService.dart";
 
     return result;
   }
-
-  
 }
- 

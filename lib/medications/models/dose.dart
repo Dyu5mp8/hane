@@ -123,8 +123,7 @@ class Dose {
   _convertedByTime(double value, Map fromUnits, String toUnit) {
     Map<String, double> validTimeUnits = {"h": 1, "min": 60, "d": 1 / 24};
 
-    if (fromUnits == null ||
-        !validTimeUnits.containsKey(fromUnits["time"]) ||
+    if (!validTimeUnits.containsKey(fromUnits["time"]) ||
         !validTimeUnits.containsKey(toUnit)) {
       Exception("$fromUnits is not an valid unit");
     }

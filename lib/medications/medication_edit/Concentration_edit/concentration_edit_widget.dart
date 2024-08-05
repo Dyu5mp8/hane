@@ -24,7 +24,7 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
           Row(
             children: <Widget>[
               SizedBox(
-                width: MediaQuery.of(context).size.width/4,
+                width: MediaQuery.of(context).size.width / 4,
                 child: TextFormField(
                   controller:
                       widget.concentrationForm.concentrationAmountController,
@@ -36,9 +36,10 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
                   validator: val.validateConcentrationAmount,
                 ),
               ),
-              SizedBox(height: 20, width: MediaQuery.of(context).size.width/16),
               SizedBox(
-                width: MediaQuery.of(context).size.width/4, 
+                  height: 20, width: MediaQuery.of(context).size.width / 16),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 4,
                 child: TextFormField(
                     controller:
                         widget.concentrationForm.concentrationUnitController,
@@ -57,19 +58,18 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
                   });
                 },
               ),
- 
             ],
           ),
-                       Container(
-                        padding: EdgeInsets.only(top: 20, bottom: 20),
-                        width: MediaQuery.of(context).size.width/2,
-                         child: Wrap(
-                           runSpacing: 8,
-                           spacing: 8,
-                           alignment: WrapAlignment.start,
-                           children: getConcentrationChips(widget.concentrationForm),
-                         ),
-                       )
+          Container(
+            padding: EdgeInsets.only(top: 20, bottom: 20),
+            width: MediaQuery.of(context).size.width / 2,
+            child: Wrap(
+              runSpacing: 8,
+              spacing: 8,
+              alignment: WrapAlignment.start,
+              children: getConcentrationChips(widget.concentrationForm),
+            ),
+          )
         ],
       ),
     );
@@ -84,7 +84,6 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
   List<InputChip> getConcentrationChips(ConcentrationForm concentrationForm) {
     return concentrationForm.concentrations
         .map((concentration) => InputChip(
-          
               labelStyle:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
               backgroundColor: Colors.blue,

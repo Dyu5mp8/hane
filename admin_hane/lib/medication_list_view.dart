@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:admin_hane/medication_list_row.dart';
@@ -37,7 +39,7 @@ class _ItemListPageState extends State<MedicationListView> {
         child: ListView.builder(
           itemCount: medications.length,
           itemBuilder: (context, index) {
-            return MedicationListRow(medications[index] as Medication);
+            return MedicationListRow(medications[index]);
           },
         ),
         );
@@ -46,7 +48,7 @@ class _ItemListPageState extends State<MedicationListView> {
     final searchField = 
     Expanded(
       child: Container(
-        padding: EdgeInsets.only(left: 10.0, right: 10.0),
+        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
         child:
         TextField(
           decoration: InputDecoration(
@@ -54,7 +56,7 @@ class _ItemListPageState extends State<MedicationListView> {
             
             // labelText: 'Sök',
             hintText: 'Sök efter läkemedel',
-            prefixIcon: Icon(Icons.search),
+            prefixIcon: const Icon(Icons.search),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20),
              
@@ -79,7 +81,7 @@ class _ItemListPageState extends State<MedicationListView> {
             onPressed: () {
               refreshList();
             },
-            child: Text("Uppdatera"),
+            child: const Text("Uppdatera"),
           ),
           ElevatedButton(onPressed:  () {
                           Navigator.push(
@@ -89,7 +91,7 @@ class _ItemListPageState extends State<MedicationListView> {
                                     medicationForm: MedicationForm(
                                       medication: Medication()))),
                           );
-                        }, child: Icon(Icons.add)),
+                        }, child: const Icon(Icons.add)),
 
 
         ]),

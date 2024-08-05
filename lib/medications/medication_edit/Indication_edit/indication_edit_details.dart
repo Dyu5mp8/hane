@@ -112,6 +112,7 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
                           if (value == null || value.isEmpty) {
                             return 'Ange indikation';
                           }
+                          return null;
                         }),
                     TextFormField(
                       controller: widget.indicationDetailForm.notesController,

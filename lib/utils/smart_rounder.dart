@@ -3,7 +3,7 @@ num smartRound(double value) {
   int decimalIndex = str.indexOf(".");
   if (decimalIndex == -1) {
   
-    return double.parse(value.toStringAsPrecision(3));
+    return double.parse(value.toStringAsPrecision(3)).toInt();
   } else {
     var intString = str.substring(0, decimalIndex);
     var intPartDouble = double.parse(intString);

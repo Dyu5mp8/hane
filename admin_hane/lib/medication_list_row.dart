@@ -4,9 +4,9 @@ import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/models/medication.dart';
 
 class MedicationListRow extends StatefulWidget {
-  Medication _medication;
+  final Medication _medication;
 
-  MedicationListRow(this._medication);
+  const MedicationListRow(this._medication, {super.key});
 
   @override
   State<MedicationListRow> createState() => _MedicationListRowState();
@@ -40,10 +40,10 @@ class _MedicationListRowState extends State<MedicationListRow> {
                 child: SizedBox(
                   width: 150,
                   child:
-                      Text(concentrationString(), style: TextStyle(fontSize: 12)),
+                      Text(concentrationString(), style: const TextStyle(fontSize: 12)),
                 ),
               ),
-              Flexible(
+              const Flexible(
                 child: SizedBox(
                     width: 200,
         
@@ -52,7 +52,7 @@ class _MedicationListRowState extends State<MedicationListRow> {
               ),
               Flexible(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints.tightFor(width: 100),
+                  constraints: const BoxConstraints.tightFor(width: 100),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
@@ -67,7 +67,7 @@ class _MedicationListRowState extends State<MedicationListRow> {
                                           medication: widget._medication))),
                             );
                           },
-                          child: Text("Edit")),
+                          child: const Text("Edit")),
                     ),
                   ),
                 ),

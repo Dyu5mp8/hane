@@ -10,11 +10,10 @@ import 'package:hane/medications/views/medication_detail_view/medication_detail_
 import 'package:hane/utils/validate_medication_save.dart' as val;
 
 class MedicationEditDetail extends StatefulWidget {
-   MedicationForm medicationForm;
+   final MedicationForm medicationForm;
 
   MedicationEditDetail(
-      {Key? key, required this.medicationForm})
-      : super(key: key);
+      {super.key, required this.medicationForm});
 
   @override
   _MedicationEditDetailState createState() => _MedicationEditDetailState();
@@ -29,10 +28,10 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text("Redigera läkemedel"),
+        title: const Text("Redigera läkemedel"),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
             onPressed: () => _saveMedication(),
           ),
         ],
@@ -47,7 +46,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
               children: <Widget>[
                 TextFormField(
                   controller: widget.medicationForm.nameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Läkemedel',
                     hintText: 'Ange generiskt namn',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -56,7 +55,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                 ),
                 TextFormField(
                   controller: widget.medicationForm.contraindicationController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Kontraindikationer',
                     hintText: 'Ange kontraindikationer',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -64,14 +63,14 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                 ),
                 TextFormField(
                   controller: widget.medicationForm.notesController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Anteckningar',
                     hintText: 'Ange anteckningar',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: BrandNameWidget(
                     brandNameForm: BrandNameForm(brandNames: widget.medicationForm.brandNames),
                   ),
@@ -79,13 +78,13 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
               
                 ),
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: ConcentrationEditPart(
                       concentrationForm: ConcentrationForm(
                           concentrations: widget.medicationForm.concentrations)),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: 20, bottom: 20),  
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),  
                   child: IndicationEditWidget(
                     
                     indicationForm: IndicationForm(
@@ -99,7 +98,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                 ),
                 ElevatedButton(
                   onPressed: () => _saveMedication(),
-                  child: Text('Save Medication'),
+                  child: const Text('Save Medication'),
                 ),
               ],
             ),
@@ -117,7 +116,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
         SnackBar(
           showCloseIcon: true,
           closeIconColor: Colors.green,
-          content: Row(
+          content: const Row(
             children: [
               Icon(Icons.check_box, color: Colors.green),
               Text("Ändringar sparade!"),
