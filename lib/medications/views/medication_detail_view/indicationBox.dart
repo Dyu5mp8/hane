@@ -113,10 +113,11 @@ class _IndicationDetails extends StatelessWidget {
         children: [
           Text(indication.name, style: Theme.of(context).textTheme.headlineSmall),
           if (indication.notes != null) Text(indication.notes!),
-          const SizedBox(height: 40),
+          
           if (indication.dosages != null)
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.all(1),
               itemCount: indication.dosages?.length,
               itemBuilder: (context, index) {
       

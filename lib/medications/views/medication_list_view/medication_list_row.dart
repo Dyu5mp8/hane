@@ -8,41 +8,57 @@ class MedicationListRow extends StatelessWidget {
 
   MedicationListRow(this._medication);
 
-
   @override
   Widget build(BuildContext context) {
-    // If the medication name is null, return a list tile with a message.
-    if (_medication.name == null){
+    if (_medication.name == null) {
       return const ListTile(
-        
-        title: Text("Felaktig data"),
-      );
-      }
-
-
-    else {
-     return ListTile(
-        title: Text(_medication.name!),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-          if (_medication.category != null) 
-          Text(_medication.category!),
-    ],
+        title: Text(
+          "Felaktig data",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-
+      );
+    } else {
+      return ListTile(
+        dense: true,
+        contentPadding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 16.0),
+        
+        title: Text(
+          _medication.name!,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        subtitle: _medication.category != null
+            ? Text(
+                _medication.category!,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+              )
+            : null,
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey[600],
+        ),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  ChangeNotifierProvider(
-      create: (context) => _medication,
-      child: MedicationDetailView(medication: _medication),
+              builder: (context) => ChangeNotifierProvider(
+                create: (context) => _medication,
+                child: MedicationDetailView(medication: _medication),
+              ),
             ),
-          ),
           );
-        }
+        },
       );
+    }
   }
-  }
-} 
+}

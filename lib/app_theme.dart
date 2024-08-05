@@ -10,7 +10,8 @@ final ThemeData appTheme = ThemeData(
 
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.purple,
+    seedColor: const Color.fromARGB(255, 238, 110, 82),
+
     // ···
     brightness: Brightness.light,
   ),
@@ -30,6 +31,11 @@ final ThemeData appTheme = ThemeData(
     displaySmall: GoogleFonts.roboto(
       fontSize: 14,
     ),
+    
   ),
+  appBarTheme: const AppBarTheme(
+    scrolledUnderElevation: 0
+
+  )
 );
   

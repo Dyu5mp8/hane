@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:hane/medications/controllers/dosageViewHandler.dart";
+import "package:hane/medications/models/conversionColors.dart";
 
 
 class ConversionOptionMinature extends StatelessWidget {
@@ -11,39 +12,38 @@ class ConversionOptionMinature extends StatelessWidget {
     this.iconSize = 17.0, // Default value set here.
   });
 
-  @override
-  Widget build(BuildContext context) {
+ @override
+Widget build(BuildContext context) {
+  // Determine if conversions are active
+  bool isConvertingWeight = dosageViewHandler.conversionWeight != null;
+  bool isConvertingTime = dosageViewHandler.conversionTime != null;
+  bool isConvertingConcentration = dosageViewHandler.conversionConcentration != null;
 
-    bool _isConvertingWeight =
-        dosageViewHandler.conversionWeight == null ? false : true;
-    bool _isConvertingTime =
-        dosageViewHandler.conversionTime == null ? false : true;
-    bool _isConvertingConcentration =
-        dosageViewHandler.conversionConcentration == null ? false : true;
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        // if (dosageViewHandler.ableToConvert().concentration ||
-        //     dosageViewHandler.ableToConvert().time ||
-        //     dosageViewHandler.ableToConvert().weight)
-        //   Icon(Icons.swipe_left, size: iconSize, color: Colors.black),
-        if (dosageViewHandler.ableToConvert().concentration)
-          Icon(Icons.vaccines,
-              size: iconSize,
-              color: _isConvertingConcentration ? Colors.green : Colors.grey),
-        if (dosageViewHandler.ableToConvert().time)
-          Icon(Icons.timer_rounded,
-              size: iconSize,
-              color: _isConvertingTime ? Colors.green : Colors.grey),
-        if (dosageViewHandler.ableToConvert().weight)
-          Icon(Icons.scale,
-              size: iconSize,
-              color: _isConvertingWeight ? Colors.green : Colors.grey),
-      ],
-    );
-  }
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      if (dosageViewHandler.ableToConvert().concentration)
+        Icon(
+          Icons.vaccines,
+          size: iconSize,
+          color: ConversionColor.getColor(ConversionType.concentration, isActive: isConvertingConcentration),
+        ),
+      if (dosageViewHandler.ableToConvert().time)
+        Icon(
+          Icons.timer_rounded,
+          size: iconSize,
+          color: ConversionColor.getColor(ConversionType.time, isActive: isConvertingConcentration),
+        ),
+      if (dosageViewHandler.ableToConvert().weight)
+        Icon(
+          Icons.scale,
+          size: iconSize,
+          color: ConversionColor.getColor(ConversionType.weight, isActive: isConvertingConcentration),
+        ),
+    ],
+  );
+}
 }
 
 
