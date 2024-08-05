@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:hane/medications/models/conversionColors.dart';
 import 'package:hane/medications/ui_components/concentration_picker.dart';
 import 'package:hane/medications/ui_components/conversion_option_miniature.dart';
 import 'package:hane/medications/controllers/dosageViewHandler.dart';
@@ -36,7 +37,7 @@ class DosageSnippetState extends State<DosageSnippet>
 
   void _showWeightSlider(BuildContext context) {
     showModalBottomSheet(
-      isDismissible: true,
+        isDismissible: true,
         context: context,
         builder: (BuildContext context) {
           return WeightSlider(
@@ -71,7 +72,6 @@ class DosageSnippetState extends State<DosageSnippet>
         context: context,
         builder: (BuildContext context) {
           return TimePicker(
-            
             onTimeUnitSet: (newTime) {
               setState(() {
                 widget.dosageViewHandler.conversionTime = newTime;
@@ -124,11 +124,9 @@ class DosageSnippetState extends State<DosageSnippet>
       return Slidable(
         // Specify a key if the Slidable is dismissible.
         key: const ValueKey(0),
-        
 
         // The end action pane is the one at the right or the bottom side.
         endActionPane: ActionPane(
-          
           motion: const ScrollMotion(),
           children: [
             if (widget.dosageViewHandler.ableToConvert().weight)
@@ -143,7 +141,8 @@ class DosageSnippetState extends State<DosageSnippet>
                     });
                   }
                 },
-                backgroundColor: const Color(0xFF7BC043),
+                backgroundColor:
+                    ConversionColor.getColor(ConversionType.weight),
                 foregroundColor: Colors.white,
                 icon: Icons.scale,
                 label: _conversionButtonText("Set Weight", "Reset",
@@ -162,7 +161,8 @@ class DosageSnippetState extends State<DosageSnippet>
                     });
                   }
                 },
-                backgroundColor: const Color(0xFF7BC043),
+                backgroundColor:
+                    ConversionColor.getColor(ConversionType.concentration),
                 foregroundColor: Colors.white,
                 icon: Icons.medication_liquid,
                 label: _conversionButtonText("Set Concentration", "Reset",
@@ -180,7 +180,7 @@ class DosageSnippetState extends State<DosageSnippet>
                     });
                   }
                 },
-                backgroundColor: const Color(0xFF7BC043),
+                backgroundColor: ConversionColor.getColor(ConversionType.time),
                 foregroundColor: Colors.white,
                 icon: Icons.timer,
                 label: _conversionButtonText("Convert to minutes", "Reset",
@@ -194,24 +194,31 @@ class DosageSnippetState extends State<DosageSnippet>
         // component is not dragged.
 
         child: ListTile(
-          contentPadding: const EdgeInsets.only(left: 10, right: 10),
-          shape: const RoundedRectangleBorder(
-            side: BorderSide(
-                color: Color.fromARGB(255, 117, 117, 117), width: 0.2),
-          ),
-          minTileHeight: 80,
-          trailing: SizedBox(
-            width: 80,
-            child: Container(
-              alignment: Alignment.topRight,
-              child: ConversionOptionMinature(
-                  dosageViewHandler: widget.dosageViewHandler),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            side: const BorderSide(
+              color: Color.fromARGB(255, 200, 200, 200), // Softer border color
+              width: 0.5,
             ),
           ),
-          dense: true,
-          title: Text(
-            widget.dosageViewHandler.showDosage(), style: Theme.of(context).textTheme.displaySmall,
+          tileColor: Colors.white, // Consistent background color
+          minVerticalPadding: 20,
+          trailing: SizedBox(
+            width: 80,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ConversionOptionMinature(
+                    dosageViewHandler: widget.dosageViewHandler),
+              ],
+            ),
           ),
+          title: widget.dosageViewHandler.showDosage(),
+
+          dense: false, // Ensure the tile isn't too compressed
         ),
       );
     }
