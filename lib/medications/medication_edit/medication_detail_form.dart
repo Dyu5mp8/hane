@@ -41,7 +41,6 @@ class MedicationForm {
     if (medication == null) {
       medication = createMedication();
     } else {
-      print("Updating medication");
       medication!.name = nameController.text;
       medication!.contraindication = contraindicationController.text;
       medication!.concentrations = concentrations;

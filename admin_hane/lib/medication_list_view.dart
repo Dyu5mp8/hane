@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:admin_hane/medication_list_row.dart';
 import 'package:hane/medications/models/medication.dart';
 import 'package:hane/utils/error_alert.dart';
 import 'package:hane/medications/services/firebaseService.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class MedicationListView extends StatefulWidget {
@@ -87,11 +87,7 @@ class _ItemListPageState extends State<MedicationListView> {
                             MaterialPageRoute(
                                 builder: (context) => MedicationEditDetail(
                                     medicationForm: MedicationForm(
-                                        onSave: (Medication medication) {
-                                          setState(() {
-                                            medications.add(medication);
-                                          });
-                                        }))),
+                                      medication: Medication()))),
                           );
                         }, child: Icon(Icons.add)),
 
@@ -133,7 +129,6 @@ Future<void> getMedications({bool forceFromServer = true}) async {
   
     // Update state with medications, whether from cache or server
     setState(() {
-      print(snapshot.docs.asMap());
       medications = List.from(snapshot.docs.map((doc) => Medication.fromFirestore(doc.data())));
     });
   } catch (e) {

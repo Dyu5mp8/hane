@@ -8,9 +8,10 @@ import 'package:hane/medications/models/medication.dart';
 class IndicationDetail extends StatefulWidget {
   final IndicationDetailForm indicationDetailForm;
 
-  IndicationDetail({required this.indicationDetailForm});
+ const IndicationDetail({super.key, required this.indicationDetailForm});
 
   @override
+  // ignore: library_private_types_in_public_api
   _IndicationDetailFormState createState() => _IndicationDetailFormState();
 }
 
@@ -26,7 +27,7 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
           children: [
             if (dosage.instruction != null)
               Text(dosage.instruction!,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             if (dosage.dose != null) Text("dos: ${dosage.dose!.toString()}"),
             if (dosage.lowerLimitDose != null)
               Text("från: ${dosage.lowerLimitDose!.toString()}"),
@@ -38,7 +39,7 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
           ],
         ),
         IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             onPressed: () {
               showDialog(
                   context: context,
@@ -65,7 +66,7 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
     }
     for (int i = 0; i < dosages.length; i++) {
       ls.add(customListTile(dosages[i], i));
-      ls.add(Divider());
+      ls.add(const Divider());
     }
     return ls;
   }
@@ -82,73 +83,77 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("${widget.indicationDetailForm.indication.name == "" ? "Ny indikation" : widget.indicationDetailForm.indication.name}"),
+          title: Text(widget.indicationDetailForm.indication.name == "" ? "Ny indikation" : widget.indicationDetailForm.indication.name),
           actions: [
             TextButton(
-              child: Text("Spara"),
+              child: const Text("Spara"),
               onPressed: () => _saveForm(),
             ),
           ],
         ),
-        body: Column(
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  TextFormField(
-                      controller: widget.indicationDetailForm.nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Indikation',
-                        hintText: 'Ange indikation',
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextFormField(
+                        controller: widget.indicationDetailForm.nameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Indikation',
+                          hintText: 'Ange indikation',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Ange indikation';
+                          }
+                        }),
+                    TextFormField(
+                      controller: widget.indicationDetailForm.notesController,
+                      decoration: const InputDecoration(
+                        labelText: 'Anteckningar',
+                        hintText: 'Ange anteckningar',
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Ange indikation';
-                        }
-                      }),
-                  TextFormField(
-                    controller: widget.indicationDetailForm.notesController,
-                    decoration: InputDecoration(
-                      labelText: 'Anteckningar',
-                      hintText: 'Ange anteckningar',
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
-                  ),
-                  Column(
-                      children: dosagesToList(
-                          widget.indicationDetailForm.indication.dosages)),
-
-                  TextButton(
-                    child: Text("Lägg till dosering"),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => DosageEditDetail(
-                          dosageForm: DosageDetailForm(
-                            dosage: Dosage(
-                                instruction: "",
-                                administrationRoute: "",
-                                dose: null,
-                                lowerLimitDose: null,
-                                higherLimitDose: null,
-                                maxDose: null),
-                            onSave: (Dosage newDosage) {
-                              setState(() {
-                                widget.indicationDetailForm.addDosage(newDosage);
-                              });
-                            },
+                    Column(
+                        children: dosagesToList(
+                            widget.indicationDetailForm.indication.dosages)),
+          
+                    TextButton(
+                      child: const Text("Lägg till dosering"),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (ctx) => DosageEditDetail(
+                            dosageForm: DosageDetailForm(
+                              dosage: Dosage(
+                                  instruction: "",
+                                  administrationRoute: "",
+                                  dose: null,
+                                  lowerLimitDose: null,
+                                  higherLimitDose: null,
+                                  maxDose: null),
+                              onSave: (Dosage newDosage) {
+                                setState(() {
+                                  widget.indicationDetailForm.addDosage(newDosage);
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ));
   }
 }

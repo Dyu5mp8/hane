@@ -79,15 +79,14 @@ class Dose {
       var result = _convertedByWeight(value, fromUnits, convertWeight);
       value = result.$1;
       fromUnits = result.$2;
-      print(fromUnits);
-      print(this.units);
+   
     }
 
     if (convertTime != null && fromUnits.containsKey("time")) {
       var result = _convertedByTime(value, fromUnits, convertTime);
       value = result.$1;
       fromUnits = result.$2;
-      print(fromUnits);
+     
     }
 
     if (convertConcentration != null) {
@@ -95,7 +94,7 @@ class Dose {
           _convertedByConcentration(value, fromUnits, convertConcentration);
       value = result.$1;
       fromUnits = result.$2 as Map<String, String>;
-      print(fromUnits);
+
 
       return Dose(amount: value, units: fromUnits);
     }
@@ -104,7 +103,7 @@ class Dose {
       var result = _scaledDose(value, fromUnits);
       value = result.$1;
       fromUnits = result.$2 as Map<String, String>;
-      print(fromUnits);
+
     }
 
     return Dose(amount: value, units: fromUnits);

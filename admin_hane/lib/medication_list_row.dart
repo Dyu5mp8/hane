@@ -64,12 +64,7 @@ class _MedicationListRowState extends State<MedicationListRow> {
                               MaterialPageRoute(
                                   builder: (context) => MedicationEditDetail(
                                       medicationForm: MedicationForm(
-                                          medication: widget._medication,
-                                          onSave: (Medication medication) {
-                                            setState(() {
-                                              widget._medication = medication;
-                                            });
-                                          }))),
+                                          medication: widget._medication))),
                             );
                           },
                           child: Text("Edit")),

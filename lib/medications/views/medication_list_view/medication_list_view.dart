@@ -118,7 +118,7 @@ Future<void> getMedications({bool forceFromServer = true}) async {
   
     // Update state with medications, whether from cache or server
     setState(() {
-      print(snapshot.docs.asMap());
+  
       medications = List.from(snapshot.docs.map((doc) => Medication.fromFirestore(doc.data())));
     });
   } catch (e) {

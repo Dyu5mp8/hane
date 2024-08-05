@@ -2,7 +2,7 @@ num smartRound(double value) {
   String str = value.toString();
   int decimalIndex = str.indexOf(".");
   if (decimalIndex == -1) {
-    print(value.toStringAsPrecision(3));
+  
     return double.parse(value.toStringAsPrecision(3));
   } else {
     var intString = str.substring(0, decimalIndex);

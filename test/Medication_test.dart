@@ -41,7 +41,7 @@ void main() {
 
     
     test('initializes with all parameters', () {
-      print(testMedication.getConcentrationsAsString());
+
     }
     );
   }

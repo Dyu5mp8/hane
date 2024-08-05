@@ -24,7 +24,6 @@ class _IndicationEditWidgetState extends State<IndicationEditWidget> {
   
   @override
   Widget build(BuildContext context) {
-    print("build IndicationEditWidget");
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -7,7 +7,7 @@ class UnitParser{
   UnitParser();
 
     static getUnitConversionFactor({required String fromUnit, required String toUnit}){
-      print(UnitValidator.validUnits[fromUnit]);
+  
     if (UnitValidator.validUnits[fromUnit] != (UnitValidator.validUnits[toUnit])){
 
       throw Exception("Both units must be of the same type");

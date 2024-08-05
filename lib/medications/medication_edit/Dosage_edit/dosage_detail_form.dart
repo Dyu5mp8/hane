@@ -54,9 +54,7 @@ String? validateDosageFields(String ? value){
   bool isValidLowerLimitDose = val.validateAmountInput(lowerLimitDoseAmount) == null && val.validateUnitInput(lowerLimitDoseUnit)==null;
   bool isValidHigherLimitDose = val.validateAmountInput(higherLimitDoseAmount) == null && val.validateUnitInput(higherLimitDoseUnit)==null;
 
-  print(isValidHigherLimitDose);
-  print(isValidLowerLimitDose);
-  print(isValidDose);
+  
   
   if (isValidDose || (isValidLowerLimitDose && isValidHigherLimitDose)){
     return null;
@@ -90,7 +88,6 @@ Dosage updatedDosage = Dosage(
   higherLimitDose: higherLimitDose,
   maxDose: maxDose,
 );
-print(updatedDosage);
 onSave(updatedDosage);
 
 

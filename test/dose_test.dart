@@ -12,7 +12,7 @@ void main() {
           "time": "h"
         }
       );
-    print(dose);
+
 
     Concentration concentration = Concentration(
       amount: 5.0,
@@ -20,7 +20,6 @@ void main() {
     );
     Dose convertedDose = dose.convertedBy(convertTime: "min", convertConcentration: concentration);
 
-    print(convertedDose);
     
       // 
     });

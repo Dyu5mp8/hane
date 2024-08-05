@@ -44,7 +44,7 @@ class Medication extends ChangeNotifier {
 
   String? get notes => _notes;
   set notes(String? newNotes) {
-    print(_notes);
+
     if (_notes != newNotes) {
       _notes = newNotes;
       notifyListeners();
