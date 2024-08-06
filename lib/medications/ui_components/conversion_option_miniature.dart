@@ -33,13 +33,13 @@ Widget build(BuildContext context) {
         Icon(
           Icons.timer_rounded,
           size: iconSize,
-          color: ConversionColor.getColor(ConversionType.time, isActive: isConvertingConcentration),
+          color: ConversionColor.getColor(ConversionType.time, isActive: isConvertingTime),
         ),
       if (dosageViewHandler.ableToConvert().weight)
         Icon(
           Icons.scale,
           size: iconSize,
-          color: ConversionColor.getColor(ConversionType.weight, isActive: isConvertingConcentration),
+          color: ConversionColor.getColor(ConversionType.weight, isActive: isConvertingWeight),
         ),
     ],
   );

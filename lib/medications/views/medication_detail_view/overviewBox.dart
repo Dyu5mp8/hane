@@ -18,9 +18,9 @@ class OverviewBox extends StatelessWidget {
 
     return Container(
       height: 100,
+      padding: EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
-      padding: EdgeInsets.all(10),
       child: Row(children: [
         SizedBox(
           width: 240,
@@ -48,12 +48,14 @@ class OverviewBox extends StatelessWidget {
         ),
         if (concentrations != null)
           Flexible(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: medication
-                    .getConcentrationsAsString()!
-                    .map((conc) => Text(conc))
-                    .toList()),
+            child: FittedBox(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: medication
+                      .getConcentrationsAsString()!
+                      .map((conc) => Text(conc))
+                      .toList()),
+            ),
           )
       ]),
     );

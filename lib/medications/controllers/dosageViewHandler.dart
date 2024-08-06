@@ -83,18 +83,16 @@ class DosageViewHandler {
     Dose? higherLimitDose = convertIfNeeded(dosage.higherLimitDose);
     Dose? maxDose = convertIfNeeded(dosage.maxDose);
 
-    TextStyle _dosageTextStyle = TextStyle(
-      fontSize: 12,
-    );
-
+    double _fontSize = 14;
+    FontStyle _doseFontStyle = shouldConvertDoses ? FontStyle.italic : FontStyle.normal;
 
     TextSpan instructionSpan(String instruction) {
       if (instruction.isEmpty) return TextSpan();
       return TextSpan(
-        text: instruction,
+        text: "$instruction:  ",
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 16,
+          fontSize: _fontSize
         ),
       );
     }
@@ -104,8 +102,8 @@ class DosageViewHandler {
       return TextSpan(
         text: dose.toString(),
         style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
+          fontSize: _fontSize,
+          fontStyle: _doseFontStyle,
         ),
       );
     }
@@ -115,7 +113,8 @@ class DosageViewHandler {
       return TextSpan(
         text: " (${lowerLimitDose.toString()} - ${higherLimitDose.toString()})",
         style: TextStyle(
-          fontSize: 16,
+          fontSize: _fontSize,
+          fontStyle: _doseFontStyle,
         ),
       );
     }
@@ -126,7 +125,8 @@ class DosageViewHandler {
       return TextSpan(
         text: " Max dose: ${maxDose.toString()}",
         style: TextStyle(
-          fontSize: 16,
+          fontSize: _fontSize,
+          fontStyle: _doseFontStyle,
         ),
       );
     } 
@@ -136,7 +136,7 @@ class DosageViewHandler {
       return TextSpan(
         text: " $route",
         style: TextStyle(
-          fontSize: 16,
+          fontSize: _fontSize,
         ),
       );
     }
@@ -156,29 +156,3 @@ class DosageViewHandler {
     );
   }
 }
-
-//     StringBuffer doseString = StringBuffer();
-//     if (dosage.instruction != null) {
-//       doseString.write(dosage.instruction);
-//     }
-//     if (dose != null) {
-//       if (doseString.isNotEmpty) doseString.write(": ");
-//       doseString.write(dose.toString());
-//     }
-//     if (lowerLimitDose != null && higherLimitDose != null) {
-//       if (doseString.isNotEmpty) doseString.write(" (");
-//       doseString.write(
-//           "${lowerLimitDose.toString()} - ${higherLimitDose.toString()}");
-//       if (doseString.toString().contains("(")) doseString.write(")");
-//     }
-
-//     String result =
-//         "${doseString.toString()} ${dosage.administrationRoute ?? ''}.".trim();
-
-//     if (maxDose != null) {
-//       result += " Max dose: ${maxDose.toString()}.";
-//     }
-
-//     return result;
-//   }
-// }

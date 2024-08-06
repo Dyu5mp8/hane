@@ -12,6 +12,6 @@ class ConversionColor {
   static Color getColor(ConversionType type, {bool isActive = true}) {
     // Default to a grey color if not active
     Color baseColor = _conversionColorMap[type] ?? Colors.grey;
-    return isActive ? baseColor : baseColor.withOpacity(0.5);
+    return isActive ? baseColor : Colors.grey;
   }
 }
