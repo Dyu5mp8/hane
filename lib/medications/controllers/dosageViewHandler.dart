@@ -41,23 +41,38 @@ class DosageViewHandler {
         }
 
         if (availableConcentrations != null) {
-          var concentrationSubstanceUnits = availableConcentrations!.map(
-              (conc) => UnitParser.getConcentrationsUnitsAsMap(
-                  conc.unit)["substance"]);
-          if (concentrationSubstanceUnits.contains(dose.units["substance"])) {
+          var concentrationSubstanceUnits = availableConcentrations!
+              .map((c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
+
+          
+          var concentrationUnitTypes = concentrationSubstanceUnits
+              .map((c) => UnitValidator.getUnitType(c)).toSet();
+          
+          if (dose.units.containsKey("substance")) {
+           
+          
+
+          var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!) ;  
+
+
+
+          if (concentrationUnitTypes.contains(doseUnitType)) {
+     
             concentrationConversions++;
           }
+
         }
       }
+      }
     }
-
     return (
       weight: weightConversions > 0,
       time: timeConversions > 0,
       concentration: concentrationConversions > 0
     );
+    
   }
-
+  
   void setConversionWeight(double weight) {
     conversionWeight = weight;
   }
@@ -84,7 +99,7 @@ class DosageViewHandler {
     Dose? maxDose = convertIfNeeded(dosage.maxDose);
 
     double _fontSize = 14;
-    FontStyle _doseFontStyle = shouldConvertDoses ? FontStyle.italic : FontStyle.normal;
+    TextDecoration _decoration = shouldConvertDoses ? TextDecoration.underline : TextDecoration.none;
 
     TextSpan instructionSpan(String instruction) {
       if (instruction.isEmpty) return TextSpan();
@@ -92,7 +107,9 @@ class DosageViewHandler {
         text: "$instruction:  ",
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: _fontSize
+          fontSize: _fontSize,
+
+        
         ),
       );
     }
@@ -103,7 +120,8 @@ class DosageViewHandler {
         text: dose.toString(),
         style: TextStyle(
           fontSize: _fontSize,
-          fontStyle: _doseFontStyle,
+        decoration: _decoration,
+
         ),
       );
     }
@@ -114,7 +132,7 @@ class DosageViewHandler {
         text: " (${lowerLimitDose.toString()} - ${higherLimitDose.toString()})",
         style: TextStyle(
           fontSize: _fontSize,
-          fontStyle: _doseFontStyle,
+          decoration: _decoration,
         ),
       );
     }
@@ -126,7 +144,7 @@ class DosageViewHandler {
         text: " Max dose: ${maxDose.toString()}",
         style: TextStyle(
           fontSize: _fontSize,
-          fontStyle: _doseFontStyle,
+          decoration: _decoration,
         ),
       );
     } 

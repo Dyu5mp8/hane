@@ -30,10 +30,8 @@ class OverviewBox extends StatelessWidget {
               Row(
                 children: [
                   Flexible(
-                    child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(medication.name!,
-                            style: Theme.of(context).textTheme.headlineLarge)),
+                    child: Text(medication.name!,
+                        style: Theme.of(context).textTheme.headlineLarge),
                   ),
                   editButton
                 ],
@@ -48,14 +46,12 @@ class OverviewBox extends StatelessWidget {
         ),
         if (concentrations != null)
           Flexible(
-            child: FittedBox(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: medication
-                      .getConcentrationsAsString()!
-                      .map((conc) => Text(conc))
-                      .toList()),
-            ),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: medication
+                    .getConcentrationsAsString()!
+                    .map((conc) => Text(conc))
+                    .toList()),
           )
       ]),
     );

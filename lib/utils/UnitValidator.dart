@@ -30,6 +30,10 @@ static validSubstanceUnits() {
   );
 }
 
+static String getUnitType(String str) {
+  return _validUnits[str]!;
+}
+
 static containsPatientWeightUnit(String str) {
   return _validUnits[str] == "patientWeight";
 }
