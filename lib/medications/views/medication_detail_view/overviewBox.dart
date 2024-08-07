@@ -22,8 +22,7 @@ class OverviewBox extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
       child: Row(children: [
-        SizedBox(
-          width: 240,
+        Flexible(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -45,13 +44,26 @@ class OverviewBox extends StatelessWidget {
           ),
         ),
         if (concentrations != null)
-          Flexible(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: medication
-                    .getConcentrationsAsString()!
-                    .map((conc) => Text(conc))
-                    .toList()),
+          Align(
+            alignment: Alignment.topRight,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 100),
+
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Padding(
+                  
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                      
+                      mainAxisSize: MainAxisSize.min,
+                      children: medication
+                          .getConcentrationsAsString()!
+                          .map((conc) => Text(conc))
+                          .toList()),
+                ),
+              ),
+            ),
           )
       ]),
     );
