@@ -10,15 +10,21 @@ class DosageViewHandler {
   String? conversionTime;
   Concentration? conversionConcentration;
   List<Concentration>? availableConcentrations;
+  late ({bool weight, bool time, bool concentration}) ableToConvert;
 
   DosageViewHandler(Key? key,
       {required this.dosage,
       this.conversionWeight,
       this.conversionTime,
       this.conversionConcentration,
-      this.availableConcentrations});
+      this.availableConcentrations})
+      {
+    ableToConvert = _ableToConvert();  // Call to the instance method
+  }
 
-  ({bool weight, bool time, bool concentration}) ableToConvert() {
+  
+
+  ({bool weight, bool time, bool concentration}) _ableToConvert() {
     int weightConversions = 0;
     int timeConversions = 0;
     int concentrationConversions = 0;
@@ -51,7 +57,7 @@ class DosageViewHandler {
           if (dose.units.containsKey("substance")) {
            
           
-
+              print(dose.units["substance"]);
           var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!) ;  
 
 

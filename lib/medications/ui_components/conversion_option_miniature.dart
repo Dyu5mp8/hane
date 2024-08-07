@@ -23,19 +23,19 @@ Widget build(BuildContext context) {
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisAlignment: MainAxisAlignment.end,
     children: [
-      if (dosageViewHandler.ableToConvert().concentration)
+      if (dosageViewHandler.ableToConvert.concentration)
         Icon(
           Icons.vaccines,
           size: iconSize,
           color: ConversionColor.getColor(ConversionType.concentration, isActive: isConvertingConcentration),
         ),
-      if (dosageViewHandler.ableToConvert().time)
+      if (dosageViewHandler.ableToConvert.time)
         Icon(
           Icons.timer_rounded,
           size: iconSize,
           color: ConversionColor.getColor(ConversionType.time, isActive: isConvertingTime),
         ),
-      if (dosageViewHandler.ableToConvert().weight)
+      if (dosageViewHandler.ableToConvert.weight)
         Icon(
           Icons.scale,
           size: iconSize,

@@ -35,4 +35,15 @@ Concentration({required this.amount, required this.unit});
   String toString() {
     return "$amount $unit";
   }
+
+  Map concentrationUnit = {
+    "mg" : "mass",
+    "g" : "mass",
+    "mL" : "volume",
+    "L" : "volume",
+    "mcg" : "mass",
+    "units" : "substance",
+
+
+  };
 }

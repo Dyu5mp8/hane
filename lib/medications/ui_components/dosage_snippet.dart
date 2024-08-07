@@ -12,6 +12,7 @@ class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
   final DosageViewHandler dosageViewHandler;
 
+
   DosageSnippet(
       {Key? key, required this.dosage, required this.dosageViewHandler})
       : super(key: key);
@@ -129,7 +130,7 @@ class DosageSnippetState extends State<DosageSnippet>
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
           children: [
-            if (widget.dosageViewHandler.ableToConvert().weight)
+            if (widget.dosageViewHandler.ableToConvert.weight)
               SlidableAction(
                 flex: 1,
                 onPressed: (_) {
@@ -148,7 +149,7 @@ class DosageSnippetState extends State<DosageSnippet>
                 label: _conversionButtonText("Set Weight", "Reset",
                     widget.dosageViewHandler.conversionWeight),
               ),
-            if (widget.dosageViewHandler.ableToConvert().concentration)
+            if (widget.dosageViewHandler.ableToConvert.concentration)
               SlidableAction(
                 flex: 1,
                 onPressed: (_) {
@@ -168,7 +169,7 @@ class DosageSnippetState extends State<DosageSnippet>
                 label: _conversionButtonText("Set Concentration", "Reset",
                     widget.dosageViewHandler.conversionConcentration),
               ),
-            if (widget.dosageViewHandler.ableToConvert().time)
+            if (widget.dosageViewHandler.ableToConvert.time)
               SlidableAction(
                 flex: 1,
                 onPressed: (_) {

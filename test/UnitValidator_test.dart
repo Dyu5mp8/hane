@@ -5,6 +5,14 @@ import 'package:hane/utils/UnitValidator.dart';
 void main() {
   group('unitvalidator', () {
 
+    test('functions', () {
+
+      print(UnitValidator.validSubstanceUnits());
+
+
+
+    });
+
     test('initializes with all parameters', () {
       
         print(UnitValidator.isSubstanceUnit("mg"));
