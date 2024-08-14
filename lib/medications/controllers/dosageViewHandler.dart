@@ -1,7 +1,6 @@
-import "package:flutter/foundation.dart";
+
 import "package:flutter/material.dart";
 import "package:hane/medications/models/medication.dart";
-import "package:hane/utils/UnitParser.dart";
 import "package:hane/utils/UnitService.dart";
 
 class DosageViewHandler {
@@ -22,7 +21,27 @@ class DosageViewHandler {
     ableToConvert = _ableToConvert();  // Call to the instance method
   }
 
-  
+  bool canConvertConcentration (Dose dose){
+  if (availableConcentrations != null && dose.units.containsKey("substance")) {
+    var concentrationSubstanceUnits = availableConcentrations!
+        .map((c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
+    var concentrationUnitTypes = concentrationSubstanceUnits
+        .map((c) => UnitValidator.getUnitType(c))
+        .toSet();
+    var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!);
+
+    return concentrationUnitTypes.contains(doseUnitType);
+  }
+  return false;
+  }
+
+  bool canConvertTime(Dose dose) {
+    return dose.units.containsKey("time");
+  }
+
+  bool canConvertWeight(Dose dose) {
+    return dose.units.containsKey("patientWeight");
+  } 
 
   ({bool weight, bool time, bool concentration}) _ableToConvert() {
     int weightConversions = 0;
@@ -38,49 +57,26 @@ class DosageViewHandler {
 
     for (Dose? dose in doseList) {
       if (dose != null) {
-        if (dose.units.containsKey("time")) {
+        if(canConvertTime(dose)){
           timeConversions++;
         }
 
-        if (dose.units.containsKey("patientWeight")) {
+        if(canConvertWeight(dose)){
           weightConversions++;
         }
 
-        if (availableConcentrations != null) {
-          var concentrationSubstanceUnits = availableConcentrations!
-              .map((c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
-
-          
-          var concentrationUnitTypes = concentrationSubstanceUnits
-              .map((c) => UnitValidator.getUnitType(c)).toSet();
-          
-          if (dose.units.containsKey("substance")) {
-           
-          
-              print(dose.units["substance"]);
-          var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!) ;  
-
-
-
-          if (concentrationUnitTypes.contains(doseUnitType)) {
-     
-            concentrationConversions++;
-          }
-
+        if(canConvertConcentration(dose)){
+          concentrationConversions++;
         }
-      }
-      }
+
     }
-    return (
+   
+    }
+     return (
       weight: weightConversions > 0,
       time: timeConversions > 0,
       concentration: concentrationConversions > 0
     );
-    
-  }
-  
-  void setConversionWeight(double weight) {
-    conversionWeight = weight;
   }
 
   Text showDosage() {
@@ -92,9 +88,9 @@ class DosageViewHandler {
       if (dose == null) return null;
       return shouldConvertDoses
           ? dose.convertedBy(
-              convertWeight: conversionWeight,
-              convertTime: conversionTime,
-              convertConcentration: conversionConcentration,
+              convertWeight: canConvertWeight(dose) ? conversionWeight : null,
+              convertTime: canConvertTime(dose) ? conversionTime : null,
+              convertConcentration:   canConvertConcentration(dose) ? conversionConcentration : null,
             )
           : dose;
     }
