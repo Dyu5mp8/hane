@@ -1,25 +1,22 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
+import 'package:hane/forms/generic_chip_form.dart';
+import 'package:hane/forms/generic_chip_widget.dart';
 
-
-class BrandNameForm{
-
-List<dynamic> brandNames;  
-
-TextEditingController brandNameController = TextEditingController();
-
-BrandNameForm({required this.brandNames});
-
-void addBrandName(){
-  if (brandNameController.text.isEmpty) return;
-  brandNames.add(brandNameController.text);
-  brandNameController.clear();  
+class BrandNameForm extends GenericChipForm<dynamic> {
+  BrandNameForm({required List<dynamic> brandNames}) : super(items: brandNames);
 }
 
+class BrandNameWidget extends StatelessWidget {
+  final BrandNameForm brandNameForm;
 
-void removeBrandName(String brandName){
-  brandNames.remove(brandName); 
-}
+  const BrandNameWidget({super.key, required this.brandNameForm});
 
-
-
+  @override
+  Widget build(BuildContext context) {
+    return GenericChipWidget<dynamic>(
+      form: brandNameForm,
+      labelText: 'Brand Name',
+      hintText: 'Enter brand name',
+    );
+  }
 }

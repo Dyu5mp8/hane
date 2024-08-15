@@ -1,6 +1,8 @@
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_form.dart';
 import 'package:flutter/material.dart';
+import 'package:hane/medications/ui_components/custom_chip.dart';
 import 'package:hane/utils/validate_concentration_save.dart' as val;
+
 
 class ConcentrationEditPart extends StatefulWidget {
   final ConcentrationForm concentrationForm;
@@ -24,7 +26,7 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
           Row(
             children: <Widget>[
               SizedBox(
-                width: MediaQuery.of(context).size.width / 4,
+                width: MediaQuery.of(context).size.width / 6,
                 child: TextFormField(
                   controller:
                       widget.concentrationForm.concentrationAmountController,
@@ -37,9 +39,9 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
                 ),
               ),
               SizedBox(
-                  height: 20, width: MediaQuery.of(context).size.width / 16),
+                  height: 20, width: MediaQuery.of(context).size.width / 20),
               SizedBox(
-                width: MediaQuery.of(context).size.width / 4,
+                width: MediaQuery.of(context).size.width / 6,
                 child: TextFormField(
                     controller:
                         widget.concentrationForm.concentrationUnitController,
@@ -81,13 +83,11 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
     }
   }
 
-  List<InputChip> getConcentrationChips(ConcentrationForm concentrationForm) {
+  List<CustomChip> getConcentrationChips(ConcentrationForm concentrationForm) {
     return concentrationForm.concentrations
-        .map((concentration) => InputChip(
-              labelStyle:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-              backgroundColor: Colors.blue,
-              label: Text(concentration.toString()),
+        .map((concentration) => CustomChip(
+            
+              label: concentration.toString(),
               onDeleted: () {
                 setState(() {
                   concentrationForm.removeConcentration(concentration);

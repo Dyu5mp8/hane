@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_edit_widget.dart';
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_form.dart';
 import 'package:hane/medications/medication_edit/brand_name_edit/brand_name_form.dart';
-import 'package:hane/medications/medication_edit/brand_name_edit/brand_name_widget.dart';
 import 'package:hane/medications/medication_edit/category_edit/category_form.dart';
-import 'package:hane/medications/medication_edit/category_edit/category_widget.dart';
 import 'package:hane/medications/medication_edit/indication_edit_widget.dart';
 import 'package:hane/medications/medication_edit/indication_widget_form.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
@@ -76,13 +74,14 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                 SizedBox(height: 40),
 
                  Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.only(left: 10),
                   child: CategoryWidget(
                     categoryForm: CategoryForm(categories: widget.medicationForm.categories),
                   )
                  ),
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.only(left:10),
+                
                   child: BrandNameWidget(
                     brandNameForm: BrandNameForm(brandNames: widget.medicationForm.brandNames),
                   ),
