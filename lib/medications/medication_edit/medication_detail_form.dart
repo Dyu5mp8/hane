@@ -9,6 +9,7 @@ class MedicationForm {
   List<dynamic> brandNames = [];
   TextEditingController notesController = TextEditingController();
   List<Indication>? indications = [];
+  List<dynamic> categories = [];
 
   Medication? medication;
 
@@ -21,6 +22,7 @@ class MedicationForm {
       notesController.text = medication.notes ?? "";
       indications = medication.indications ?? [];
       brandNames = medication.brandNames ?? [];
+      categories = medication.categories ?? [];
     }
 
   }
@@ -33,7 +35,8 @@ class MedicationForm {
       concentrations: concentrations,
       notes: notesController.text,
       indications: indications,
-      brandNames: brandNames
+      brandNames: brandNames,
+      categories: categories
     );
   }
 
@@ -47,6 +50,7 @@ class MedicationForm {
       medication!.notes = notesController.text;
       medication!.indications = indications;
       medication!.brandNames = brandNames;
+      medication!.categories = categories;
 
     }
 

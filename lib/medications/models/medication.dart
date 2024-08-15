@@ -11,7 +11,7 @@ export 'package:hane/medications/models/dose.dart';
 class Medication extends ChangeNotifier {
   String? _name;
   List<dynamic>? _brandNames;
-  String? _category;
+  List<dynamic>? _categories;
   List<Concentration>? _concentrations;
   String? _contraindication;
   List<Indication>? _indications;
@@ -21,13 +21,13 @@ class Medication extends ChangeNotifier {
   Medication({
     String? name,
     List<dynamic>? brandNames,
-    String? category,
+    List<dynamic>? categories,
    List<Concentration>? concentrations,
     String? contraindication,
     List<Indication>? indications,
     String? notes,
   })  : _name = name,
-        _category = category,
+        _categories = categories,
         _concentrations = concentrations,
         _contraindication = contraindication,
         _indications = indications,
@@ -59,10 +59,10 @@ class Medication extends ChangeNotifier {
     }
   }
 
-  String? get category => _category;
-  set category(String? newCategory) {
-    if (_category != newCategory) {
-      _category = newCategory;
+  List<dynamic>? get categories => _categories;
+  set categories(List<dynamic>? newcategories) {
+    if (_categories != newcategories) {
+      _categories = newcategories;
       notifyListeners();
     }
   }
@@ -125,7 +125,7 @@ void addIndication(Indication indication) {
     return {
       'name': _name,
       'brandNames': _brandNames,
-      'category': _category,
+      'categories': _categories,
       'concentrations': concentrations?.map((c) => c.toJson()).toList(),
       'contraindication': _contraindication,
       'indications': indications?.map((ind) => ind.toJson()).toList(),
@@ -138,7 +138,7 @@ void addIndication(Indication indication) {
   factory Medication.fromFirestore(Map<String, dynamic> map) {
     return Medication(
       name: map['name'] as String?,
-      category: map['category'] as String?,
+      categories: (map['categories'] as List<dynamic>?),
       concentrations: (map['concentrations'] as List<dynamic>?)?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
         .toList(),
       brandNames:(map['brandNames'] as List<dynamic>?),

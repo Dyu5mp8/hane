@@ -3,11 +3,14 @@ import 'package:hane/medications/medication_edit/Concentration_edit/concentratio
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_form.dart';
 import 'package:hane/medications/medication_edit/brand_name_edit/brand_name_form.dart';
 import 'package:hane/medications/medication_edit/brand_name_edit/brand_name_widget.dart';
+import 'package:hane/medications/medication_edit/category_edit/category_form.dart';
+import 'package:hane/medications/medication_edit/category_edit/category_widget.dart';
 import 'package:hane/medications/medication_edit/indication_edit_widget.dart';
 import 'package:hane/medications/medication_edit/indication_widget_form.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/views/medication_detail_view/medication_detail_view.dart';
 import 'package:hane/utils/validate_medication_save.dart' as val;
+
 
 class MedicationEditDetail extends StatefulWidget {
    final MedicationForm medicationForm;
@@ -69,6 +72,15 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                 ),
+
+                SizedBox(height: 40),
+
+                 Container(
+                  padding: const EdgeInsets.all(10),
+                  child: CategoryWidget(
+                    categoryForm: CategoryForm(categories: widget.medicationForm.categories),
+                  )
+                 ),
                 Container(
                   padding: const EdgeInsets.all(10),
                   child: BrandNameWidget(

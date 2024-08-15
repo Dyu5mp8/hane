@@ -39,7 +39,10 @@ class OverviewBox extends StatelessWidget {
                 Text(medication.brandNames!.join(", "),
                     style:
                         TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
-              if (medication.category != null) Text(medication.category!)
+              if (medication.categories != null) 
+              Text(medication.categories!.join(", "),
+                    style:
+                        TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
             ],
           ),
         ),

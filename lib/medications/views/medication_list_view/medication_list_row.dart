@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class MedicationListRow extends StatelessWidget {
   final Medication _medication;
 
-  MedicationListRow(this._medication);
+  const MedicationListRow(this._medication, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +33,9 @@ class MedicationListRow extends StatelessWidget {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        subtitle: _medication.category != null
+        subtitle: _medication.categories != null
             ? Text(
-                _medication.category!,
+                _medication.categories!.join(", "),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],

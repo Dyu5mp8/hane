@@ -1,18 +1,18 @@
 import "package:flutter/material.dart";
-import "package:hane/medications/medication_edit/brand_name_edit/brand_name_form.dart";
+import "package:hane/medications/medication_edit/category_edit/category_form.dart";
 
-class BrandNameWidget extends StatefulWidget {
-  final BrandNameForm brandNameForm;
+class CategoryWidget extends StatefulWidget {
+  final CategoryForm categoryForm;
 
-  const BrandNameWidget({super.key, 
-    required this.brandNameForm
+  const CategoryWidget({super.key, 
+    required this.categoryForm
   });
 
   @override
-  State<BrandNameWidget> createState() => _BrandNameWidgetState();
+  State<CategoryWidget> createState() => _categoryWidgetState();
 }
 
-class _BrandNameWidgetState extends State<BrandNameWidget> {
+class _categoryWidgetState extends State<CategoryWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -22,10 +22,10 @@ class _BrandNameWidgetState extends State<BrandNameWidget> {
           children: <Widget>[
             Expanded(
               child: TextFormField(
-                controller: widget.brandNameForm.brandNameController,
+                controller: widget.categoryForm.categoryController,
                 decoration: const InputDecoration(
-                  labelText: 'Varumärkesnamn',
-                  hintText: 'Ange varumärkesnamn',
+                  labelText: 'Kategorier',
+                  hintText: 'Ange kategorier',
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                 ),
               ),
@@ -34,7 +34,7 @@ class _BrandNameWidgetState extends State<BrandNameWidget> {
               icon: const Icon(Icons.add),
               onPressed: () {
                 setState(() {
-                  widget.brandNameForm.addBrandName();
+                  widget.categoryForm.addcategory();
                 });
                 
                 
@@ -49,20 +49,20 @@ class _BrandNameWidgetState extends State<BrandNameWidget> {
             spacing: 8,
             runSpacing: 8,
             alignment: WrapAlignment.start,
-            children: _buildBrandNameChips(),
+            children: _buildcategoryChips(),
           ),
         ),
       ],
     );
   }
 
-  List<Widget> _buildBrandNameChips() {
-    return widget.brandNameForm.brandNames.map((brandName) {
+  List<Widget> _buildcategoryChips() {
+    return widget.categoryForm.categories.map((category) {
       return InputChip(
-        label: Text(brandName),
+        label: Text(category),
         onDeleted: () {
           setState(() {
-            widget.brandNameForm.removeBrandName(brandName);
+            widget.categoryForm.removecategory(category);
           });
      
         },
