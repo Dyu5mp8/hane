@@ -86,10 +86,11 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                     brandNameForm: BrandNameForm(brandNames: widget.medicationForm.brandNames),
                   ),
 
-              
+        
                 ),
+                SizedBox(height: 40),
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.only(left: 10),
                   child: ConcentrationEditPart(
                       concentrationForm: ConcentrationForm(
                           concentrations: widget.medicationForm.concentrations)),

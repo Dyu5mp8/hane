@@ -5,13 +5,13 @@ import "generic_chip_form.dart";
 class GenericChipWidget<T> extends StatefulWidget {
   final GenericChipForm<T> form;
   final String labelText;
-  final String hintText;
+  final String? hintText;
 
   const GenericChipWidget({
     super.key,
     required this.form,
     required this.labelText,
-    required this.hintText,
+    this.hintText
   });
 
   @override
@@ -25,7 +25,7 @@ class _GenericChipWidgetState<T> extends State<GenericChipWidget<T>> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(
-          width: MediaQuery.of(context).size.width /4,
+          width: MediaQuery.of(context).size.width *0.7,
           child: Row(
             children: <Widget>[
               Expanded(
@@ -34,6 +34,9 @@ class _GenericChipWidgetState<T> extends State<GenericChipWidget<T>> {
                   decoration: InputDecoration(
                     labelText: widget.labelText,
                     hintText: widget.hintText,
+                    hintStyle: const TextStyle(
+                      fontSize: 12,
+                    ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                 ),

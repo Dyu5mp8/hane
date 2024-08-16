@@ -15,8 +15,8 @@ class CategoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GenericChipWidget<dynamic>(
       form: categoryForm,
-      labelText: 'Category',
-      hintText: 'Enter category',
+      labelText: 'Kategorier',
+      hintText: "Lägg till kategori (ex. smärtstillande)",
     );
   }
 }

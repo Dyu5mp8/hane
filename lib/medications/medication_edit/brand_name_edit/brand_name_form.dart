@@ -15,8 +15,8 @@ class BrandNameWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GenericChipWidget<dynamic>(
       form: brandNameForm,
-      labelText: 'Brand Name',
-      hintText: 'Enter brand name',
+      labelText: 'Varumärkesnamn',
+      hintText: 'Lägg till synonym (ex. Alvedon)',
     );
   }
 }

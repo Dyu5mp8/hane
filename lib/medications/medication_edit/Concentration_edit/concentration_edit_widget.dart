@@ -26,13 +26,14 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
           Row(
             children: <Widget>[
               SizedBox(
-                width: MediaQuery.of(context).size.width / 6,
+                width: MediaQuery.of(context).size.width/4,
                 child: TextFormField(
                   controller:
                       widget.concentrationForm.concentrationAmountController,
                   decoration: InputDecoration(
-                    labelText: 'Amount',
-                    hintText: 'Enter amount',
+                    labelText: 'Värde',
+                    hintText: "ex. 10",
+  
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                   validator: val.validateConcentrationAmount,
@@ -41,13 +42,13 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
               SizedBox(
                   height: 20, width: MediaQuery.of(context).size.width / 20),
               SizedBox(
-                width: MediaQuery.of(context).size.width / 6,
+                width: MediaQuery.of(context).size.width/4,
                 child: TextFormField(
                     controller:
                         widget.concentrationForm.concentrationUnitController,
                     decoration: InputDecoration(
-                      labelText: 'Unit',
-                      hintText: 'Enter unit',
+                      labelText: 'Enhet',
+                      hintText: "ex. mg/ml",
                       floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
                     validator: val.validateConcentrationUnit),
