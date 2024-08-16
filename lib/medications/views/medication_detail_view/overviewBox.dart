@@ -17,7 +17,7 @@ class OverviewBox extends StatelessWidget {
     List<Concentration>? concentrations = medication.concentrations;
 
     return Container(
-      height: 100,
+      height: 120,
       padding: EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
@@ -26,6 +26,11 @@ class OverviewBox extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(children: [if (medication.categories != null) 
+              ...medication.categories!.map((dynamic category) {
+                return Text("#$category ", style: TextStyle(fontSize: 11));
+              }).toList()]
+            ),
               Row(
                 children: [
                   Flexible(
@@ -33,18 +38,17 @@ class OverviewBox extends StatelessWidget {
                         style: Theme.of(context).textTheme.headlineLarge),
                   ),
                   editButton
-                ],
+        
+                ]
               ),
               if (medication.brandNames != null)
-                Text(medication.brandNames!.join(", "),
-                    style:
-                        TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
-              if (medication.categories != null) 
-              Text(medication.categories!.join(", "),
-                    style:
-                        TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
-            ],
-          ),
+                Flexible(
+                  child: Text(medication.brandNames!.join(", "),
+                      style:
+                          TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
+                ),
+          
+      ]),
         ),
         if (concentrations != null)
           Align(

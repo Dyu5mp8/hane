@@ -83,38 +83,45 @@ class _MedicationListViewState extends State<MedicationListView> {
     );
 
     // ChoiceChips for categories
-    final categoryChips = Row(
-
-      children: [Text("Kategori"),
-      SizedBox(width: 30),
-        ChoiceChip(
-          label: Text("Alla"),
-          selected: _selectedCategory == null,
-          onSelected: (bool selected) {
-            setState(() {
-              _selectedCategory = selected ? null : null;
-            });
-          },
-        ),
-
-        Wrap(
-          children: categories.map((dynamic category) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2.0),
-              child: ChoiceChip(
-                label: Text(category),
-                selected: _selectedCategory == category,
-                onSelected: (bool selected) {
-                  setState(() {
-                    _selectedCategory = selected ? category : null;
-                  });
-                },
-              ),
+   // ChoiceChips for categories
+// ChoiceChips for categories
+final categoryChips = Padding(
+  padding: const EdgeInsets.only(left: 0),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      SizedBox(height: 10),
+      Wrap(
+        spacing: 2.0, // horizontal space between chips
+        runSpacing: 1.0, // vertical space between rows of chips
+        children: [
+          ChoiceChip(
+            label: Text("Alla", style: TextStyle(fontSize: 11)),
+            selected: _selectedCategory == null,
+            onSelected: (bool selected) {
+              setState(() {
+                _selectedCategory = null;
+              });
+            },
+            padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+          ),
+          ...categories.map((dynamic category) {
+            return ChoiceChip(
+              label: Text(category, style: TextStyle(fontSize: 11)),
+              selected: _selectedCategory == category,
+              onSelected: (bool selected) {
+                setState(() {
+                  _selectedCategory = selected ? category : null;
+                });
+              },
+              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
             );
           }).toList(),
-        ),
-      ],
-    );
+        ],
+      ),
+    ],
+  ),
+);
 
     return Scaffold(
       appBar: AppBar(
@@ -137,14 +144,15 @@ class _MedicationListViewState extends State<MedicationListView> {
           ),
         ],
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
+
         onRefresh: refreshList,
         child: Column(
           children: [
             searchField,
             const SizedBox(height: 10),
             if (categories.isNotEmpty) Container(
-              padding: EdgeInsets.only(left: 40),
+              padding: EdgeInsets.only(left: 20),
               alignment: Alignment.centerLeft,
               child: categoryChips),
             const SizedBox(height:30),
