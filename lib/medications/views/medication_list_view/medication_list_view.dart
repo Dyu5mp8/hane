@@ -19,7 +19,7 @@ class _MedicationListViewState extends State<MedicationListView> {
   @override
   void initState() {
     super.initState();
-    _fetchMedications();
+   _fetchMedications();
   }
 
   Future<void> _fetchMedications() async {
@@ -68,15 +68,22 @@ class _MedicationListViewState extends State<MedicationListView> {
             },
           ),
         ],
+
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : RefreshIndicator.adaptive(
-              onRefresh: _fetchMedications,
+body: _isLoading
+    ? Center(child: CircularProgressIndicator())
+    : RefreshIndicator.adaptive(
+        onRefresh: _fetchMedications,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
               child: Column(
                 children: [
-                  searchFieldWidget(), // Moved search field into a separate method for clarity
+                  // Search field
+                  searchFieldWidget(),
                   const SizedBox(height: 10),
+                  
+                  // Category Chips
                   if (categories.isNotEmpty)
                     Container(
                       padding: EdgeInsets.only(left: 20),
@@ -84,22 +91,25 @@ class _MedicationListViewState extends State<MedicationListView> {
                       child: categoryChipsWidget(categories),
                     ),
                   const SizedBox(height: 30),
-                  Expanded(
-                    child: filteredMedications.isEmpty
-                        ? Center(child: Text('No medications found.'))
-                        : SafeArea(
-                            child: ListView.builder(
-                              itemCount: filteredMedications.length,
-                              itemBuilder: (context, index) {
-                                return MedicationListRow(filteredMedications[index]);
-                              },
-                            ),
-                          ),
-                  ),
                 ],
               ),
             ),
-    );
+            filteredMedications.isEmpty
+                ? SliverFillRemaining(
+                    child: Center(child: Text('No medications found.')),
+                  )
+                : SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return MedicationListRow(filteredMedications[index]);
+                      },
+                      childCount: filteredMedications.length,
+                    ),
+                  ),
+          ],
+        ),
+      ),
+);
   }
 
   Widget searchFieldWidget() {
@@ -131,12 +141,15 @@ class _MedicationListViewState extends State<MedicationListView> {
         children: [
           SizedBox(height: 10),
           Wrap(
-            spacing: 2.0, // horizontal space between chips
-            runSpacing: 1.0, // vertical space between rows of chips
+            spacing: 10.0, // horizontal space between chips
             children: [
               ChoiceChip(
                 label: Text("Alla", style: TextStyle(fontSize: 11)),
                 selected: _selectedCategory == null,
+                 shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
+      
+      ),
                 onSelected: (bool selected) {
                   setState(() {
                     _selectedCategory = null;
@@ -148,6 +161,10 @@ class _MedicationListViewState extends State<MedicationListView> {
                 return ChoiceChip(
                   label: Text(category, style: TextStyle(fontSize: 11)),
                   selected: _selectedCategory == category,
+                   shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
+      
+      ),
                   onSelected: (bool selected) {
                     setState(() {
                       _selectedCategory = selected ? category : null;
