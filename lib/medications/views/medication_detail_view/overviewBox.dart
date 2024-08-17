@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:hane/medications/models/medication.dart';
+import 'package:hane/medications/services/firebaseService.dart';
+import 'package:hane/medications/services/medication_firebase_service.dart';
+import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:hane/Views/medication_view/Helpers/editButton.dart';
+import 'package:hane/medications/ui_components/editButton.dart';
 
 
 class OverviewBox extends StatelessWidget {
@@ -37,7 +40,38 @@ class OverviewBox extends StatelessWidget {
                     child: Text(medication.name!,
                         style: Theme.of(context).textTheme.headlineLarge),
                   ),
-                  editButton
+                  editButton,
+                  IconButton(
+      icon: Icon(Icons.delete),
+      onPressed: () => showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Vill du ta bort läkemedlet?"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("Avbryt")),
+                TextButton(
+                    onPressed: () {
+                      var medicationListProvider = Provider.of<MedicationListProvider>(context, listen: false);
+                      Navigator.of(context).pop();
+                      FirebaseService.deleteMedication(medicationListProvider.user, medication);
+                      
+                      Navigator.of(context).pop();
+                      medicationListProvider.refreshList();
+                    },
+                    child: Text("Ta bort")
+
+    )],
+            );  
+          }
+      )
+                  ) 
+
+                  
         
                 ]
               ),

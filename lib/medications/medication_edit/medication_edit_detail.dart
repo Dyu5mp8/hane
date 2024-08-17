@@ -7,11 +7,15 @@ import 'package:hane/medications/medication_edit/indication_edit_widget.dart';
 import 'package:hane/medications/medication_edit/indication_widget_form.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/views/medication_detail_view/medication_detail_view.dart';
+import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:hane/utils/validate_medication_save.dart' as val;
+import 'package:provider/provider.dart';
+
 
 
 class MedicationEditDetail extends StatefulWidget {
    final MedicationForm medicationForm;
+
 
   MedicationEditDetail(
       {super.key, required this.medicationForm});
@@ -22,10 +26,12 @@ class MedicationEditDetail extends StatefulWidget {
 
 class _MedicationEditDetailState extends State<MedicationEditDetail> {
   final _formKey = GlobalKey<FormState>(); // Key for Form
+ 
 
 
   @override
   Widget build(BuildContext context) {
+    var medicationListProvider = Provider.of<MedicationListProvider>(context);
     
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +39,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () => _saveMedication(),
+            onPressed: () => _saveMedication(medicationListProvider),
           ),
         ],
       ),
@@ -109,7 +115,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                 
                 ),
                 ElevatedButton(
-                  onPressed: () => _saveMedication(),
+                  onPressed: () => _saveMedication(medicationListProvider),
                   child: const Text('Save Medication'),
                 ),
               ],
@@ -120,7 +126,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
     );
   }
 
-  void _saveMedication() {
+  void _saveMedication(MedicationListProvider provider) {
     if (_formKey.currentState!.validate()) {
       widget.medicationForm.saveMedication();
 
@@ -151,5 +157,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
         ),
       );
     }
+    provider.refreshList();
+    
   }
 }
