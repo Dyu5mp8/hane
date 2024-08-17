@@ -3,10 +3,9 @@ import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:hane/medications/models/medication.dart';
 import 'package:hane/medications/services/firebaseService.dart';
-import 'package:hane/medications/services/medication_firebase_service.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:hane/medications/ui_components/editButton.dart';
+import 'package:hane/medications/ui_components/edit_button.dart';
 
 
 class OverviewBox extends StatelessWidget {
@@ -21,7 +20,7 @@ class OverviewBox extends StatelessWidget {
 
     return Container(
       height: 120,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
       child: Row(children: [
@@ -31,7 +30,7 @@ class OverviewBox extends StatelessWidget {
             children: [
               Row(children: [if (medication.categories != null) 
               ...medication.categories!.map((dynamic category) {
-                return Text("#$category ", style: TextStyle(fontSize: 11));
+                return Text("#$category ", style: const TextStyle(fontSize: 11));
               }).toList()]
             ),
               Row(
@@ -42,18 +41,18 @@ class OverviewBox extends StatelessWidget {
                   ),
                   editButton,
                   IconButton(
-      icon: Icon(Icons.delete),
+      icon: const Icon(Icons.delete),
       onPressed: () => showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Vill du ta bort läkemedlet?"),
+              title: const Text("Vill du ta bort läkemedlet?"),
               actions: [
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text("Avbryt")),
+                    child: const Text("Avbryt")),
                 TextButton(
                     onPressed: () {
                       var medicationListProvider = Provider.of<MedicationListProvider>(context, listen: false);
@@ -63,7 +62,7 @@ class OverviewBox extends StatelessWidget {
                       Navigator.of(context).pop();
                       medicationListProvider.refreshList();
                     },
-                    child: Text("Ta bort")
+                    child: const Text("Ta bort")
 
     )],
             );  
@@ -79,7 +78,7 @@ class OverviewBox extends StatelessWidget {
                 Flexible(
                   child: Text(medication.brandNames!.join(", "),
                       style:
-                          TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
+                          const TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
                 ),
           
       ]),
@@ -88,7 +87,7 @@ class OverviewBox extends StatelessWidget {
           Align(
             alignment: Alignment.topRight,
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 100),
+              constraints: const BoxConstraints(maxWidth: 100),
 
               child: FittedBox(
                 fit: BoxFit.scaleDown,
@@ -114,17 +113,17 @@ class OverviewBox extends StatelessWidget {
     return Container(
         width: MediaQuery.of(context).size.width,
         color: Colors.white,
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "namn",
               style: TextStyle(fontSize: 16),
             ),
             medication.brandNames != null
                 ? Text(medication.brandNames!.join(", "))
-                : Text('sss')
+                : const Text('sss')
           ],
         ));
   }
@@ -133,17 +132,17 @@ class OverviewBox extends StatelessWidget {
     return Container(
         width: MediaQuery.of(context).size.width,
         color: Colors.white,
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Kontraindikationer",
               style: TextStyle(fontSize: 16),
             ),
             medication.contraindication != null
                 ? Text(medication.contraindication!)
-                : Text('Ingen angedd kontraindikation')
+                : const Text('Ingen angedd kontraindikation')
           ],
         ));
   }
@@ -157,18 +156,15 @@ class OverviewBox extends StatelessWidget {
     return Container(
         width: MediaQuery.of(context).size.width,
         color: Colors.white,
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Anteckningar',
               style: TextStyle(fontSize: 16),
             ),
-            medication.notes != null ? Text(medication.notes!) : Text(""),
-            //Testing state
-            // ElevatedButton(onPressed: (){ medication.notes = medication.name;}, child: Text("Spara"))
-            // ,
+            medication.notes != null ? Text(medication.notes!) : const Text(""),
           ],
         ));
   }
