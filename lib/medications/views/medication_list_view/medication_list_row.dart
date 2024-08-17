@@ -33,15 +33,29 @@ class MedicationListRow extends StatelessWidget {
             color: Theme.of(context).primaryColor,
           ),
         ),
-        subtitle: _medication.categories != null
-            ? Text(
-                _medication.categories!.join(", "),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              )
-            : null,
+        subtitle: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      if (_medication.brandNames != null)
+        Text(
+          _medication.brandNames!.join(","),
+          style: TextStyle(
+            fontSize: 12,
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[600],
+          ),
+        ),
+      if (_medication.categories != null)
+        Text(
+          _medication.categories!.join(", "),
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+          ),
+        ),
+      
+    ],
+  ),
         trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
