@@ -30,7 +30,7 @@ class OverviewBox extends StatelessWidget {
             children: [
               Row(children: [if (medication.categories != null) 
               ...medication.categories!.map((dynamic category) {
-                return Text("#$category ", style: const TextStyle(fontSize: 11));
+                return Text("#$category ", style: Theme.of(context).textTheme.displaySmall);
               }).toList()]
             ),
               Row(
@@ -78,7 +78,7 @@ class OverviewBox extends StatelessWidget {
                 Flexible(
                   child: Text(medication.brandNames!.join(", "),
                       style:
-                          const TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
+                          Theme.of(context).textTheme.bodyMedium?.copyWith(fontStyle: FontStyle.italic)),
                 ),
           
       ]),
@@ -109,25 +109,6 @@ class OverviewBox extends StatelessWidget {
     );
   }
 
-  Widget brandNameRow(BuildContext context, Medication medication) {
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        color: Colors.white,
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "namn",
-              style: TextStyle(fontSize: 16),
-            ),
-            medication.brandNames != null
-                ? Text(medication.brandNames!.join(", "))
-                : const Text('sss')
-          ],
-        ));
-  }
-
   Widget contraindicationRow(BuildContext context, Medication medication) {
     return Container(
         width: MediaQuery.of(context).size.width,
@@ -138,7 +119,7 @@ class OverviewBox extends StatelessWidget {
           children: [
             const Text(
               "Kontraindikationer",
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 14),
             ),
             medication.contraindication != null
                 ? Text(medication.contraindication!)
@@ -162,9 +143,9 @@ class OverviewBox extends StatelessWidget {
           children: [
             const Text(
               'Anteckningar',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 14),
             ),
-            medication.notes != null ? Text(medication.notes!) : const Text(""),
+            medication.notes != null ? Text(medication.notes!,) : const Text(""),
           ],
         ));
   }

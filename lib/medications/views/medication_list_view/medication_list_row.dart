@@ -27,11 +27,7 @@ class MedicationListRow extends StatelessWidget {
         
         title: Text(
           _medication.name!,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium,
         ),
         subtitle: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,20 +35,9 @@ class MedicationListRow extends StatelessWidget {
       if (_medication.brandNames != null)
         Text(
           _medication.brandNames!.join(","),
-          style: TextStyle(
-            fontSize: 12,
-            fontStyle: FontStyle.italic,
-            color: Colors.grey[600],
-          ),
+          style: Theme.of(context).textTheme.displaySmall?.copyWith(fontStyle: FontStyle.italic, fontSize: 12),
         ),
-      if (_medication.categories != null)
-        Text(
-          _medication.categories!.join(", "),
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
+
       
     ],
   ),
@@ -65,10 +50,7 @@ class MedicationListRow extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChangeNotifierProvider(
-                create: (context) => _medication,
-                child: MedicationDetailView(medication: _medication),
-              ),
+              builder: (context) => MedicationDetailView(medication: _medication),
             ),
           );
         },

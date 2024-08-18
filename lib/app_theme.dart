@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final largeFont = GoogleFonts.roboto(fontSize: 30);
-final mediumFont = GoogleFonts.roboto(fontSize: 14);
-final smallFont = GoogleFonts.roboto(fontSize: 12);
+final largeFont = GoogleFonts.rubik(fontSize: 30);
+final mediumFont = GoogleFonts.rubik(fontSize: 14);
+final smallFont = GoogleFonts.rubik(fontSize: 12);
 
 final ThemeData appTheme = ThemeData(
   useMaterial3: true,
@@ -25,12 +25,35 @@ final ThemeData appTheme = ThemeData(
     titleLarge: GoogleFonts.barlowSemiCondensed(
       fontSize: 30,
     ),
-    bodyMedium: GoogleFonts.roboto(
+    bodyMedium: GoogleFonts.rubik(
+      fontSize: 12,
+    ),
+    displaySmall: GoogleFonts.rubik(
+      fontSize: 10,
+    ),
+
+    headlineLarge: GoogleFonts.rubik(
+      fontSize: 20,
+    ),
+
+    bodyLarge: GoogleFonts.rubik(
       fontSize: 16,
     ),
-    displaySmall: GoogleFonts.roboto(
+
+    headlineSmall: GoogleFonts.rubik(
       fontSize: 14,
     ),
+
+    bodySmall: GoogleFonts.rubik(
+      fontSize: 12,
+    ),
+
+    headlineMedium: GoogleFonts.rubik(
+      fontSize: 16,
+    ),
+
+
+    
     
   ),
   appBarTheme: const AppBarTheme(

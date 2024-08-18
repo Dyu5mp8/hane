@@ -119,6 +119,8 @@ body: _isLoading
         decoration: InputDecoration(
           isDense: true,
           hintText: 'Sök efter läkemedel',
+          labelStyle: Theme.of(context).textTheme.bodyMedium,
+          hintStyle: Theme.of(context).textTheme.bodyMedium,
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
@@ -144,7 +146,7 @@ body: _isLoading
             spacing: 10.0, // horizontal space between chips
             children: [
               ChoiceChip(
-                label: Text("Alla", style: TextStyle(fontSize: 11)),
+                label: Text("Alla", style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
                 selected: _selectedCategory == null,
                  shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20), // Slightly rounded edges
@@ -159,7 +161,7 @@ body: _isLoading
               ),
               ...categories.map((dynamic category) {
                 return ChoiceChip(
-                  label: Text(category, style: TextStyle(fontSize: 11)),
+                  label: Text(category, style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
                   selected: _selectedCategory == category,
                    shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20), // Slightly rounded edges

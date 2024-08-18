@@ -26,7 +26,6 @@ class MedicationDetailView extends StatelessWidget {
             OverviewBox(),
             
 
-           if (medication.adultIndications != null && medication.adultIndications!.isNotEmpty) 
             const IndicationBox()
           ],
         ),

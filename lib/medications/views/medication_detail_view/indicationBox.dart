@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hane/medications/controllers/dosageViewHandler.dart';
+import 'package:hane/medications/medication_edit/medication_detail_form.dart';
+import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:hane/medications/ui_components/dosage_snippet.dart';
 import 'package:hane/medications/models/indication.dart';
 import 'package:hane/medications/models/medication.dart';
@@ -13,12 +15,20 @@ class IndicationBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Medication>(
       builder: (context, medication, child) {
-        if (medication.indications == null){
-          return const Text('No indications available');
+
+        if (medication.indications == null || medication.indications!.isEmpty) {
+          return const Column(
+            children: [
+              SizedBox(height:20),
+              Icon(Icons.lightbulb_circle, color: Colors.grey, size: 50),
+              Text("Inga indikationer ännu! Lägg till indikation eller gör andra ändringar..."),
+              SizedBox(height:20),
+              AddIndicationButton(),
+            ],
+          );
+
         }
-        if (medication.indications!.isEmpty){
-          return const Text('No indications available');
-        }
+   
         return _IndicationView(indications: medication.indications!, concentrations: medication.concentrations);
       },
     );
@@ -41,7 +51,7 @@ class _IndicationView extends StatelessWidget {
           children: [
             _IndicationTabs(indications: indications),
             _IndicationTabView(indications: indications, concentrations: concentrations),
-            AddIndicationButton(),
+            const AddIndicationButton(),
           ],
         ),
       ),
@@ -153,12 +163,20 @@ class AddIndicationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var _medication = Provider.of<Medication>(context, listen: false);
+
     return ElevatedButton(
       onPressed: () {
-        final medication = Provider.of<Medication>(context, listen: false);
-        medication.addIndication(Indication(name: 'New indication', isPediatric: false));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MedicationEditDetail(medicationForm: MedicationForm(medication: _medication))));
       },
-      child: const Text('Add indication'),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Redigera läkemedel'),
+          SizedBox(width: 10),
+          const Icon(Icons.edit),
+        ],
+      ),
     );
   }
 }
