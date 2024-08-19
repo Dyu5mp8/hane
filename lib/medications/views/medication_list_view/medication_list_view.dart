@@ -137,15 +137,17 @@ body: _isLoading
 
   Widget categoryChipsWidget(List<dynamic> categories) {
     return Padding(
-      padding: const EdgeInsets.only(left: 0),
+      padding: const EdgeInsets.only(left: 0, right: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 10),
           Wrap(
-            spacing: 10.0, // horizontal space between chips
+            spacing: 5.0, // horizontal space between chips
+            runSpacing: -8,
             children: [
               ChoiceChip(
+                showCheckmark: false,
                 label: Text("Alla", style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
                 selected: _selectedCategory == null,
                  shape: RoundedRectangleBorder(
@@ -161,6 +163,7 @@ body: _isLoading
               ),
               ...categories.map((dynamic category) {
                 return ChoiceChip(
+                  showCheckmark: false,
                   label: Text(category, style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
                   selected: _selectedCategory == category,
                    shape: RoundedRectangleBorder(

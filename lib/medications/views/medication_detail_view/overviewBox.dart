@@ -57,7 +57,7 @@ class OverviewBox extends StatelessWidget {
                     onPressed: () {
                       var medicationListProvider = Provider.of<MedicationListProvider>(context, listen: false);
                       Navigator.of(context).pop();
-                      FirebaseService.deleteMedication(medicationListProvider.user, medication);
+                      FirebaseService.deleteMedication(medicationListProvider.user!, medication);
                       
                       Navigator.of(context).pop();
                       medicationListProvider.refreshList();

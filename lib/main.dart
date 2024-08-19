@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hane/login/loginPage.dart';
+import 'package:hane/login/welcomePage.dart';
+
 import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:hane/medications/views/medication_list_view/medication_list_view.dart';
 import 'Views/homepage.dart';
@@ -11,6 +14,7 @@ import 'package:provider/provider.dart';
 
 
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -19,6 +23,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform, // Ensure your firebase_options.dart file is properly set up.
   );
   var firestore = FirebaseFirestore.instance;
+
   firestore.settings = const Settings(persistenceEnabled: true, 
   cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   
@@ -26,7 +31,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => MedicationListProvider(user: 'master'),
+          create: (_) => MedicationListProvider(),
         ),
         // Other providers...
       ],
@@ -45,7 +50,7 @@ class MyApp extends StatelessWidget {
       
     
        theme: appTheme,
-      home: MedicationListView(),
+      home: WelcomePage(),
       routes: {
 
     // Add more routes here

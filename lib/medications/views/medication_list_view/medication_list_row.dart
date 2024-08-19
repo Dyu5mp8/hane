@@ -27,7 +27,7 @@ class MedicationListRow extends StatelessWidget {
         
         title: Text(
           _medication.name!,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
         subtitle: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
