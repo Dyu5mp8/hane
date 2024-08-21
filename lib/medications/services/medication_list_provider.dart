@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hane/medications/models/medication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hane/utils/error_alert.dart';
 
 class MedicationListProvider with ChangeNotifier {
   String? user;
@@ -14,12 +15,26 @@ class MedicationListProvider with ChangeNotifier {
   List<Medication> get medications => _medications;
 
   Future<void> refreshList() async {
-    await queryMedications(forceFromServer: true);
-    notifyListeners();
+    try {
+      await queryMedications(forceFromServer: false);
+      notifyListeners();
+    } catch (e) {
+
+    }
   }
 
-  Future<void> setUserData(String user) async {
+  setUserData(String user) {
     this.user = user;
+  }
+
+  void addMedication(Medication medication) async {
+    var db = FirebaseFirestore.instance;
+    CollectionReference medicationsCollection = db.collection('users').doc(user).collection('medications');
+
+    await medicationsCollection.doc(medication.name).set(medication.toJson());
+    // Notify listeners that the list has been updated
+    notifyListeners();
+  
   }
 
   Future<void> copyMasterToUser() async {
@@ -34,15 +49,15 @@ class MedicationListProvider with ChangeNotifier {
     CollectionReference<Map<String, dynamic>> userMedicationsCollection =
         db.collection("users").doc(user).collection("medications");
     
-    // Check if the current user already has medications
-    var userSnapshot = await userMedicationsCollection.get();
-    if (userSnapshot.docs.isNotEmpty) {
-      throw Exception("User already has medications. Cannot copy master medications.");
-    }
-
-    WriteBatch batch = db.batch();
-
     try {
+      // Check if the current user already has medications
+      var userSnapshot = await userMedicationsCollection.get();
+      if (userSnapshot.docs.isNotEmpty) {
+        throw Exception("User already has medications. Cannot copy master medications.");
+      }
+
+      WriteBatch batch = db.batch();
+
       // Fetch all medications from the master user's collection
       QuerySnapshot<Map<String, dynamic>> masterSnapshot = await masterMedicationsCollection.get();
 
@@ -59,22 +74,24 @@ class MedicationListProvider with ChangeNotifier {
       await refreshList();
     } catch (e) {
       print("Failed to copy master medications to user: $e");
-      throw Exception("Failed to copy master medications to user.");
     }
   }
 
-  Future<List<Medication>> queryMedications({bool isGettingDefaultList = false, bool forceFromServer = true}) async {
+  Future<List<Medication>> queryMedications({bool isGettingDefaultList = false, bool forceFromServer = true, BuildContext? context}) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     CollectionReference<Map<String, dynamic>> medicationsCollection;
     var source = forceFromServer ? Source.server : Source.cache;
+    print("Querying medications for user: $user");
 
-    // Determine the correct medications collection
     medicationsCollection = db.collection("users")
                                .doc(isGettingDefaultList ? masterUID : user)
                                .collection("medications");
 
     try {
       var snapshot = await medicationsCollection.get(GetOptions(source: source));
+      print(forceFromServer);
+      print(source);
+      print(snapshot.metadata.isFromCache ? "Cache data used." : "Server data used.");
 
       if (snapshot.metadata.isFromCache && forceFromServer) {
         print("Cache data used. Forcing server fetch.");
@@ -84,9 +101,13 @@ class MedicationListProvider with ChangeNotifier {
       _medications = snapshot.docs
                              .map((doc) => Medication.fromFirestore(doc.data()))
                              .toList();
+      print("Fetched ${_medications.length} medications");
       return _sortMedications(_medications);
     } catch (e) {
       print("Error querying medications: $e");
+      if (context != null) {
+        showErrorDialog(context, "Failed to fetch medications: $e");
+      }
       throw Exception("Failed to fetch medications: $e");
     }
   }

@@ -18,15 +18,17 @@ class _MedicationListViewState extends State<MedicationListView> {
 
   @override
   void initState() {
-    super.initState();
-   _fetchMedications();
-  }
-
-  Future<void> _fetchMedications() async {
-    await Provider.of<MedicationListProvider>(context, listen: false).refreshList();
     setState(() {
       _isLoading = false;
     });
+  }
+
+
+  Future<void> _fetchMedications() async {
+    MedicationListProvider medicationListProvider = Provider.of<MedicationListProvider>(context, listen: false);
+    print('Fetching medications');
+    await medicationListProvider.queryMedications(isGettingDefaultList: false, forceFromServer: true);
+
   }
 
   @override

@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hane/medications/views/medication_initial_screen.dart';
+import 'package:hane/medications/services/medication_list_provider.dart';
+import 'package:hane/login/medication_initial_screen.dart';
 import 'package:hane/medications/views/medication_list_view/medication_list_view.dart';
+import 'package:provider/provider.dart';
 import 'signup.dart';
 import 'Widget/bezierContainer.dart';
-
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key, this.title}) : super(key: key);
@@ -20,7 +22,105 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
- 
+  Future<UserStatus> checkUserStatus(String user) async {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(user);
+
+    // Get the document snapshot for the user
+    final userSnapshot = await userRef.get();
+
+    // Directly return the value of the isAdmin field, or false if it's not true or doesn't exist
+    if (userSnapshot.data()?['isAdmin'] == true) {
+      return UserStatus.isAdmin;
+    }
+
+    final userMedicationRef = userRef.collection('medications');
+
+    // Check if the medications subcollection has any documents
+    final snapshot = await userMedicationRef.get();
+
+    if (snapshot.docs.isNotEmpty) {
+      return UserStatus.hasExistingUserData;
+    } else {
+      return UserStatus.noExistingUserData;
+    }
+  }
+
+  Widget _submitButton() {
+    return InkWell(
+      onTap: () async {
+        try {
+          await _auth.signInWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Logged in successfully"),
+          ));
+          var user = FirebaseAuth.instance.currentUser?.uid;
+          if (user != null) {
+            var userStatus = await checkUserStatus(user);
+
+            if (userStatus == UserStatus.hasExistingUserData ||
+                userStatus == UserStatus.isAdmin) {
+              var medicationProvider =
+                  Provider.of<MedicationListProvider>(context, listen: false);
+
+              medicationProvider.setUserData(user);
+              await medicationProvider.queryMedications(
+                  isGettingDefaultList: false, forceFromServer: true);
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MedicationListView()));
+            }
+
+            if (userStatus == UserStatus.noExistingUserData) {
+              var medicationProvider =
+                  Provider.of<MedicationListProvider>(context, listen: false);
+
+              medicationProvider.setUserData(user);
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MedicationInitScreen(user: user)));
+            }
+          }
+        } catch (e) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Failed to log in: $e"),
+          ));
+        }
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.symmetric(vertical: 15),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.grey.shade200,
+              offset: Offset(2, 4),
+              blurRadius: 5,
+              spreadRadius: 2,
+            ),
+          ],
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [Color(0xfffbb448), Color(0xfff7892b)],
+          ),
+        ),
+        child: Text(
+          'Login',
+          style: TextStyle(fontSize: 20, color: Colors.white),
+        ),
+      ),
+    );
+  }
+
   Widget _entryField(String title, TextEditingController controller,
       {bool isPassword = false}) {
     return Container(
@@ -43,56 +143,6 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _submitButton() {
-    return InkWell(
-      onTap: () async {
-        try {
-          await _auth.signInWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Logged in successfully"),
-          ));
-          var user = FirebaseAuth.instance.currentUser?.uid;
-          if (user != null) {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MedicationInitScreen(user: user)));
-          }
-
-        } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Failed to log in: $e"),
-          ));
-        }
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-                      BoxShadow(
-              color: Colors.grey.shade200,
-              offset: Offset(2, 4),
-              blurRadius: 5,
-              spreadRadius: 2,
-            ),
-          ],
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [Color(0xfffbb448), Color(0xfff7892b)],
-          ),
-        ),
-        child: Text(
-          'Login',
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        ),
       ),
     );
   }
@@ -121,8 +171,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-
 
   Widget _createAccountLabel() {
     return InkWell(
@@ -195,7 +243,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-
       body: Container(
         height: height,
         child: Stack(
@@ -236,7 +283,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-        
           ],
         ),
       ),

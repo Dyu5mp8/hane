@@ -1,10 +1,13 @@
 
+import "package:firebase_auth/firebase_auth.dart";
 import "package:hane/medications/models/medication.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 
 class FirebaseService {
 
-  static Future<void> uploadMedication(String user, Medication medication) async {
+  static Future<void> uploadMedication(Medication medication) async {
+    var user = FirebaseAuth.instance.currentUser!.uid;
+
     var db = FirebaseFirestore.instance;
     CollectionReference medicationsCollection = db.collection('users').doc(user).collection('medications');
     if (medication.name != null) {

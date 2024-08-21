@@ -1,6 +1,8 @@
 import "package:flutter/widgets.dart";
 import "package:hane/medications/models/medication.dart";
 import "package:hane/medications/services/firebaseService.dart";
+import "package:hane/medications/services/medication_list_provider.dart";
+import "package:provider/provider.dart";
 
 class MedicationForm {
   List<Concentration> concentrations = [];
@@ -40,7 +42,7 @@ class MedicationForm {
     );
   }
 
-  void saveMedication() {
+  void saveMedication(context) {
     if (medication == null) {
       medication = createMedication();
     } else {
@@ -56,7 +58,8 @@ class MedicationForm {
 
 
     medication!.updateMedication();
-    FirebaseService.uploadMedication("master", medication!);
+    var medicationListProvider = Provider.of<MedicationListProvider>(context, listen: false);
+    medicationListProvider.addMedication(medication!);
 
   }
 }

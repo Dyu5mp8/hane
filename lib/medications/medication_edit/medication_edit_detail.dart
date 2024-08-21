@@ -128,7 +128,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
 
   void _saveMedication(MedicationListProvider provider) {
     if (_formKey.currentState!.validate()) {
-      widget.medicationForm.saveMedication();
+      widget.medicationForm.saveMedication(context);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
