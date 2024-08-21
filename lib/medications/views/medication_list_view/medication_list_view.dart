@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hane/login/loginPage.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:hane/medications/models/medication.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:hane/medications/views/medication_list_view/medication_list_row.dart';
 import 'package:provider/provider.dart';
+
+
 
 class MedicationListView extends StatefulWidget {
   @override
@@ -14,14 +18,8 @@ class MedicationListView extends StatefulWidget {
 class _MedicationListViewState extends State<MedicationListView> {
   String _searchQuery = '';
   String? _selectedCategory;
-  bool _isLoading = true;
 
-  @override
-  void initState() {
-    setState(() {
-      _isLoading = false;
-    });
-  }
+
 
 
   Future<void> _fetchMedications() async {
@@ -52,6 +50,33 @@ class _MedicationListViewState extends State<MedicationListView> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Läkemedel'),
+        leading: IconButton(
+          icon: Icon(Icons.exit_to_app),
+          onPressed: () {
+            showDialog(context: context, builder: (context) {
+              return AlertDialog(
+                title: Text('Vill du logga ut?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Avbryt'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      FirebaseAuth.instance.signOut();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    child: Text('Logga ut'),
+                  ),
+                ],
+              );
+            });
+
+          },
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
@@ -72,9 +97,7 @@ class _MedicationListViewState extends State<MedicationListView> {
         ],
 
       ),
-body: _isLoading
-    ? Center(child: CircularProgressIndicator())
-    : RefreshIndicator.adaptive(
+body: RefreshIndicator.adaptive(
         onRefresh: _fetchMedications,
         child: CustomScrollView(
           slivers: [
