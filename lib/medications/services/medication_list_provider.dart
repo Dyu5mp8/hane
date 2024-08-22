@@ -31,7 +31,7 @@ class MedicationListProvider with ChangeNotifier {
     this.user = user;
   }
 
-  void addMedication(Medication medication) async {
+  Future<void> addMedication(Medication medication) async {
     var db = FirebaseFirestore.instance;
 
     CollectionReference medicationsCollection = db.collection('users').doc(user).collection('medications');
@@ -41,6 +41,17 @@ class MedicationListProvider with ChangeNotifier {
     print(medication.name); 
    // notifyListeners();
   
+  }
+
+  Future<void> deleteMedication(Medication medication) async {
+    var db = FirebaseFirestore.instance;
+    CollectionReference medicationsCollection = db.collection('users').doc(user).collection('medications');
+    if (medication.name != null) {
+      await medicationsCollection.doc(medication.name).delete();
+      print("Medication deleted successfully!");
+    } else {
+      print("Medication name is null. Medication not deleted.");
+    }
   }
 
   Future<void> copyMasterToUser() async {

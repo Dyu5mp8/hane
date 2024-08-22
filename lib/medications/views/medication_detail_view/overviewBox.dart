@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:hane/medications/models/medication.dart';
-import 'package:hane/medications/services/firebaseService.dart';
+
 import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/medications/ui_components/edit_button.dart';
@@ -57,7 +57,7 @@ class OverviewBox extends StatelessWidget {
                     onPressed: () {
                       var medicationListProvider = Provider.of<MedicationListProvider>(context, listen: false);
                       Navigator.of(context).pop();
-                      FirebaseService.deleteMedication(medicationListProvider.user!, medication);
+                      medicationListProvider.deleteMedication(medication);
                       
                       Navigator.of(context).pop();
                       medicationListProvider.refreshList();

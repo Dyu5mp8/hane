@@ -1,6 +1,5 @@
 import "package:flutter/widgets.dart";
 import "package:hane/medications/models/medication.dart";
-import "package:hane/medications/services/firebaseService.dart";
 import "package:hane/medications/services/medication_list_provider.dart";
 import "package:provider/provider.dart";
 
@@ -59,7 +58,6 @@ class MedicationForm {
 
     medication!.updateMedication();
     var medicationListProvider = Provider.of<MedicationListProvider>(context, listen: false);
-    print("somethin");
     medicationListProvider.addMedication(medication!);
 
   }
