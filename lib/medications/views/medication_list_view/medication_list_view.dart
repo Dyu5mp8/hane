@@ -49,7 +49,19 @@ class _MedicationListViewState extends State<MedicationListView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Läkemedel'),
+        title: Column(
+          children: [
+            Text('Läkemedel'),
+            if (medicationListProvider.isAdmin)
+              Text(
+                'Admin: ÄNDRINGAR SKER I STAMLISTAN',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.orange,
+                ),
+              ),
+          ],
+        ),
         leading: IconButton(
           icon: Icon(Icons.exit_to_app),
           onPressed: () {
@@ -67,6 +79,7 @@ class _MedicationListViewState extends State<MedicationListView> {
                     onPressed: () {
                       Navigator.of(context).pop();
                       FirebaseAuth.instance.signOut();
+                      medicationListProvider.clearProvider();
                       Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
                     },
                     child: Text('Logga ut'),

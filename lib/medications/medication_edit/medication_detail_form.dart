@@ -59,6 +59,7 @@ class MedicationForm {
 
     medication!.updateMedication();
     var medicationListProvider = Provider.of<MedicationListProvider>(context, listen: false);
+    print("somethin");
     medicationListProvider.addMedication(medication!);
 
   }

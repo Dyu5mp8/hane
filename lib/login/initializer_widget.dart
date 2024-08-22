@@ -7,6 +7,7 @@ import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:hane/medications/views/medication_list_view/medication_list_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/utils/error_alert.dart';
+
 class InitializerWidget extends StatelessWidget {
   const InitializerWidget({Key? key}) : super(key: key);
 
@@ -17,7 +18,7 @@ class InitializerWidget extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Show a loading screen while waiting for the future to complete
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           // Handle errors accordingly
           return Center(
@@ -33,7 +34,6 @@ class InitializerWidget extends StatelessWidget {
               child: Text("An error occurred: $e"),
             );
           }
-          // Show the resolved widget (either LoginPage or MedicationListView)
         }
       },
     );
@@ -47,10 +47,9 @@ class InitializerWidget extends StatelessWidget {
           await checkUserStatus(FirebaseAuth.instance.currentUser!.uid);
       String user = FirebaseAuth.instance.currentUser!.uid;
       final medicationListProvider =
-            Provider.of<MedicationListProvider>(context, listen: false);
-
+          Provider.of<MedicationListProvider>(context, listen: false);
+      print("User status: $userStatus");
       if (userStatus == UserStatus.hasExistingUserData) {
-        
         await medicationListProvider
             .setUserData(FirebaseAuth.instance.currentUser!.uid);
         await medicationListProvider.queryMedications(
@@ -59,32 +58,35 @@ class InitializerWidget extends StatelessWidget {
       } else if (userStatus == UserStatus.noExistingUserData) {
         return MedicationInitScreen(user: user);
       } else if (userStatus == UserStatus.isAdmin) {
+        medicationListProvider.setUserData("master");       
         medicationListProvider.queryMedications(
-            isGettingDefaultList: true, forceFromServer: true);
+            isGettingDefaultList: false, forceFromServer: true);
         return MedicationListView();
-      }
-      else {
+      } else {
         throw Exception("Unknown user status");
       }
-    }
-     else {
+    } else {
       // Return the login page if the user is not logged in
       return LoginPage();
     }
-  
   }
 
   Future<UserStatus> checkUserStatus(String user) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(user);
+    // First, check if the user has the 'admin' custom claim
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
 
-    // Get the document snapshot for the user
-    final userSnapshot = await userRef.get();
 
-    // Directly return the value of the isAdmin field, or false if it's not true or doesn't exist
-    if (userSnapshot.data()?['isAdmin'] == true) {
-      return UserStatus.isAdmin;
+    if (firebaseUser != null) {
+      IdTokenResult idTokenResult = await firebaseUser.getIdTokenResult(true);
+
+      if (idTokenResult.claims != null && idTokenResult.claims!['admin'] == true) {
+        print("User is admin");
+        return UserStatus.isAdmin;
+      }
     }
 
+    // If the user is not an admin, check for existing user data in Firestore
+    final userRef = FirebaseFirestore.instance.collection('users').doc(user);
     final userMedicationRef = userRef.collection('medications');
 
     // Check if the medications subcollection has any documents

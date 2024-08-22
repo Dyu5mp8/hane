@@ -8,7 +8,11 @@ class MedicationListProvider with ChangeNotifier {
   final String masterUID = "master";
   List<Medication> _medications = [];
 
+
   MedicationListProvider({this.user});
+
+
+ bool get isAdmin => user == masterUID;
 
   bool get hasExistingUserData => _medications.isNotEmpty;
 
@@ -29,11 +33,13 @@ class MedicationListProvider with ChangeNotifier {
 
   void addMedication(Medication medication) async {
     var db = FirebaseFirestore.instance;
+
     CollectionReference medicationsCollection = db.collection('users').doc(user).collection('medications');
 
     await medicationsCollection.doc(medication.name).set(medication.toJson());
     // Notify listeners that the list has been updated
-    notifyListeners();
+    print(medication.name); 
+   // notifyListeners();
   
   }
 
@@ -77,7 +83,7 @@ class MedicationListProvider with ChangeNotifier {
     }
   }
 
-  Future<List<Medication>> queryMedications({bool isGettingDefaultList = false, bool forceFromServer = true, BuildContext? context}) async {
+  Future<void> queryMedications({bool isGettingDefaultList = false, bool forceFromServer = true, BuildContext? context}) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     CollectionReference<Map<String, dynamic>> medicationsCollection;
     var source = forceFromServer ? Source.server : Source.cache;
@@ -102,7 +108,8 @@ class MedicationListProvider with ChangeNotifier {
                              .map((doc) => Medication.fromFirestore(doc.data()))
                              .toList();
       print("Fetched ${_medications.length} medications");
-      return _sortMedications(_medications);
+      _medications = _sortMedications(_medications);
+      notifyListeners();
     } catch (e) {
       print("Error querying medications: $e");
       if (context != null) {
@@ -115,5 +122,11 @@ class MedicationListProvider with ChangeNotifier {
   List<Medication> _sortMedications(List<Medication> medications) {
     medications.sort((a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
     return medications;
+  }
+
+  void clearProvider(){
+    user = null;
+    _medications = [];
+    notifyListeners();
   }
 }

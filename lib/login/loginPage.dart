@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:hane/login/medication_initial_screen.dart';
 import 'package:hane/medications/views/medication_list_view/medication_list_view.dart';
@@ -56,37 +57,10 @@ class _LoginPageState extends State<LoginPage> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("Logged in successfully"),
           ));
-          var user = FirebaseAuth.instance.currentUser?.uid;
-          if (user != null) {
-            var userStatus = await checkUserStatus(user);
-
-            if (userStatus == UserStatus.hasExistingUserData ||
-                userStatus == UserStatus.isAdmin) {
-              var medicationProvider =
-                  Provider.of<MedicationListProvider>(context, listen: false);
-
-              medicationProvider.setUserData(user);
-              await medicationProvider.queryMedications(
-                  isGettingDefaultList: false, forceFromServer: true);
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MedicationListView()));
-            }
-
-            if (userStatus == UserStatus.noExistingUserData) {
-              var medicationProvider =
-                  Provider.of<MedicationListProvider>(context, listen: false);
-
-              medicationProvider.setUserData(user);
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MedicationInitScreen(user: user)));
-            }
-          }
+         Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => InitializerWidget()),
+          );
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("Failed to log in: $e"),
