@@ -5,7 +5,7 @@ import 'package:hane/login/loginPage.dart';
 import 'package:hane/medications/models/medication.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hane/medications/views/medication_list_view/medication_list_view.dart';
+import 'package:hane/medications/medication_list_view/medication_list_view.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'app_theme.dart';

@@ -5,7 +5,7 @@ import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:hane/medications/models/medication.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
-import 'package:hane/medications/views/medication_list_view/medication_list_row.dart';
+import 'package:hane/medications/medication_list_view/medication_list_row.dart';
 import 'package:provider/provider.dart';
 
 

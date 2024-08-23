@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hane/medications/views/medication_list_view/medication_list_view.dart';
+import 'package:hane/medications/medication_list_view/medication_list_view.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
 
-enum UserStatus {
-  hasExistingUserData,
-  noExistingUserData,
-  isAdmin 
-}
 
 class MedicationInitScreen extends StatelessWidget {
   final String user;

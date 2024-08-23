@@ -1,15 +1,24 @@
+// ignore_for_file: unused_import
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/login/loginPage.dart';
-import 'package:hane/login/medication_initial_screen.dart';
+import 'package:hane/login/medication_init_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
-import 'package:hane/medications/views/medication_list_view/medication_list_view.dart';
+import 'package:hane/medications/medication_list_view/medication_list_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/utils/error_alert.dart';
 
+enum UserStatus {
+  hasExistingUserData,
+  noExistingUserData,
+  isAdmin 
+}
+
+
 class InitializerWidget extends StatelessWidget {
-  const InitializerWidget({Key? key}) : super(key: key);
+  const InitializerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

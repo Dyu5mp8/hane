@@ -6,7 +6,7 @@ import 'package:hane/medications/medication_edit/category_edit/category_form.dar
 import 'package:hane/medications/medication_edit/indication_edit_widget.dart';
 import 'package:hane/medications/medication_edit/indication_widget_form.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
-import 'package:hane/medications/views/medication_detail_view/medication_detail_view.dart';
+import 'package:hane/medications/medication_detail/medication_detail_view.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:hane/utils/validate_medication_save.dart' as val;
 import 'package:provider/provider.dart';
