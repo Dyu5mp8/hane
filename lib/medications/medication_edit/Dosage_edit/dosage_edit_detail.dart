@@ -41,7 +41,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Allmän information", style: TextStyle(fontWeight: FontWeight.bold)),
+                Text("Allmänt", style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 TextFormField(
                   controller: widget.dosageForm.administrationRouteController,
@@ -63,7 +63,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.doseAmountController,
-                        decoration: customInputDecoration("Doseringsmängd"),
+                        decoration: customInputDecoration("Mängd"),
                         validator: val.validateAmountInput,
                         style: TextStyle(fontSize: formTextSize),
                       ),
@@ -72,7 +72,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.doseUnitController,
-                        decoration: customInputDecoration("Doseringsenhet"),
+                        decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
                         style: TextStyle(fontSize: formTextSize),
                       ),
@@ -80,12 +80,13 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                   ],
                 ),
                 SizedBox(height: 16),
+                Text("Dosintervall", style: TextStyle(fontWeight: FontWeight.bold)),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.lowerLimitDoseAmountController,
-                        decoration: customInputDecoration("Lägsta dosmängd"),
+                        decoration: customInputDecoration("Från"),
                         validator: val.validateAmountInput,
                         style: TextStyle(fontSize: formTextSize),
                       ),
@@ -94,7 +95,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.lowerLimitDoseUnitController,
-                        decoration: customInputDecoration("Lägsta dosenhet"),
+                        decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
                         style: TextStyle(fontSize: formTextSize),
                       ),
@@ -107,7 +108,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.higherLimitDoseAmountController,
-                        decoration: customInputDecoration("Högsta dosmängd"),
+                        decoration: customInputDecoration("Till"),
                         validator: val.validateAmountInput,
                         style: TextStyle(fontSize: formTextSize),
                       ),
@@ -116,7 +117,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.higherLimitDoseUnitController,
-                        decoration: customInputDecoration("Högsta dosenhet"),
+                        decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
                         style: TextStyle(fontSize: formTextSize),
                       ),
@@ -124,14 +125,14 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                   ],
                 ),
                 SizedBox(height: 24),
-                Text("Maximal dosering", style: TextStyle(fontWeight: FontWeight.bold)),
+                Text("Maximal dosering (tak)", style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.maxDoseamountController,
-                        decoration: customInputDecoration("Maxdosmängd"),
+                        decoration: customInputDecoration("Max"),
                         validator: val.validateAmountInput,
                         style: TextStyle(fontSize: formTextSize),
                       ),
@@ -140,7 +141,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.maxDoseUnitController,
-                        decoration: customInputDecoration("Maxdosenhet"),
+                        decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
                         style: TextStyle(fontSize: formTextSize),
                       ),

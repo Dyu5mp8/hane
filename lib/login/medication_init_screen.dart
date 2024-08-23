@@ -3,7 +3,6 @@ import 'package:hane/medications/medication_list_view/medication_list_view.dart'
 import 'package:provider/provider.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
 
-
 class MedicationInitScreen extends StatelessWidget {
   final String user;
 
@@ -11,14 +10,17 @@ class MedicationInitScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);  // Access the current theme
+    final theme = Theme.of(context); // Access the current theme
     final textTheme = theme.textTheme;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Initialize Medications',
-          style: textTheme.titleLarge, // Use custom app theme text style
+          style: textTheme.headlineSmall?.copyWith(
+            color: theme.colorScheme.onPrimary,
+            fontWeight: FontWeight.bold,
+          ), // Use custom app theme text style
         ),
         centerTitle: true,
         backgroundColor: theme.colorScheme.primary,
@@ -28,7 +30,10 @@ class MedicationInitScreen extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [theme.colorScheme.primary.withOpacity(0.8), theme.colorScheme.primary],
+            colors: [
+              theme.colorScheme.primary.withOpacity(0.8),
+              theme.colorScheme.primary
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -37,10 +42,11 @@ class MedicationInitScreen extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 'How would you like to start?',
-                style: textTheme.headlineLarge!.copyWith(
+                style: textTheme.headlineSmall?.copyWith(
                   color: theme.colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -94,7 +100,7 @@ class MedicationInitScreen extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         foregroundColor: theme.colorScheme.onPrimary,
-        backgroundColor: theme.colorScheme.secondary,
+        backgroundColor: color, // Use the passed color for background
         padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -104,8 +110,9 @@ class MedicationInitScreen extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         label,
-        style: textTheme.bodyLarge!.copyWith(
+        style: textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.bold,
+          color: theme.colorScheme.onPrimary, // Ensure text is readable
         ),
       ),
     );
