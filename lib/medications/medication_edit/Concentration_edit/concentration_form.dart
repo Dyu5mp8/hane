@@ -24,10 +24,6 @@ class ConcentrationForm {
     concentrations.remove(concentration);
 
   }
-
-  void saveConcentration(Concentration concentration) {
-    
-  }
 }
 
 

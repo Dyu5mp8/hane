@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_edit_widget.dart';
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_form.dart';
@@ -17,7 +19,7 @@ class MedicationEditDetail extends StatefulWidget {
    final MedicationForm medicationForm;
 
 
-  MedicationEditDetail(
+  const MedicationEditDetail(
       {super.key, required this.medicationForm});
 
   @override
@@ -77,7 +79,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                   ),
                 ),
 
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
 
                  Container(
                   padding: const EdgeInsets.only(left: 10),
@@ -94,7 +96,7 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
 
         
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Container(
                   padding: const EdgeInsets.only(left: 10),
                   child: ConcentrationEditPart(

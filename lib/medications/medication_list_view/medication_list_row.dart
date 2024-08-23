@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hane/medications/models/medication.dart';
 import 'package:hane/medications/medication_detail/medication_detail_view.dart';
-import 'package:provider/provider.dart';
+
 
 class MedicationListRow extends StatelessWidget {
   final Medication _medication;
