@@ -101,11 +101,21 @@ class DosageViewHandler {
 
     double _fontSize = 14;
     TextDecoration _decoration = shouldConvertDoses ? TextDecoration.underline : TextDecoration.none;
-
-    TextSpan instructionSpan(String instruction) {
+    
+    TextSpan routeText(String route) {
+      if (route.isEmpty) return TextSpan();
+      return TextSpan(
+        text: "$route.",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: _fontSize,
+        ),
+      );
+    }
+    TextSpan instructionText(String instruction) {
       if (instruction.isEmpty) return TextSpan();
       return TextSpan(
-        text: "$instruction:  ",
+        text: "$instruction:",
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: _fontSize,
@@ -115,10 +125,10 @@ class DosageViewHandler {
       );
     }
 
-    TextSpan doseSpan(Dose? dose) {
+    TextSpan doseText(Dose? dose) {
       if (dose == null) return TextSpan();
       return TextSpan(
-        text: dose.toString(),
+        text: "${dose.toString()}.",
         style: TextStyle(
           fontSize: _fontSize,
         decoration: _decoration,
@@ -127,10 +137,12 @@ class DosageViewHandler {
       );
     }
 
-    TextSpan doseRangeSpan(Dose? lowerLimitDose, Dose? higherLimitDose) {
+ 
+
+    TextSpan doseRangeText(Dose? lowerLimitDose, Dose? higherLimitDose) {
       if (lowerLimitDose == null || higherLimitDose == null) return TextSpan();
       return TextSpan(
-        text: " (${lowerLimitDose.toString()} - ${higherLimitDose.toString()})",
+        text: "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}).",
         style: TextStyle(
           fontSize: _fontSize,
           decoration: _decoration,
@@ -139,10 +151,10 @@ class DosageViewHandler {
     }
 
 
-    TextSpan maxDoseSpan(Dose? maxDose) {
+    TextSpan maxDoseText(Dose? maxDose) {
       if (maxDose == null) return TextSpan();
       return TextSpan(
-        text: " Max dose: ${maxDose.toString()}",
+        text: "Maxdos: ${maxDose.toString()}.",
         style: TextStyle(
           fontSize: _fontSize,
           decoration: _decoration,
@@ -150,10 +162,9 @@ class DosageViewHandler {
       );
     } 
 
-    TextSpan routeSpan(String route) {
-      if (route.isEmpty) return TextSpan();
+   TextSpan space() {
       return TextSpan(
-        text: " $route",
+        text: " ",
         style: TextStyle(
           fontSize: _fontSize,
         ),
@@ -163,11 +174,15 @@ class DosageViewHandler {
     return Text.rich(
       TextSpan(
         children: [
-          instructionSpan(dosage.instruction ?? ''),
-          doseSpan(dose),
-          doseRangeSpan(lowerLimitDose, higherLimitDose),
-          maxDoseSpan(maxDose),
-          routeSpan(dosage.administrationRoute ?? ''),
+          routeText(dosage.administrationRoute ?? ''),
+          space(),
+          instructionText(dosage.instruction ?? ''),
+          space(),
+          doseText(dose),
+          space(),
+          doseRangeText(lowerLimitDose, higherLimitDose),
+          space(),
+          maxDoseText(maxDose),
         ],
 
       
