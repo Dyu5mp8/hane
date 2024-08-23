@@ -26,7 +26,7 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
           Row(
             children: <Widget>[
               SizedBox(
-                width: MediaQuery.of(context).size.width/4,
+                width: MediaQuery.of(context).size.width/8,
                 child: TextFormField(
                   controller:
                       widget.concentrationForm.concentrationAmountController,
@@ -42,7 +42,7 @@ class _ConcentrationEditPartState extends State<ConcentrationEditPart> {
               SizedBox(
                   height: 20, width: MediaQuery.of(context).size.width / 20),
               SizedBox(
-                width: MediaQuery.of(context).size.width/4,
+                width: MediaQuery.of(context).size.width/8,
                 child: TextFormField(
                     controller:
                         widget.concentrationForm.concentrationUnitController,

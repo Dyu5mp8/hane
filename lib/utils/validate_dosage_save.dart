@@ -1,5 +1,4 @@
 import "package:hane/medications/models/medication.dart";
-import "package:hane/utils/UnitService.dart";
 
 String? validateTextInput(String? value) {
   if (value == null || value.isEmpty) {
@@ -36,7 +35,7 @@ String? validateUnitInput(String? value) {
   }
   catch (e) {
   
-    return 'Ange en giltig enhet';
+    return 'Felaktig enhet: ${e.toString()}';
   }
   return null;
 }

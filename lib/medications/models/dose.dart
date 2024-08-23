@@ -2,6 +2,7 @@ import 'package:hane/medications/models/medication.dart';
 import 'package:hane/medications/models/concentration.dart';
 import 'package:hane/utils/UnitService.dart';
 import 'package:hane/utils/smart_rounder.dart';
+import 'package:hane/utils/validation_exception.dart';
 
 class Dose {
   final double amount;
@@ -32,10 +33,10 @@ class Dose {
 
     List<String> parts = unitInput.split('/');
     if (parts.length > 3) {
-      throw Exception("Not a valid unit : more than 4 units");
+      throw ValidationException("Måste vara max 3 enheter (t.ex. mg/kg/h)");
     }
     if (!UnitValidator.isSubstanceUnit(parts[0])) {
-      throw Exception("Not a valid unit : $parts[0]");
+      throw ValidationException(" [${parts[0]}], bör vara ${UnitValidator.validSubstanceUnits().keys.join(", ")}");
     } else {
       unitMap["substance"] = parts[0];
     }
@@ -43,7 +44,7 @@ class Dose {
       if (validUnits.keys.contains((part))) {
         unitMap[validUnits[part]] = part;
       } else {
-        throw Exception("Not a valid unit");
+        throw ValidationException("$part inte en giltig enhet");
       }
     }
     return unitMap;
