@@ -57,7 +57,7 @@ class _MedicationListViewState extends State<MedicationListView> {
                 'Admin: ÄNDRINGAR SKER I STAMLISTAN',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.orange,
+                  color: Color.fromARGB(255, 255, 77, 0),
                 ),
               ),
           ],

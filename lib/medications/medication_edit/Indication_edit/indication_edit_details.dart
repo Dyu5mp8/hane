@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hane/medications/medication_edit/Dosage_edit/dosage_detail_form.dart';
 import 'package:hane/medications/medication_edit/Dosage_edit/dosage_edit_detail.dart';
 import 'package:hane/medications/medication_edit/Indication_edit/indication_detail_form.dart';
@@ -120,7 +121,14 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
                         labelText: 'Anteckningar',
                         hintText: 'Ange anteckningar',
                         floatingLabelBehavior: FloatingLabelBehavior.always,
+                
                       ),
+                      minLines: 1,
+                      maxLines: 4,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(100),
+                      ],
+
                     ),
                     Column(
                         children: dosagesToList(

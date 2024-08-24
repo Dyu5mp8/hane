@@ -26,6 +26,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
       labelStyle: TextStyle(fontSize: formTextSize),
       errorStyle: TextStyle(fontSize: formErrorTextSize),
       floatingLabelBehavior: FloatingLabelBehavior.always,
+      errorMaxLines: 2
     );
   }
 
@@ -120,6 +121,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                         decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
                         style: TextStyle(fontSize: formTextSize),
+                      
                       ),
                     ),
                   ],

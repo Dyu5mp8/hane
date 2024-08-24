@@ -12,6 +12,8 @@ class OverviewBox extends StatelessWidget {
 
   Widget basicInfoRow(BuildContext context, Medication medication) {
     final editButton = editButtontoView(
+      icon: Icons.edit,
+      iconColor: Theme.of(context).primaryColor,
         destination: MedicationEditDetail(
             medicationForm: MedicationForm(
       medication: medication,
@@ -20,7 +22,7 @@ class OverviewBox extends StatelessWidget {
     List<Concentration>? concentrations = medication.concentrations;
 
     return Container(
-      height: 80,
+      height: 100,
       padding: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,
       color: Colors.white,
@@ -42,7 +44,7 @@ class OverviewBox extends StatelessWidget {
               ),
               editButton,
               IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: const Icon(Icons.delete, color: Color.fromARGB(255, 241, 64, 0)),
                   onPressed: () => showDialog(
                       context: context,
                       builder: (BuildContext context) {

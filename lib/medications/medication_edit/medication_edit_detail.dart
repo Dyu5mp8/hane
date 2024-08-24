@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_edit_widget.dart';
 import 'package:hane/medications/medication_edit/Concentration_edit/concentration_form.dart';
 import 'package:hane/medications/medication_edit/brand_name_edit/brand_name_form.dart';
@@ -49,9 +50,10 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                 SizedBox(height: 8),
                 TextFormField(
                   controller: widget.medicationForm.nameController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Läkemedel',
                     hintText: 'Ange generiskt namn',
+                    labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
                   validator: val.validateName,
@@ -59,20 +61,28 @@ class _MedicationEditDetailState extends State<MedicationEditDetail> {
                 SizedBox(height: 16),
                 TextFormField(
                   controller: widget.medicationForm.contraindicationController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Kontraindikationer',
-                    hintText: 'Ange kontraindikationer',
+                    labelStyle: TextStyle(color: Theme.of(context).primaryColor),
+                    hintText: 'Ange kontraindikationer och varningar',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
+                    
                   ),
+                  minLines: 1,
+                    maxLines: 4,
                 ),
                 SizedBox(height: 16),
                 TextFormField(
                   controller: widget.medicationForm.notesController,
-                  decoration: const InputDecoration(
+                  
+                  decoration: InputDecoration(
                     labelText: 'Anteckningar',
                     hintText: 'Ange anteckningar',
+                    labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                   ),
+                  minLines: 1,
+                  maxLines: 4,
                 ),
                 SizedBox(height: 24),
 
