@@ -3,7 +3,6 @@ import 'package:hane/medications/controllers/dosageViewHandler.dart';
 import 'package:hane/medications/medication_edit/medication_detail_form.dart';
 import 'package:hane/medications/medication_edit/medication_edit_detail.dart';
 import 'package:hane/medications/ui_components/dosage_snippet.dart';
-import 'package:hane/medications/models/indication.dart';
 import 'package:hane/medications/models/medication.dart';
 import 'package:provider/provider.dart';
 
@@ -17,9 +16,9 @@ class IndicationBox extends StatelessWidget {
       builder: (context, medication, child) {
 
         if (medication.indications == null || medication.indications!.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: const Column(
+          return const Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Column(
              
               children: [
                 SizedBox(height:20),
@@ -74,7 +73,7 @@ class _IndicationTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Container(
+    return SizedBox(
       height: 30,
       child: TabBar(
         unselectedLabelStyle: const TextStyle(color: Color.fromARGB(255, 157, 157, 157)),
@@ -83,9 +82,8 @@ class _IndicationTabs extends StatelessWidget {
         isScrollable: true,
         indicatorSize: TabBarIndicatorSize.tab,
         indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: BorderRadius.circular(70),
           color: Colors.lightBlue,
-          border: Border.all(color: Colors.black, width: 0.4),
         ),
         tabs: indications.map((indication) => Tab(text: indication.name)).toList(),
       ),
@@ -114,7 +112,7 @@ class _IndicationDetails extends StatelessWidget {
   final Indication indication;
   final List<Concentration>? concentrations;
 
-  _IndicationDetails({
+  const _IndicationDetails({
     required this.indication,
     this.concentrations,
     });
@@ -128,7 +126,6 @@ class _IndicationDetails extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(indication.name, style: Theme.of(context).textTheme.headlineSmall),
           if (indication.notes != null) Text(indication.notes!),
           
           if (indication.dosages != null)
@@ -170,18 +167,18 @@ class AddIndicationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _medication = Provider.of<Medication>(context, listen: false);
+    var medication = Provider.of<Medication>(context, listen: false);
 
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MedicationEditDetail(medicationForm: MedicationForm(medication: _medication))));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MedicationEditDetail(medicationForm: MedicationForm(medication: medication))));
       },
-      child: Row(
+      child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Redigera läkemedel'),
+          Text('Redigera läkemedel'),
           SizedBox(width: 10),
-          const Icon(Icons.edit),
+          Icon(Icons.edit),
         ],
       ),
     );

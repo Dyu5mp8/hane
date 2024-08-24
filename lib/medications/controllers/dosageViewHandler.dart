@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:hane/medications/models/medication.dart";
-import "package:hane/utils/UnitService.dart";
+import "package:hane/utils/unit_service.dart";
 
 class DosageViewHandler {
   final Dosage dosage;

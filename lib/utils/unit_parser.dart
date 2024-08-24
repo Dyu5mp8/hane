@@ -1,5 +1,4 @@
-import "package:hane/medications/models/dose.dart";
-import "package:hane/utils/UnitValidator.dart";
+import "package:hane/utils/unit_validator.dart";
 
 
 class UnitParser{

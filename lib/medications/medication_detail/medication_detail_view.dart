@@ -1,8 +1,9 @@
 import 'package:hane/medications/models/medication.dart';
 import 'package:flutter/material.dart';
-import 'package:hane/medications/medication_detail/indicationBox.dart';
-import 'package:hane/medications/medication_detail/overviewBox.dart';
+import 'package:hane/medications/medication_detail/indication_box.dart';
+import 'package:hane/medications/medication_detail/overview_box.dart';
 import 'package:provider/provider.dart';
+
 class MedicationDetailView extends StatelessWidget {
   final Medication medication;
 
@@ -21,12 +22,12 @@ class MedicationDetailView extends StatelessWidget {
         appBar: AppBar(
           title: Text(medication.name ?? 'Medication Details'),
         ),
-        body: Column(
+        body: const Column(
           children: <Widget>[
             OverviewBox(),
             
 
-            const IndicationBox()
+            IndicationBox()
           ],
         ),
       ),
