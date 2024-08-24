@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
    
     return MaterialApp(
-      title: 'Module App',
+      title: 'AnestesiH',
       debugShowCheckedModeBanner: false,
    
        theme: appTheme,
