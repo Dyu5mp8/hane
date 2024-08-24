@@ -10,7 +10,7 @@ final ThemeData appTheme = ThemeData(
 
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 238, 110, 82),
+    seedColor: Color.fromARGB(255, 0, 79, 104),
 
     // ···
     brightness: Brightness.light,

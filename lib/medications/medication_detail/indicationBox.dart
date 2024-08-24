@@ -17,14 +17,18 @@ class IndicationBox extends StatelessWidget {
       builder: (context, medication, child) {
 
         if (medication.indications == null || medication.indications!.isEmpty) {
-          return const Column(
-            children: [
-              SizedBox(height:20),
-              Icon(Icons.lightbulb_circle, color: Colors.grey, size: 50),
-              Text("Inga indikationer ännu! Lägg till indikation eller gör andra ändringar..."),
-              SizedBox(height:20),
-              AddIndicationButton(),
-            ],
+          return Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: const Column(
+             
+              children: [
+                SizedBox(height:20),
+                Icon(Icons.lightbulb_circle, color: Colors.grey, size: 50),
+                Text("Inga indikationer ännu! Lägg till indikation eller gör andra ändringar..."),
+                SizedBox(height:20),
+                AddIndicationButton(),
+              ],
+            ),
           );
 
         }
@@ -47,12 +51,15 @@ class _IndicationView extends StatelessWidget {
     return Expanded(
       child: DefaultTabController(
         length: indications.length,
-        child: Column(
-          children: [
-            _IndicationTabs(indications: indications),
-            _IndicationTabView(indications: indications, concentrations: concentrations),
-            const AddIndicationButton(),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: Column(
+            children: [
+              _IndicationTabs(indications: indications),
+              _IndicationTabView(indications: indications, concentrations: concentrations),
+              const AddIndicationButton(),
+            ],
+          ),
         ),
       ),
     );
