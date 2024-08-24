@@ -16,7 +16,7 @@ class MedicationInitScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Initialize Medications',
+          'Ny användare?',
           style: textTheme.headlineSmall?.copyWith(
             color: theme.colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
@@ -45,7 +45,7 @@ class MedicationInitScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'How would you like to start?',
+                'Välj hur du vill börja',
                 style: textTheme.headlineSmall?.copyWith(
                   color: theme.colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
@@ -55,7 +55,7 @@ class MedicationInitScreen extends StatelessWidget {
               const SizedBox(height: 40),
               _buildStyledButton(
                 context,
-                label: 'Start Fresh',
+                label: "Påbörja en blank lista",
                 onPressed: () async {
                   final medicationProvider = Provider.of<MedicationListProvider>(context, listen: false);
                   await medicationProvider.queryMedications(isGettingDefaultList: false, forceFromServer: true);
@@ -69,7 +69,7 @@ class MedicationInitScreen extends StatelessWidget {
               const SizedBox(height: 20),
               _buildStyledButton(
                 context,
-                label: 'Copy from Master',
+                label: 'Kopiera från stamlistan',
                 onPressed: () async {
                   final medicationProvider = Provider.of<MedicationListProvider>(context, listen: false);
                   medicationProvider.setUserData(user);

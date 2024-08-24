@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/loginPage.dart';
-import 'package:hane/medications/models/medication.dart';
 import 'package:hane/medications/services/medication_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hane/medications/medication_list_view/medication_list_view.dart';

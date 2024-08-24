@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hane/login/initializer_widget.dart';
 import 'loginPage.dart';
 import 'Widget/bezierContainer.dart';
 
@@ -33,7 +34,7 @@ class _SignUpPageState extends State<SignUpPage> {
               padding: const EdgeInsets.only(left: 0, top: 10, bottom: 10),
               child: const Icon(Icons.keyboard_arrow_left, color: Colors.black),
             ),
-            const Text('Back',
+            const Text('Tillbaka',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
           ],
         ),
@@ -69,17 +70,17 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void _onSuccessfulRegistration() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("User registered successfully"),
+      content: Text("Du är nu registrerad!"),
     ));
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
+      MaterialPageRoute(builder: (context) => const InitializerWidget()),
     );
   }
 
   void _onFailedRegistration() {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Failed to register user"),
+      content: Text("Av någon anledning kunde vi inte registrera dig."),
     ));
   }
 
@@ -116,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
               colors: [Color(0xfffbb448), Color(0xfff7892b)]),
         ),
         child: const Text(
-          'Register Now',
+          'Registrera dig nu',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
@@ -137,12 +138,12 @@ class _SignUpPageState extends State<SignUpPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Already have an account ?',
+              'Har du redan ett konto?',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
             SizedBox(width: 10),
             Text(
-              'Login',
+              'Logga in',
               style: TextStyle(
                   color: Color(0xfff79c4f),
                   fontSize: 13,
@@ -157,9 +158,8 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Username", _usernameController),
-        _entryField("Email id", _emailController),
-        _entryField("Password", _passwordController, isPassword: true),
+        _entryField("Epost", _emailController),
+        _entryField("Lösenord", _passwordController, isPassword: true),
       ],
     );
   }
@@ -204,26 +204,9 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: const TextSpan(
-        text: 'd',
-        style: TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.w700,
-          color: Color(0xffe46b10),
-        ),
-        children: [
-          TextSpan(
-            text: 'ev',
-            style: TextStyle(color: Colors.black, fontSize: 30),
-          ),
-          TextSpan(
-            text: 'rnz',
-            style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
-          ),
-        ],
-      ),
+    return const Text(
+      'Registrera dig',
+      style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Colors.black),
     );
   }
 }

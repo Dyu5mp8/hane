@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
             password: _passwordController.text.trim(),
           );
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Logged in successfully"),
+            content: Text("Inloggad!"),
           ));
          Navigator.push(
             context,
@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Failed to log in: $e"),
+            content: Text("Kunde inte logga in: $e"),
           ));
         }
       },
@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: const Text(
-          'Login',
+          'Logga in',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
@@ -155,8 +155,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Email id", _emailController),
-        _entryField("Password", _passwordController, isPassword: true),
+        _entryField("Epost", _emailController),
+        _entryField("Lösenord", _passwordController, isPassword: true),
       ],
     );
   }
@@ -211,17 +211,17 @@ class _LoginPageState extends State<LoginPage> {
                     _emailPasswordWidget(),
                     const SizedBox(height: 20),
                     _submitButton(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      alignment: Alignment.centerRight,
-                      child: const Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(vertical: 10),
+                    //   alignment: Alignment.centerRight,
+                    //   child: const Text(
+                    //     'Forgot Password?',
+                    //     style: TextStyle(
+                    //       fontSize: 14,
+                    //       fontWeight: FontWeight.w500,
+                    //     ),
+                    //   ),
+                    // ),
                     _divider(),
                     SizedBox(height: height * .055),
                     _createAccountLabel(),
