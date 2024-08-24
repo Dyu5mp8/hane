@@ -18,7 +18,6 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _usernameController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Widget _backButton() {
