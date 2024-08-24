@@ -1,15 +1,15 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hane/medications/models/bolus_dosage.dart';
-import 'package:hane/medications/models/dose.dart';
-import 'package:hane/medications/models/indication.dart';
-import 'package:hane/medications/models/medication.dart';
+import 'package:hane/drugs/models/bolus_dosage.dart';
+import 'package:hane/drugs/models/dose.dart';
+import 'package:hane/drugs/models/indication.dart';
+import 'package:hane/drugs/models/drug.dart';
 
 
 
 void main() {
   group('test string function for concentration', () {
 
-     Medication testMedication = Medication(
+     Drug testDrug = Drug(
       name: "milrinon",
       contraindication: "Hypotenad kardiell syrgaskons, takykardi, ",
       concentrations: [(amount: 0.05, unit: "fe"), (amount: 0.1, unit: "mg/ml")],

@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:hane/medications/ui_components/custom_chip.dart";
+import "package:hane/drugs/ui_components/custom_chip.dart";
 import "generic_chip_form.dart";
 
 class GenericChipWidget<T> extends StatefulWidget {

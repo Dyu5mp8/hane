@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:hane/Views/medication_view/medication_detail_view/DoseConverter.dart';
+import 'package:hane/Views/drug_view/drug_detail_view/DoseConverter.dart';
 
-import 'package:hane/medications/models/dose.dart';
+import 'package:hane/drugs/models/dose.dart';
 
 void main(){
 

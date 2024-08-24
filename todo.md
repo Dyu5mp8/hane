@@ -5,7 +5,7 @@
 - [x] work on version control user vs master list.
 - [ ] Consider using typesense
 
-# Medication detail view
+# Drug detail view
 - [ ] Banner header
 - [x] Horizontal tabs
 - [x] Notes and indication detail views

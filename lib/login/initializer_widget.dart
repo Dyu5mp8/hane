@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/login/loginPage.dart';
-import 'package:hane/login/medication_init_screen.dart';
+import 'package:hane/login/drug_init_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:hane/medications/services/medication_list_provider.dart';
-import 'package:hane/medications/medication_list_view/medication_list_view.dart';
+import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:hane/drugs/drug_list_view/drug_list_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 enum UserStatus {
@@ -52,22 +52,22 @@ class InitializerWidget extends StatelessWidget {
       UserStatus userStatus =
           await checkUserStatus(FirebaseAuth.instance.currentUser!.uid);
       String user = FirebaseAuth.instance.currentUser!.uid;
-      final medicationListProvider =
-          Provider.of<MedicationListProvider>(context, listen: false);
+      final drugListProvider =
+          Provider.of<DrugListProvider>(context, listen: false);
       print("User status: $userStatus");
       if (userStatus == UserStatus.hasExistingUserData) {
-        await medicationListProvider
+        await drugListProvider
             .setUserData(FirebaseAuth.instance.currentUser!.uid);
-        await medicationListProvider.queryMedications(
+        await drugListProvider.queryDrugs(
             isGettingDefaultList: false, forceFromServer: true);
-        return MedicationListView();
+        return DrugListView();
       } else if (userStatus == UserStatus.noExistingUserData) {
-        return MedicationInitScreen(user: user);
+        return DrugInitScreen(user: user);
       } else if (userStatus == UserStatus.isAdmin) {
-        medicationListProvider.setUserData("master");       
-        medicationListProvider.queryMedications(
+        drugListProvider.setUserData("master");       
+        drugListProvider.queryDrugs(
             isGettingDefaultList: false, forceFromServer: true);
-        return MedicationListView();
+        return DrugListView();
       } else {
         throw Exception("Unknown user status");
       }
@@ -93,10 +93,10 @@ class InitializerWidget extends StatelessWidget {
 
     // If the user is not an admin, check for existing user data in Firestore
     final userRef = FirebaseFirestore.instance.collection('users').doc(user);
-    final userMedicationRef = userRef.collection('medications');
+    final userDrugRef = userRef.collection('drugs');
 
-    // Check if the medications subcollection has any documents
-    final snapshot = await userMedicationRef.get();
+    // Check if the drugs subcollection has any documents
+    final snapshot = await userDrugRef.get();
 
     if (snapshot.docs.isNotEmpty) {
       return UserStatus.hasExistingUserData;

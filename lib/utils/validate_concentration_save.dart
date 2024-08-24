@@ -1,5 +1,5 @@
-import "package:hane/medications/models/concentration.dart";
-import "package:hane/medications/models/medication.dart";
+import "package:hane/drugs/models/concentration.dart";
+import "package:hane/drugs/models/drug.dart";
 
 import "package:hane/utils/validation_exception.dart";
 
