@@ -25,7 +25,7 @@ class _DrugListViewState extends State<DrugListView> {
   Future<void> _fetchDrugs() async {
     DrugListProvider drugListProvider = Provider.of<DrugListProvider>(context, listen: false);
     print('Fetching drugs');
-    await drugListProvider.queryDrugs(isGettingDefaultList: false, forceFromServer: true);
+    await drugListProvider.queryDrugs(forceFromServer: false);
 
   }
 
@@ -52,7 +52,7 @@ class _DrugListViewState extends State<DrugListView> {
         title: Column(
           children: [
             Text('Läkemedel'),
-            if (drugListProvider.isAdmin)
+            if (drugListProvider.isAdmin())
               Text(
                 'Admin: ÄNDRINGAR SKER I STAMLISTAN',
                 style: TextStyle(

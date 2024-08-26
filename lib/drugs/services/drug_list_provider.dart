@@ -5,14 +5,10 @@ import 'package:hane/utils/error_alert.dart';
 
 class DrugListProvider with ChangeNotifier {
   String? user;
-  final String masterUID = "master";
   List<Drug> _drugs = [];
-
+  String masterUID = "master";
 
   DrugListProvider({this.user});
-
-
- bool get isAdmin => user == masterUID;
 
   bool get hasExistingUserData => _drugs.isNotEmpty;
 
@@ -30,6 +26,8 @@ class DrugListProvider with ChangeNotifier {
   setUserData(String user) {
     this.user = user;
   }
+
+  bool isAdmin() => user == masterUID;
 
   Future<void> addDrug(Drug drug) async {
     var db = FirebaseFirestore.instance;
@@ -94,14 +92,14 @@ class DrugListProvider with ChangeNotifier {
     }
   }
 
-  Future<void> queryDrugs({bool isGettingDefaultList = false, bool forceFromServer = true, BuildContext? context}) async {
+  Future<void> queryDrugs({bool forceFromServer = true, BuildContext? context}) async {
     FirebaseFirestore db = FirebaseFirestore.instance;
     CollectionReference<Map<String, dynamic>> drugsCollection;
     var source = forceFromServer ? Source.server : Source.cache;
     print("Querying drugs for user: $user");
 
     drugsCollection = db.collection("users")
-                               .doc(isGettingDefaultList ? masterUID : user)
+                               .doc(user)
                                .collection("drugs");
 
     try {

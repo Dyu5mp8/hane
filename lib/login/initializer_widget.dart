@@ -59,14 +59,14 @@ class InitializerWidget extends StatelessWidget {
         await drugListProvider
             .setUserData(FirebaseAuth.instance.currentUser!.uid);
         await drugListProvider.queryDrugs(
-            isGettingDefaultList: false, forceFromServer: true);
+            forceFromServer: false);
         return DrugListView();
       } else if (userStatus == UserStatus.noExistingUserData) {
         return DrugInitScreen(user: user);
       } else if (userStatus == UserStatus.isAdmin) {
         drugListProvider.setUserData("master");       
         drugListProvider.queryDrugs(
-            isGettingDefaultList: false, forceFromServer: true);
+            forceFromServer: true);
         return DrugListView();
       } else {
         throw Exception("Unknown user status");
