@@ -6,7 +6,7 @@
 - [ ] Consider using typesense
 
 # Drug detail view
-- [ ] Banner header
+- [x] Banner header
 - [x] Horizontal tabs
 - [x] Notes and indication detail views
 - [ ] Adult/ped toggle
@@ -15,3 +15,5 @@
 - [ ] Bug reports
 - [ ] Timestamp and user for changes
 - [ ] version control
+- [ ] indicator for user changed item
+

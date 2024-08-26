@@ -16,12 +16,12 @@ void main() async {
   
   
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // Ensure your firebase_options.dart file is properly set up.
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   var firestore = FirebaseFirestore.instance;
 
   firestore.settings = const Settings(persistenceEnabled: true, 
-  cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+  cacheSizeBytes: 10 * 1024 * 1024,);//10megs
   
     runApp(
     MultiProvider(
