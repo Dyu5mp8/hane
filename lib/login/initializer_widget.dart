@@ -96,7 +96,7 @@ class InitializerWidget extends StatelessWidget {
     final userDrugRef = userRef.collection('drugs');
 
     // Check if the drugs subcollection has any documents
-    final snapshot = await userDrugRef.get();
+    final snapshot = await userDrugRef.limit(1).get();
 
     if (snapshot.docs.isNotEmpty) {
       return UserStatus.hasExistingUserData;
