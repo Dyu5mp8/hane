@@ -171,7 +171,6 @@ class _DrugEditDetailState extends State<DrugEditDetail> {
         ),
       );
     }
-    provider.refreshList();
     Navigator.pop(context);
   }
 

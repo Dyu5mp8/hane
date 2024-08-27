@@ -67,7 +67,7 @@ class OverviewBox extends StatelessWidget {
                                       .deleteDrug(drug);
 
                                   Navigator.of(context).pop();
-                                  drugListProvider.refreshList();
+                                  
                                 },
                                 child: const Text("Ta bort"))
                           ],

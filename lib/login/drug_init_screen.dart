@@ -58,7 +58,7 @@ class DrugInitScreen extends StatelessWidget {
                 label: "Påbörja en blank lista",
                 onPressed: () async {
                   final drugProvider = Provider.of<DrugListProvider>(context, listen: false);
-                  await drugProvider.queryDrugs(forceFromServer: true);
+                  drugProvider.setUserData(user);
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => DrugListView()),
@@ -72,6 +72,7 @@ class DrugInitScreen extends StatelessWidget {
                 label: 'Kopiera från stamlistan',
                 onPressed: () async {
                   final drugProvider = Provider.of<DrugListProvider>(context, listen: false);
+                  drugProvider.setUserData(user);
                   await drugProvider.copyMasterToUser();
                   Navigator.pushReplacement(
                     context,

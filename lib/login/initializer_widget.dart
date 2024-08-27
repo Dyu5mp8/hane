@@ -10,12 +10,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 enum UserStatus {
   hasExistingUserData,
   noExistingUserData,
-  isAdmin 
+  isAdmin,
 }
 
-
 class InitializerWidget extends StatelessWidget {
-
   final bool firstLogin;
 
   const InitializerWidget({super.key, this.firstLogin = false});
@@ -50,35 +48,29 @@ class InitializerWidget extends StatelessWidget {
 
   Future<Widget> _initializeApp(BuildContext context) async {
     final isUserLoggedIn = FirebaseAuth.instance.currentUser != null;
-    
-    
-    
 
     if (isUserLoggedIn) {
       String user = FirebaseAuth.instance.currentUser!.uid;
+
       if (firstLogin) {
-      await _firstLoginSetup(user);
-    }
+        await _firstLoginSetup(user);
+      }
+
       _logUserLogin(user);
-      UserStatus userStatus =
-          await checkUserStatus(user);
-      
+      UserStatus userStatus = await checkUserStatus(user);
+
       final drugListProvider =
           Provider.of<DrugListProvider>(context, listen: false);
       print("User status: $userStatus");
+
       if (userStatus == UserStatus.hasExistingUserData) {
-        await drugListProvider
-            .setUserData(user);
-        await drugListProvider.queryDrugs(
-            forceFromServer: true);
+        drugListProvider.setUserData(user);
         return DrugListView();
       } else if (userStatus == UserStatus.noExistingUserData) {
-        await drugListProvider.setUserData(user);
+        drugListProvider.setUserData(user);
         return DrugInitScreen(user: user);
       } else if (userStatus == UserStatus.isAdmin) {
-        drugListProvider.setUserData("master");       
-        drugListProvider.queryDrugs(
-            forceFromServer: true);
+        drugListProvider.setUserData("master");
         return DrugListView();
       } else {
         throw Exception("Unknown user status");
@@ -92,7 +84,6 @@ class InitializerWidget extends StatelessWidget {
   Future<UserStatus> checkUserStatus(String user) async {
     // First, check if the user has the 'admin' custom claim
     User? firebaseUser = FirebaseAuth.instance.currentUser;
-
 
     if (firebaseUser != null) {
       IdTokenResult idTokenResult = await firebaseUser.getIdTokenResult(true);
@@ -117,7 +108,7 @@ class InitializerWidget extends StatelessWidget {
     }
   }
 
-  _logUserLogin(String user) async {
+  Future<void> _logUserLogin(String user) async {
     final db = FirebaseFirestore.instance;
     final userRef = db.collection('users').doc(user);
 

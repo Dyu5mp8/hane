@@ -1,14 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/login/loginPage.dart';
-import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
-import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
+import 'package:provider/provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
-import 'package:provider/provider.dart';
-
-
+import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
+import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
 
 class DrugListView extends StatefulWidget {
   @override
@@ -19,33 +17,9 @@ class _DrugListViewState extends State<DrugListView> {
   String _searchQuery = '';
   String? _selectedCategory;
 
-
-
-
-  Future<void> _fetchDrugs() async {
-    DrugListProvider drugListProvider = Provider.of<DrugListProvider>(context, listen: false);
-    print('Fetching drugs');
-    await drugListProvider.queryDrugs(forceFromServer: false);
-
-  }
-
   @override
   Widget build(BuildContext context) {
-    var drugListProvider = Provider.of<DrugListProvider>(context,listen:true);
-
-    // Get the list of categories from the drugs, handling null categories
-    List<dynamic> categories = drugListProvider.drugs
-        .where((drug) => drug.categories != null) // Filter out drugs with null categories
-        .expand((drug) => drug.categories!)
-        .toSet()
-        .toList();
-
-    // Filter drugs based on the search query and selected category
-    List<Drug> filteredDrugs = drugListProvider.drugs.where((drug) {
-      final matchesSearchQuery = drug.name!.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesCategory = _selectedCategory == null || (drug.categories?.contains(_selectedCategory) ?? false);
-      return matchesSearchQuery && matchesCategory;
-    }).toList();
+    var drugListProvider = Provider.of<DrugListProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -87,7 +61,6 @@ class _DrugListViewState extends State<DrugListView> {
                 ],
               );
             });
-
           },
         ),
         actions: <Widget>[
@@ -108,46 +81,64 @@ class _DrugListViewState extends State<DrugListView> {
             },
           ),
         ],
+      ),
+      body: StreamBuilder<List<Drug>>(
+        stream: drugListProvider.getDrugsStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No drugs found.'));
+          }
 
-      ),
-body: RefreshIndicator.adaptive(
-        onRefresh: _fetchDrugs,
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  // Search field
-                  searchFieldWidget(),
-                  const SizedBox(height: 10),
-                  
-                  // Category Chips
-                  if (categories.isNotEmpty)
-                    Container(
-                      padding: EdgeInsets.only(left: 20),
-                      alignment: Alignment.centerLeft,
-                      child: categoryChipsWidget(categories),
-                    ),
-                  const SizedBox(height: 30),
-                ],
+          List<Drug> filteredDrugs = snapshot.data!.where((drug) {
+            final matchesSearchQuery = drug.name!.toLowerCase().contains(_searchQuery.toLowerCase());
+            final matchesCategory = _selectedCategory == null || (drug.categories?.contains(_selectedCategory) ?? false);
+            return matchesSearchQuery && matchesCategory;
+          }).toList();
+
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    searchFieldWidget(),
+                    const SizedBox(height: 10),
+                    if (drugListProvider.drugs.isNotEmpty)
+                      Container(
+                        padding: EdgeInsets.only(left: 20),
+                        alignment: Alignment.centerLeft,
+                        child: categoryChipsWidget(
+                          drugListProvider.drugs
+                              .where((drug) => drug.categories != null)
+                              .expand((drug) => drug.categories!)
+                              .toSet()
+                              .toList(),
+                        ),
+                      ),
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ),
-            ),
-            filteredDrugs.isEmpty
-                ? SliverFillRemaining(
-                    child: Center(child: Text('No drugs found.')),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        return DrugListRow(filteredDrugs[index]);
-                      },
-                      childCount: filteredDrugs.length,
+              filteredDrugs.isEmpty
+                  ? SliverFillRemaining(
+                      child: Center(child: Text('No drugs found.')),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          return DrugListRow(filteredDrugs[index]);
+                        },
+                        childCount: filteredDrugs.length,
+                      ),
                     ),
-                  ),
-          ],
-        ),
+            ],
+          );
+        },
       ),
-);
+    );
   }
 
   Widget searchFieldWidget() {
@@ -181,17 +172,16 @@ body: RefreshIndicator.adaptive(
         children: [
           SizedBox(height: 10),
           Wrap(
-            spacing: 5.0, // horizontal space between chips
+            spacing: 5.0,
             runSpacing: -8,
             children: [
               ChoiceChip(
                 showCheckmark: false,
                 label: Text("Alla", style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
                 selected: _selectedCategory == null,
-                 shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
-      
-      ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 onSelected: (bool selected) {
                   setState(() {
                     _selectedCategory = null;
@@ -204,10 +194,9 @@ body: RefreshIndicator.adaptive(
                   showCheckmark: false,
                   label: Text(category, style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
                   selected: _selectedCategory == category,
-                   shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
-      
-      ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   onSelected: (bool selected) {
                     setState(() {
                       _selectedCategory = selected ? category : null;
