@@ -15,7 +15,10 @@ enum UserStatus {
 
 
 class InitializerWidget extends StatelessWidget {
-  const InitializerWidget({super.key});
+
+  final bool firstLogin;
+
+  const InitializerWidget({super.key, this.firstLogin = false});
 
   @override
   Widget build(BuildContext context) {
@@ -47,21 +50,30 @@ class InitializerWidget extends StatelessWidget {
 
   Future<Widget> _initializeApp(BuildContext context) async {
     final isUserLoggedIn = FirebaseAuth.instance.currentUser != null;
+    
+    
+    
 
     if (isUserLoggedIn) {
-      UserStatus userStatus =
-          await checkUserStatus(FirebaseAuth.instance.currentUser!.uid);
       String user = FirebaseAuth.instance.currentUser!.uid;
+      if (firstLogin) {
+      await _firstLoginSetup(user);
+    }
+      _logUserLogin(user);
+      UserStatus userStatus =
+          await checkUserStatus(user);
+      
       final drugListProvider =
           Provider.of<DrugListProvider>(context, listen: false);
       print("User status: $userStatus");
       if (userStatus == UserStatus.hasExistingUserData) {
         await drugListProvider
-            .setUserData(FirebaseAuth.instance.currentUser!.uid);
+            .setUserData(user);
         await drugListProvider.queryDrugs(
-            forceFromServer: false);
+            forceFromServer: true);
         return DrugListView();
       } else if (userStatus == UserStatus.noExistingUserData) {
+        await drugListProvider.setUserData(user);
         return DrugInitScreen(user: user);
       } else if (userStatus == UserStatus.isAdmin) {
         drugListProvider.setUserData("master");       
@@ -103,5 +115,23 @@ class InitializerWidget extends StatelessWidget {
     } else {
       return UserStatus.noExistingUserData;
     }
+  }
+
+  _logUserLogin(String user) async {
+    final db = FirebaseFirestore.instance;
+    final userRef = db.collection('users').doc(user);
+
+    await userRef.set({
+      'lastLogin': DateTime.now(),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> _firstLoginSetup(String user) async {
+    final db = FirebaseFirestore.instance;
+    final userRef = db.collection('users').doc(user);
+
+    await userRef.set({
+      'registerTime': DateTime.now(),
+    }, SetOptions(merge: true));
   }
 }

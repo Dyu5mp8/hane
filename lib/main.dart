@@ -21,7 +21,7 @@ void main() async {
   var firestore = FirebaseFirestore.instance;
 
   firestore.settings = const Settings(persistenceEnabled: true, 
-  cacheSizeBytes: 10 * 1024 * 1024,);//10megs
+  cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   
     runApp(
     MultiProvider(

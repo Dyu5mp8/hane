@@ -52,7 +52,7 @@ class _DrugListViewState extends State<DrugListView> {
         title: Column(
           children: [
             Text('Läkemedel'),
-            if (drugListProvider.isAdmin())
+            if (drugListProvider.isAdmin ?? false)
               Text(
                 'Admin: ÄNDRINGAR SKER I STAMLISTAN',
                 style: TextStyle(

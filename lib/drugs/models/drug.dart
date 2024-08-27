@@ -1,12 +1,15 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/concentration.dart';
 import 'package:hane/drugs/models/indication.dart';
+
 
 export 'package:hane/drugs/models/dosage.dart';
 export 'package:hane/drugs/models/indication.dart';
 export 'package:hane/drugs/models/concentration.dart';
 export 'package:hane/drugs/models/dose.dart';
+
 
 class Drug extends ChangeNotifier {
   String? _name;
@@ -15,18 +18,24 @@ class Drug extends ChangeNotifier {
   List<Concentration>? _concentrations;
   String? _contraindication;
   List<Indication>? _indications;
+  bool? _changedByUser = false;
+  Timestamp? _lastUpdated;
 
   String? _notes;
 
   Drug({
     String? name,
+    bool? changedByUser,
     List<dynamic>? brandNames,
     List<dynamic>? categories,
    List<Concentration>? concentrations,
     String? contraindication,
     List<Indication>? indications,
     String? notes,
+    Timestamp? lastUpdated,
   })  : _name = name,
+        _changedByUser = changedByUser,
+        _lastUpdated = lastUpdated,
         _categories = categories,
         _concentrations = concentrations,
         _contraindication = contraindication,
@@ -38,6 +47,22 @@ class Drug extends ChangeNotifier {
   set name(String? newName) {
     if (_name != newName) {
       _name = newName;
+      notifyListeners();
+    }
+  }
+
+  bool get changedByUser => _changedByUser ?? false;
+  set changedByUser(bool newChangedByUser) {
+    if (_changedByUser != newChangedByUser) {
+      _changedByUser = newChangedByUser;
+      notifyListeners();
+    }
+  }
+
+  Timestamp? get lastUpdated => _lastUpdated;
+  set lastUpdated(Timestamp? newLastUpdated) {
+    if (_lastUpdated != newLastUpdated) {
+      _lastUpdated = newLastUpdated;
       notifyListeners();
     }
   }
@@ -124,12 +149,14 @@ void addIndication(Indication indication) {
   Map<String, dynamic> toJson() {
     return {
       'name': _name,
+      'changedByUser': _changedByUser,
       'brandNames': _brandNames,
       'categories': _categories,
       'concentrations': concentrations?.map((c) => c.toJson()).toList(),
       'contraindication': _contraindication,
       'indications': indications?.map((ind) => ind.toJson()).toList(),
       'notes': _notes,
+      'lastUpdated': _lastUpdated
     };
   } 
 
@@ -138,6 +165,7 @@ void addIndication(Indication indication) {
   factory Drug.fromFirestore(Map<String, dynamic> map) {
     return Drug(
       name: map['name'] as String?,
+      changedByUser: map['changedByUser'] as bool?,
       categories: (map['categories'] as List<dynamic>?),
       concentrations: (map['concentrations'] as List<dynamic>?)?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
         .toList(),
@@ -145,6 +173,7 @@ void addIndication(Indication indication) {
       contraindication: map['contraindication'] as String?,
       indications: (map['indications'] as List?)?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>)).toList(),
       notes: map['notes'] as String?,
+      lastUpdated: map['lastUpdated'] as Timestamp?,
     );
   }
 

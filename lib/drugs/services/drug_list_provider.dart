@@ -7,9 +7,10 @@ class DrugListProvider with ChangeNotifier {
   String? user;
   List<Drug> _drugs = [];
   String masterUID = "master";
-
-  DrugListProvider({this.user});
-
+  bool? isAdmin;
+  DrugListProvider({this.user}) {
+    isAdmin = user == null ? null : user == masterUID;
+  }
   bool get hasExistingUserData => _drugs.isNotEmpty;
 
   List<Drug> get drugs => _drugs;
@@ -23,16 +24,26 @@ class DrugListProvider with ChangeNotifier {
     }
   }
 
-  setUserData(String user) {
+     setUserData(String? user) {
     this.user = user;
+    isAdmin = user == null ? null : user == masterUID;
+    notifyListeners();  // Notify listeners if user data or admin status changes
   }
 
-  bool isAdmin() => user == masterUID;
 
   Future<void> addDrug(Drug drug) async {
     var db = FirebaseFirestore.instance;
 
     CollectionReference drugsCollection = db.collection('users').doc(user).collection('drugs');
+    if (user == 'master') {
+       drug.changedByUser = false;
+    }
+    else {
+      drug.changedByUser = true;
+
+    }
+
+    drug.lastUpdated = Timestamp.now();
 
     await drugsCollection.doc(drug.name).set(drug.toJson());
     // Notify listeners that the list has been updated
@@ -108,15 +119,11 @@ class DrugListProvider with ChangeNotifier {
       print(source);
       print(snapshot.metadata.isFromCache ? "Cache data used." : "Server data used.");
 
-      if (snapshot.metadata.isFromCache && forceFromServer) {
-        print("Cache data used. Forcing server fetch.");
-        snapshot = await drugsCollection.get(GetOptions(source: Source.server));
-      }
-
       _drugs = snapshot.docs
                              .map((doc) => Drug.fromFirestore(doc.data()))
                              .toList();
       print("Fetched ${_drugs.length} drugs");
+    
       _drugs = _sortDrugs(_drugs);
       notifyListeners();
     } catch (e) {
@@ -134,7 +141,7 @@ class DrugListProvider with ChangeNotifier {
   }
 
   void clearProvider(){
-    user = null;
+    setUserData(null);
     _drugs = [];
     notifyListeners();
   }

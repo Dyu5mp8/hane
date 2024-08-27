@@ -73,7 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
     ));
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const InitializerWidget()),
+      MaterialPageRoute(builder: (context) => const InitializerWidget(firstLogin: true,)),
     );
   }
 
