@@ -39,28 +39,31 @@ class _DrugListViewState extends State<DrugListView> {
         leading: IconButton(
           icon: Icon(Icons.exit_to_app),
           onPressed: () {
-            showDialog(context: context, builder: (context) {
-              return AlertDialog(
-                title: Text('Vill du logga ut?'),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Avbryt'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      FirebaseAuth.instance.signOut();
-                      drugListProvider.clearProvider();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
-                    },
-                    child: Text('Logga ut'),
-                  ),
-                ],
-              );
-            });
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Vill du logga ut?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Avbryt'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        FirebaseAuth.instance.signOut();
+                        drugListProvider.clearProvider();
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                      },
+                      child: Text('Logga ut'),
+                    ),
+                  ],
+                );
+              },
+            );
           },
         ),
         actions: <Widget>[
@@ -93,6 +96,21 @@ class _DrugListViewState extends State<DrugListView> {
             return Center(child: Text('No drugs found.'));
           }
 
+          // Extract categories for the category chips
+          List<dynamic> categories = snapshot.data!
+              .where((drug) => drug.categories != null)
+              .expand((drug) => drug.categories!)
+              .toSet()
+              .toList();
+
+          // Reset _selectedCategory if it is no longer available
+          if (_selectedCategory != null && !categories.contains(_selectedCategory)) {
+            
+              _selectedCategory = null;
+            };
+          
+
+          // Filter drugs based on search query and selected category
           List<Drug> filteredDrugs = snapshot.data!.where((drug) {
             final matchesSearchQuery = drug.name!.toLowerCase().contains(_searchQuery.toLowerCase());
             final matchesCategory = _selectedCategory == null || (drug.categories?.contains(_selectedCategory) ?? false);
@@ -106,17 +124,11 @@ class _DrugListViewState extends State<DrugListView> {
                   children: [
                     searchFieldWidget(),
                     const SizedBox(height: 10),
-                    if (drugListProvider.drugs.isNotEmpty)
+                    if (categories.isNotEmpty)
                       Container(
                         padding: EdgeInsets.only(left: 20),
                         alignment: Alignment.centerLeft,
-                        child: categoryChipsWidget(
-                          drugListProvider.drugs
-                              .where((drug) => drug.categories != null)
-                              .expand((drug) => drug.categories!)
-                              .toSet()
-                              .toList(),
-                        ),
+                        child: categoryChipsWidget(categories),
                       ),
                     const SizedBox(height: 30),
                   ],

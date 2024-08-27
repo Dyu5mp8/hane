@@ -12,17 +12,22 @@ class DrugListProvider with ChangeNotifier {
     isAdmin = user == null ? null : user == masterUID;
   }
 
-  Stream<List<Drug>> getDrugsStream() {
-    var db = FirebaseFirestore.instance;
+   Stream<List<Drug>> getDrugsStream() {
+  var db = FirebaseFirestore.instance;
 
-    // Reference the drugs collection for the current user
-    CollectionReference<Map<String, dynamic>> drugsCollection = db.collection('users').doc(user).collection('drugs');
+  // Reference the drugs collection for the current user, ordered alphabetically by the 'name' field
+  Query<Map<String, dynamic>> drugsCollection = db
+      .collection('users')
+      .doc(user)
+      .collection('drugs')
+      .orderBy('name', descending: false); // Apply ordering
 
-    // Return a stream of drugs
-    return drugsCollection.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => Drug.fromFirestore(doc.data())).toList();
-    });
-  }
+  // Return a stream of drugs
+  return drugsCollection.snapshots().map((snapshot) {
+    return snapshot.docs.map((doc) => Drug.fromFirestore(doc.data())).toList();
+  });
+}
+  
 
   Future<void> addDrug(Drug drug) async {
     var db = FirebaseFirestore.instance;
@@ -54,7 +59,7 @@ class DrugListProvider with ChangeNotifier {
         db.collection("users").doc(user).collection("drugs");
 
     try {
-      var userSnapshot = await userDrugsCollection.get();
+     var userSnapshot = await userDrugsCollection.limit(1).get();
       if (userSnapshot.docs.isNotEmpty) {
         throw Exception("User already has drugs. Cannot copy master drugs.");
       }
@@ -76,11 +81,10 @@ class DrugListProvider with ChangeNotifier {
   void setUserData(String? user) {
     this.user = user;
     isAdmin = user == null ? null : user == masterUID;
-    notifyListeners();
   }
 
   void clearProvider() {
+    
     setUserData(null);
-    notifyListeners();
   }
 }
