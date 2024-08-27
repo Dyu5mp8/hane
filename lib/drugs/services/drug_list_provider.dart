@@ -11,7 +11,6 @@ class DrugListProvider with ChangeNotifier {
   DrugListProvider({this.user}) {
     isAdmin = user == null ? null : user == masterUID;
   }
-
 Stream<List<Drug>> getDrugsStream() {
   var db = FirebaseFirestore.instance;
 
@@ -21,10 +20,18 @@ Stream<List<Drug>> getDrugsStream() {
       .collection('drugs');
 
   return drugsCollection.snapshots().map((snapshot) {
-    var drugsList = snapshot.docs.map((doc) => Drug.fromFirestore(doc.data())).toList();
+    // Check if the data was fetched from the server (billable) or from the cache (non-billable)
+    if (!snapshot.metadata.isFromCache) {
+      print('Firestore Read: Snapshot received from server with ${snapshot.docs.length} documents at ${DateTime.now()}');
+    } else {
+      print('Firestore Read: Snapshot served from cache with ${snapshot.docs.length} documents');
+    }
 
-    // Sort by name in a case-insensitive manner
-    drugsList.sort((a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+    // Convert each document to a Drug object
+    var drugsList = snapshot.docs.map((doc) {
+      var drug = Drug.fromFirestore(doc.data());
+      return drug;
+    }).toList();
 
     return drugsList;
   });
