@@ -6,25 +6,27 @@ class DrugListProvider with ChangeNotifier {
   String? user;
   String masterUID = "master";
   bool? isAdmin;
-  List<Drug> drugs = [];
+
 
   DrugListProvider({this.user}) {
     isAdmin = user == null ? null : user == masterUID;
   }
 
-   Stream<List<Drug>> getDrugsStream() {
+Stream<List<Drug>> getDrugsStream() {
   var db = FirebaseFirestore.instance;
 
-  // Reference the drugs collection for the current user, ordered alphabetically by the 'name' field
   Query<Map<String, dynamic>> drugsCollection = db
       .collection('users')
       .doc(user)
-      .collection('drugs')
-      .orderBy('name', descending: false); // Apply ordering
+      .collection('drugs');
 
-  // Return a stream of drugs
   return drugsCollection.snapshots().map((snapshot) {
-    return snapshot.docs.map((doc) => Drug.fromFirestore(doc.data())).toList();
+    var drugsList = snapshot.docs.map((doc) => Drug.fromFirestore(doc.data())).toList();
+
+    // Sort by name in a case-insensitive manner
+    drugsList.sort((a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+
+    return drugsList;
   });
 }
   
