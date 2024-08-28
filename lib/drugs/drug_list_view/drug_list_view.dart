@@ -8,6 +8,8 @@ import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
 import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
 import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
 
+
+
 class DrugListView extends StatefulWidget {
   @override
   _DrugListViewState createState() => _DrugListViewState();
@@ -16,211 +18,223 @@ class DrugListView extends StatefulWidget {
 class _DrugListViewState extends State<DrugListView> {
   String _searchQuery = '';
   String? _selectedCategory;
+  TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    setState(() {
+      _searchQuery = _searchController.text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var drugListProvider = Provider.of<DrugListProvider>(context, listen: false);
+    List<Drug> drugs = Provider.of<List<Drug>>(context);
+
+    if (drugs.isEmpty) {
+      return Scaffold(
+        appBar: _buildAppBar(context),
+        body: Center(child: Text('Inga läkemedel i listan')),
+      );
+    }
+
+    // Filter drugs based on search query and selected category
+    List<Drug> filteredDrugs = _filterDrugs(drugs);
+
+      List<dynamic> allCategories = drugs
+      .where((drug) => drug.categories != null)
+      .expand((drug) => drug.categories!)
+      .toSet()
+      .toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          children: [
-            Text('Läkemedel'),
-            if (drugListProvider.isAdmin ?? false)
-              Text(
-                'Admin: ÄNDRINGAR SKER I STAMLISTAN',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Color.fromARGB(255, 255, 77, 0),
-                ),
-              ),
-          ],
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.exit_to_app),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text('Vill du logga ut?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Avbryt'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        FirebaseAuth.instance.signOut();
-                        drugListProvider.clearProvider();
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
-                      },
-                      child: Text('Logga ut'),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChangeNotifierProvider.value(
-                    value: Provider.of<DrugListProvider>(context, listen: false),
-                    child: DrugEditDetail(
-                      drugForm: DrugForm(),
-                    ),
+      appBar: _buildAppBar(context),
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSearchField(),
+                if (Provider.of<DrugListProvider>(context).categories.isNotEmpty)
+                  _buildCategoryChips(allCategories),
+                SizedBox(height: 30),
+              ],
+            ),
+          ),
+        
+          filteredDrugs.isEmpty
+              ? SliverFillRemaining(
+                  child: Center(child: Text('No drugs found.')),
+                )
+              : SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return DrugListRow(filteredDrugs[index]);
+                    },
+                    childCount: filteredDrugs.length,
                   ),
                 ),
-              );
-            },
-          ),
         ],
-      ),
-      body: StreamBuilder<List<Drug>>(
-        stream: drugListProvider.getDrugsStream(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No drugs found.'));
-          }
-
-          // Extract categories for the category chips
-          List<dynamic> categories = snapshot.data!
-              .where((drug) => drug.categories != null)
-              .expand((drug) => drug.categories!)
-              .toSet()
-              .toList();
-
-          // Reset _selectedCategory if it is no longer available
-          if (_selectedCategory != null && !categories.contains(_selectedCategory)) {
-            
-              _selectedCategory = null;
-            };
-          
-
-          // Filter drugs based on search query and selected category
-          List<Drug> filteredDrugs = snapshot.data!.where((drug) {
-            final matchesSearchQuery = drug.name!.toLowerCase().contains(_searchQuery.toLowerCase());
-            final matchesCategory = _selectedCategory == null || (drug.categories?.contains(_selectedCategory) ?? false);
-            return matchesSearchQuery && matchesCategory;
-          }).toList();
-
-          return CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    searchFieldWidget(),
-                    const SizedBox(height: 10),
-                    if (categories.isNotEmpty)
-                      Container(
-                        padding: EdgeInsets.only(left: 20),
-                        alignment: Alignment.centerLeft,
-                        child: categoryChipsWidget(categories),
-                      ),
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-              filteredDrugs.isEmpty
-                  ? SliverFillRemaining(
-                      child: Center(child: Text('No drugs found.')),
-                    )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          return DrugListRow(filteredDrugs[index]);
-                        },
-                        childCount: filteredDrugs.length,
-                      ),
-                    ),
-            ],
-          );
-        },
       ),
     );
   }
 
-  Widget searchFieldWidget() {
-    return Container(
-      padding: EdgeInsets.only(left: 10.0, right: 10.0),
+  
+  void _onLogoutPressed() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Vill du logga ut?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Avbryt'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                FirebaseAuth.instance.signOut();
+                Provider.of<DrugListProvider>(context, listen: false).clearProvider();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+              child: Text('Logga ut'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onAddDrugPressed() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider.value(
+          value: Provider.of<DrugListProvider>(context, listen: false),
+          child: DrugEditDetail(
+            drugForm: DrugForm(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: TextField(
+        controller: _searchController,
         decoration: InputDecoration(
           isDense: true,
           hintText: 'Sök efter läkemedel',
-          labelStyle: Theme.of(context).textTheme.bodyMedium,
-          hintStyle: Theme.of(context).textTheme.bodyMedium,
           prefixIcon: Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-        onChanged: (query) {
-          setState(() {
-            _searchQuery = query;
-          });
-        },
       ),
     );
   }
 
-  Widget categoryChipsWidget(List<dynamic> categories) {
+  Widget _buildCategoryChips(List<dynamic> categories) {
     return Padding(
-      padding: const EdgeInsets.only(left: 0, right: 5),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.only(left: 10.0, right: 5.0),
+      child: Wrap(
+        spacing: 5.0,
+        runSpacing: -8.0,
         children: [
-          SizedBox(height: 10),
-          Wrap(
-            spacing: 5.0,
-            runSpacing: -8,
-            children: [
-              ChoiceChip(
-                showCheckmark: false,
-                label: Text("Alla", style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
-                selected: _selectedCategory == null,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                onSelected: (bool selected) {
-                  setState(() {
-                    _selectedCategory = null;
-                  });
-                },
-                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-              ),
-              ...categories.map((dynamic category) {
-                return ChoiceChip(
-                  showCheckmark: false,
-                  label: Text(category, style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
-                  selected: _selectedCategory == category,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  onSelected: (bool selected) {
-                    setState(() {
-                      _selectedCategory = selected ? category : null;
-                    });
-                  },
-                  padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-                );
-              }).toList(),
-            ],
+          ChoiceChip(
+            showCheckmark: false,
+            label: Text("Alla", style: TextStyle(fontSize: 11)),
+            selected: _selectedCategory == null,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            onSelected: (bool selected) {
+              setState(() {
+                _selectedCategory = null;
+              });
+            },
+            padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
           ),
+          ...categories.map((dynamic category) {
+            return ChoiceChip(
+              showCheckmark: false,
+              label: Text(category, style: TextStyle(fontSize: 11)),
+              selected: _selectedCategory == category,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              onSelected: (bool selected) {
+                setState(() {
+                  _selectedCategory = selected ? category : null;
+                });
+              },
+              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+            );
+          }).toList(),
         ],
       ),
     );
   }
+
+  List<Drug> _filterDrugs(List<Drug> drugs) {
+    return drugs.where((drug) {
+      final matchesSearchQuery = drug.name!.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesCategory = _selectedCategory == null || (drug.categories?.contains(_selectedCategory) ?? false);
+      return matchesSearchQuery && matchesCategory;
+    }).toList();
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Läkemedel'),
+          Consumer<DrugListProvider>(
+            builder: (context, drugListProvider, child) {
+              return drugListProvider.isAdmin ?? false
+                  ? Text(
+                      'Admin: ÄNDRINGAR SKER I STAMLISTAN',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color.fromARGB(255, 255, 77, 0),
+                      ),
+                    )
+                  : SizedBox.shrink();
+            },
+          ),
+        ],
+      ),
+      leading: IconButton(
+        icon: Icon(Icons.exit_to_app),
+        onPressed: _onLogoutPressed,
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: _onAddDrugPressed,
+        ),
+      ],
+    );
+  }
+
 }

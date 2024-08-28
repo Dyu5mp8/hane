@@ -1,11 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/login/loginPage.dart';
 import 'package:hane/login/drug_init_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drug_list_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+class DrugListWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamProvider<List<Drug>>.value(
+      value: Provider.of<DrugListProvider>(context, listen: false).getDrugsStream(),
+      initialData: [],
+      catchError: (_, error) => [],
+      child: DrugListView(),
+    );
+  }
+}
 
 enum UserStatus {
   hasExistingUserData,
@@ -65,13 +78,13 @@ class InitializerWidget extends StatelessWidget {
 
       if (userStatus == UserStatus.hasExistingUserData) {
         drugListProvider.setUserData(user);
-        return DrugListView();
+        return DrugListWrapper();
       } else if (userStatus == UserStatus.noExistingUserData) {
         drugListProvider.setUserData(user);
         return DrugInitScreen(user: user);
       } else if (userStatus == UserStatus.isAdmin) {
         drugListProvider.setUserData("master");
-        return DrugListView();
+        return DrugListWrapper();
       } else {
         throw Exception("Unknown user status");
       }
@@ -126,3 +139,4 @@ class InitializerWidget extends StatelessWidget {
     }, SetOptions(merge: true));
   }
 }
+
