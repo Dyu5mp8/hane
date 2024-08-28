@@ -153,43 +153,51 @@ class _DrugListViewState extends State<DrugListView> {
     );
   }
 
-  Widget _buildCategoryChips(List<dynamic> categories) {
+ Widget _buildCategoryChips(List<dynamic> categories) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10.0, right: 5.0),
-      child: Wrap(
-        spacing: 5.0,
-        runSpacing: -8.0,
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ChoiceChip(
-            showCheckmark: false,
-            label: Text("Alla", style: TextStyle(fontSize: 11)),
-            selected: _selectedCategory == null,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            onSelected: (bool selected) {
-              setState(() {
-                _selectedCategory = null;
-              });
-            },
-            padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-          ),
-          ...categories.map((dynamic category) {
-            return ChoiceChip(
-              showCheckmark: false,
-              label: Text(category, style: TextStyle(fontSize: 11)),
-              selected: _selectedCategory == category,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+          SizedBox(height: 10),
+          Wrap(
+            spacing: 5.0, // horizontal space between chips
+            runSpacing: -8,
+            children: [
+              ChoiceChip(
+                showCheckmark: false,
+                label: Text("Alla", style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
+                selected: _selectedCategory == null,
+                 shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
+      
+      ),
+                onSelected: (bool selected) {
+                  setState(() {
+                    _selectedCategory = null;
+                  });
+                },
+                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
               ),
-              onSelected: (bool selected) {
-                setState(() {
-                  _selectedCategory = selected ? category : null;
-                });
-              },
-              padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-            );
-          }).toList(),
+              ...categories.map((dynamic category) {
+                return ChoiceChip(
+                  showCheckmark: false,
+                  label: Text(category, style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
+                  selected: _selectedCategory == category,
+                   shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
+      
+      ),
+                  onSelected: (bool selected) {
+                    setState(() {
+                      _selectedCategory = selected ? category : null;
+                    });
+                  },
+                  padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                );
+              }).toList(),
+            ],
+          ),
         ],
       ),
     );
