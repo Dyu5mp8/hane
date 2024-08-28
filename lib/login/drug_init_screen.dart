@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_list_view/drug_list_view.dart';
+import 'package:hane/drugs/services/drug_list_wrapper.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 
@@ -61,7 +61,7 @@ class DrugInitScreen extends StatelessWidget {
                   drugProvider.setUserData(user);
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => DrugListView()),
+                    MaterialPageRoute(builder: (context) => DrugListWrapper()),
                   );
                 },
                 color: theme.colorScheme.secondary,
@@ -76,7 +76,7 @@ class DrugInitScreen extends StatelessWidget {
                   await drugProvider.copyMasterToUser();
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => DrugListView()),
+                    MaterialPageRoute(builder: (context) => DrugListWrapper()),
                   );
                 },
                 color: theme.colorScheme.tertiary,
