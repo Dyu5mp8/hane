@@ -84,6 +84,8 @@ class _IndicationTabs extends StatelessWidget {
         indicator: BoxDecoration(
           borderRadius: BorderRadius.circular(70),
           color: Colors.lightBlue,
+          border: Border.all(color: Colors.black, width: 0.5),
+         
         ),
         tabs: indications.map((indication) => Tab(text: indication.name)).toList(),
       ),

@@ -24,11 +24,12 @@ class DrugListRow extends StatelessWidget {
       return 
     ListTile(
       dense: true,
-      contentPadding: EdgeInsets.only(right: 16.0, top: 0, bottom: 0),
+      contentPadding: EdgeInsets.only(right: 16.0, top: 0, bottom: 5),
       minLeadingWidth: 0,
       leading: Container(
         width: 5,
         color: _drug.changedByUser ? Theme.of(context).primaryColor : Colors.transparent,),
+  
       title: Text(
         _drug.name!,
         style: Theme.of(context).textTheme.bodyLarge,
@@ -41,7 +42,7 @@ class DrugListRow extends StatelessWidget {
               _drug.brandNames!.join(","),
               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                     fontStyle: FontStyle.italic,
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
             ),
         ],
