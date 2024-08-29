@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hane/drugs/models/conversionColors.dart';
 import 'package:hane/drugs/ui_components/concentration_picker.dart';
-import 'package:hane/drugs/ui_components/conversion_option_miniature.dart';
 import 'package:hane/drugs/controllers/dosageViewHandler.dart';
 import 'package:hane/drugs/ui_components/time_picker.dart';
 import 'package:hane/drugs/ui_components/weight_slider.dart';
@@ -12,22 +10,16 @@ class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
   final DosageViewHandler dosageViewHandler;
 
-
-  DosageSnippet(
-      {Key? key, required this.dosage, required this.dosageViewHandler})
-      : super(key: key);
+  DosageSnippet({Key? key, required this.dosage, required this.dosageViewHandler}) : super(key: key);
 
   @override
   DosageSnippetState createState() => DosageSnippetState();
 }
 
-class DosageSnippetState extends State<DosageSnippet>
-    with SingleTickerProviderStateMixin {
-  late final controller = SlidableController(this);
-
+class DosageSnippetState extends State<DosageSnippet> {
   bool shouldShowWeightSlider = false;
 
-  //setting pt weight to 70 or the static variable
+  // Setting patient weight to 70 or the static variable
   double _weightSliderValue = 70;
 
   setConversionWeight(double weight) {
@@ -60,8 +52,7 @@ class DosageSnippetState extends State<DosageSnippet>
             concentrations: widget.dosageViewHandler.availableConcentrations!,
             onConcentrationSet: (newConcentration) {
               setState(() {
-                widget.dosageViewHandler.conversionConcentration =
-                    newConcentration;
+                widget.dosageViewHandler.conversionConcentration = newConcentration;
               });
             },
           );
@@ -82,146 +73,134 @@ class DosageSnippetState extends State<DosageSnippet>
         });
   }
 
-  _conversionButtonText(
-      String setText, String resetText, dynamic conversionAdress) {
-    if (conversionAdress == null) {
-      return setText;
-    } else {
-      return resetText;
-    }
+  String _conversionButtonText(String setText, String resetText, dynamic conversionAddress) {
+    return conversionAddress == null ? setText : resetText;
+  }
+
+  bool get _isConversionActive {
+    return widget.dosageViewHandler.conversionWeight != null ||
+        widget.dosageViewHandler.conversionConcentration != null ||
+        widget.dosageViewHandler.conversionTime != null;
+  }
+
+  void _resetAllConversions() {
+    setState(() {
+      widget.dosageViewHandler.conversionWeight = null;
+      widget.dosageViewHandler.conversionConcentration = null;
+      widget.dosageViewHandler.conversionTime = null;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (shouldShowWeightSlider) {
-      return Row(
+    return ListTile(
+      key: ValueKey(_isConversionActive), // Use a unique key to force rebuilds when state changes
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        side: const BorderSide(
+          color: Color.fromARGB(255, 220, 220, 220), // Softer border color
+          width: 0.5,
+        ),
+      ),
+      tileColor: Colors.white, // Consistent background color
+      minVerticalPadding: 20,
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-              child: Slider(
-            value: _weightSliderValue,
-            min: 0,
-            max: 200,
-            onChanged: (value) {
-              setState(() {
-                _weightSliderValue = value;
-              });
+          if (_isConversionActive)
+            IconButton(
+              icon: const Icon(Icons.refresh, color: Colors.redAccent),
+              onPressed: _resetAllConversions,
+            ),
+          PopupMenuButton<int>(
+            onSelected: (int result) {
+              if (result == 1) {
+                if (widget.dosageViewHandler.conversionWeight == null) {
+                  _showWeightSlider(context);
+                } else {
+                  setState(() {
+                    widget.dosageViewHandler.conversionWeight = null;
+                  });
+                }
+              } else if (result == 2) {
+                if (widget.dosageViewHandler.conversionConcentration == null) {
+                  _showConcentrationPicker(context);
+                } else {
+                  setState(() {
+                    widget.dosageViewHandler.conversionConcentration = null;
+                  });
+                }
+              } else if (result == 3) {
+                if (widget.dosageViewHandler.conversionTime == null) {
+                  _showTimePicker(context);
+                } else {
+                  setState(() {
+                    widget.dosageViewHandler.conversionTime = null;
+                  });
+                }
+              } else if (result == 4) {
+                _resetAllConversions();
+              }
             },
-          )),
-          SizedBox(
-              width: 50,
-              child: Text("${_weightSliderValue.round().toString()} kg")),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                setConversionWeight(_weightSliderValue);
-                shouldShowWeightSlider = false;
-              });
-            },
-            child: const Text("OK"),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+              if (widget.dosageViewHandler.ableToConvert.weight)
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      Icon(Icons.scale, color: Colors.blueAccent),
+                      SizedBox(width: 8),
+                      Text(_conversionButtonText(
+                          "Konvertera med vikt", "Återställ viktkonvertering", widget.dosageViewHandler.conversionWeight)),
+                    ],
+                  ),
+                ),
+              if (widget.dosageViewHandler.ableToConvert.concentration)
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: Row(
+                    children: [
+                      Icon(Icons.science, color: Colors.greenAccent),
+                      SizedBox(width: 8),
+                      Text(_conversionButtonText(
+                          "Konvertera till ml", "Återställ konvertering till ml", widget.dosageViewHandler.conversionConcentration)),
+                    ],
+                  ),
+                ),
+              if (widget.dosageViewHandler.ableToConvert.time)
+                PopupMenuItem<int>(
+                  value: 3,
+                  child: Row(
+                    children: [
+                      Icon(Icons.timer, color: Colors.orangeAccent),
+                      SizedBox(width: 8),
+                      Text(_conversionButtonText(
+                          "Konvertera tidsenhet", "Återställ tidskonvertering", widget.dosageViewHandler.conversionTime)),
+                    ],
+                  ),
+                ),
+              if (_isConversionActive)
+                PopupMenuItem<int>(
+                  value: 4,
+                  child: Row(
+                    children: [
+                      Icon(Icons.refresh, color: Colors.redAccent),
+                      SizedBox(width: 8),
+                      Text("Återställ alla"),
+                    ],
+                  ),
+                ),
+            ],
+            icon: const Icon(Icons.swap_horiz_outlined, color: Colors.blueAccent),
           ),
         ],
-      );
-    } else {
-      return Slidable(
-        // Specify a key if the Slidable is dismissible.
-        key: const ValueKey(0),
-
-        // The end action pane is the one at the right or the bottom side.
-        endActionPane: ActionPane(
-          motion: const ScrollMotion(),
-          children: [
-            if (widget.dosageViewHandler.ableToConvert.weight)
-              SlidableAction(
-                flex: 1,
-                onPressed: (_) {
-                  if (widget.dosageViewHandler.conversionWeight == null) {
-                    _showWeightSlider(context);
-                  } else {
-                    setState(() {
-                      widget.dosageViewHandler.conversionWeight = null;
-                    });
-                  }
-                },
-                backgroundColor:
-                    ConversionColor.getColor(ConversionType.weight),
-                foregroundColor: Colors.white,
-                icon: Icons.scale,
-                label: _conversionButtonText("Set Weight", "Reset",
-                    widget.dosageViewHandler.conversionWeight),
-              ),
-            if (widget.dosageViewHandler.ableToConvert.concentration)
-              SlidableAction(
-                flex: 1,
-                onPressed: (_) {
-                  if (widget.dosageViewHandler.conversionConcentration ==
-                      null) {
-                    _showConcentrationPicker(context);
-                  } else {
-                    setState(() {
-                      widget.dosageViewHandler.conversionConcentration = null;
-                    });
-                  }
-                },
-                backgroundColor:
-                    ConversionColor.getColor(ConversionType.concentration),
-                foregroundColor: Colors.white,
-                icon: Icons.medication_liquid,
-                label: _conversionButtonText("Set Concentration", "Reset",
-                    widget.dosageViewHandler.conversionConcentration),
-              ),
-            if (widget.dosageViewHandler.ableToConvert.time)
-              SlidableAction(
-                flex: 1,
-                onPressed: (_) {
-                  if (widget.dosageViewHandler.conversionTime == null) {
-                    _showTimePicker(context);
-                  } else {
-                    setState(() {
-                      widget.dosageViewHandler.conversionTime = null;
-                    });
-                  }
-                },
-                backgroundColor: ConversionColor.getColor(ConversionType.time),
-                foregroundColor: Colors.white,
-                icon: Icons.timer,
-                label: _conversionButtonText("Convert to minutes", "Reset",
-                    widget.dosageViewHandler.conversionTime),
-              ),
-            // Include other actions as necessary
-          ],
-        ),
-
-        // The child of the Slidable is what the user sees when the
-        // component is not dragged.
-
-        child: ListTile(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            side: const BorderSide(
-              color: Color.fromARGB(255, 200, 200, 200), // Softer border color
-              width: 0.5,
-            ),
-          ),
-          tileColor: Colors.white, // Consistent background color
-          minVerticalPadding: 20,
-          trailing: SizedBox(
-            width: 80,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ConversionOptionMinature(
-                    dosageViewHandler: widget.dosageViewHandler),
-              ],
-            ),
-          ),
-          title: widget.dosageViewHandler.showDosage(),
-
-          dense: false, // Ensure the tile isn't too compressed
-        ),
-      );
-    }
+      ),
+                title: widget.dosageViewHandler.showDosage(isOriginalText: true),
+  subtitle: _isConversionActive
+      ? widget.dosageViewHandler.showDosage(isOriginalText: false)
+      : null,
+      dense: false, // Ensure the tile isn't too compressed
+    );
   }
 }

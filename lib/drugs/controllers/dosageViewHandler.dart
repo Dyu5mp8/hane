@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:hane/drugs/models/drug.dart";
 import "package:hane/utils/unit_service.dart";
+import "package:hane/utils/smart_rounder.dart";
 
 class DosageViewHandler {
   final Dosage dosage;
@@ -10,28 +11,29 @@ class DosageViewHandler {
   List<Concentration>? availableConcentrations;
   late ({bool weight, bool time, bool concentration}) ableToConvert;
 
-  DosageViewHandler(Key? key,
-      {required this.dosage,
-      this.conversionWeight,
-      this.conversionTime,
-      this.conversionConcentration,
-      this.availableConcentrations})
-      {
-    ableToConvert = _ableToConvert();  // Call to the instance method
+  DosageViewHandler(
+    Key? key, {
+    required this.dosage,
+    this.conversionWeight,
+    this.conversionTime,
+    this.conversionConcentration,
+    this.availableConcentrations,
+  }) {
+    ableToConvert = _ableToConvert();
   }
 
-  bool canConvertConcentration (Dose dose){
-  if (availableConcentrations != null && dose.units.containsKey("substance")) {
-    var concentrationSubstanceUnits = availableConcentrations!
-        .map((c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
-    var concentrationUnitTypes = concentrationSubstanceUnits
-        .map((c) => UnitValidator.getUnitType(c))
-        .toSet();
-    var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!);
+  bool canConvertConcentration(Dose dose) {
+    if (availableConcentrations != null && dose.units.containsKey("substance")) {
+      var concentrationSubstanceUnits = availableConcentrations!
+          .map((c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
+      var concentrationUnitTypes = concentrationSubstanceUnits
+          .map((c) => UnitValidator.getUnitType(c))
+          .toSet();
+      var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!);
 
-    return concentrationUnitTypes.contains(doseUnitType);
-  }
-  return false;
+      return concentrationUnitTypes.contains(doseUnitType);
+    }
+    return false;
   }
 
   bool canConvertTime(Dose dose) {
@@ -40,7 +42,7 @@ class DosageViewHandler {
 
   bool canConvertWeight(Dose dose) {
     return dose.units.containsKey("patientWeight");
-  } 
+  }
 
   ({bool weight, bool time, bool concentration}) _ableToConvert() {
     int weightConversions = 0;
@@ -51,37 +53,87 @@ class DosageViewHandler {
       dosage.dose,
       dosage.lowerLimitDose,
       dosage.higherLimitDose,
-      dosage.maxDose
+      dosage.maxDose,
     ];
 
     for (Dose? dose in doseList) {
       if (dose != null) {
-        if(canConvertTime(dose)){
+        if (canConvertTime(dose)) {
           timeConversions++;
         }
 
-        if(canConvertWeight(dose)){
+        if (canConvertWeight(dose)) {
           weightConversions++;
         }
 
-        if(canConvertConcentration(dose)){
+        if (canConvertConcentration(dose)) {
           concentrationConversions++;
         }
-
+      }
     }
-   
-    }
-     return (
+    return (
       weight: weightConversions > 0,
       time: timeConversions > 0,
       concentration: concentrationConversions > 0
     );
   }
 
-  Text showDosage() {
-    bool shouldConvertDoses = (conversionWeight != null ||
+ Widget showDosage({required bool isOriginalText}) {
+  String buildDosageText({
+    String? conversionInfo,
+    required String? route,
+    required String? instruction,
+    required Dose? dose,
+    required Dose? lowerLimitDose,
+    required Dose? higherLimitDose,
+    required Dose? maxDose,
+    required bool shouldConvertDoses,
+  }) {
+    final String conversionText = conversionInfo != null && conversionInfo.isNotEmpty
+        ? conversionInfo
+        : '';
+    
+    final String routeText = route != null && route.isNotEmpty
+        ? "$route. "
+        : '';
+
+    final String instructionText = instruction != null && instruction.isNotEmpty
+        ? "$instruction: "
+        : '';
+
+    final String doseText = dose != null
+        ? "${dose.toString()}. "
+        : '';
+
+    final String doseRangeText = (lowerLimitDose != null && higherLimitDose != null)
+        ? "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}). "
+        : '';
+
+    final String maxDoseText = maxDose != null
+        ? "Maxdos: ${maxDose.toString()}."
+        : '';
+
+    return "$conversionText$routeText$instructionText$doseText$doseRangeText$maxDoseText";
+  }
+
+  if (isOriginalText) {
+    return Text(
+      buildDosageText(
+        conversionInfo: '',
+        route: dosage.administrationRoute,
+        instruction: dosage.instruction,
+        dose: dosage.dose,
+        lowerLimitDose: dosage.lowerLimitDose,
+        higherLimitDose: dosage.higherLimitDose,
+        maxDose: dosage.maxDose,
+        shouldConvertDoses: false,
+      ),
+      style: TextStyle(fontSize: 14),
+    );
+  } else {
+    bool shouldConvertDoses = conversionWeight != null ||
         conversionTime != null ||
-        conversionConcentration != null);
+        conversionConcentration != null;
 
     Dose? convertIfNeeded(Dose? dose) {
       if (dose == null) return null;
@@ -89,7 +141,7 @@ class DosageViewHandler {
           ? dose.convertedBy(
               convertWeight: canConvertWeight(dose) ? conversionWeight : null,
               convertTime: canConvertTime(dose) ? conversionTime : null,
-              convertConcentration:   canConvertConcentration(dose) ? conversionConcentration : null,
+              convertConcentration: canConvertConcentration(dose) ? conversionConcentration : null,
             )
           : dose;
     }
@@ -99,94 +151,65 @@ class DosageViewHandler {
     Dose? higherLimitDose = convertIfNeeded(dosage.higherLimitDose);
     Dose? maxDose = convertIfNeeded(dosage.maxDose);
 
-    double _fontSize = 14;
-    TextDecoration _decoration = shouldConvertDoses ? TextDecoration.underline : TextDecoration.none;
-    
-    TextSpan routeText(String route) {
-      if (route.isEmpty) return TextSpan();
-      return TextSpan(
-        text: "$route.",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: _fontSize,
+    String? weightConversionInfo = conversionWeight != null
+      ? "vikt ${smartRound(conversionWeight!).toString()} kg"
+      : null;
+
+    String? concentrationConversionInfo = conversionConcentration != null
+      ? "koncentration ${conversionConcentration.toString()}"
+      : null;
+
+    String? timeConversionInfo = conversionTime != null
+      ? "tidsenhet ${conversionTime.toString()}"
+      : null;
+
+    List<String> conversionParts = [
+      if (weightConversionInfo != null) weightConversionInfo,
+      if (concentrationConversionInfo != null) concentrationConversionInfo,
+      if (timeConversionInfo != null) timeConversionInfo,
+    ];
+
+    String conversionInfo = conversionParts.isNotEmpty
+      ? "Konvertering baserat på ${conversionParts.join(', ')}: "
+      : "";
+
+    return RichText(
+  text: TextSpan(
+    children: [
+      if (conversionInfo.isNotEmpty)
+           TextSpan(
+          text: '\n', // Newline TextSpan
         ),
-      );
-    }
-    TextSpan instructionText(String instruction) {
-      if (instruction.isEmpty) return TextSpan();
-      return TextSpan(
-        text: "$instruction:",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: _fontSize,
-
-        
+        TextSpan(
+          text: conversionInfo,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            decoration: TextDecoration.underline, 
+          ),
         ),
-      );
-    }
-
-    TextSpan doseText(Dose? dose) {
-      if (dose == null) return TextSpan();
-      return TextSpan(
-        text: "${dose.toString()}.",
-        style: TextStyle(
-          fontSize: _fontSize,
-        decoration: _decoration,
-
+      if (conversionInfo.isNotEmpty) 
+        TextSpan(
+          text: '\n', // Newline TextSpan
         ),
-      );
-    }
-
- 
-
-    TextSpan doseRangeText(Dose? lowerLimitDose, Dose? higherLimitDose) {
-      if (lowerLimitDose == null || higherLimitDose == null) return TextSpan();
-      return TextSpan(
-        text: "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}).",
-        style: TextStyle(
-          fontSize: _fontSize,
-          decoration: _decoration,
-        ),
-      );
-    }
-
-
-    TextSpan maxDoseText(Dose? maxDose) {
-      if (maxDose == null) return TextSpan();
-      return TextSpan(
-        text: "Maxdos: ${maxDose.toString()}.",
-        style: TextStyle(
-          fontSize: _fontSize,
-          decoration: _decoration,
-        ),
-      );
-    } 
-
-   TextSpan space() {
-      return TextSpan(
-        text: " ",
-        style: TextStyle(
-          fontSize: _fontSize,
-        ),
-      );
-    }
-
-    return Text.rich(
       TextSpan(
-        children: [
-          routeText(dosage.administrationRoute ?? ''),
-          space(),
-          instructionText(dosage.instruction ?? ''),
-          space(),
-          doseText(dose),
-          space(),
-          doseRangeText(lowerLimitDose, higherLimitDose),
-          space(),
-          maxDoseText(maxDose),
-        ],
-
-      
+        text: buildDosageText(
+          conversionInfo: '',
+          route: null,
+          instruction: dosage.instruction,
+          dose: dose,
+          lowerLimitDose: lowerLimitDose,
+          higherLimitDose: higherLimitDose,
+          maxDose: maxDose,
+          shouldConvertDoses: shouldConvertDoses,
+        ),
+        style: TextStyle(
+          fontSize: 12
+        ),
       ),
-    );
+    ],
+  ),
+);
   }
 }
+  }
