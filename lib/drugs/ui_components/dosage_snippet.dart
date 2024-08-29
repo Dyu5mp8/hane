@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/models/conversionColors.dart';
 import 'package:hane/drugs/ui_components/concentration_picker.dart';
 import 'package:hane/drugs/controllers/dosageViewHandler.dart';
 import 'package:hane/drugs/ui_components/time_picker.dart';
@@ -10,7 +9,7 @@ class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
   final DosageViewHandler dosageViewHandler;
 
-  DosageSnippet({Key? key, required this.dosage, required this.dosageViewHandler}) : super(key: key);
+  const DosageSnippet({super.key, required this.dosage, required this.dosageViewHandler});
 
   @override
   DosageSnippetState createState() => DosageSnippetState();
@@ -20,7 +19,7 @@ class DosageSnippetState extends State<DosageSnippet> {
   bool shouldShowWeightSlider = false;
 
   // Setting patient weight to 70 or the static variable
-  double _weightSliderValue = 70;
+  final double _weightSliderValue = 70;
 
   setConversionWeight(double weight) {
     setState(() {
@@ -110,7 +109,8 @@ class DosageSnippetState extends State<DosageSnippet> {
         children: [
           if (_isConversionActive)
             IconButton(
-              icon: const Icon(Icons.refresh, color: Colors.redAccent),
+              iconSize: 40,
+              icon: const Icon(Icons.refresh, color: Colors.orangeAccent),
               onPressed: _resetAllConversions,
             ),
           PopupMenuButton<int>(
@@ -149,8 +149,8 @@ class DosageSnippetState extends State<DosageSnippet> {
                   value: 1,
                   child: Row(
                     children: [
-                      Icon(Icons.scale, color: Colors.blueAccent),
-                      SizedBox(width: 8),
+                      const Icon(Icons.scale, color: Colors.blueAccent),
+                      const SizedBox(width: 8),
                       Text(_conversionButtonText(
                           "Konvertera med vikt", "Återställ viktkonvertering", widget.dosageViewHandler.conversionWeight)),
                     ],
@@ -161,8 +161,8 @@ class DosageSnippetState extends State<DosageSnippet> {
                   value: 2,
                   child: Row(
                     children: [
-                      Icon(Icons.science, color: Colors.greenAccent),
-                      SizedBox(width: 8),
+                      const Icon(Icons.science, color: Colors.greenAccent),
+                      const SizedBox(width: 8),
                       Text(_conversionButtonText(
                           "Konvertera till ml", "Återställ konvertering till ml", widget.dosageViewHandler.conversionConcentration)),
                     ],
@@ -173,26 +173,26 @@ class DosageSnippetState extends State<DosageSnippet> {
                   value: 3,
                   child: Row(
                     children: [
-                      Icon(Icons.timer, color: Colors.orangeAccent),
-                      SizedBox(width: 8),
+                      const Icon(Icons.timer, color: Colors.orangeAccent),
+                      const SizedBox(width: 8),
                       Text(_conversionButtonText(
                           "Konvertera tidsenhet", "Återställ tidskonvertering", widget.dosageViewHandler.conversionTime)),
                     ],
                   ),
                 ),
               if (_isConversionActive)
-                PopupMenuItem<int>(
+                const PopupMenuItem<int>(
                   value: 4,
                   child: Row(
                     children: [
-                      Icon(Icons.refresh, color: Colors.redAccent),
+                      Icon(Icons.refresh, color: Colors.blueGrey),
                       SizedBox(width: 8),
                       Text("Återställ alla"),
                     ],
                   ),
                 ),
             ],
-            icon: const Icon(Icons.swap_horiz_outlined, color: Colors.blueAccent),
+            icon: const Icon(Icons.swap_horiz_outlined, color: Colors.blueAccent, size: 40),
           ),
         ],
       ),

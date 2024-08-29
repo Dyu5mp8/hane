@@ -128,7 +128,7 @@ class DosageViewHandler {
         maxDose: dosage.maxDose,
         shouldConvertDoses: false,
       ),
-      style: TextStyle(fontSize: 14),
+      style: const TextStyle(fontSize: 14),
     );
   } else {
     bool shouldConvertDoses = conversionWeight != null ||
@@ -177,19 +177,19 @@ class DosageViewHandler {
   text: TextSpan(
     children: [
       if (conversionInfo.isNotEmpty)
-           TextSpan(
+           const TextSpan(
           text: '\n', // Newline TextSpan
         ),
         TextSpan(
           text: conversionInfo,
-          style: TextStyle(
-            fontSize: 12,
+          style: const TextStyle(
+            fontSize: 14,
             fontWeight: FontWeight.bold,
             decoration: TextDecoration.underline, 
           ),
         ),
       if (conversionInfo.isNotEmpty) 
-        TextSpan(
+        const TextSpan(
           text: '\n', // Newline TextSpan
         ),
       TextSpan(
@@ -203,8 +203,8 @@ class DosageViewHandler {
           maxDose: maxDose,
           shouldConvertDoses: shouldConvertDoses,
         ),
-        style: TextStyle(
-          fontSize: 12
+        style: const TextStyle(
+          fontSize: 14
         ),
       ),
     ],
