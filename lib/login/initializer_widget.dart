@@ -24,106 +24,87 @@ class InitializerWidget extends StatelessWidget {
       future: _initializeApp(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a loading screen while waiting for the future to complete
-          return const Center(child: CircularProgressIndicator());
+          return Container(
+            decoration: BoxDecoration(color: Colors.white),
+            child: const Center(child: CircularProgressIndicator()),
+          );
         } else if (snapshot.hasError) {
-          // Handle errors accordingly
           return Center(
             child: Text("An error occurred: ${snapshot.error}"),
           );
         } else {
-          try {
-            // If the future has completed successfully, return the resolved widget
-            return snapshot.data!;
-          } catch (e) {
-            // If an error occurs while trying to build the widget, show an error screen
-            return Center(
-              child: Text("An error occurred: $e"),
-            );
-          }
+          return snapshot.data!;
         }
       },
     );
   }
 
   Future<Widget> _initializeApp(BuildContext context) async {
-    final isUserLoggedIn = FirebaseAuth.instance.currentUser != null;
+    final user = FirebaseAuth.instance.currentUser;
 
-    if (isUserLoggedIn) {
-      String user = FirebaseAuth.instance.currentUser!.uid;
+    if (user != null) {
+      String userId = user.uid;
 
       if (firstLogin) {
-        await _firstLoginSetup(user);
+        await _firstLoginSetup(userId);
       }
 
-      _logUserLogin(user);
-      UserStatus userStatus = await checkUserStatus(user);
+      await _logUserLogin(userId);
 
-      final drugListProvider =
-          Provider.of<DrugListProvider>(context, listen: false);
-      print("User status: $userStatus");
+      UserStatus userStatus = await _determineUserStatus(user);
 
-      if (userStatus == UserStatus.hasExistingUserData) {
-        drugListProvider.setUserData(user);
-        return DrugListWrapper();
-      } else if (userStatus == UserStatus.noExistingUserData) {
-        drugListProvider.setUserData(user);
-        return DrugInitScreen(user: user);
-      } else if (userStatus == UserStatus.isAdmin) {
-        drugListProvider.setUserData("master");
-        return DrugListWrapper();
-      } else {
-        throw Exception("Unknown user status");
-      }
+      return _getHomeScreen(context, userStatus, userId);
     } else {
-      // Return the login page if the user is not logged in
       return LoginPage();
     }
   }
 
-  Future<UserStatus> checkUserStatus(String user) async {
-    // First, check if the user has the 'admin' custom claim
-    User? firebaseUser = FirebaseAuth.instance.currentUser;
+  Future<UserStatus> _determineUserStatus(User user) async {
+    final idTokenResult = await user.getIdTokenResult(true);
+    final isAdmin = idTokenResult.claims?['admin'] == true;
 
-    if (firebaseUser != null) {
-      IdTokenResult idTokenResult = await firebaseUser.getIdTokenResult(true);
-
-      if (idTokenResult.claims != null && idTokenResult.claims!['admin'] == true) {
-        print("User is admin");
-        return UserStatus.isAdmin;
-      }
+    if (isAdmin) {
+      print("User is admin");
+      return UserStatus.isAdmin;
     }
 
-    // If the user is not an admin, check for existing user data in Firestore
-    final userRef = FirebaseFirestore.instance.collection('users').doc(user);
-    final userDrugRef = userRef.collection('drugs');
-
-    // Check if the drugs subcollection has any documents
+    final userDrugRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection('drugs');
     final snapshot = await userDrugRef.limit(1).get();
 
-    if (snapshot.docs.isNotEmpty) {
-      return UserStatus.hasExistingUserData;
-    } else {
-      return UserStatus.noExistingUserData;
+    return snapshot.docs.isNotEmpty
+        ? UserStatus.hasExistingUserData
+        : UserStatus.noExistingUserData;
+  }
+
+  Widget _getHomeScreen(BuildContext context, UserStatus status, String userId) {
+    final drugListProvider = Provider.of<DrugListProvider>(context, listen: false);
+
+    switch (status) {
+      case UserStatus.isAdmin:
+        drugListProvider.setUserData("master");
+        return DrugListWrapper();
+      case UserStatus.hasExistingUserData:
+        drugListProvider.setUserData(userId);
+        return DrugListWrapper();
+      case UserStatus.noExistingUserData:
+        drugListProvider.setUserData(userId);
+        return DrugInitScreen(user: userId);
+      default:
+        throw Exception("Unknown user status");
     }
   }
 
-  Future<void> _logUserLogin(String user) async {
-    final db = FirebaseFirestore.instance;
-    final userRef = db.collection('users').doc(user);
-
+  Future<void> _logUserLogin(String userId) async {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
     await userRef.set({
       'lastLogin': DateTime.now(),
     }, SetOptions(merge: true));
   }
 
-  Future<void> _firstLoginSetup(String user) async {
-    final db = FirebaseFirestore.instance;
-    final userRef = db.collection('users').doc(user);
-
+  Future<void> _firstLoginSetup(String userId) async {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
     await userRef.set({
       'registerTime': DateTime.now(),
     }, SetOptions(merge: true));
   }
 }
-

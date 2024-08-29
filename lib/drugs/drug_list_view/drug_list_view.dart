@@ -41,14 +41,30 @@ class _DrugListViewState extends State<DrugListView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Drug> drugs = Provider.of<List<Drug>>(context);
+    List<Drug>? drugs = Provider.of<List<Drug>?>(context);
+
+       if (drugs == null) {
+      // Show a loading indicator while the drugs are loading
+      return Scaffold(
+        appBar: _buildAppBar(context),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     if (drugs.isEmpty) {
       return Scaffold(
         appBar: _buildAppBar(context),
-        body: const Center(child: Text('Inga läkemedel i listan')),
+        body: Center(child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          
+          children: [
+            Text('Inga läkemedel i listan'),
+            TextButton.icon(onPressed: _onAddDrugPressed, label: const Text('Lägg till ett läkemedel'), icon: const Icon(Icons.add)),
+          ],
+        )),
       );
     }
+
 
     // Filter drugs based on search query and selected category
     List<Drug> filteredDrugs = _filterDrugs(drugs);
@@ -77,7 +93,7 @@ class _DrugListViewState extends State<DrugListView> {
         
           filteredDrugs.isEmpty
               ? const SliverFillRemaining(
-                  child: Center(child: Text('No drugs found.')),
+                  child: Center(child: Text('Inga läkemedel som matchar sökningen')),
                 )
               : SliverList(
                   delegate: SliverChildBuilderDelegate(
