@@ -93,150 +93,159 @@ class DosageSnippetState extends State<DosageSnippet> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      key: ValueKey(
-          _isConversionActive), // Use a unique key to force rebuilds when state changes
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-        side: const BorderSide(
-          color: Color.fromARGB(255, 220, 220, 220), // Softer border color
-          width: 0.5,
-        ),
-      ),
-      tileColor: Colors.white, // Consistent background color
-      minVerticalPadding: 20,
-      title: Row(
-        children: [
-          Expanded(
-            child: widget.dosageViewHandler.showDosage(isOriginalText: true),
-          ),
-          const SizedBox(width: 8),
-          if (_isConversionActive)
-            IconButton(
+  PopupMenuButton<int> _buildPopUpMenuButton() {
+    return PopupMenuButton<int>(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
                style: ButtonStyle(
-    backgroundColor: ButtonStyleButton.allOrNull<Color>(Color.fromARGB(255, 195, 225, 240)),
-    padding: ButtonStyleButton.allOrNull<EdgeInsets>(EdgeInsets.all(4)), // Compact padding
-   
-    elevation: ButtonStyleButton.allOrNull<double>(4.0), // Slight elevation for depth
-  ),
-              iconSize: 20,
-              icon: const Icon(Icons.refresh, color: Color.fromARGB(255, 20, 12, 2)),
-              onPressed: _resetAllConversions,
+              backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255, 195, 225, 240)),
+              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(4)), // Compact padding
+              elevation: WidgetStateProperty.all<double>(4.0), // Slight elevation for depth
             ),
-          PopupMenuButton<int>(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            ),
-            color: const Color.fromARGB(
-                255, 225, 225, 225), // Background color of the popup menu
-            elevation: 8, // Elevation of the popup menu
-            offset: Offset(0, 40),
-            popUpAnimationStyle: AnimationStyle.noAnimation,
-            onSelected: (int result) {
-              if (result == 1) {
-                if (widget.dosageViewHandler.conversionWeight == null) {
-                  _showWeightSlider(context);
-                } else {
-                  setState(() {
-                    widget.dosageViewHandler.conversionWeight = null;
-                  });
+            iconSize: 20,
+              color: const Color.fromARGB(255, 225, 225, 225), // Background color of the popup menu
+              elevation: 8, // Elevation of the popup menu
+              offset: const Offset(0, 40),
+              onSelected: (int result) {
+                if (result == 1) {
+                  if (widget.dosageViewHandler.conversionWeight == null) {
+                    _showWeightSlider(context);
+                  } else {
+                    setState(() {
+                      widget.dosageViewHandler.conversionWeight = null;
+                    });
+                  }
+                } else if (result == 2) {
+                  if (widget.dosageViewHandler.conversionConcentration == null) {
+                    _showConcentrationPicker(context);
+                  } else {
+                    setState(() {
+                      widget.dosageViewHandler.conversionConcentration = null;
+                    });
+                  }
+                } else if (result == 3) {
+                  if (widget.dosageViewHandler.conversionTime == null) {
+                    _showTimePicker(context);
+                  } else {
+                    setState(() {
+                      widget.dosageViewHandler.conversionTime = null;
+                    });
+                  }
+                } else if (result == 4) {
+                  _resetAllConversions();
                 }
-              } else if (result == 2) {
-                if (widget.dosageViewHandler.conversionConcentration == null) {
-                  _showConcentrationPicker(context);
-                } else {
-                  setState(() {
-                    widget.dosageViewHandler.conversionConcentration = null;
-                  });
-                }
-              } else if (result == 3) {
-                if (widget.dosageViewHandler.conversionTime == null) {
-                  _showTimePicker(context);
-                } else {
-                  setState(() {
-                    widget.dosageViewHandler.conversionTime = null;
-                  });
-                }
-              } else if (result == 4) {
-                _resetAllConversions();
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-              if (widget.dosageViewHandler.ableToConvert.weight)
-                PopupMenuItem<int>(
-                  value: 1,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.scale,
-                          color: Color.fromARGB(255, 54, 107, 200)),
-                      const SizedBox(width: 8),
-                      Text(_conversionButtonText(
-                          "Konvertera med vikt",
-                          "Återställ viktkonvertering",
-                          widget.dosageViewHandler.conversionWeight)),
-                    ],
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                if (widget.dosageViewHandler.ableToConvert.weight)
+                  PopupMenuItem<int>(
+                    value: 1,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.scale, color: Color.fromARGB(255, 54, 107, 200)),
+                        const SizedBox(width: 8),
+                        Text(_conversionButtonText(
+                            "Konvertera med vikt",
+                            "Återställ viktkonvertering",
+                            widget.dosageViewHandler.conversionWeight)),
+                      ],
+                    ),
                   ),
-                ),
-              if (widget.dosageViewHandler.ableToConvert.concentration)
-                PopupMenuItem<int>(
-                  value: 2,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.science,
-                          color: Color.fromARGB(255, 26, 106, 34)),
-                      const SizedBox(width: 8),
-                      Text(_conversionButtonText(
-                          "Konvertera till ml",
-                          "Återställ konvertering till ml",
-                          widget.dosageViewHandler.conversionConcentration)),
-                    ],
+                if (widget.dosageViewHandler.ableToConvert.concentration)
+                  PopupMenuItem<int>(
+                    value: 2,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.science, color: Color.fromARGB(255, 26, 106, 34)),
+                        const SizedBox(width: 8),
+                        Text(_conversionButtonText(
+                            "Konvertera till ml",
+                            "Återställ konvertering till ml",
+                            widget.dosageViewHandler.conversionConcentration)),
+                      ],
+                    ),
                   ),
-                ),
-              if (widget.dosageViewHandler.ableToConvert.time)
-                PopupMenuItem<int>(
-                  value: 3,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.timer, color: Colors.orangeAccent),
-                      const SizedBox(width: 8),
-                      Text(_conversionButtonText(
-                          "Konvertera tidsenhet",
-                          "Återställ tidskonvertering",
-                          widget.dosageViewHandler.conversionTime)),
-                    ],
+                if (widget.dosageViewHandler.ableToConvert.time)
+                  PopupMenuItem<int>(
+                    value: 3,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.timer, color: Colors.orangeAccent),
+                        const SizedBox(width: 8),
+                        Text(_conversionButtonText(
+                            "Konvertera tidsenhet",
+                            "Återställ tidskonvertering",
+                            widget.dosageViewHandler.conversionTime)),
+                      ],
+                    ),
                   ),
-                ),
-              if (_isConversionActive)
-                const PopupMenuItem<int>(
-                  value: 4,
-                  child: Row(
-                    children: [
-                      Icon(Icons.refresh, color: Colors.blueGrey),
-                      SizedBox(width: 8),
-                      Text("Återställ alla"),
-                    ],
+                if (_isConversionActive)
+                  const PopupMenuItem<int>(
+                    value: 4,
+                    child: Row(
+                      children: [
+                        Icon(Icons.refresh, color: Colors.blueGrey),
+                        SizedBox(width: 8),
+                        Text("Återställ alla"),
+                      ],
+                    ),
                   ),
-                ),
-            ],
-            icon: const Icon(Icons.swap_horiz_outlined,
-            
+              ],
+              icon: const Icon(Icons.swap_horiz_outlined,
                 color: Color.fromARGB(255, 0, 0, 0), size: 24),
-                 style: ButtonStyle(
-    backgroundColor: ButtonStyleButton.allOrNull<Color>(Color.fromARGB(255, 195, 225, 240)),
-    padding: ButtonStyleButton.allOrNull<EdgeInsets>(EdgeInsets.all(4)), // Compact padding
-   
-    elevation: ButtonStyleButton.allOrNull<double>(4.0), // Slight elevation for depth
-  ),
-          ),
-        ],
-      ),
-      subtitle: _isConversionActive
-          ? widget.dosageViewHandler.showDosage(isOriginalText: false)
-          : null,
-    );
+            );
   }
+
+@override
+Widget build(BuildContext context) {
+  // Calculate the number of active conversions
+  int activeConversions = 0;
+  if (widget.dosageViewHandler.conversionWeight != null) activeConversions++;
+  if (widget.dosageViewHandler.conversionConcentration != null) activeConversions++;
+  if (widget.dosageViewHandler.conversionTime != null) activeConversions++;
+
+  return ListTile(
+    key: ValueKey(_isConversionActive),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      side: const BorderSide(
+        color: Color.fromARGB(255, 220, 220, 220), // Softer border color
+        width: 0.5,
+      ),
+    ),
+    tileColor: Colors.white, // Consistent background color
+    minVerticalPadding: 20,
+    title: Row(
+      children: [
+        Expanded(
+          child: widget.dosageViewHandler.showDosage(isOriginalText: true),
+        ),
+        const SizedBox(width: 8),
+        if (_isConversionActive)
+          IconButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255, 195, 225, 240)),
+              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(4)), // Compact padding
+              elevation: WidgetStateProperty.all<double>(4.0), // Slight elevation for depth
+            ),
+            iconSize: 20,
+            icon: const Icon(Icons.refresh, color: Color.fromARGB(255, 20, 12, 2)),
+            onPressed: _resetAllConversions,
+          ),
+          SizedBox(width: 8),
+        if (activeConversions > 0)
+          Badge.count(
+            count: activeConversions,
+            child: _buildPopUpMenuButton(),
+          )
+          else _buildPopUpMenuButton(),
+        
+      ],
+    ),
+    subtitle: _isConversionActive
+        ? widget.dosageViewHandler.showDosage(isOriginalText: false)
+        : null,
+  );
+}
 }
