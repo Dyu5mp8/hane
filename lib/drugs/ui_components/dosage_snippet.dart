@@ -95,6 +95,8 @@ class DosageSnippetState extends State<DosageSnippet> {
 
   PopupMenuButton<int> _buildPopUpMenuButton() {
     return PopupMenuButton<int>(
+      popUpAnimationStyle: AnimationStyle.noAnimation,
+
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
               ),

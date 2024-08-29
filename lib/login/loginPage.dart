@@ -67,31 +67,38 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _entryField(String title, TextEditingController controller,
-      {bool isPassword = false}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+ Widget _entryField(String title, TextEditingController controller,
+    {bool isPassword = false}) {
+
+  // Assign the appropriate autofill hint based on the field type
+  List<String> autofillHints = isPassword
+      ? [AutofillHints.password]
+      : [AutofillHints.email];
+
+  return Container(
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        const SizedBox(height: 10),
+        TextField(
+          controller: controller,
+          obscureText: isPassword,
+          autofillHints: autofillHints, // Provide the correct autofill hints
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            fillColor: Color(0xfff3f3f4),
+            filled: true,
           ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: controller,
-            obscureText: isPassword,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              fillColor: Color(0xfff3f3f4),
-              filled: true,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 
   Widget _divider() {
     return Container(

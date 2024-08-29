@@ -38,6 +38,7 @@ class DrugListProvider with ChangeNotifier {
         categories.addAll(drug.categories ?? []);
         return drug;
       }).toList();
+       drugsList.sort((a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
       return drugsList;
     });
