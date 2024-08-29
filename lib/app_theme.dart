@@ -59,6 +59,18 @@ final ThemeData appTheme = ThemeData(
   appBarTheme: const AppBarTheme(
     scrolledUnderElevation: 0
 
-  )
+  ),
+
+  cardColor:  Color.fromARGB(255, 0, 79, 104),
+  cardTheme: CardTheme(
+    color: Color.fromARGB(255, 106, 136, 207),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.0),
+      side: const BorderSide(
+        color: Color.fromARGB(255, 220, 220, 220), // Softer border color
+        width: 0.5,
+      ),
+    ),
+  ),
 );
   

@@ -9,7 +9,8 @@ class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
   final DosageViewHandler dosageViewHandler;
 
-  const DosageSnippet({super.key, required this.dosage, required this.dosageViewHandler});
+  const DosageSnippet(
+      {super.key, required this.dosage, required this.dosageViewHandler});
 
   @override
   DosageSnippetState createState() => DosageSnippetState();
@@ -51,7 +52,8 @@ class DosageSnippetState extends State<DosageSnippet> {
             concentrations: widget.dosageViewHandler.availableConcentrations!,
             onConcentrationSet: (newConcentration) {
               setState(() {
-                widget.dosageViewHandler.conversionConcentration = newConcentration;
+                widget.dosageViewHandler.conversionConcentration =
+                    newConcentration;
               });
             },
           );
@@ -72,7 +74,8 @@ class DosageSnippetState extends State<DosageSnippet> {
         });
   }
 
-  String _conversionButtonText(String setText, String resetText, dynamic conversionAddress) {
+  String _conversionButtonText(
+      String setText, String resetText, dynamic conversionAddress) {
     return conversionAddress == null ? setText : resetText;
   }
 
@@ -93,8 +96,10 @@ class DosageSnippetState extends State<DosageSnippet> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      key: ValueKey(_isConversionActive), // Use a unique key to force rebuilds when state changes
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      key: ValueKey(
+          _isConversionActive), // Use a unique key to force rebuilds when state changes
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
         side: const BorderSide(
@@ -104,16 +109,32 @@ class DosageSnippetState extends State<DosageSnippet> {
       ),
       tileColor: Colors.white, // Consistent background color
       minVerticalPadding: 20,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+      title: Row(
         children: [
+          Expanded(
+            child: widget.dosageViewHandler.showDosage(isOriginalText: true),
+          ),
+          const SizedBox(width: 8),
           if (_isConversionActive)
             IconButton(
-              iconSize: 40,
-              icon: const Icon(Icons.refresh, color: Colors.orangeAccent),
+               style: ButtonStyle(
+    backgroundColor: ButtonStyleButton.allOrNull<Color>(Color.fromARGB(255, 195, 225, 240)),
+    padding: ButtonStyleButton.allOrNull<EdgeInsets>(EdgeInsets.all(4)), // Compact padding
+   
+    elevation: ButtonStyleButton.allOrNull<double>(4.0), // Slight elevation for depth
+  ),
+              iconSize: 20,
+              icon: const Icon(Icons.refresh, color: Color.fromARGB(255, 20, 12, 2)),
               onPressed: _resetAllConversions,
             ),
           PopupMenuButton<int>(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            color: const Color.fromARGB(
+                255, 225, 225, 225), // Background color of the popup menu
+            elevation: 8, // Elevation of the popup menu
+            offset: Offset(0, 40),
             popUpAnimationStyle: AnimationStyle.noAnimation,
             onSelected: (int result) {
               if (result == 1) {
@@ -150,10 +171,13 @@ class DosageSnippetState extends State<DosageSnippet> {
                   value: 1,
                   child: Row(
                     children: [
-                      const Icon(Icons.scale, color: Colors.blueAccent),
+                      const Icon(Icons.scale,
+                          color: Color.fromARGB(255, 54, 107, 200)),
                       const SizedBox(width: 8),
                       Text(_conversionButtonText(
-                          "Konvertera med vikt", "Återställ viktkonvertering", widget.dosageViewHandler.conversionWeight)),
+                          "Konvertera med vikt",
+                          "Återställ viktkonvertering",
+                          widget.dosageViewHandler.conversionWeight)),
                     ],
                   ),
                 ),
@@ -162,10 +186,13 @@ class DosageSnippetState extends State<DosageSnippet> {
                   value: 2,
                   child: Row(
                     children: [
-                      const Icon(Icons.science, color: Colors.greenAccent),
+                      const Icon(Icons.science,
+                          color: Color.fromARGB(255, 26, 106, 34)),
                       const SizedBox(width: 8),
                       Text(_conversionButtonText(
-                          "Konvertera till ml", "Återställ konvertering till ml", widget.dosageViewHandler.conversionConcentration)),
+                          "Konvertera till ml",
+                          "Återställ konvertering till ml",
+                          widget.dosageViewHandler.conversionConcentration)),
                     ],
                   ),
                 ),
@@ -177,7 +204,9 @@ class DosageSnippetState extends State<DosageSnippet> {
                       const Icon(Icons.timer, color: Colors.orangeAccent),
                       const SizedBox(width: 8),
                       Text(_conversionButtonText(
-                          "Konvertera tidsenhet", "Återställ tidskonvertering", widget.dosageViewHandler.conversionTime)),
+                          "Konvertera tidsenhet",
+                          "Återställ tidskonvertering",
+                          widget.dosageViewHandler.conversionTime)),
                     ],
                   ),
                 ),
@@ -193,15 +222,21 @@ class DosageSnippetState extends State<DosageSnippet> {
                   ),
                 ),
             ],
-            icon: const Icon(Icons.swap_horiz_outlined, color: Colors.blueAccent, size: 40),
+            icon: const Icon(Icons.swap_horiz_outlined,
+            
+                color: Color.fromARGB(255, 0, 0, 0), size: 24),
+                 style: ButtonStyle(
+    backgroundColor: ButtonStyleButton.allOrNull<Color>(Color.fromARGB(255, 195, 225, 240)),
+    padding: ButtonStyleButton.allOrNull<EdgeInsets>(EdgeInsets.all(4)), // Compact padding
+   
+    elevation: ButtonStyleButton.allOrNull<double>(4.0), // Slight elevation for depth
+  ),
           ),
         ],
       ),
-                title: widget.dosageViewHandler.showDosage(isOriginalText: true),
-  subtitle: _isConversionActive
-      ? widget.dosageViewHandler.showDosage(isOriginalText: false)
-      : null,
-
+      subtitle: _isConversionActive
+          ? widget.dosageViewHandler.showDosage(isOriginalText: false)
+          : null,
     );
   }
 }
