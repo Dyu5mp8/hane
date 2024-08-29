@@ -2,6 +2,19 @@ import "package:flutter/material.dart";
 import "package:hane/drugs/models/drug.dart";
 import "package:hane/utils/unit_service.dart";
 import "package:hane/utils/smart_rounder.dart";
+
+enum AdministrationRoute{
+
+  po,
+  iv,
+  im,
+  sc,
+  rect,
+  inh,
+  nasal,
+  other,
+}
+
 class DosageViewHandler {
   final Dosage dosage;
   double? conversionWeight;
@@ -75,6 +88,27 @@ class DosageViewHandler {
       time: timeConversions > 0,
       concentration: concentrationConversions > 0
     );
+  }
+
+  AdministrationRoute? getAdministrationRoute() {
+    switch (dosage.administrationRoute) {
+      case "PO":
+        return AdministrationRoute.po;
+      case "IV":
+        return AdministrationRoute.iv;
+      case "IM":
+        return AdministrationRoute.im;
+      case "SC":
+        return AdministrationRoute.sc;
+      case "Nasalt":
+        return AdministrationRoute.nasal;
+      case "Inh": 
+        return AdministrationRoute.inh;
+      default:
+        return AdministrationRoute.other;
+      
+  
+    }
   }
 
   Text showDosage({required bool isOriginalText}) {

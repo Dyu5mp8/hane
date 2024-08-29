@@ -4,6 +4,7 @@ import 'package:hane/drugs/controllers/dosageViewHandler.dart';
 import 'package:hane/drugs/ui_components/time_picker.dart';
 import 'package:hane/drugs/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/dosage.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
@@ -197,7 +198,6 @@ class DosageSnippetState extends State<DosageSnippet> {
                 color: Color.fromARGB(255, 0, 0, 0), size: 24),
             );
   }
-
 @override
 Widget build(BuildContext context) {
   // Calculate the number of active conversions
@@ -206,48 +206,107 @@ Widget build(BuildContext context) {
   if (widget.dosageViewHandler.conversionConcentration != null) activeConversions++;
   if (widget.dosageViewHandler.conversionTime != null) activeConversions++;
 
-  return ListTile(
-    key: ValueKey(_isConversionActive),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12.0),
-      side: const BorderSide(
-        color: Color.fromARGB(255, 220, 220, 220), // Softer border color
-        width: 0.5,
-      ),
-    ),
-    tileColor: Colors.white, // Consistent background color
-    minVerticalPadding: 20,
-    title: Row(
-      children: [
-        Expanded(
-          child: widget.dosageViewHandler.showDosage(isOriginalText: true),
-        ),
-        const SizedBox(width: 8),
-        if (_isConversionActive)
-          IconButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255, 195, 225, 240)),
-              padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(4)), // Compact padding
-              elevation: WidgetStateProperty.all<double>(4.0), // Slight elevation for depth
-            ),
-            iconSize: 20,
-            icon: const Icon(Icons.refresh, color: Color.fromARGB(255, 20, 12, 2)),
-            onPressed: _resetAllConversions,
+ Widget routeTextIcon() {
+  switch (widget.dosageViewHandler.getAdministrationRoute()) {
+    case AdministrationRoute.iv:
+      return Row(
+        children: [
+          const Text("Intravenöst"),
+          const SizedBox(width: 4),  // Optional: To add spacing between text and icon
+          const Icon(FontAwesome.syringe_solid, color: Colors.red),
+        ],
+      );
+    case AdministrationRoute.po:
+      return Row(
+        children: [
+          const Text("Peroralt"),
+          const SizedBox(width: 4),  // Optional: To add spacing between text and icon
+          const Icon(FontAwesome.pills_solid, color: Colors.red),
+        ],
+      );
+    case AdministrationRoute.sc:
+      return Row(
+        children: [
+          const Text("Subkutant"),
+        ],
+      );
+    case AdministrationRoute.rect:
+      return Row(
+        children: [
+          const Text("Rektalt"),
+        ],
+      );
+
+    case AdministrationRoute.inh:
+      return Row(
+        children: [
+          const Text("Inhalation"),
+          SizedBox(width:4),
+          const Icon(FontAwesome.lungs_solid, color: Colors.red),
+        ],
+      );
+    default:
+      return const SizedBox(); // Return an empty widget in the default case
+  }
+}
+
+
+  
+
+  return Stack(
+    children: [
+      ListTile(
+        key: ValueKey(_isConversionActive),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+          side: const BorderSide(
+            color: Color.fromARGB(255, 220, 220, 220), // Softer border color
+            width: 0.5,
           ),
-          SizedBox(width: 4),
-        if (activeConversions > 0)
-          Badge.count(
-            offset: const Offset(0, 2),
-            count: activeConversions,
-            child: _buildPopUpMenuButton(),
-          )
-          else _buildPopUpMenuButton(),
-      ],
-    ),
-    subtitle: _isConversionActive
-        ? widget.dosageViewHandler.showDosage(isOriginalText: false)
-        : null,
+        ),
+        tileColor: Colors.white, // Consistent background color
+        minVerticalPadding: 20,
+        title: Row(
+          children: [
+            Expanded(
+              child: widget.dosageViewHandler.showDosage(isOriginalText: true),
+            ),
+            const SizedBox(width: 8),
+            if (_isConversionActive)
+              IconButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all<Color>(const Color.fromARGB(255, 195, 225, 240)),
+                  padding: WidgetStateProperty.all<EdgeInsets>(const EdgeInsets.all(4)), // Compact padding
+                  elevation: WidgetStateProperty.all<double>(4.0), // Slight elevation for depth
+                ),
+                iconSize: 20,
+                icon: const Icon(Icons.refresh, color: Color.fromARGB(255, 20, 12, 2)),
+                onPressed: _resetAllConversions,
+              ),
+            SizedBox(width: 4),
+            if (activeConversions > 0)
+              Badge.count(
+                offset: const Offset(0, 2),
+                count: activeConversions,
+                child: _buildPopUpMenuButton(),
+              )
+            else
+              _buildPopUpMenuButton(),
+          ],
+        ),
+        subtitle: _isConversionActive
+            ? widget.dosageViewHandler.showDosage(isOriginalText: false)
+            : null,
+      ),
+      Positioned(
+        top: 8,
+        left: 16,
+        child: 
+        
+        routeTextIcon(),
+      ),
+    ],
   );
 }
 }
