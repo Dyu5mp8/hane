@@ -114,6 +114,7 @@ class DosageSnippetState extends State<DosageSnippet> {
               onPressed: _resetAllConversions,
             ),
           PopupMenuButton<int>(
+            popUpAnimationStyle: AnimationStyle.noAnimation,
             onSelected: (int result) {
               if (result == 1) {
                 if (widget.dosageViewHandler.conversionWeight == null) {
@@ -200,7 +201,7 @@ class DosageSnippetState extends State<DosageSnippet> {
   subtitle: _isConversionActive
       ? widget.dosageViewHandler.showDosage(isOriginalText: false)
       : null,
-      dense: false, // Ensure the tile isn't too compressed
+
     );
   }
 }
