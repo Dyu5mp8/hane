@@ -233,14 +233,14 @@ Widget build(BuildContext context) {
             icon: const Icon(Icons.refresh, color: Color.fromARGB(255, 20, 12, 2)),
             onPressed: _resetAllConversions,
           ),
-          SizedBox(width: 8),
+          SizedBox(width: 4),
         if (activeConversions > 0)
           Badge.count(
+            offset: const Offset(0, 2),
             count: activeConversions,
             child: _buildPopUpMenuButton(),
           )
           else _buildPopUpMenuButton(),
-        
       ],
     ),
     subtitle: _isConversionActive
