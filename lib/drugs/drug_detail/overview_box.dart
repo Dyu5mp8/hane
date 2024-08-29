@@ -25,7 +25,7 @@ class OverviewBox extends StatelessWidget {
       height: 100,
       padding: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,
-      color: Colors.white,
+      color: const Color.fromARGB(255, 255, 255, 255),
       child: Row(children: [
         Flexible(
           child:
@@ -35,7 +35,7 @@ class OverviewBox extends StatelessWidget {
                 ...drug.categories!.map((dynamic category) {
                   return Text("#$category ",
                       style: Theme.of(context).textTheme.displaySmall);
-                }).toList()
+                })
             ]),
             Row(children: [
               Flexible(
@@ -44,7 +44,7 @@ class OverviewBox extends StatelessWidget {
               ),
               editButton,
               IconButton(
-                  icon: const Icon(Icons.delete, color: Color.fromARGB(255, 241, 64, 0)),
+                  icon: const Icon(Icons.delete, color: Color.fromARGB(255, 122, 0, 0)),
                   onPressed: () => showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -112,23 +112,14 @@ class OverviewBox extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         color: Colors.white,
         padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              children: [
-                const Icon(Icons.warning, color: Colors.red),
-                Expanded(
-                  child: Divider(
-                    color: Colors.black, // Customize the color
-                    thickness: 0.2, // Customize the thickness
-                  ),
-                ),
-              ],
-            ),
-            drug.contraindication != null
-                ? Text(drug.contraindication!)
-                : const Text('Ingen angedd kontraindikation')
+            const Icon(Icons.warning, color:Color.fromARGB(255, 122, 0, 0)),
+            const SizedBox(width: 10,),
+              drug.contraindication != null
+            ? Expanded(child: Text(drug.contraindication!, style: const TextStyle(fontSize: 14)))
+            : const Text('Ingen angedd kontraindikation')
+         
           ],
         ));
   }
@@ -143,25 +134,20 @@ class OverviewBox extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         color: Colors.white,
         padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              children: [
-                const Icon(Icons.notes, color: Colors.black),
-                Expanded(
-                  child: Divider(
-                    color: Colors.black, // Customize the color
-                    thickness: 0.2, // Customize the thickness
-                  ),
+            const Icon(Icons.notes, color: Colors.black),
+                        const SizedBox(width: 10,),
+                          drug.notes != null
+            ? Expanded(
+              child: Text(
+                  drug.notes!,
+                  style: const TextStyle(fontSize: 14),
                 ),
-              ],
-            ),
-            drug.notes != null
-                ? Text(
-                    drug.notes!,
-                  )
-                : const Text(""),
+            )
+            : const Text(""),
+        
+                  
           ],
         ));
   }
@@ -181,7 +167,9 @@ class OverviewBox extends StatelessWidget {
               children: [
                 basicInfoRow(context, drug),
                 noteRow(context, drug),
-                contraindicationRow(context, drug)
+                const Divider(indent: 10, endIndent: 10, thickness: 1),
+                contraindicationRow(context, drug),
+                const SizedBox(height: 20),
               ],
             ),
           )),

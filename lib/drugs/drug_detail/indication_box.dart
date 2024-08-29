@@ -64,7 +64,6 @@ class _IndicationView extends StatelessWidget {
     );
   }
 }
-
 class _IndicationTabs extends StatelessWidget {
   final List<Indication> indications;
 
@@ -72,9 +71,13 @@ class _IndicationTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return SizedBox(
+    return Container(
       height: 30,
+      decoration: const BoxDecoration(
+        color: Colors.white, // Set a solid, non-transparent background color
+
+ 
+      ),
       child: TabBar(
         unselectedLabelStyle: const TextStyle(color: Color.fromARGB(255, 157, 157, 157)),
         labelColor: Colors.black,
@@ -85,14 +88,12 @@ class _IndicationTabs extends StatelessWidget {
           borderRadius: BorderRadius.circular(70),
           color: Colors.lightBlue,
           border: Border.all(color: Colors.black, width: 0.5),
-         
         ),
         tabs: indications.map((indication) => Tab(text: indication.name)).toList(),
       ),
     );
   }
 }
-
 class _IndicationTabView extends StatelessWidget {
   final List<Indication> indications;
   final List<Concentration>? concentrations;
@@ -128,7 +129,10 @@ class _IndicationDetails extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (indication.notes != null) Text(indication.notes!),
+          if (indication.notes != null) Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(indication.notes!, style: const TextStyle(fontSize: 14)),
+          ),
           
           if (indication.dosages != null)
           Expanded(
@@ -186,3 +190,4 @@ class AddIndicationButton extends StatelessWidget {
     );
   }
 }
+

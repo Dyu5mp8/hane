@@ -46,7 +46,7 @@ class _DrugListViewState extends State<DrugListView> {
     if (drugs.isEmpty) {
       return Scaffold(
         appBar: _buildAppBar(context),
-        body: Center(child: Text('Inga läkemedel i listan')),
+        body: const Center(child: Text('Inga läkemedel i listan')),
       );
     }
 
@@ -70,13 +70,13 @@ class _DrugListViewState extends State<DrugListView> {
                 _buildSearchField(),
                 if (Provider.of<DrugListProvider>(context).categories.isNotEmpty)
                   _buildCategoryChips(allCategories),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
               ],
             ),
           ),
         
           filteredDrugs.isEmpty
-              ? SliverFillRemaining(
+              ? const SliverFillRemaining(
                   child: Center(child: Text('No drugs found.')),
                 )
               : SliverList(
@@ -98,11 +98,11 @@ class _DrugListViewState extends State<DrugListView> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Vill du logga ut?'),
+          title: const Text('Vill du logga ut?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Avbryt'),
+              child: const Text('Avbryt'),
             ),
             TextButton(
               onPressed: () {
@@ -114,7 +114,7 @@ class _DrugListViewState extends State<DrugListView> {
                   MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
-              child: Text('Logga ut'),
+              child: const Text('Logga ut'),
             ),
           ],
         );
@@ -144,7 +144,7 @@ class _DrugListViewState extends State<DrugListView> {
         decoration: InputDecoration(
           isDense: true,
           hintText: 'Sök efter läkemedel',
-          prefixIcon: Icon(Icons.search),
+          prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -159,7 +159,7 @@ class _DrugListViewState extends State<DrugListView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Wrap(
             spacing: 5.0, // horizontal space between chips
             runSpacing: -8,
@@ -177,7 +177,7 @@ class _DrugListViewState extends State<DrugListView> {
                     _selectedCategory = null;
                   });
                 },
-                padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
               ),
               ...categories.map((dynamic category) {
                 return ChoiceChip(
@@ -193,7 +193,7 @@ class _DrugListViewState extends State<DrugListView> {
                       _selectedCategory = selected ? category : null;
                     });
                   },
-                  padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
                 );
               }).toList(),
             ],
@@ -214,31 +214,32 @@ class _DrugListViewState extends State<DrugListView> {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('Läkemedel'),
+          const Text('Läkemedel'),
           Consumer<DrugListProvider>(
             builder: (context, drugListProvider, child) {
               return drugListProvider.isAdmin ?? false
-                  ? Text(
+                  ? const Text(
                       'Admin: ÄNDRINGAR SKER I STAMLISTAN',
                       style: TextStyle(
                         fontSize: 16,
                         color: Color.fromARGB(255, 255, 77, 0),
                       ),
                     )
-                  : SizedBox.shrink();
+                  : const SizedBox.shrink();
             },
           ),
+          const SizedBox(height: 10,)
         ],
       ),
       leading: IconButton(
-        icon: Icon(Icons.exit_to_app),
+        icon: const Icon(Icons.exit_to_app),
         onPressed: _onLogoutPressed,
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
           onPressed: _onAddDrugPressed,
         ),
       ],

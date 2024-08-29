@@ -142,8 +142,8 @@ class DosageSnippetState extends State<DosageSnippet> {
                     value: 1,
                     child: Row(
                       children: [
-                        const Icon(Icons.scale, color: Color.fromARGB(255, 54, 107, 200)),
-                        const SizedBox(width: 8),
+                        const Icon(Icons.person, color: Color.fromARGB(255, 54, 107, 200)),
+                        const SizedBox(width: 4),
                         Text(_conversionButtonText(
                             "Konvertera med vikt",
                             "Återställ viktkonvertering",
