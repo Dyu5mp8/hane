@@ -25,7 +25,7 @@ class InitializerWidget extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
-            decoration: BoxDecoration(color: Colors.white),
+            decoration: const BoxDecoration(color: Colors.white),
             child: const Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
@@ -41,6 +41,7 @@ class InitializerWidget extends StatelessWidget {
 
   Future<Widget> _initializeApp(BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
+    print("User: ${user.toString()}");
 
     if (user != null) {
       String userId = user.uid;
@@ -49,13 +50,21 @@ class InitializerWidget extends StatelessWidget {
         await _firstLoginSetup(userId);
       }
 
-      await _logUserLogin(userId);
-
-      UserStatus userStatus = await _determineUserStatus(user);
+      UserStatus userStatus = await _getUserStatus(user);
 
       return _getHomeScreen(context, userStatus, userId);
     } else {
-      return LoginPage();
+      return const LoginPage();
+    }
+  }
+
+  Future<UserStatus> _getUserStatus(User user) async {
+    try {
+      await _logUserLogin(user.uid);
+      return await _determineUserStatus(user);
+    } catch (e) {
+      print("Failed to log user login or determine user status: $e");
+      return UserStatus.hasExistingUserData;
     }
   }
 
@@ -68,8 +77,30 @@ class InitializerWidget extends StatelessWidget {
       return UserStatus.isAdmin;
     }
 
-    final userDrugRef = FirebaseFirestore.instance.collection('users').doc(user.uid).collection('drugs');
-    final snapshot = await userDrugRef.limit(1).get();
+    try {
+      final userDrugRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('drugs');
+
+      final snapshot = await userDrugRef.limit(1).get().timeout(const Duration(seconds: 5));
+
+      return snapshot.docs.isNotEmpty
+          ? UserStatus.hasExistingUserData
+          : UserStatus.noExistingUserData;
+    } catch (e) {
+      print("Fetching from network failed or timed out, trying from cache: $e");
+      return _getUserStatusFromCache(user.uid);
+    }
+  }
+
+  Future<UserStatus> _getUserStatusFromCache(String userId) async {
+    final userDrugRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('drugs');
+
+    final snapshot = await userDrugRef.get(const GetOptions(source: Source.cache));
 
     return snapshot.docs.isNotEmpty
         ? UserStatus.hasExistingUserData
@@ -82,10 +113,10 @@ class InitializerWidget extends StatelessWidget {
     switch (status) {
       case UserStatus.isAdmin:
         drugListProvider.setUserData("master");
-        return DrugListWrapper();
+        return const DrugListWrapper();
       case UserStatus.hasExistingUserData:
         drugListProvider.setUserData(userId);
-        return DrugListWrapper();
+        return const DrugListWrapper();
       case UserStatus.noExistingUserData:
         drugListProvider.setUserData(userId);
         return DrugInitScreen(user: userId);
@@ -96,15 +127,23 @@ class InitializerWidget extends StatelessWidget {
 
   Future<void> _logUserLogin(String userId) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
-    await userRef.set({
-      'lastLogin': DateTime.now(),
-    }, SetOptions(merge: true));
+    try {
+      await userRef.set({
+        'lastLogin': DateTime.now(),
+      }, SetOptions(merge: true)).timeout(const Duration(seconds: 5));
+    } catch (e) {
+      print("Failed to log user login: $e");
+    }
   }
 
   Future<void> _firstLoginSetup(String userId) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
-    await userRef.set({
-      'registerTime': DateTime.now(),
-    }, SetOptions(merge: true));
+    try {
+      final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+      await userRef.set({
+        'registerTime': DateTime.now(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print("Failed to set up first login: $e");
+    }
   }
 }

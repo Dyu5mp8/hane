@@ -5,7 +5,7 @@ import 'signup.dart';
 import 'Widget/bezierContainer.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key, this.title}) : super(key: key);
+  const LoginPage({Key? key, this.title}) : super(key: key);
 
   final String? title;
 

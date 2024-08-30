@@ -5,6 +5,9 @@ import "package:provider/provider.dart";
 import "package:hane/drugs/services/drug_list_provider.dart";
 
 class DrugListWrapper extends StatelessWidget {
+
+const DrugListWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<Drug>?>.value(
