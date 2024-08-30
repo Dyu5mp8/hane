@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/ui_components/concentration_picker.dart';
 import 'package:hane/drugs/controllers/dosageViewHandler.dart';
+import 'package:hane/drugs/ui_components/route_text.dart';
 import 'package:hane/drugs/ui_components/time_picker.dart';
 import 'package:hane/drugs/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/dosage.dart';
-import 'package:icons_plus/icons_plus.dart';
 
 class DosageSnippet extends StatefulWidget {
   final Dosage dosage;
@@ -205,52 +205,6 @@ Widget build(BuildContext context) {
   if (widget.dosageViewHandler.conversionWeight != null) activeConversions++;
   if (widget.dosageViewHandler.conversionConcentration != null) activeConversions++;
   if (widget.dosageViewHandler.conversionTime != null) activeConversions++;
-
- Widget routeTextIcon() {
-  switch (widget.dosageViewHandler.getAdministrationRoute()) {
-    case AdministrationRoute.iv:
-      return Row(
-        children: [
-          const Text("Intravenöst"),
-          const SizedBox(width: 4),  // Optional: To add spacing between text and icon
-          const Icon(FontAwesome.syringe_solid, color: Colors.red),
-        ],
-      );
-    case AdministrationRoute.po:
-      return Row(
-        children: [
-          const Text("Peroralt"),
-          const SizedBox(width: 4),  // Optional: To add spacing between text and icon
-          const Icon(FontAwesome.pills_solid, color: Colors.red),
-        ],
-      );
-    case AdministrationRoute.sc:
-      return Row(
-        children: [
-          const Text("Subkutant"),
-        ],
-      );
-    case AdministrationRoute.rect:
-      return Row(
-        children: [
-          const Text("Rektalt"),
-        ],
-      );
-
-    case AdministrationRoute.inh:
-      return Row(
-        children: [
-          const Text("Inhalation"),
-          SizedBox(width:4),
-          const Icon(FontAwesome.lungs_solid, color: Colors.red),
-        ],
-      );
-    default:
-      return const SizedBox(); // Return an empty widget in the default case
-  }
-}
-
-
   
 
   return Stack(
@@ -299,12 +253,15 @@ Widget build(BuildContext context) {
             ? widget.dosageViewHandler.showDosage(isOriginalText: false)
             : null,
       ),
+      
+      if (widget.dosageViewHandler.getAdministrationRoute() != null)
       Positioned(
         top: 8,
         left: 16,
         child: 
         
-        routeTextIcon(),
+       
+        RouteText(route: widget.dosageViewHandler.getAdministrationRoute()!),
       ),
     ],
   );
