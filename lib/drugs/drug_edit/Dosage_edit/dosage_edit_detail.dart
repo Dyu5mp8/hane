@@ -44,7 +44,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
       backgroundColor: Theme.of(context).primaryColorLight,
       label: Text(label, style: TextStyle(fontSize: chipTextSize)),
       selected: widget.dosageForm.administrationRouteController.text == label,
-      labelPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+      labelPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
       onSelected: (bool selected) {
         setState(() {
           widget.dosageForm.administrationRouteController.text = label;
@@ -57,7 +57,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Redigera dosering"),
-      content: Container(
+      content: SizedBox(
         width: 600,
         child: SingleChildScrollView(
           child: Form(
@@ -65,26 +65,26 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Allmänt", style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 8),
+                const Text("Allmänt", style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
                 
                 // Wrap for Segmented Buttons
-                Text("Administrationsväg"),
-                SizedBox(height: 8),
+                const Text("Administrationsväg"),
+                const SizedBox(height: 8),
                 Wrap(
                   spacing: 5.0, // Horizontal spacing between chips
                   runSpacing: -5, // Vertical spacing between rows of chips
                   children: [
-                    _labelChip("PO", icon: Icon(FontAwesome.pills_solid, size: 11,)),
-                    _labelChip("IV", icon: Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("IM", icon: Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("SC", icon: Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("Inh", icon: Icon(FontAwesome.lungs_solid, size: 11)),
+                    _labelChip("PO", icon: const Icon(FontAwesome.pills_solid, size: 11,)),
+                    _labelChip("IV", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("IM", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("SC", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("Inh", icon: const Icon(FontAwesome.lungs_solid, size: 11)),
                     _labelChip("Annat"),
                   ],
                 ),
                 
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: widget.dosageForm.instructionController,
                   decoration: customInputDecoration("Instruktion"),
@@ -92,9 +92,9 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                   minLines: 1,
                   maxLines: 3
                 ),
-                SizedBox(height: 24),
-                Text("Dosering", style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 8),
+                const SizedBox(height: 24),
+                const Text("Dosering", style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
@@ -105,7 +105,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                         style: TextStyle(fontSize: formTextSize),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.doseUnitController,
@@ -116,8 +116,8 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
-                Text("Dosintervall", style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                const Text("Dosintervall", style: TextStyle(fontWeight: FontWeight.bold)),
                 Row(
                   children: [
                     Expanded(
@@ -128,7 +128,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                         style: TextStyle(fontSize: formTextSize),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.lowerLimitDoseUnitController,
@@ -139,7 +139,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
@@ -150,7 +150,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                         style: TextStyle(fontSize: formTextSize),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.higherLimitDoseUnitController,
@@ -161,9 +161,9 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                     ),
                   ],
                 ),
-                SizedBox(height: 24),
-                Text("Maximal dosering (tak)", style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 8),
+                const SizedBox(height: 24),
+                const Text("Maximal dosering (tak)", style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
@@ -174,7 +174,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                         style: TextStyle(fontSize: formTextSize),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: TextFormField(
                         controller: widget.dosageForm.maxDoseUnitController,
