@@ -1,9 +1,11 @@
-import "package:flutter/material.dart";
-import "package:hane/drugs/drug_edit/Dosage_edit/dosage_detail_form.dart";
-import "package:hane/utils/validate_dosage_save.dart" as val;
+import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_edit/Dosage_edit/dosage_detail_form.dart';
+import 'package:hane/utils/validate_dosage_save.dart' as val;
+import 'package:icons_plus/icons_plus.dart';
 
 class DosageEditDetail extends StatefulWidget {
   final DosageDetailForm dosageForm;
+
   DosageEditDetail({
     required this.dosageForm,
     super.key,
@@ -18,6 +20,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
 
   double formTextSize = 16.0;
   double formErrorTextSize = 8.0;
+  double chipTextSize = 12.0;
 
   InputDecoration customInputDecoration(String labelText) {
     return InputDecoration(
@@ -26,7 +29,27 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
       labelStyle: TextStyle(fontSize: formTextSize),
       errorStyle: TextStyle(fontSize: formErrorTextSize),
       floatingLabelBehavior: FloatingLabelBehavior.always,
-      errorMaxLines: 2
+      errorMaxLines: 2,
+    );
+  }
+
+
+  ChoiceChip _labelChip (String label, {Icon? icon}) {
+    return ChoiceChip(
+      avatar: icon,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(40),
+        side: BorderSide(color: Theme.of(context).primaryColorLight),
+      ),
+      backgroundColor: Theme.of(context).primaryColorLight,
+      label: Text(label, style: TextStyle(fontSize: chipTextSize)),
+      selected: widget.dosageForm.administrationRouteController.text == label,
+      labelPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+      onSelected: (bool selected) {
+        setState(() {
+          widget.dosageForm.administrationRouteController.text = label;
+        });
+      },
     );
   }
 
@@ -35,7 +58,7 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
     return AlertDialog(
       title: const Text("Redigera dosering"),
       content: Container(
-        width: 500,
+        width: 600,
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -44,17 +67,30 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
               children: [
                 Text("Allmänt", style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                TextFormField(
-                  controller: widget.dosageForm.administrationRouteController,
-                  decoration: customInputDecoration("Administrationsväg"),
-                  validator: val.validateTextInput,
-                  style: TextStyle(fontSize: formTextSize),
+                
+                // Wrap for Segmented Buttons
+                Text("Administrationsväg"),
+                SizedBox(height: 8),
+                Wrap(
+                  spacing: 5.0, // Horizontal spacing between chips
+                  runSpacing: -5, // Vertical spacing between rows of chips
+                  children: [
+                    _labelChip("PO", icon: Icon(FontAwesome.pills_solid, size: 11,)),
+                    _labelChip("IV", icon: Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("IM", icon: Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("SC", icon: Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("Inh", icon: Icon(FontAwesome.lungs_solid, size: 11)),
+                    _labelChip("Annat"),
+                  ],
                 ),
+                
                 SizedBox(height: 16),
                 TextFormField(
                   controller: widget.dosageForm.instructionController,
                   decoration: customInputDecoration("Instruktion"),
                   style: TextStyle(fontSize: formTextSize),
+                  minLines: 1,
+                  maxLines: 3
                 ),
                 SizedBox(height: 24),
                 Text("Dosering", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -121,7 +157,6 @@ class _DosageEditDetailState extends State<DosageEditDetail> {
                         decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
                         style: TextStyle(fontSize: formTextSize),
-                      
                       ),
                     ),
                   ],
