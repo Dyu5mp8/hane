@@ -38,7 +38,7 @@ class RouteText extends StatelessWidget {
           case AdministrationRoute.iv:
             return Icon(FontAwesome.syringe_solid, size: iconSize);
           case AdministrationRoute.im:
-            return Icon(HugeIcons.strokeRoundedBodyPartLeg, size: 16, color: Color.fromARGB(255, 188, 39, 13));
+            return Icon(FontAwesome.syringe_solid, size: iconSize);
           case AdministrationRoute.sc:
             return Icon(FontAwesome.syringe_solid, size: iconSize);
           case AdministrationRoute.inh:

@@ -239,6 +239,10 @@ Widget build(BuildContext context) {
                 onPressed: _resetAllConversions,
               ),
             SizedBox(width: 4),
+            if (widget.dosageViewHandler.ableToConvert.weight ||
+                widget.dosageViewHandler.ableToConvert.concentration ||
+                widget.dosageViewHandler.ableToConvert.time)
+                
             if (activeConversions > 0)
               Badge.count(
                 offset: const Offset(0, 2),

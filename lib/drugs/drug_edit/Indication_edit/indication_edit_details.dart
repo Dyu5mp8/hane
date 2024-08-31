@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hane/drugs/controllers/dosageViewHandler.dart';
 import 'package:hane/drugs/drug_edit/Dosage_edit/dosage_detail_form.dart';
 import 'package:hane/drugs/drug_edit/Dosage_edit/dosage_edit_detail.dart';
 import 'package:hane/drugs/drug_edit/Indication_edit/indication_detail_form.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/drugs/ui_components/dosage_snippet.dart';
+
+
 
 
 class IndicationDetail extends StatefulWidget {
@@ -60,17 +64,7 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
     );
   }
 
-  List<Widget> dosagesToList(List<Dosage>? dosages) {
-    List<Widget> ls = [];
-    if (dosages == null) {
-      return ls;
-    }
-    for (int i = 0; i < dosages.length; i++) {
-      ls.add(customListTile(dosages[i], i));
-      ls.add(const Divider());
-    }
-    return ls;
-  }
+ 
 
   void _saveForm() {
     if (_formKey.currentState!.validate()) {
@@ -130,10 +124,19 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
                       ],
 
                     ),
-                    Column(
-                        children: dosagesToList(
-                            widget.indicationDetailForm.indication.dosages)),
-          
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: widget.indicationDetailForm.indication.dosages?.length,
+                      itemBuilder: (ctx, index) {
+                        return DosageSnippet(
+                            dosage: widget.indicationDetailForm.indication.dosages![index],
+                            dosageViewHandler: DosageViewHandler(
+                                widget.key,
+                                dosage: widget.indicationDetailForm.indication.dosages![index],
+                               
+                            ));
+                      },
+                    ),
                     TextButton(
                       child: const Text("Lägg till dosering"),
                       onPressed: () {
