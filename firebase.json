@@ -37,7 +37,10 @@
     ],
     "frameworksBackend": {
       "region": "europe-west1"
-    }
+    },
+    "headers": [
+      { "source":"/service-worker.js", "headers": [{"key": "Cache-Control", "value": "no-cache"}] }
+    ]
   },
   "firestore": {
     "rules": "firestore.rules",
