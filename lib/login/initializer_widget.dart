@@ -41,7 +41,6 @@ class InitializerWidget extends StatelessWidget {
 
   Future<Widget> _initializeApp(BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
-    print("User: ${user.toString()}");
 
     if (user != null) {
       String userId = user.uid;

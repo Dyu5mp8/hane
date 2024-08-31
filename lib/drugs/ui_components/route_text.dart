@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:hane/drugs/controllers/dosageViewHandler.dart";
+import "package:hugeicons/hugeicons.dart";
 import "package:icons_plus/icons_plus.dart";
 
 class RouteText extends StatelessWidget {
@@ -37,7 +38,7 @@ class RouteText extends StatelessWidget {
           case AdministrationRoute.iv:
             return Icon(FontAwesome.syringe_solid, size: iconSize);
           case AdministrationRoute.im:
-            return Icon(FontAwesome.syringe_solid, size: iconSize);
+            return Icon(HugeIcons.strokeRoundedBodyPartLeg, size: 16, color: Color.fromARGB(255, 188, 39, 13));
           case AdministrationRoute.sc:
             return Icon(FontAwesome.syringe_solid, size: iconSize);
           case AdministrationRoute.inh:
@@ -60,7 +61,7 @@ class RouteText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        if (routeIcon(iconSize: 10) != null) routeIcon(iconSize: 10)!,
+        if (routeIcon(iconSize: 12) != null) routeIcon(iconSize: 14)!,
         SizedBox(width: 5),
         Text(routeText()),
       ],

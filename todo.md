@@ -13,7 +13,13 @@
 
 # 
 - [ ] Bug reports
-- [ ] Timestamp and user for changes
+- [x] Timestamp and user for changes
 - [ ] version control
-- [ ] indicator for user changed item
+- [x] indicator for user changed item
+
+- [ ] Options for downloading master list items
+- [ ] sidebar
+- [ ] redesign edit view
+- [ ] Autocomplete categories upon edit
+- [ ] Fix custom icons
 
