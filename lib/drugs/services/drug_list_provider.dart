@@ -44,6 +44,129 @@ class DrugListProvider with ChangeNotifier {
     });
   }
 
+
+
+Future<void> addDrugNameToIndex(String drugName) async {
+  try {
+    var db = FirebaseFirestore.instance;
+    DocumentReference indexDocRef = db.collection('users').doc(user).collection('indexes').doc('drugIndex');
+
+    // Check if the document exists
+    DocumentSnapshot snapshot = await indexDocRef.get();
+
+    if (snapshot.exists) {
+      // Document exists, update it
+      await indexDocRef.update({
+        "drugs": FieldValue.arrayUnion([drugName])
+      });
+    } else {
+      // Document does not exist, create it
+      await indexDocRef.set({
+        "drugs": [drugName]
+      });
+    }
+  } catch (e) {
+    print("Failed to add drug name to index: $e");
+    rethrow;
+  }
+}
+
+Future<void> removeDrugNameFromIndex(String drugName) async {
+  try {
+    var db = FirebaseFirestore.instance;
+    DocumentReference indexDocRef = db.collection('users').doc(user).collection('indexes').doc('drugIndex');
+
+    // Check if the document exists
+    DocumentSnapshot snapshot = await indexDocRef.get();
+
+    if (snapshot.exists) {
+      // Document exists, update it
+      await indexDocRef.update({
+        "drugNames": FieldValue.arrayRemove([drugName])
+      });
+    } else {
+      print("Index document does not exist. No need to remove.");
+    }
+  } catch (e) {
+    print("Failed to remove drug name from index: $e");
+    rethrow;
+  }
+}
+
+Future<Set<String>> getDrugNamesFromMaster({String masterUser = 'master'}) async {
+  try {
+    var db = FirebaseFirestore.instance;
+    DocumentSnapshot indexSnapshot = await db.collection('users').doc(masterUser).collection('indexes').doc('drugIndex').get();
+
+    if (indexSnapshot.exists) {
+      // Document exists, retrieve the drug names
+      List<dynamic> drugNames = indexSnapshot.get('drugs');
+      print(drugNames);
+      return Set<String>.from(drugNames);
+    } else {
+      // Document does not exist, return an empty list
+      return {};
+    }
+  } catch (e) {
+    print("Failed to retrieve drug names: $e");
+    rethrow;
+  }
+}
+
+Future<Set<String>> getDrugNamesFromUser() async {
+  // Get the first list of drugs emitted by the stream
+  List<Drug> drugs = await getDrugsStream().first;
+
+  // Extract drug names
+  Set<String> drugNames = drugs.map((drug) => drug.name!).toSet();
+
+  return drugNames;
+}
+Future<List<String>> getDifferenceBetweenMasterAndUser() async {
+  try {
+
+    Set<String> masterDrugNames = await getDrugNamesFromMaster();
+    Set<String> userDrugNames = await getDrugNamesFromUser();
+    print(masterDrugNames);
+    print(userDrugNames);
+    // Return the difference between the two sets
+    print(masterDrugNames.difference(userDrugNames).toList());
+
+    return masterDrugNames.difference(userDrugNames).toList();
+  } catch (e) {
+    print("Failed to get difference between master and user: $e");
+    rethrow;
+  }
+}
+
+Future<void> addDrugsFromMaster(List<String> drugNames) async {
+  CollectionReference masterDrugsCollection = FirebaseFirestore.instance
+      .collection('users')
+      .doc('master')
+      .collection('drugs');
+
+  try {
+    // Await the snapshot
+    final snapshot = await masterDrugsCollection.where('name', whereIn: drugNames).get();
+
+    // Convert the documents into a list of Drug objects
+    final List<Drug> drugs = snapshot.docs
+        .map((doc) => Drug.fromFirestore(doc.data() as Map<String, dynamic>))
+        .toList();
+
+    for (var drug in drugs) {
+      await addDrug(drug);
+    }
+    notifyListeners();
+  }
+  catch (e) {
+    print("Failed to add drugs from master: $e");
+    rethrow;
+  } 
+
+}
+
+
   Future<void> addDrug(Drug drug) async {
     try {
       var db = FirebaseFirestore.instance;
@@ -55,6 +178,9 @@ class DrugListProvider with ChangeNotifier {
 
       // Use set with merge: true to overwrite if the drug already exists
       await drugsCollection.doc(drug.name).set(drug.toJson(), SetOptions(merge: true));
+      if (isAdmin == true) {
+            await addDrugNameToIndex(drug.name!);
+      }
     } catch (e) {
       print("Failed to add drug: $e");
       rethrow;
@@ -67,6 +193,9 @@ class DrugListProvider with ChangeNotifier {
       CollectionReference drugsCollection = db.collection('users').doc(user).collection('drugs');
       if (drug.name != null) {
         await drugsCollection.doc(drug.name).delete();
+        if (isAdmin == true) {
+          await removeDrugNameFromIndex(drug.name!);
+        }
       }
     } catch (e) {
       print("Failed to delete drug: $e");

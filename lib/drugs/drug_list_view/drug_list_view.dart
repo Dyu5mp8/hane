@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/ui_components/menu_drawer.dart';
 import 'package:hane/login/loginPage.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/models/drug.dart';
@@ -7,6 +8,7 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
 import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
 import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
+
 
 
 
@@ -54,6 +56,7 @@ class _DrugListViewState extends State<DrugListView> {
     if (drugs.isEmpty) {
       return Scaffold(
         appBar: _buildAppBar(context),
+        drawer: MenuDrawer(), 
         body: Center(child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           
@@ -77,6 +80,7 @@ class _DrugListViewState extends State<DrugListView> {
 
     return Scaffold(
       appBar: _buildAppBar(context),
+      drawer: MenuDrawer(),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -109,34 +113,7 @@ class _DrugListViewState extends State<DrugListView> {
   }
 
   
-  void _onLogoutPressed() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Vill du logga ut?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Avbryt'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                FirebaseAuth.instance.signOut();
-                Provider.of<DrugListProvider>(context, listen: false).clearProvider();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
-              },
-              child: const Text('Logga ut'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   void _onAddDrugPressed() {
     Navigator.push(
@@ -267,10 +244,11 @@ List<Drug> _filterDrugs(List<Drug> drugs) {
           const SizedBox(height: 10,)
         ],
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.exit_to_app),
-        onPressed: _onLogoutPressed,
-      ),
+      // leading: IconButton(
+      //   icon: const Icon(Icons.exit_to_app),
+      //   onPressed: _onLogoutPressed,
+      // ),
+  
       actions: [
         IconButton(
           icon: const Icon(Icons.add),
