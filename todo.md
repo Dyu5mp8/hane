@@ -22,4 +22,6 @@
 - [ ] redesign edit view
 - [ ] Autocomplete categories upon edit
 - [ ] Fix custom icons
+- [ ] Fix discrete steps on weight input
+
 
