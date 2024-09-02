@@ -28,14 +28,13 @@ class _SyncDrugsDialogState extends State<SyncDrugsDialog> {
   Widget build(BuildContext context) {
     if (widget.difference.isEmpty) {
       return AlertDialog(
-        title: const Text('No Drugs Available'),
-        content: const Text('No drugs available to sync.'),
+        content: const Text("Inga nya läkemedel att hämta"),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text('Close'),
+            child: const Text('Stäng'),
           ),
         ],
       );
@@ -44,7 +43,7 @@ class _SyncDrugsDialogState extends State<SyncDrugsDialog> {
     return AlertDialog(
       titlePadding: EdgeInsets.zero,
       title: AppBar(
-        title: const Text('Select Drugs to Sync'),
+        title: const Text('Välj läkemedel att hämta'),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
