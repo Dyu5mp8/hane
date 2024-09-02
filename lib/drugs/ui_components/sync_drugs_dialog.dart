@@ -58,13 +58,35 @@ class _SyncDrugsDialogState extends State<SyncDrugsDialog> {
               Provider.of<DrugListProvider>(context, listen: false)
                   .addDrugsFromMaster(checkedItems);
 
-              Navigator.of(context).pop(); // Close the dialog
+              // Define the snackBarText based on the number of checked items
+              var snackBarText = '';
+              if (checkedItems.length > 1) {
+                snackBarText =
+                    '${checkedItems.length} läkemedel har lagts till';
+              } else if (checkedItems.length == 1) {
+                snackBarText = '${checkedItems.first} har lagts till';
+              } else {
+                snackBarText = 'Inga läkemedel har lagts till';
+              }
+
+// Create the SnackBar with the dynamic text
+              SnackBar snackBar = SnackBar(
+                content: Text(snackBarText),
+              );
+
+// Show the SnackBar
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+// Close the dialog twice
+              Navigator.of(context).pop(); // Close the first dialog
+              Navigator.of(context).pop(); // Close the second dialog
             },
           ),
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog without any action
+              Navigator.of(context)
+                  .pop(); // Close the dialog without any action
             },
           ),
         ],

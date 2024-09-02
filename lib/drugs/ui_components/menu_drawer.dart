@@ -1,9 +1,11 @@
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hane/drugs/ui_components/custom_drawer_header.dart';
 import 'package:hane/drugs/ui_components/sync_drugs_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/loginPage.dart';
+
 
 
 
@@ -42,9 +44,6 @@ class MenuDrawer extends StatelessWidget {
   }
 
   Set<String> masterUserDifference(Set<String> masterList, Set<String> userList) {
-    print("Master list: $masterList");
-    print("User list: $userList");
-    print("Difference: ${masterList.difference(userList)}");
     return masterList.difference(userList);
   }
 
@@ -56,40 +55,40 @@ class MenuDrawer extends StatelessWidget {
       },
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Provider.of<DrugListProvider>(context).getDrugNamesFromMaster().timeout(Duration(seconds: 5)),
-      builder: (context, snapshot) {
-        return Drawer(
+@override
+Widget build(BuildContext context) {
+  return FutureBuilder(
+    future: Provider.of<DrugListProvider>(context)
+        .getDrugNamesFromMaster()
+        .timeout(Duration(seconds: 5)),
+    builder: (context, snapshot) {
+      return Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
+            CustomDrawerHeader(),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pop(context); // Close the drawer
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
+              leading: Badge(
+                child: Icon(Icons.settings),
+                label: snapshot.connectionState == ConnectionState.waiting
+                    ? Text('...')
+                    : snapshot.hasError
+                        ? Icon(Icons.error, color: Colors.red)
+                        : Text(masterUserDifference(snapshot.data as Set<String>, userDrugNames).length.toString()),
+              ),
               title: Text('Synka med stamlistan'),
               onTap: () {
-                _onSyncPressed(context, masterUserDifference(snapshot.data as Set<String>, userDrugNames));
+                if (snapshot.connectionState == ConnectionState.done &&
+                    !snapshot.hasError) {
+                  _onSyncPressed(
+                    context,
+                    masterUserDifference(snapshot.data as Set<String>, userDrugNames),
+                  );
+                } else if (snapshot.hasError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Failed to load data')),
+                  );
+                }
               },
             ),
             ListTile(
@@ -101,11 +100,8 @@ class MenuDrawer extends StatelessWidget {
             ),
           ],
         ),
-          );
-      }
-    );  
-  }
-
-
-  
+      );
+    },
+  );
+}
 }

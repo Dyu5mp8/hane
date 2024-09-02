@@ -101,7 +101,6 @@ Future<Set<String>> getDrugNamesFromMaster({String masterUser = 'master'}) async
     if (indexSnapshot.exists) {
       // Document exists, retrieve the drug names
       List<dynamic> drugNames = indexSnapshot.get('drugs');
-      print(drugNames);
       return Set<String>.from(drugNames);
     } else {
       // Document does not exist, return an empty list
@@ -109,32 +108,6 @@ Future<Set<String>> getDrugNamesFromMaster({String masterUser = 'master'}) async
     }
   } catch (e) {
     print("Failed to retrieve drug names: $e");
-    rethrow;
-  }
-}
-
-Future<Set<String>> getDrugNamesFromUser() async {
-  // Get the first list of drugs emitted by the stream
-  List<Drug> drugs = await getDrugsStream().first;
-
-  // Extract drug names
-  Set<String> drugNames = drugs.map((drug) => drug.name!).toSet();
-
-  return drugNames;
-}
-Future<List<String>> getDifferenceBetweenMasterAndUser() async {
-  try {
-
-    Set<String> masterDrugNames = await getDrugNamesFromMaster();
-    Set<String> userDrugNames = await getDrugNamesFromUser();
-    print(masterDrugNames);
-    print(userDrugNames);
-    // Return the difference between the two sets
-    print(masterDrugNames.difference(userDrugNames).toList());
-
-    return masterDrugNames.difference(userDrugNames).toList();
-  } catch (e) {
-    print("Failed to get difference between master and user: $e");
     rethrow;
   }
 }
@@ -157,7 +130,7 @@ Future<void> addDrugsFromMaster(List<String> drugNames) async {
     for (var drug in drugs) {
       await addDrug(drug);
     }
-    notifyListeners();
+  
   }
   catch (e) {
     print("Failed to add drugs from master: $e");
