@@ -82,7 +82,7 @@ Future<void> removeDrugNameFromIndex(String drugName) async {
     if (snapshot.exists) {
       // Document exists, update it
       await indexDocRef.update({
-        "drugNames": FieldValue.arrayRemove([drugName])
+        "drugs": FieldValue.arrayRemove([drugName])
       });
     } else {
       print("Index document does not exist. No need to remove.");
