@@ -9,7 +9,8 @@ import 'package:hane/login/loginPage.dart';
 
 
 class MenuDrawer extends StatelessWidget {
-  const MenuDrawer({super.key});
+  final Set<String> userDrugNames;
+  const MenuDrawer({super.key, this.userDrugNames = const {}});
 
     void _onLogoutPressed(BuildContext context) {
     showDialog(
@@ -40,57 +41,69 @@ class MenuDrawer extends StatelessWidget {
     );
   }
 
-  void _onSyncPressed(BuildContext context) {
+  Set<String> masterUserDifference(Set<String> masterList, Set<String> userList) {
+    print("Master list: $masterList");
+    print("User list: $userList");
+    print("Difference: ${masterList.difference(userList)}");
+    return masterList.difference(userList);
+  }
+
+  void _onSyncPressed(BuildContext context, Set<String> difference) {
     showDialog(
       context: context,
       builder: (context) {
-        return SyncDrugsDialog();
+        return SyncDrugsDialog(difference: difference);
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: <Widget>[
-        DrawerHeader(
-          decoration: BoxDecoration(
-            color: Colors.blue,
-          ),
-          child: Text(
-            'Drawer Header',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
+    return FutureBuilder(
+      future: Provider.of<DrugListProvider>(context).getDrugNamesFromMaster().timeout(Duration(seconds: 5)),
+      builder: (context, snapshot) {
+        return Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Drawer Header',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
             ),
-          ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Synka med stamlistan'),
+              onTap: () {
+                _onSyncPressed(context, masterUserDifference(snapshot.data as Set<String>, userDrugNames));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logga ut'),
+              onTap: () {
+                _onLogoutPressed(context);
+              },
+            ),
+          ],
         ),
-        ListTile(
-          leading: Icon(Icons.home),
-          title: Text('Home'),
-          onTap: () {
-            Navigator.pop(context); // Close the drawer
-          },
-        ),
-        ListTile(
-          leading: Icon(Icons.settings),
-          title: Text('Synka med stamlistan'),
-          onTap: () {
-            _onSyncPressed(context);
-          },
-        ),
-        ListTile(
-          leading: Icon(Icons.logout),
-          title: Text('Logga ut'),
-          onTap: () {
-            _onLogoutPressed(context);
-          },
-        ),
-      ],
-    ),
-  );  
+          );
+      }
+    );  
   }
 
 

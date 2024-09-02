@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/ui_components/menu_drawer.dart';
@@ -41,9 +43,16 @@ class _DrugListViewState extends State<DrugListView> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     List<Drug>? drugs = Provider.of<List<Drug>?>(context);
+    Set<String>? drugNames = drugs
+    ?.map((drug) => drug.name)
+    .where((name) => name != null)
+    .map((name) => name!)
+    .toSet();
+
 
        if (drugs == null) {
       // Show a loading indicator while the drugs are loading
@@ -56,7 +65,7 @@ class _DrugListViewState extends State<DrugListView> {
     if (drugs.isEmpty) {
       return Scaffold(
         appBar: _buildAppBar(context),
-        drawer: MenuDrawer(), 
+        drawer: MenuDrawer(userDrugNames: {},) ,
         body: Center(child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           
@@ -80,7 +89,7 @@ class _DrugListViewState extends State<DrugListView> {
 
     return Scaffold(
       appBar: _buildAppBar(context),
-      drawer: MenuDrawer(),
+      drawer: MenuDrawer(userDrugNames: drugNames!), 
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
