@@ -124,6 +124,7 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
                       ],
 
                     ),
+                    if (widget.indicationDetailForm.indication.dosages != null)
                     ListView.builder(
                       shrinkWrap: true,
                       itemCount: widget.indicationDetailForm.indication.dosages?.length,
