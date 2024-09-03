@@ -14,11 +14,11 @@
 # 
 - [ ] Bug reports
 - [x] Timestamp and user for changes
-- [ ] version control
+- [x] version control
 - [x] indicator for user changed item
 
-- [ ] Options for downloading master list items
-- [ ] sidebar
+- [x] Options for downloading master list items
+- [x] sidebar
 - [ ] redesign edit view
 - [ ] Autocomplete categories upon edit
 - [ ] Fix custom icons
