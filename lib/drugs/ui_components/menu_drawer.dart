@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/ui_components/custom_drawer_header.dart';
 import 'package:hane/drugs/ui_components/sync_drugs_dialog.dart';
+import 'package:hane/login/initializer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/loginPage.dart';
@@ -27,13 +28,13 @@ class MenuDrawer extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
-                FirebaseAuth.instance.signOut();
                 Provider.of<DrugListProvider>(context, listen: false).clearProvider();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => InitializerWidget()),
+                  
                 );
+                FirebaseAuth.instance.signOut();
               },
               child: const Text('Logga ut'),
             ),
@@ -66,7 +67,7 @@ Widget build(BuildContext context) {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            CustomDrawerHeader(),
+            const CustomDrawerHeader(),
             ListTile(
               leading: Badge(
                 child: Icon(Icons.settings),

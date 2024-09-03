@@ -91,6 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
             email: _emailController.text.trim(),
             password: _passwordController.text.trim(),
           );
+          await _auth.currentUser!.sendEmailVerification();
           _onSuccessfulRegistration();
 
         } catch (e) {

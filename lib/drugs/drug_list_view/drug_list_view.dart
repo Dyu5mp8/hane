@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/ui_components/menu_drawer.dart';
 import 'package:hane/login/loginPage.dart';

@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class CustomDrawerHeader extends StatefulWidget {
+  const CustomDrawerHeader({super.key});
+
   @override
   _CustomDrawerHeaderState createState() => _CustomDrawerHeaderState();
 }
@@ -77,6 +79,7 @@ class _CustomDrawerHeaderState extends State<CustomDrawerHeader>
                     ],
                   ),
                 ),
+                if (FirebaseAuth.instance.currentUser != null)
                 Text("Inloggad som " + FirebaseAuth.instance.currentUser!.email!, style: TextStyle(color: Colors.white), textAlign: TextAlign.center, ),
               ],
             ),

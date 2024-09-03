@@ -5,9 +5,10 @@ import 'signup.dart';
 import 'Widget/bezierContainer.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key, this.title}) : super(key: key);
+  const LoginPage({Key? key, this.title, this.emailNotVerified}) : super(key: key);
 
   final String? title;
+  final bool? emailNotVerified;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -40,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       child: Container(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.width/2,
         padding: const EdgeInsets.symmetric(vertical: 15),
         alignment: Alignment.center,
         decoration: BoxDecoration(
@@ -217,6 +218,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 50),
                     _emailPasswordWidget(),
                     const SizedBox(height: 20),
+                   
                     _submitButton(),
                     // Container(
                     //   padding: const EdgeInsets.symmetric(vertical: 10),
