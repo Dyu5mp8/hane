@@ -1,10 +1,6 @@
-import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/ui_components/menu_drawer.dart';
-import 'package:hane/login/loginPage.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
@@ -139,22 +135,27 @@ class _DrugListViewState extends State<DrugListView> {
     );
   }
 
-  Widget _buildSearchField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          isDense: true,
-          hintText: 'Sök efter läkemedel',
-          prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-      ),
-    );
-  }
+Widget _buildSearchField() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+    child: CupertinoSearchTextField(
+      
+      style: Theme.of(context).textTheme.bodyLarge,
+      controller: _searchController,
+      placeholder: 'Sök efter läkemedel',
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value; // Update the search query as the user types
+        });
+      },
+      onSubmitted: (value) {
+        setState(() {
+          _searchQuery = value; // Final value after user submits search
+        });
+      },
+    ),
+  );
+}
 
  Widget _buildCategoryChips(List<dynamic> categories) {
     return Padding(
