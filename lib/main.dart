@@ -22,6 +22,8 @@ void main() async {
 
   firestore.settings = const Settings(persistenceEnabled: true, 
   cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+  await firestore
+    .enablePersistence(const PersistenceSettings(synchronizeTabs: true));
   
     runApp(
     MultiProvider(
