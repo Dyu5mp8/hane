@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/edit_name_dialog.dart';
+import 'package:hane/drugs/drug_detail/editable_row.dart';
 import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
 import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
 import 'package:hane/drugs/models/drug.dart';
@@ -7,17 +9,21 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/ui_components/edit_button.dart';
 
-class OverviewBox extends StatelessWidget {
+
+
+
+class OverviewBox extends StatefulWidget {
   const OverviewBox({super.key});
 
+  @override
+  State<OverviewBox> createState() => _OverviewBoxState();
+}
+
+class _OverviewBoxState extends State<OverviewBox> {
+
+  bool editMode = true;
+  
   Widget basicInfoRow(BuildContext context, Drug drug) {
-    final editButton = editButtontoView(
-      icon: Icons.edit,
-      iconColor: Theme.of(context).primaryColor,
-        destination: DrugEditDetail(
-            drugForm: DrugForm(
-      drug: drug,
-    )));
 
     List<Concentration>? concentrations = drug.concentrations;
 
@@ -25,7 +31,6 @@ class OverviewBox extends StatelessWidget {
       height: 100,
       padding: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,
-      color: const Color.fromARGB(255, 255, 255, 255),
       child: Row(children: [
         Flexible(
           child:
@@ -39,10 +44,13 @@ class OverviewBox extends StatelessWidget {
             ]),
             Row(children: [
               Flexible(
-                child: Text(drug.name!,
-                    style: Theme.of(context).textTheme.headlineLarge),
+                child: EditableRow(
+                  text: drug.name!,
+                  textStyle: Theme.of(context).textTheme.bodyLarge,
+                  editDialog: EditNameDialog(drug: drug),
+                  isEditMode: editMode),
               ),
-              editButton,
+  
               IconButton(
                   icon: const Icon(Icons.delete, color: Color.fromARGB(255, 122, 0, 0)),
                   onPressed: () => showDialog(
@@ -110,7 +118,6 @@ class OverviewBox extends StatelessWidget {
   Widget contraindicationRow(BuildContext context, Drug drug) {
     return Container(
         width: MediaQuery.of(context).size.width,
-        color: Colors.white,
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
@@ -125,18 +132,13 @@ class OverviewBox extends StatelessWidget {
   }
 
   // Widget brandNameRow(BuildContext context, Drug drug) {
-
-  // //   implement brandNameRow
-  //   }
-
   Widget noteRow(BuildContext context, Drug drug) {
     return Container(
         width: MediaQuery.of(context).size.width,
-        color: Colors.white,
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
-            const Icon(Icons.notes, color: Colors.black),
+            const Icon(Icons.notes),
                         const SizedBox(width: 10,),
                           drug.notes != null
             ? Expanded(
@@ -162,7 +164,6 @@ class OverviewBox extends StatelessWidget {
           ),
           child: SingleChildScrollView(
               child: Container(
-            color: Colors.white,
             child: Column(
               children: [
                 basicInfoRow(context, drug),
