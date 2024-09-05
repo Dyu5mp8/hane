@@ -39,7 +39,7 @@ class DrugListRow extends StatelessWidget {
         children: [
           if (_drug.brandNames != null)
             Text(
-              _drug.brandNames!.join(","),
+              _drug.brandNames!.join(", "),
               style: Theme.of(context).textTheme.displaySmall?.copyWith(
                     fontStyle: FontStyle.italic,
                     fontSize: 11,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:hane/Views/drug_view/drug_detail_view/DoseConverter.dart';
-import 'package:hane/drugs/controllers/dosageViewHandler.dart';
+import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
 import 'package:hane/drugs/models/bolus_dosage.dart';
 
 import 'package:hane/drugs/models/drug.dart';

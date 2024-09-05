@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:hane/drugs/controllers/dosageViewHandler.dart";
+import "package:hane/drugs/drug_detail/dosageViewHandler.dart";
 import "package:hugeicons/hugeicons.dart";
 import "package:icons_plus/icons_plus.dart";
 

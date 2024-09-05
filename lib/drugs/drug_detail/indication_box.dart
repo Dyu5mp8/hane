@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/controllers/dosageViewHandler.dart';
+import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
 import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
 import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
-import 'package:hane/drugs/ui_components/dosage_snippet.dart';
+import 'package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:provider/provider.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/ui_components/concentration_picker.dart';
-import 'package:hane/drugs/controllers/dosageViewHandler.dart';
-import 'package:hane/drugs/ui_components/route_text.dart';
-import 'package:hane/drugs/ui_components/time_picker.dart';
-import 'package:hane/drugs/ui_components/weight_slider.dart';
+import 'package:hane/drugs/drug_detail/ui_components/concentration_picker.dart';
+import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
+import 'package:hane/drugs/drug_detail/ui_components/route_text.dart';
+import 'package:hane/drugs/drug_detail/ui_components/time_picker.dart';
+import 'package:hane/drugs/drug_detail/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/dosage.dart';
 
 class DosageSnippet extends StatefulWidget {

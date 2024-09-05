@@ -138,15 +138,24 @@ class DosageViewHandler {
           ? "${dose.toString()}. "
           : '';
 
-      final String doseRangeText = (lowerLimitDose != null && higherLimitDose != null)
-          ? "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}). "
-          : '';
+      String doseRangeText () {
+       if (lowerLimitDose != null && higherLimitDose != null) {
+         if (dose != null) {
+           return "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}). ";
+           }
+
+         else {
+            return "${lowerLimitDose.toString()} - ${higherLimitDose.toString()}. ";
+         }
+       }
+          return "";
+      }
 
       final String maxDoseText = maxDose != null
           ? "Maxdos: ${maxDose.toString()}."
           : '';
 
-      return "$conversionText$routeText$instructionText$doseText$doseRangeText$maxDoseText";
+      return "$conversionText$routeText$instructionText$doseText${doseRangeText()}$maxDoseText";
     }
 
     if (isOriginalText) {

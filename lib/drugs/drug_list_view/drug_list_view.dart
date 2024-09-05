@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/ui_components/menu_drawer.dart';
+import 'package:hane/drugs/drug_list_view/menu_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';

@@ -31,6 +31,36 @@ class _DrugEditDetailState extends State<DrugEditDetail> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Redigera läkemedel"),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+         onPressed: () {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Spara?'),
+        content: const Text('Vill du spara ändringarna?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _saveDrug(drugListProvider);
+              Navigator.pop(context); // Close the dialog
+            },
+            child: const Text('Ja'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+              Navigator.pop(context); // Close the screen
+            },
+            child: const Text('Nej'),
+          ),
+        ],
+      );
+    },
+  );
+},
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
@@ -138,6 +168,10 @@ class _DrugEditDetailState extends State<DrugEditDetail> {
         ),
       ),
     );
+  }
+
+  void _onBackPressed() {
+    Navigator.pop(context);
   }
 
   void _saveDrug(DrugListProvider provider) {
