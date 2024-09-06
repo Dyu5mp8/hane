@@ -127,6 +127,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                     errorMaxLines: 2,
                   ),
                   validator: val.validateConcentrationAmount,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true)
                 ),
                   ),
                 

@@ -60,7 +60,7 @@ class _EditableRowState extends State<EditableRow>
     return GestureDetector(
       onTap: widget.isEditMode
           ? () {
-              showModalBottomSheet(
+              showDialog(
                 context: context,
                 builder: (context) => widget.editDialog,
               );
@@ -70,7 +70,7 @@ class _EditableRowState extends State<EditableRow>
         padding: widget.isEditMode ? EdgeInsets.all(8.0) : EdgeInsets.only(top:8),
         decoration: BoxDecoration(
           color: widget.isEditMode ? Colors.blue[50] : Colors.transparent,
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(16.0),
           
         ),
         child: Row(
@@ -103,7 +103,7 @@ class _EditableRowState extends State<EditableRow>
                 child: ScaleTransition(
                   scale: _iconAnimation,
                   child: Icon(
-                    Icons.edit,
+                    Icons.edit_note_outlined,
                     color: Colors.blue[800],
                     size: 20,
                   ),

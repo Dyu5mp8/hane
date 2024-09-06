@@ -1,32 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/drugs/ui_components/custom_chip.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
 
-class EditContraindicationsDialog extends StatefulWidget {
+class EditNotesDialog extends StatefulWidget {
   final Drug drug;
-  const EditContraindicationsDialog({super.key, required this.drug});
+  const EditNotesDialog({super.key, required this.drug});
 
   @override
-  _EditContraindicationsDialogState createState() => _EditContraindicationsDialogState();
+  _EditNotesDialogState createState() => _EditNotesDialogState();
 }
 
-class _EditContraindicationsDialogState extends State<EditContraindicationsDialog> {
-  final TextEditingController _contraindicationController = TextEditingController();
+class _EditNotesDialogState extends State<EditNotesDialog> {
+  final TextEditingController _notesController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     // Initialize the controllers with the existing data
-    _contraindicationController.text = widget.drug.contraindication ?? '';
+    _notesController.text = widget.drug.notes ?? '';
   }
 
   @override
   void dispose() {
-    _contraindicationController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -47,14 +46,14 @@ class _EditContraindicationsDialogState extends State<EditContraindicationsDialo
         ),
         TextButton(
           onPressed: () {
-           
+            if (_formKey.currentState!.validate()) {
               // Update the drug name with the new value
-              widget.drug.contraindication = _contraindicationController.text;
+              widget.drug.notes = _notesController.text;
 
               Provider.of<DrugListProvider>(context, listen: false)
                   .addDrug(widget.drug);
               Navigator.pop(context);
-            
+            }
           },
           child: const Text('Spara'),
         ),
@@ -73,13 +72,13 @@ class _EditContraindicationsDialogState extends State<EditContraindicationsDialo
                 const Text('Namn'),
                 const SizedBox(height: 8),
                 TextFormField(
-                  controller: _contraindicationController,
+                  controller: _notesController,
                   autofocus: true,
                   decoration: const InputDecoration(
                     labelText: 'Namn',
                     border: OutlineInputBorder(),
                   ),
-                  
+                  validator: val.validateName,
                 ),
                 
               

@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/drugs/ui_components/custom_chip.dart';
 import 'package:provider/provider.dart';
-import 'package:hane/utils/validate_drug_save.dart' as val;
 
-class EditNotesDialog extends StatefulWidget {
+class EditContraindicationsDialog extends StatefulWidget {
   final Drug drug;
-  const EditNotesDialog({super.key, required this.drug});
+  const EditContraindicationsDialog({super.key, required this.drug});
 
   @override
-  _EditNotesDialogState createState() => _EditNotesDialogState();
+  _EditContraindicationsDialogState createState() => _EditContraindicationsDialogState();
 }
 
-class _EditNotesDialogState extends State<EditNotesDialog> {
-  final TextEditingController _notesController = TextEditingController();
+class _EditContraindicationsDialogState extends State<EditContraindicationsDialog> {
+  final TextEditingController _contraindicationController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     // Initialize the controllers with the existing data
-    _notesController.text = widget.drug.notes ?? '';
+    _contraindicationController.text = widget.drug.contraindication ?? '';
   }
 
   @override
   void dispose() {
-    _notesController.dispose();
+    _contraindicationController.dispose();
     super.dispose();
   }
 
@@ -47,14 +45,14 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
         ),
         TextButton(
           onPressed: () {
-            if (_formKey.currentState!.validate()) {
+           
               // Update the drug name with the new value
-              widget.drug.notes = _notesController.text;
+              widget.drug.contraindication = _contraindicationController.text;
 
               Provider.of<DrugListProvider>(context, listen: false)
                   .addDrug(widget.drug);
               Navigator.pop(context);
-            }
+            
           },
           child: const Text('Spara'),
         ),
@@ -73,13 +71,13 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                 const Text('Namn'),
                 const SizedBox(height: 8),
                 TextFormField(
-                  controller: _notesController,
+                  controller: _contraindicationController,
                   autofocus: true,
                   decoration: const InputDecoration(
                     labelText: 'Namn',
                     border: OutlineInputBorder(),
                   ),
-                  validator: val.validateName,
+                  
                 ),
                 
               

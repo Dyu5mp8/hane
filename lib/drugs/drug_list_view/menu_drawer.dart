@@ -2,7 +2,6 @@ import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/ui_components/custom_drawer_header.dart';
 import 'package:hane/drugs/drug_list_view/sync_drugs_dialog.dart';
-import 'package:hane/login/initializer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/loginPage.dart';
@@ -31,7 +30,7 @@ class MenuDrawer extends StatelessWidget {
                 Provider.of<DrugListProvider>(context, listen: false).clearProvider();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                   
                 );
                 FirebaseAuth.instance.signOut();
@@ -61,7 +60,7 @@ Widget build(BuildContext context) {
   return FutureBuilder(
     future: Provider.of<DrugListProvider>(context)
         .getDrugNamesFromMaster()
-        .timeout(Duration(seconds: 5)),
+        .timeout(const Duration(seconds: 5)),
     builder: (context, snapshot) {
       return Drawer(
         child: ListView(
@@ -70,14 +69,14 @@ Widget build(BuildContext context) {
             const CustomDrawerHeader(),
             ListTile(
               leading: Badge(
-                child: Icon(Icons.settings),
+                child: const Icon(Icons.settings),
                 label: snapshot.connectionState == ConnectionState.waiting
-                    ? Text('...')
+                    ? const Text('...')
                     : snapshot.hasError
-                        ? Icon(Icons.error, color: Colors.red)
+                        ? const Icon(Icons.error, color: Colors.red)
                         : Text(masterUserDifference(snapshot.data as Set<String>, userDrugNames).length.toString()),
               ),
-              title: Text('Synka med stamlistan'),
+              title: const Text('Synka med stamlistan'),
               onTap: () {
                 if (snapshot.connectionState == ConnectionState.done &&
                     !snapshot.hasError) {
@@ -87,14 +86,14 @@ Widget build(BuildContext context) {
                   );
                 } else if (snapshot.hasError) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to load data')),
+                    const SnackBar(content: const Text('Failed to load data')),
                   );
                 }
               },
             ),
             ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logga ut'),
+              leading: const Icon(Icons.logout),
+              title: const Text('Logga ut'),
               onTap: () {
                 _onLogoutPressed(context);
               },

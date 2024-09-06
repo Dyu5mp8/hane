@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/edit_concentrations_dialog.dart';
-import 'package:hane/drugs/drug_detail/edit_contraindications_dialog.dart';
-import 'package:hane/drugs/drug_detail/edit_name_dialog.dart';
-import 'package:hane/drugs/drug_detail/edit_notes_dialog.dart';
+import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart'; 
 import 'package:hane/drugs/drug_detail/editable_row.dart';
-import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
-import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
 import 'package:hane/drugs/models/drug.dart';
 
-import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:hane/drugs/ui_components/edit_button.dart';
 
 class OverviewBox extends StatelessWidget {
   const OverviewBox({super.key, required this.editMode});
@@ -96,7 +89,7 @@ class OverviewBox extends StatelessWidget {
                 ? Flexible(
                     child: EditableRow(
                         text: drug.contraindication,
-                        textStyle: TextStyle(fontSize: 14),
+                        textStyle: const TextStyle(fontSize: 14),
                         editDialog: EditContraindicationsDialog(
                           drug: drug,
                         ),
@@ -123,7 +116,7 @@ class OverviewBox extends StatelessWidget {
                       editDialog: EditNotesDialog(drug: drug),
                       isEditMode: editMode,
                       text: drug.notes,
-                      textStyle: TextStyle(fontSize: 14),
+                      textStyle: const TextStyle(fontSize: 14),
                     ),
                   )
                 : const Text(""),
