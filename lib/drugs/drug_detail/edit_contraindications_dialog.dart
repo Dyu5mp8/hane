@@ -47,14 +47,14 @@ class _EditContraindicationsDialogState extends State<EditContraindicationsDialo
         ),
         TextButton(
           onPressed: () {
-            if (_formKey.currentState!.validate()) {
+           
               // Update the drug name with the new value
               widget.drug.contraindication = _contraindicationController.text;
 
               Provider.of<DrugListProvider>(context, listen: false)
                   .addDrug(widget.drug);
               Navigator.pop(context);
-            }
+            
           },
           child: const Text('Spara'),
         ),
@@ -79,7 +79,7 @@ class _EditContraindicationsDialogState extends State<EditContraindicationsDialo
                     labelText: 'Namn',
                     border: OutlineInputBorder(),
                   ),
-                  validator: val.validateName,
+                  
                 ),
                 
               
