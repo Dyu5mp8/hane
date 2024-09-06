@@ -33,7 +33,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Redigera'),
+        title: const Text('Anteckningar'),
         automaticallyImplyLeading: false,
         centerTitle: true,
         leading: null,
@@ -46,14 +46,14 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
         ),
         TextButton(
           onPressed: () {
-            if (_formKey.currentState!.validate()) {
+       
               // Update the drug name with the new value
               widget.drug.notes = _notesController.text;
 
               Provider.of<DrugListProvider>(context, listen: false)
                   .addDrug(widget.drug);
               Navigator.pop(context);
-            }
+            
           },
           child: const Text('Spara'),
         ),
@@ -78,7 +78,10 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                     labelText: 'Namn',
                     border: OutlineInputBorder(),
                   ),
-                  validator: val.validateName,
+                  minLines: 1,
+                  maxLines: 3
+                  
+
                 ),
                 
               

@@ -32,7 +32,7 @@ class _EditContraindicationsDialogState extends State<EditContraindicationsDialo
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Redigera'),
+        title: const Text('Kontraindikationer'),
         automaticallyImplyLeading: false,
         centerTitle: true,
         leading: null,
@@ -77,6 +77,10 @@ class _EditContraindicationsDialogState extends State<EditContraindicationsDialo
                     labelText: 'Namn',
                     border: OutlineInputBorder(),
                   ),
+
+                          minLines: 1,
+                          maxLines: 3
+                
                   
                 ),
                 

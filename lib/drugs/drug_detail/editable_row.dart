@@ -67,10 +67,11 @@ class _EditableRowState extends State<EditableRow>
             }
           : null,
       child: Container(
-        padding: widget.isEditMode ? EdgeInsets.all(8.0) : EdgeInsets.only(top:8),
+        padding: widget.isEditMode ? EdgeInsets.symmetric(vertical: 4, horizontal:8) : EdgeInsets.only(top:8),
         decoration: BoxDecoration(
-          color: widget.isEditMode ? Colors.blue[50] : Colors.transparent,
-          borderRadius: BorderRadius.circular(16.0),
+          color: widget.isEditMode ? Theme.of(context).primaryColorLight : Colors.transparent,
+          borderRadius: BorderRadius.circular(16.0)
+      
           
         ),
         child: Row(

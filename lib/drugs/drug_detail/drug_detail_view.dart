@@ -27,6 +27,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.drug.name ?? 'Drug Details'),
+          centerTitle: true,
           actions: [
 
             if (editMode) IconButton(
@@ -62,7 +63,9 @@ class _DrugDetailViewState extends State<DrugDetailView> {
             )
             
              ,IconButton(
-            icon: Icon(editMode ? Icons.check : Icons.edit_note_sharp),
+    
+            
+            icon: Icon(editMode ? Icons.check : Icons.edit_note_sharp, size: 30),
             onPressed: () {
               HapticFeedback.lightImpact();
               setState(() {
