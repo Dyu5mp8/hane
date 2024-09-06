@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EditableRow extends StatelessWidget{
-  final String text;
+  final String? text;
   final Widget editDialog;
   final bool isEditMode;
   final TextStyle? textStyle; // TextStyle parameter
@@ -16,21 +16,23 @@ class EditableRow extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+
+  
     return isEditMode
         ? GestureDetector(
             onTap: () {
-              showDialog(context: context, builder: (context) => editDialog);
+              showModalBottomSheet(context: context, builder: (context) => editDialog);
             },
             child: Row(
               children: [
-                Text(text, style: textStyle ?? Theme.of(context).textTheme.headlineLarge),
+                Text(text?? "", style: textStyle ?? Theme.of(context).textTheme.headlineLarge),
                 Icon(Icons.edit, color: Colors.grey[600], size: 16),
               ],
             ),
           )
         : Row(
             children: [
-              Text(text, style: textStyle ?? Theme.of(context).textTheme.headlineLarge),
+              Text(text ?? "", style: textStyle ?? Theme.of(context).textTheme.headlineLarge),
             ],
           );
   }
