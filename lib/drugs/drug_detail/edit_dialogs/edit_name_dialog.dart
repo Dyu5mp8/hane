@@ -87,16 +87,21 @@ class _EditNameDialogState extends State<EditNameDialog> {
         ),
         TextButton(
           onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              print("hej");
            
 
               if (_brandNameController.text.isNotEmpty||_categoriesController.text.isNotEmpty) {
-                print("hej");
+
+                String? forgottenBrandNameText =  _brandNameController.text.isNotEmpty ? _brandNameController.text : null;
+                String? forgottenCategoryText =  _categoriesController.text.isNotEmpty ? _categoriesController.text : null;
+
                 showDialog(
               context: context,
                       builder: (BuildContext context)  {
                 return AlertDialog(
                   title: const Text('Ej tillagda ändringar'),
-                  content: const Text('Du har ej lagt till alla ändringar. Vill du avsluta redigeringen?'),
+                  content: Text('Ej sparat fält: ${forgottenBrandNameText ?? ''} ${forgottenCategoryText ?? ''}. Spara utan att lägga till de inskrivna fälten?'),
                   actions: [
                     TextButton(
                       onPressed: () {
@@ -117,17 +122,12 @@ class _EditNameDialogState extends State<EditNameDialog> {
                 );
               });
               }
-              else {
-              // Update the drug name with the new value
-              widget.drug.name = _nameController.text;
-              widget.drug.brandNames = _brandNames; // Update brand names list
-              widget.drug.categories = _categories; // Update categories list
-
               Provider.of<DrugListProvider>(context, listen: false)
                   .addDrug(widget.drug);
-              Navigator.pop(context);
             }
-          },
+   
+          }
+        ,
 
           child: const Text('Spara'),
         ),
@@ -145,6 +145,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
               const Text('Namn'),
               const SizedBox(height: 8),
               TextFormField(
+
                 controller: _nameController,
                 autofocus: true,
                 decoration: const InputDecoration(

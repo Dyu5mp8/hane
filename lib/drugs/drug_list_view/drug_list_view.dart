@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 import 'package:hane/drugs/drug_list_view/menu_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/models/drug.dart';
@@ -127,9 +128,7 @@ class _DrugListViewState extends State<DrugListView> {
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider.value(
           value: Provider.of<DrugListProvider>(context, listen: false),
-          child: DrugEditDetail(
-            drugForm: DrugForm(),
-          ),
+          child: DrugDetailView(drug: Drug(), newDrug: true),
         ),
       ),
     );

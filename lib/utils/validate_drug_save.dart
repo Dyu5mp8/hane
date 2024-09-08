@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
+
 String? validateName(String? value) {
-  if (value == null || value.isEmpty) {
-    return 'Ange ett giltigt namn';
+  if (value == null || value.trim().isEmpty) {
+    return 'Ange ett giltigt namn'; 
   }
 
   return null;

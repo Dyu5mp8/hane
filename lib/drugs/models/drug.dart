@@ -28,12 +28,12 @@ class Drug extends ChangeNotifier {
     bool? changedByUser,
     List<dynamic>? brandNames,
     List<dynamic>? categories,
-   List<Concentration>? concentrations,
-    String? contraindication,
+   List<Concentration>? concentrations = const [],
+    String? contraindication = '',
     List<Indication>? indications,
-    String? notes,
+    String? notes = '',
     Timestamp? lastUpdated,
-  })  : _name = name,
+  })  : _name = name ?? '',
         _changedByUser = changedByUser,
         _lastUpdated = lastUpdated,
         _categories = categories,
@@ -42,6 +42,8 @@ class Drug extends ChangeNotifier {
         _indications = indications,
         _notes = notes,
         _brandNames = brandNames;
+
+  
 
   String? get name => _name;
   set name(String? newName) {

@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/indication_box.dart';
@@ -8,10 +9,12 @@ import 'package:provider/provider.dart';
 
 
 
+
 class DrugDetailView extends StatefulWidget {
   final Drug drug;
+  final bool newDrug;
 
-  const DrugDetailView({super.key, required this.drug});
+  const DrugDetailView({super.key, required this.drug, this.newDrug = false});
 
   @override
   State<DrugDetailView> createState() => _DrugDetailViewState();
@@ -19,6 +22,30 @@ class DrugDetailView extends StatefulWidget {
 
 class _DrugDetailViewState extends State<DrugDetailView> {
   bool editMode = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Example to show a dialog right after the widget has been built
+    Future.delayed(Duration(milliseconds: 300), () {
+      if (widget.newDrug) {
+        _showNewDrugDialog();
+      }
+    });
+  }
+
+  void _showNewDrugDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditNameDialog(drug: widget.drug);
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -52,6 +79,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
                                 Provider.of<DrugListProvider>(context, listen: false)
                                     .deleteDrug(widget.drug); 
                                 Navigator.pop(context);
+                                Navigator.pop(context);
                               },
                               child: Text('Radera'),
                             ),
@@ -84,5 +112,6 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         ),
       ),
     );
+
   }
 }
