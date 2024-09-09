@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 
 class EditContraindicationsDialog extends StatefulWidget {

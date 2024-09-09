@@ -1,11 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/indication_box.dart';
 import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:provider/provider.dart';
 
 class DrugDetailView extends StatefulWidget {
   final Drug drug;
@@ -43,8 +43,11 @@ class _DrugDetailViewState extends State<DrugDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Drug>.value(
-      value: widget.drug,
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<Drug>.value(value: widget.drug),
+      ChangeNotifierProvider<EditModeProvider>.value(value: EditModeProvider())
+    ],
+     
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: editMode ? false : true,
@@ -86,7 +89,30 @@ class _DrugDetailViewState extends State<DrugDetailView> {
                   );
                 },
               ),
-            IconButton(
+            EditModeButton(),
+          ],
+        ),
+        body: Column(
+          children: <Widget>[
+            OverviewBox(),
+            IndicationBox()
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class EditModeButton extends StatelessWidget {
+  const EditModeButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<EditModeProvider>(
+      builder: (context, editModeProvider, child) {
+        var editMode = editModeProvider.editMode;
+        return  IconButton(
               icon: editMode
                   ? Text(
                       "Spara",
@@ -98,22 +124,12 @@ class _DrugDetailViewState extends State<DrugDetailView> {
                 HapticFeedback.lightImpact();
                 if (editMode) {
                   Provider.of<DrugListProvider>(context, listen: false)
-                      .addDrug(widget.drug);
+                      .addDrug(Provider.of<Drug>(context, listen: false));
                 }
-                setState(() {
-                  editMode = !editMode;
-                });
+                editModeProvider.toggleEditMode();
               },
-            )
-          ],
-        ),
-        body: Column(
-          children: <Widget>[
-            OverviewBox(editMode: editMode),
-            IndicationBox(editMode: editMode)
-          ],
-        ),
-      ),
+            );
+      },
     );
   }
 }

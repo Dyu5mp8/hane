@@ -6,11 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
-import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
-import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
-
-
-
 
 class DrugListView extends StatefulWidget {
   @override
@@ -26,7 +21,6 @@ class _DrugListViewState extends State<DrugListView> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
-    print('Init DrugListView');
   }
 
   @override
@@ -42,19 +36,16 @@ class _DrugListViewState extends State<DrugListView> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    print('Building DrugListView');
     List<Drug>? drugs = Provider.of<List<Drug>?>(context);
     Set<String>? drugNames = drugs
-    ?.map((drug) => drug.name)
-    .where((name) => name != null)
-    .map((name) => name!)
-    .toSet();
+        ?.map((drug) => drug.name)
+        .where((name) => name != null)
+        .map((name) => name!)
+        .toSet();
 
-
-       if (drugs == null) {
+    if (drugs == null) {
       // Show a loading indicator while the drugs are loading
       return Scaffold(
         appBar: _buildAppBar(context),
@@ -65,31 +56,35 @@ class _DrugListViewState extends State<DrugListView> {
     if (drugs.isEmpty) {
       return Scaffold(
         appBar: _buildAppBar(context),
-        drawer: MenuDrawer(userDrugNames: {},) ,
-        body: Center(child: Column(
+        drawer: MenuDrawer(
+          userDrugNames: {},
+        ),
+        body: Center(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          
           children: [
             Text('Inga läkemedel i listan'),
-            TextButton.icon(onPressed: _onAddDrugPressed, label: const Text('Lägg till ett läkemedel'), icon: const Icon(Icons.add)),
+            TextButton.icon(
+                onPressed: _onAddDrugPressed,
+                label: const Text('Lägg till ett läkemedel'),
+                icon: const Icon(Icons.add)),
           ],
         )),
       );
     }
 
-
     // Filter drugs based on search query and selected category
     List<Drug> filteredDrugs = _filterDrugs(drugs);
 
-      List<dynamic> allCategories = drugs
-      .where((drug) => drug.categories != null)
-      .expand((drug) => drug.categories!)
-      .toSet()
-      .toList();
+    List<dynamic> allCategories = drugs
+        .where((drug) => drug.categories != null)
+        .expand((drug) => drug.categories!)
+        .toSet()
+        .toList();
 
     return Scaffold(
       appBar: _buildAppBar(context),
-      drawer: MenuDrawer(userDrugNames: drugNames!), 
+      drawer: MenuDrawer(userDrugNames: drugNames!),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -97,20 +92,20 @@ class _DrugListViewState extends State<DrugListView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSearchField(),
-                if (Provider.of<DrugListProvider>(context).categories.isNotEmpty)
+                if (Provider.of<DrugListProvider>(context)
+                    .categories
+                    .isNotEmpty)
                   _buildCategoryChips(allCategories),
                 const SizedBox(height: 30),
               ],
             ),
           ),
-        
           filteredDrugs.isEmpty
               ? const SliverFillRemaining(
-                
-                  child: Center(child: Text('Inga läkemedel som matchar sökningen')),
+                  child: Center(
+                      child: Text('Inga läkemedel som matchar sökningen')),
                 )
               : SliverList(
-
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       return DrugListRow(filteredDrugs[index]);
@@ -122,9 +117,6 @@ class _DrugListViewState extends State<DrugListView> {
       ),
     );
   }
-
-  
-
 
   void _onAddDrugPressed() {
     Navigator.push(
@@ -138,29 +130,28 @@ class _DrugListViewState extends State<DrugListView> {
     );
   }
 
-Widget _buildSearchField() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-    child: CupertinoSearchTextField(
-      
-      style: Theme.of(context).textTheme.labelLarge,
-      controller: _searchController,
-      placeholder: 'Sök efter läkemedel',
-      onChanged: (value) {
-        setState(() {
-          _searchQuery = value; // Update the search query as the user types
-        });
-      },
-      onSubmitted: (value) {
-        setState(() {
-          _searchQuery = value; // Final value after user submits search
-        });
-      },
-    ),
-  );
-}
+  Widget _buildSearchField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: CupertinoSearchTextField(
+        style: Theme.of(context).textTheme.labelLarge,
+        controller: _searchController,
+        placeholder: 'Sök efter läkemedel',
+        onChanged: (value) {
+          setState(() {
+            _searchQuery = value; // Update the search query as the user types
+          });
+        },
+        onSubmitted: (value) {
+          setState(() {
+            _searchQuery = value; // Final value after user submits search
+          });
+        },
+      ),
+    );
+  }
 
- Widget _buildCategoryChips(List<dynamic> categories) {
+  Widget _buildCategoryChips(List<dynamic> categories) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: Column(
@@ -173,34 +164,44 @@ Widget _buildSearchField() {
             children: [
               ChoiceChip(
                 showCheckmark: false,
-                label: Text("Alla", style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
+                label: Text("Alla",
+                    style: Theme.of(context)
+                        .textTheme
+                        .displaySmall
+                        ?.copyWith(fontSize: 11)),
                 selected: _selectedCategory == null,
-                 shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
-      
-      ),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(20), // Slightly rounded edges
+                ),
                 onSelected: (bool selected) {
                   setState(() {
                     _selectedCategory = null;
                   });
                 },
-                padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
               ),
               ...categories.map((dynamic category) {
                 return ChoiceChip(
                   showCheckmark: false,
-                  label: Text(category, style: Theme.of(context).textTheme.displaySmall?.copyWith(fontSize: 11)),
+                  label: Text(category,
+                      style: Theme.of(context)
+                          .textTheme
+                          .displaySmall
+                          ?.copyWith(fontSize: 11)),
                   selected: _selectedCategory == category,
-                   shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
-      
-      ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(20), // Slightly rounded edges
+                  ),
                   onSelected: (bool selected) {
                     setState(() {
                       _selectedCategory = selected ? category : null;
                     });
                   },
-                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 4.0, vertical: 2.0),
                 );
               }).toList(),
             ],
@@ -210,31 +211,30 @@ Widget _buildSearchField() {
     );
   }
 
-    final Map<String, String> _drugSearchCache = {};
+  final Map<String, String> _drugSearchCache = {};
 
-List<Drug> _filterDrugs(List<Drug> drugs) {
-  final searchQuery = _searchQuery.toLowerCase();
-  
-  return drugs.where((drug) {
-    // Combine the name and brand names into one searchable string
-    if (!_drugSearchCache.containsKey(drug.name)) {
-      _drugSearchCache[drug.name!] = [
-        drug.name?.toLowerCase(),
-        ...?drug.brandNames?.map((brand) => brand.toString().toLowerCase())
-      ].join(' ');
-    }
-    
-    final combinedString = _drugSearchCache[drug.name!];
+  List<Drug> _filterDrugs(List<Drug> drugs) {
+    final searchQuery = _searchQuery.toLowerCase();
 
-    // Search within the combined string
-    final matchesSearchQuery = combinedString!.contains(searchQuery);
-    final matchesCategory = _selectedCategory == null || 
-        (drug.categories?.contains(_selectedCategory) ?? false);
-        
-    return matchesSearchQuery && matchesCategory;
-  }).toList();
-}
+    return drugs.where((drug) {
+      // Combine the name and brand names into one searchable string
+      if (!_drugSearchCache.containsKey(drug.name)) {
+        _drugSearchCache[drug.name!] = [
+          drug.name?.toLowerCase(),
+          ...?drug.brandNames?.map((brand) => brand.toString().toLowerCase())
+        ].join(' ');
+      }
 
+      final combinedString = _drugSearchCache[drug.name!];
+
+      // Search within the combined string
+      final matchesSearchQuery = combinedString!.contains(searchQuery);
+      final matchesCategory = _selectedCategory == null ||
+          (drug.categories?.contains(_selectedCategory) ?? false);
+
+      return matchesSearchQuery && matchesCategory;
+    }).toList();
+  }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
@@ -255,14 +255,16 @@ List<Drug> _filterDrugs(List<Drug> drugs) {
                   : const SizedBox.shrink();
             },
           ),
-          const SizedBox(height: 10,)
+          const SizedBox(
+            height: 10,
+          )
         ],
       ),
       // leading: IconButton(
       //   icon: const Icon(Icons.exit_to_app),
       //   onPressed: _onLogoutPressed,
       // ),
-  
+
       actions: [
         IconButton(
           icon: const Icon(Icons.add),
@@ -271,5 +273,4 @@ List<Drug> _filterDrugs(List<Drug> drugs) {
       ],
     );
   }
-
 }

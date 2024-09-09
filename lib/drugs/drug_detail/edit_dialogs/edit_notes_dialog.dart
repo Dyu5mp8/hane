@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:provider/provider.dart';
 
 class EditNotesDialog extends StatefulWidget {
   final Drug drug;
-  const EditNotesDialog({super.key, required this.drug});
+  const EditNotesDialog({Key? key, required this.drug}) : super(key: key);
 
   @override
   _EditNotesDialogState createState() => _EditNotesDialogState();
@@ -42,8 +43,8 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                 child: const Icon(Icons.close)),
             TextButton(
                 onPressed: () {
-                  // Update the drug name with the new value
-                  widget.drug.notes = _notesController.text;
+                  widget.drug.notes =
+                      _notesController.text;
                   Navigator.pop(context);
                 },
                 child: const Icon(Icons.check)),
