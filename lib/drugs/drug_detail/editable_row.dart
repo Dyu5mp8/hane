@@ -85,6 +85,7 @@ class _EditableRowState extends State<EditableRow>
                       color: widget.isEditMode
                           ? Colors.blue[800]
                           : Colors.black,
+                      
                       fontWeight:
                           widget.isEditMode ? FontWeight.bold : FontWeight.normal,
                     ) ??

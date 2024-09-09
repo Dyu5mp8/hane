@@ -94,7 +94,6 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                 
               }
               else {
-                Provider.of<DrugListProvider>(context, listen: false).addDrug(widget.drug);
                 Navigator.pop(context);
               }
             },

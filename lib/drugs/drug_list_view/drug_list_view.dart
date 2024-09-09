@@ -26,6 +26,7 @@ class _DrugListViewState extends State<DrugListView> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    print('Init DrugListView');
   }
 
   @override
@@ -44,6 +45,7 @@ class _DrugListViewState extends State<DrugListView> {
 
   @override
   Widget build(BuildContext context) {
+    print('Building DrugListView');
     List<Drug>? drugs = Provider.of<List<Drug>?>(context);
     Set<String>? drugNames = drugs
     ?.map((drug) => drug.name)

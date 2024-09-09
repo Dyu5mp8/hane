@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
@@ -49,8 +51,6 @@ class _EditContraindicationsDialogState extends State<EditContraindicationsDialo
               // Update the drug name with the new value
               widget.drug.contraindication = _contraindicationController.text;
 
-              Provider.of<DrugListProvider>(context, listen: false)
-                  .addDrug(widget.drug);
               Navigator.pop(context);
             
           },
@@ -67,19 +67,17 @@ class _EditContraindicationsDialogState extends State<EditContraindicationsDialo
               mainAxisSize: MainAxisSize.min,
               
               children: [
-                // Name input
-                const Text('Namn'),
-                const SizedBox(height: 8),
+                SizedBox(height:20),                // Name input
                 TextFormField(
                   controller: _contraindicationController,
                   autofocus: true,
                   decoration: const InputDecoration(
-                    labelText: 'Namn',
+                    labelText: 'Kontraindikationer',
                     border: OutlineInputBorder(),
                   ),
 
-                          minLines: 1,
-                          maxLines: 3
+                          minLines: 3,
+                          maxLines: 10
                 
                   
                 ),

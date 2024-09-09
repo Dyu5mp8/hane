@@ -76,12 +76,14 @@ class _DrugDetailViewState extends State<DrugDetailView> {
                             ),
                             TextButton(
                               onPressed: () {
-                                Provider.of<DrugListProvider>(context, listen: false)
-                                    .deleteDrug(widget.drug); 
+                                 Provider.of<DrugListProvider>(context, listen: false).deleteDrug(widget.drug);
+                        
                                 Navigator.pop(context);
                                 Navigator.pop(context);
                               },
                               child: Text('Radera'),
+                             
+
                             ),
                           ],
                         );
@@ -96,6 +98,9 @@ class _DrugDetailViewState extends State<DrugDetailView> {
             icon: Icon(editMode ? Icons.check : Icons.edit_note_sharp, size: 30),
             onPressed: () {
               HapticFeedback.lightImpact();
+              if (editMode) {
+                Provider.of<DrugListProvider>(context, listen: false).addDrug(widget.drug);
+              }
               setState(() {
                 editMode = !editMode;
               });

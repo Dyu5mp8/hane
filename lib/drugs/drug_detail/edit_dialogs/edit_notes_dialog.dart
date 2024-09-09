@@ -49,9 +49,6 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
        
               // Update the drug name with the new value
               widget.drug.notes = _notesController.text;
-
-              Provider.of<DrugListProvider>(context, listen: false)
-                  .addDrug(widget.drug);
               Navigator.pop(context);
             
           },
@@ -69,17 +66,17 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
               
               children: [
                 // Name input
-                const Text('Namn'),
+
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _notesController,
                   autofocus: true,
                   decoration: const InputDecoration(
-                    labelText: 'Namn',
+                    labelText: 'Anteckningar',
                     border: OutlineInputBorder(),
                   ),
-                  minLines: 1,
-                  maxLines: 3
+                  minLines: 4,
+                  maxLines: 10
                   
 
                 ),

@@ -91,7 +91,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
               print("hej");
            
 
-              if (_brandNameController.text.isNotEmpty||_categoriesController.text.isNotEmpty) {
+              if (!_brandNameController.text.isEmpty||!_categoriesController.text.isEmpty) {
 
                 String? forgottenBrandNameText =  _brandNameController.text.isNotEmpty ? _brandNameController.text : null;
                 String? forgottenCategoryText =  _categoriesController.text.isNotEmpty ? _categoriesController.text : null;
@@ -111,8 +111,9 @@ class _EditNameDialogState extends State<EditNameDialog> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Provider.of<DrugListProvider>(context, listen: false)
-                  .addDrug(widget.drug);
+                         widget.drug.name = _nameController.text;
+                widget.drug.brandNames = _brandNames;
+                widget.drug.categories = _categories;
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
@@ -121,9 +122,15 @@ class _EditNameDialogState extends State<EditNameDialog> {
                   ],
                 );
               });
+             
               }
-              Provider.of<DrugListProvider>(context, listen: false)
-                  .addDrug(widget.drug);
+              else {
+                widget.drug.name = _nameController.text;
+                widget.drug.brandNames = _brandNames;
+                widget.drug.categories = _categories;
+              
+               Navigator.pop(context);
+              }
             }
    
           }
@@ -138,12 +145,13 @@ class _EditNameDialogState extends State<EditNameDialog> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             
             children: [
               // Name input
               const Text('Namn'),
-              const SizedBox(height: 8),
+              const SizedBox(height: 40),
               TextFormField(
 
                 controller: _nameController,
@@ -156,11 +164,9 @@ class _EditNameDialogState extends State<EditNameDialog> {
               ),
               
               
-              const SizedBox(height: 16),
+              const SizedBox(height: 50),
               
-              // Brand names input
-              const Text('Varumärken'),
-              const SizedBox(height: 8),
+
               TextFormField(
                 controller: _brandNameController,
                 decoration: InputDecoration(
@@ -180,24 +186,24 @@ class _EditNameDialogState extends State<EditNameDialog> {
                 ),
                 
               ),
-              const SizedBox(height: 8),
           
+              const SizedBox(height: 8),
               // Display brand names as chips
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: _brandNames
-                    .map((name) => CustomChip(
-                          label: name,
-                        
-                          onDeleted: () => _removeBrandName(name),
-                        ))
-                    .toList(),
+              SizedBox(
+                height:40,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: _brandNames
+                      .map((name) => CustomChip(
+                            label: name,
+                          
+                            onDeleted: () => _removeBrandName(name),
+                          ))
+                      .toList(),
+                ),
               ),
-
-              const SizedBox(height: 16),
               // Categories input
-              const Text('Kategorier'),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _categoriesController,
