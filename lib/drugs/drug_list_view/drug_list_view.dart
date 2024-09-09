@@ -106,9 +106,11 @@ class _DrugListViewState extends State<DrugListView> {
         
           filteredDrugs.isEmpty
               ? const SliverFillRemaining(
+                
                   child: Center(child: Text('Inga läkemedel som matchar sökningen')),
                 )
               : SliverList(
+
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       return DrugListRow(filteredDrugs[index]);
@@ -141,7 +143,7 @@ Widget _buildSearchField() {
     padding: const EdgeInsets.symmetric(horizontal: 10.0),
     child: CupertinoSearchTextField(
       
-      style: Theme.of(context).textTheme.bodyLarge,
+      style: Theme.of(context).textTheme.labelLarge,
       controller: _searchController,
       placeholder: 'Sök efter läkemedel',
       onChanged: (value) {

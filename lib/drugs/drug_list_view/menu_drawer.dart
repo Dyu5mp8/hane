@@ -60,7 +60,7 @@ Widget build(BuildContext context) {
   return FutureBuilder(
     future: Provider.of<DrugListProvider>(context)
         .getDrugNamesFromMaster()
-        .timeout(const Duration(seconds: 5)),
+        .timeout(const Duration(seconds: 1)),
     builder: (context, snapshot) {
       return Drawer(
         child: ListView(
