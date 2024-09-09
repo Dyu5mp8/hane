@@ -5,9 +5,9 @@ class Concentration {
   final double amount;
   final String unit;
 
-Concentration({required this.amount, required this.unit});
+  Concentration({required this.amount, required this.unit});
 
- factory Concentration.fromMap(Map<String, dynamic> map) {
+  factory Concentration.fromMap(Map<String, dynamic> map) {
     num amount = map['amount'] as num;
     return Concentration(
       amount: amount.toDouble(),
@@ -40,14 +40,12 @@ Concentration({required this.amount, required this.unit});
   }
 
   Map concentrationUnit = {
-    "mg" : "mass",
-    "g" : "mass",
-    "mL" : "volume",
-    "L" : "volume",
-    "mcg" : "mass",
-    "units" : "substance",
-
-
+    "mg": "mass",
+    "g": "mass",
+    "mL": "volume",
+    "L": "volume",
+    "mcg": "mass",
+    "units": "substance",
   };
 
   static Map<String, String> getConcentrationsUnitsAsMap(String unitInput) {
@@ -60,15 +58,12 @@ Concentration({required this.amount, required this.unit});
       throw ValidationException("Måste vara mängd/volym");
     }
     if (!UnitValidator.isSubstanceUnit(parts[0])) {
-      throw ValidationException("Felaktig enhet: [${parts[0]}], bör vara ${UnitValidator.validSubstanceUnits().keys.join(", ")}");
-    
-    } 
-    else if (!UnitValidator.isVolumeUnit(parts[1]))
-    {
-      throw ValidationException("Felaktig enhet: [${parts[1]}], bör vara ${UnitValidator.validVolumeUnits().keys.join(", ")}");
-    }
-  
-    else {
+      throw ValidationException(
+          "Felaktig enhet: [${parts[0]}], bör vara ${UnitValidator.validSubstanceUnits().keys.join(", ")}");
+    } else if (!UnitValidator.isVolumeUnit(parts[1])) {
+      throw ValidationException(
+          "Felaktig enhet: [${parts[1]}], bör vara ${UnitValidator.validVolumeUnits().keys.join(", ")}");
+    } else {
       unitMap["substance"] = parts[0];
     }
     for (final part in parts.sublist(1)) {

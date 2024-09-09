@@ -4,13 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
 
-
 class DrugListProvider with ChangeNotifier {
   String? user;
   String masterUID = "master";
   bool? isAdmin;
   Set<dynamic> categories = {};
-
 
   DrugListProvider({this.user}) {
     isAdmin = user == null ? null : user == masterUID;
@@ -19,17 +17,17 @@ class DrugListProvider with ChangeNotifier {
   Stream<List<Drug>> getDrugsStream() {
     var db = FirebaseFirestore.instance;
 
-    Query<Map<String, dynamic>> drugsCollection = db
-        .collection('users')
-        .doc(user)
-        .collection('drugs');
+    Query<Map<String, dynamic>> drugsCollection =
+        db.collection('users').doc(user).collection('drugs');
 
     return drugsCollection.snapshots().map((snapshot) {
       // Check if the data was fetched from the server (billable) or from the cache (non-billable)
       if (!snapshot.metadata.isFromCache) {
-        print('Firestore Read: Snapshot received from server with ${snapshot.docs.length} documents at ${DateTime.now()}');
+        print(
+            'Firestore Read: Snapshot received from server with ${snapshot.docs.length} documents at ${DateTime.now()}');
       } else {
-        print('Firestore Read: Snapshot served from cache with ${snapshot.docs.length} documents');
+        print(
+            'Firestore Read: Snapshot served from cache with ${snapshot.docs.length} documents');
       }
 
       // Convert each document to a Drug object
@@ -38,121 +36,134 @@ class DrugListProvider with ChangeNotifier {
         categories.addAll(drug.categories ?? []);
         return drug;
       }).toList();
-       drugsList.sort((a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+      drugsList.sort(
+          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
       return drugsList;
     });
   }
 
+  Future<void> addDrugNameToIndex(String drugName) async {
+    try {
+      var db = FirebaseFirestore.instance;
+      DocumentReference indexDocRef = db
+          .collection('users')
+          .doc(user)
+          .collection('indexes')
+          .doc('drugIndex');
 
+      // Check if the document exists
+      DocumentSnapshot snapshot = await indexDocRef.get();
 
-Future<void> addDrugNameToIndex(String drugName) async {
-  try {
-    var db = FirebaseFirestore.instance;
-    DocumentReference indexDocRef = db.collection('users').doc(user).collection('indexes').doc('drugIndex');
-
-    // Check if the document exists
-    DocumentSnapshot snapshot = await indexDocRef.get();
-
-    if (snapshot.exists) {
-      // Document exists, update it
-      await indexDocRef.update({
-        "drugs": FieldValue.arrayUnion([drugName])
-      });
-    } else {
-      // Document does not exist, create it
-      await indexDocRef.set({
-        "drugs": [drugName]
-      });
+      if (snapshot.exists) {
+        // Document exists, update it
+        await indexDocRef.update({
+          "drugs": FieldValue.arrayUnion([drugName])
+        });
+      } else {
+        // Document does not exist, create it
+        await indexDocRef.set({
+          "drugs": [drugName]
+        });
+      }
+    } catch (e) {
+      print("Failed to add drug name to index: $e");
+      rethrow;
     }
-  } catch (e) {
-    print("Failed to add drug name to index: $e");
-    rethrow;
   }
-}
 
-Future<void> removeDrugNameFromIndex(String drugName) async {
-  try {
-    var db = FirebaseFirestore.instance;
-    DocumentReference indexDocRef = db.collection('users').doc(user).collection('indexes').doc('drugIndex');
+  Future<void> removeDrugNameFromIndex(String drugName) async {
+    try {
+      var db = FirebaseFirestore.instance;
+      DocumentReference indexDocRef = db
+          .collection('users')
+          .doc(user)
+          .collection('indexes')
+          .doc('drugIndex');
 
-    // Check if the document exists
-    DocumentSnapshot snapshot = await indexDocRef.get();
+      // Check if the document exists
+      DocumentSnapshot snapshot = await indexDocRef.get();
 
-    if (snapshot.exists) {
-      // Document exists, update it
-      await indexDocRef.update({
-        "drugs": FieldValue.arrayRemove([drugName])
-      });
-    } else {
-      print("Index document does not exist. No need to remove.");
+      if (snapshot.exists) {
+        // Document exists, update it
+        await indexDocRef.update({
+          "drugs": FieldValue.arrayRemove([drugName])
+        });
+      } else {
+        print("Index document does not exist. No need to remove.");
+      }
+    } catch (e) {
+      print("Failed to remove drug name from index: $e");
+      rethrow;
     }
-  } catch (e) {
-    print("Failed to remove drug name from index: $e");
-    rethrow;
   }
-}
 
-Future<Set<String>> getDrugNamesFromMaster({String masterUser = 'master'}) async {
-  try {
-    var db = FirebaseFirestore.instance;
-    DocumentSnapshot indexSnapshot = await db.collection('users').doc(masterUser).collection('indexes').doc('drugIndex').get();
+  Future<Set<String>> getDrugNamesFromMaster(
+      {String masterUser = 'master'}) async {
+    try {
+      var db = FirebaseFirestore.instance;
+      DocumentSnapshot indexSnapshot = await db
+          .collection('users')
+          .doc(masterUser)
+          .collection('indexes')
+          .doc('drugIndex')
+          .get();
 
-    if (indexSnapshot.exists) {
-      // Document exists, retrieve the drug names
-      List<dynamic> drugNames = indexSnapshot.get('drugs');
-      return Set<String>.from(drugNames);
-    } else {
-      // Document does not exist, return an empty list
-      return {};
+      if (indexSnapshot.exists) {
+        // Document exists, retrieve the drug names
+        List<dynamic> drugNames = indexSnapshot.get('drugs');
+        return Set<String>.from(drugNames);
+      } else {
+        // Document does not exist, return an empty list
+        return {};
+      }
+    } catch (e) {
+      print("Failed to retrieve drug names: $e");
+      rethrow;
     }
-  } catch (e) {
-    print("Failed to retrieve drug names: $e");
-    rethrow;
   }
-}
 
-Future<void> addDrugsFromMaster(List<String> drugNames) async {
-  CollectionReference masterDrugsCollection = FirebaseFirestore.instance
-      .collection('users')
-      .doc('master')
-      .collection('drugs');
+  Future<void> addDrugsFromMaster(List<String> drugNames) async {
+    CollectionReference masterDrugsCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc('master')
+        .collection('drugs');
 
-  try {
-    // Await the snapshot
-    final snapshot = await masterDrugsCollection.where('name', whereIn: drugNames).get();
+    try {
+      // Await the snapshot
+      final snapshot =
+          await masterDrugsCollection.where('name', whereIn: drugNames).get();
 
-    // Convert the documents into a list of Drug objects
-    final List<Drug> drugs = snapshot.docs
-        .map((doc) => Drug.fromFirestore(doc.data() as Map<String, dynamic>))
-        .toList();
+      // Convert the documents into a list of Drug objects
+      final List<Drug> drugs = snapshot.docs
+          .map((doc) => Drug.fromFirestore(doc.data() as Map<String, dynamic>))
+          .toList();
 
-    for (var drug in drugs) {
-      await addDrug(drug);
+      for (var drug in drugs) {
+        await addDrug(drug);
+      }
+    } catch (e) {
+      print("Failed to add drugs from master: $e");
+      rethrow;
     }
-  
   }
-  catch (e) {
-    print("Failed to add drugs from master: $e");
-    rethrow;
-  } 
-
-}
-
 
   Future<void> addDrug(Drug drug) async {
     try {
       var db = FirebaseFirestore.instance;
-      CollectionReference drugsCollection = db.collection('users').doc(user).collection('drugs');
+      CollectionReference drugsCollection =
+          db.collection('users').doc(user).collection('drugs');
 
       // Update the metadata before saving
       drug.changedByUser = user != masterUID;
       drug.lastUpdated = Timestamp.now();
 
       // Use set with merge: true to overwrite if the drug already exists
-      await drugsCollection.doc(drug.name).set(drug.toJson(), SetOptions(merge: true));
+      await drugsCollection
+          .doc(drug.name)
+          .set(drug.toJson(), SetOptions(merge: true));
       if (isAdmin == true) {
-            await addDrugNameToIndex(drug.name!);
+        await addDrugNameToIndex(drug.name!);
       }
     } catch (e) {
       print("Failed to add drug: $e");
@@ -163,7 +174,8 @@ Future<void> addDrugsFromMaster(List<String> drugNames) async {
   Future<void> deleteDrug(Drug drug) async {
     try {
       var db = FirebaseFirestore.instance;
-      CollectionReference drugsCollection = db.collection('users').doc(user).collection('drugs');
+      CollectionReference drugsCollection =
+          db.collection('users').doc(user).collection('drugs');
       if (drug.name != null) {
         await drugsCollection.doc(drug.name).delete();
         if (isAdmin == true) {
@@ -192,7 +204,8 @@ Future<void> addDrugsFromMaster(List<String> drugNames) async {
       }
 
       WriteBatch batch = db.batch();
-      QuerySnapshot<Map<String, dynamic>> masterSnapshot = await masterDrugsCollection.get();
+      QuerySnapshot<Map<String, dynamic>> masterSnapshot =
+          await masterDrugsCollection.get();
 
       for (var doc in masterSnapshot.docs) {
         DocumentReference userDocRef = userDrugsCollection.doc(doc.id);

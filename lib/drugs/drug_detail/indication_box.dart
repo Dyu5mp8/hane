@@ -6,33 +6,34 @@ import 'package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:provider/provider.dart';
 
-
 class IndicationBox extends StatelessWidget {
-  const IndicationBox({super.key});
+  final bool editMode;
+  const IndicationBox({super.key, this.editMode = false});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<Drug>(
       builder: (context, drug, child) {
-
         if (drug.indications == null || drug.indications!.isEmpty) {
           return const Padding(
             padding: EdgeInsets.all(10.0),
             child: Column(
-             
               children: [
-                SizedBox(height:20),
+                SizedBox(height: 20),
                 Icon(Icons.lightbulb_circle, color: Colors.grey, size: 50),
-                Text("Inga indikationer ännu! Lägg till indikation eller gör andra ändringar..."),
-                SizedBox(height:20),
+                Text(
+                    "Inga indikationer ännu! Lägg till indikation eller gör andra ändringar..."),
+                SizedBox(height: 20),
                 AddIndicationButton(),
               ],
             ),
           );
-
         }
-   
-        return _IndicationView(indications: drug.indications!, concentrations: drug.concentrations);
+
+        return _IndicationView(
+            indications: drug.indications!,
+            concentrations: drug.concentrations,
+            editMode: editMode);
       },
     );
   }
@@ -41,12 +42,13 @@ class IndicationBox extends StatelessWidget {
 class _IndicationView extends StatelessWidget {
   final List<Indication> indications;
   final List<Concentration>? concentrations;
+  final bool editMode;
 
-  const _IndicationView({required this.indications, this.concentrations});
+  const _IndicationView(
+      {required this.indications, this.concentrations, this.editMode = false});
 
   @override
   Widget build(BuildContext context) {
-
     return Expanded(
       child: DefaultTabController(
         length: indications.length,
@@ -54,8 +56,9 @@ class _IndicationView extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 20.0),
           child: Column(
             children: [
-              _IndicationTabs(indications: indications),
-              _IndicationTabView(indications: indications, concentrations: concentrations),
+              _IndicationTabs(indications: indications, editMode: editMode),
+              _IndicationTabView(
+                  indications: indications, concentrations: concentrations),
               const AddIndicationButton(),
             ],
           ),
@@ -64,10 +67,12 @@ class _IndicationView extends StatelessWidget {
     );
   }
 }
+
 class _IndicationTabs extends StatelessWidget {
   final List<Indication> indications;
+  final bool editMode;
 
-  const _IndicationTabs({required this.indications});
+  const _IndicationTabs({required this.indications, this.editMode = false});
 
   @override
   Widget build(BuildContext context) {
@@ -75,37 +80,64 @@ class _IndicationTabs extends StatelessWidget {
       height: 30,
       decoration: const BoxDecoration(
         color: Colors.white, // Set a solid, non-transparent background color
-
- 
       ),
-      child: TabBar(
-        unselectedLabelStyle: const TextStyle(color: Color.fromARGB(255, 157, 157, 157)),
-        labelColor: Colors.black,
-        tabAlignment: TabAlignment.start,
-        isScrollable: true,
-        indicatorSize: TabBarIndicatorSize.tab,
-        indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(70),
-          color: Colors.lightBlue,
-          border: Border.all(color: Colors.black, width: 0.5),
-        ),
-        tabs: indications.map((indication) => Tab(text: indication.name)).toList(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (editMode)
+            Container(
+                width: 25,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColorLight,
+                    border: Border.all(color: Colors.black, width: 0.5)),
+                child: IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.add_circle_outline_sharp),
+                    iconSize: 20,
+                    color: Colors.black,
+                    padding: EdgeInsets.zero)),
+          Flexible(
+            child: TabBar(
+              unselectedLabelStyle:
+                  const TextStyle(color: Color.fromARGB(255, 157, 157, 157)),
+              labelColor: Colors.black,
+              tabAlignment: TabAlignment.start,
+              isScrollable: true,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: const Color.fromARGB(255, 95, 142, 167),
+                border: Border.all(color: Colors.black, width: 0.5),
+              ),
+              tabs: indications
+                  .map((indication) => Tab(text: indication.name))
+                  .toList(),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
 class _IndicationTabView extends StatelessWidget {
   final List<Indication> indications;
   final List<Concentration>? concentrations;
+  final bool editMode;
 
-  const _IndicationTabView({required this.indications, this.concentrations});
+  const _IndicationTabView(
+      {required this.indications, this.concentrations, this.editMode = false});
 
   @override
   Widget build(BuildContext context) {
-
     return Expanded(
       child: TabBarView(
-        children: indications.map((indication) => _IndicationDetails(indication: indication, concentrations: concentrations,)).toList(),
+        children: indications
+            .map((indication) => _IndicationDetails(
+                  indication: indication,
+                  concentrations: concentrations,
+                ))
+            .toList(),
       ),
     );
   }
@@ -118,50 +150,44 @@ class _IndicationDetails extends StatelessWidget {
   const _IndicationDetails({
     required this.indication,
     this.concentrations,
-    });
+  });
 
-  
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (indication.notes != null) Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(indication.notes!, style: const TextStyle(fontSize: 14)),
-          ),
-          
-          if (indication.dosages != null)
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(1),
-              itemCount: indication.dosages?.length,
-              itemBuilder: (context, index) {
-      
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (indication.dosages != null)
-                    
-                    DosageSnippet(dosage: indication.dosages![index], 
-                    dosageViewHandler: (DosageViewHandler(
-                        super.key,
-                        dosage: indication.dosages![index],
-                        availableConcentrations: concentrations,
-                       
-                    )
-                      ),
-                    ),
-                   
-                 
-                  ],
-                );
-              },
+          if (indication.notes != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child:
+                  Text(indication.notes!, style: const TextStyle(fontSize: 14)),
             ),
-          ),
+          if (indication.dosages != null)
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(1),
+                itemCount: indication.dosages?.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (indication.dosages != null)
+                        DosageSnippet(
+                          dosage: indication.dosages![index],
+                          dosageViewHandler: (DosageViewHandler(
+                            super.key,
+                            dosage: indication.dosages![index],
+                            availableConcentrations: concentrations,
+                          )),
+                        ),
+                    ],
+                  );
+                },
+              ),
+            ),
         ],
       ),
     );
@@ -177,7 +203,11 @@ class AddIndicationButton extends StatelessWidget {
 
     return ElevatedButton(
       onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => DrugEditDetail(drugForm: DrugForm(drug: drug))));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DrugEditDetail(drugForm: DrugForm(drug: drug))));
       },
       child: const Row(
         mainAxisSize: MainAxisSize.min,
@@ -190,4 +220,3 @@ class AddIndicationButton extends StatelessWidget {
     );
   }
 }
-

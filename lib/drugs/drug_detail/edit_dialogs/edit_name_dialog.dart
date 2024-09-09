@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/ui_components/custom_chip.dart';
-import 'package:provider/provider.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
 
 class EditNameDialog extends StatefulWidget {
@@ -26,8 +24,10 @@ class _EditNameDialogState extends State<EditNameDialog> {
     super.initState();
     // Initialize the controllers with the existing data
     _nameController.text = widget.drug.name ?? '';
-    _brandNames = widget.drug.brandNames?.map((e) => e.toString()).toList() ?? [];
-    _categories = widget.drug.categories?.map((e) => e.toString()).toList() ?? [];
+    _brandNames =
+        widget.drug.brandNames?.map((e) => e.toString()).toList() ?? [];
+    _categories =
+        widget.drug.categories?.map((e) => e.toString()).toList() ?? [];
   }
 
   @override
@@ -45,11 +45,13 @@ class _EditNameDialogState extends State<EditNameDialog> {
       });
     }
   }
- void _removeBrandName(String name) {
+
+  void _removeBrandName(String name) {
     setState(() {
       _brandNames.remove(name);
     });
   }
+
   void _addCategory() {
     if (_categoriesController.text.isNotEmpty) {
       setState(() {
@@ -65,81 +67,74 @@ class _EditNameDialogState extends State<EditNameDialog> {
     });
   }
 
-
-
- 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Redigera'),
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        leading: null,
-        actions: [
-        TextButton(
-          onPressed: () {
+          title: const Text('Redigera'),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          leading: null,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Icon(Icons.close),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  if (_brandNameController.text.isNotEmpty ||
+                      _categoriesController.text.isNotEmpty) {
+                    String? forgottenBrandNameText =
+                        _brandNameController.text.isNotEmpty
+                            ? _brandNameController.text
+                            : null;
+                    String? forgottenCategoryText =
+                        _categoriesController.text.isNotEmpty
+                            ? _categoriesController.text
+                            : null;
 
-            Navigator.pop(context);
-          },
-          child: const Text('Avbryt')
-        ),
-        TextButton(
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              print("hej");
-           
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Ej tillagda ändringar'),
+                            content: Text(
+                                'Ej sparat fält: ${forgottenBrandNameText ?? ''} ${forgottenCategoryText ?? ''}. Spara utan att lägga till de inskrivna fälten?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Avbryt'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  widget.drug.name = _nameController.text;
+                                  widget.drug.brandNames = _brandNames;
+                                  widget.drug.categories = _categories;
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Ja'),
+                              ),
+                            ],
+                          );
+                        });
+                  } else {
+                    widget.drug.name = _nameController.text;
+                    widget.drug.brandNames = _brandNames;
+                    widget.drug.categories = _categories;
 
-              if (!_brandNameController.text.isEmpty||!_categoriesController.text.isEmpty) {
-
-                String? forgottenBrandNameText =  _brandNameController.text.isNotEmpty ? _brandNameController.text : null;
-                String? forgottenCategoryText =  _categoriesController.text.isNotEmpty ? _categoriesController.text : null;
-
-                showDialog(
-              context: context,
-                      builder: (BuildContext context)  {
-                return AlertDialog(
-                  title: const Text('Ej tillagda ändringar'),
-                  content: Text('Ej sparat fält: ${forgottenBrandNameText ?? ''} ${forgottenCategoryText ?? ''}. Spara utan att lägga till de inskrivna fälten?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Avbryt'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                         widget.drug.name = _nameController.text;
-                widget.drug.brandNames = _brandNames;
-                widget.drug.categories = _categories;
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Ja'),
-                    ),
-                  ],
-                );
-              });
-             
-              }
-              else {
-                widget.drug.name = _nameController.text;
-                widget.drug.brandNames = _brandNames;
-                widget.drug.categories = _categories;
-              
-               Navigator.pop(context);
-              }
-            }
-   
-          }
-        ,
-
-          child: const Text('Spara'),
-        ),
-      ]) ,
-      
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              child: const Icon(Icons.check),
+            ),
+          ]),
       body: Form(
         key: _formKey,
         child: Padding(
@@ -147,13 +142,12 @@ class _EditNameDialogState extends State<EditNameDialog> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
-            
             children: [
               // Name input
-              const Text('Namn'),
+
               const SizedBox(height: 40),
               TextFormField(
-
+                textCapitalization: TextCapitalization.sentences,
                 controller: _nameController,
                 autofocus: true,
                 decoration: const InputDecoration(
@@ -162,10 +156,8 @@ class _EditNameDialogState extends State<EditNameDialog> {
                 ),
                 validator: val.validateName,
               ),
-              
-              
+
               const SizedBox(height: 50),
-              
 
               TextFormField(
                 controller: _brandNameController,
@@ -174,30 +166,26 @@ class _EditNameDialogState extends State<EditNameDialog> {
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.add),
-                    onPressed: (){
-                       {
+                    onPressed: () {
+                      {
                         _addBrandName();
                       }
-                      
-                  
-                      },
+                    },
                   ),
-          
                 ),
-                
+                textCapitalization: TextCapitalization.sentences,
               ),
-          
+
               const SizedBox(height: 8),
               // Display brand names as chips
               SizedBox(
-                height:40,
+                height: 40,
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 4,
                   children: _brandNames
                       .map((name) => CustomChip(
                             label: name,
-                          
                             onDeleted: () => _removeBrandName(name),
                           ))
                       .toList(),
@@ -213,12 +201,13 @@ class _EditNameDialogState extends State<EditNameDialog> {
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () {
-                     {
+                      {
                         _addCategory();
                       }
                     },
                   ),
                 ),
+                textCapitalization: TextCapitalization.sentences,
               ),
 
               const SizedBox(height: 8),
@@ -234,15 +223,10 @@ class _EditNameDialogState extends State<EditNameDialog> {
                         ))
                     .toList(),
               ),
-
-            
-
-
             ],
           ),
         ),
       ),
-      
     );
   }
 }

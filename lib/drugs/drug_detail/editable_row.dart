@@ -67,12 +67,13 @@ class _EditableRowState extends State<EditableRow>
             }
           : null,
       child: Container(
-        padding: widget.isEditMode ? EdgeInsets.symmetric(vertical: 4, horizontal:8) : EdgeInsets.only(top:8),
+        padding: widget.isEditMode
+            ? EdgeInsets.symmetric(vertical: 4, horizontal: 8)
+            : EdgeInsets.only(top: 8),
         decoration: BoxDecoration(
-          color: widget.isEditMode ? Theme.of(context).primaryColorLight : Colors.transparent,
-          borderRadius: BorderRadius.circular(16.0)
-      
-          
+          color: widget.isEditMode
+              ? Theme.of(context).primaryColorLight
+              : Colors.transparent,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -82,12 +83,11 @@ class _EditableRowState extends State<EditableRow>
               child: Text(
                 widget.text ?? "",
                 style: widget.textStyle?.copyWith(
-                      color: widget.isEditMode
-                          ? Colors.blue[800]
-                          : Colors.black,
-                      
-                      fontWeight:
-                          widget.isEditMode ? FontWeight.bold : FontWeight.normal,
+                      color:
+                          widget.isEditMode ? Colors.blue[800] : Colors.black,
+                      fontWeight: widget.isEditMode
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ) ??
                     Theme.of(context).textTheme.headlineLarge!.copyWith(
                           color: widget.isEditMode

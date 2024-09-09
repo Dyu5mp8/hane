@@ -132,7 +132,7 @@ class _DrugListViewState extends State<DrugListView> {
       MaterialPageRoute(
         builder: (context) => ChangeNotifierProvider.value(
           value: Provider.of<DrugListProvider>(context, listen: false),
-          child: DrugDetailView(drug: Drug(), newDrug: true),
+          child: DrugDetailView(drug: Drug()),
         ),
       ),
     );

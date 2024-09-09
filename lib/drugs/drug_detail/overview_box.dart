@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart'; 
+import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 
@@ -20,7 +20,7 @@ class OverviewBox extends StatelessWidget {
       child: Row(children: [
         Flexible(
           child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               if (drug.categories != null)
                 ...drug.categories!.map((dynamic category) {
@@ -33,7 +33,6 @@ class OverviewBox extends StatelessWidget {
                   text: drug.name!,
                   editDialog: EditNameDialog(drug: drug),
                   isEditMode: editMode),
-              
             ]),
             if (drug.brandNames != null)
               Flexible(
@@ -51,9 +50,7 @@ class OverviewBox extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 100),
               child: FittedBox(
-          
                 child: Column(
-              
                   children: [
                     EditableRow(
                       text: "Spädningar",
@@ -61,7 +58,6 @@ class OverviewBox extends StatelessWidget {
                       editDialog: EditConcentrationsDialog(drug: drug),
                       isEditMode: editMode,
                     ),
-                    // Assuming you want to display concentrations below the EditableRow
                     ...drug
                         .getConcentrationsAsString()!
                         .map((conc) => Text(conc))

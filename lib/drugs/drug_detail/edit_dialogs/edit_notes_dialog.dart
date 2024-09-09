@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:provider/provider.dart';
-import 'package:hane/utils/validate_drug_save.dart' as val;
 
 class EditNotesDialog extends StatefulWidget {
   final Drug drug;
@@ -14,7 +11,7 @@ class EditNotesDialog extends StatefulWidget {
 
 class _EditNotesDialogState extends State<EditNotesDialog> {
   final TextEditingController _notesController = TextEditingController();
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -33,29 +30,24 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Anteckningar'),
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        leading: null,
-        actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Avbryt')
-        ),
-        TextButton(
-          onPressed: () {
-       
-              // Update the drug name with the new value
-              widget.drug.notes = _notesController.text;
-              Navigator.pop(context);
-            
-          },
-          child: const Text('Spara'),
-        ),
-      ]) ,
-      
+          title: const Text('Anteckningar'),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          leading: null,
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Icon(Icons.close)),
+            TextButton(
+                onPressed: () {
+                  // Update the drug name with the new value
+                  widget.drug.notes = _notesController.text;
+                  Navigator.pop(context);
+                },
+                child: const Icon(Icons.check)),
+          ]),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -63,31 +55,24 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              
               children: [
                 // Name input
 
                 const SizedBox(height: 8),
                 TextFormField(
-                  controller: _notesController,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Anteckningar',
-                    border: OutlineInputBorder(),
-                  ),
-                  minLines: 4,
-                  maxLines: 10
-                  
-
-                ),
-                
-              
+                    controller: _notesController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Anteckningar',
+                      border: OutlineInputBorder(),
+                    ),
+                    minLines: 4,
+                    maxLines: 10),
               ],
             ),
           ),
         ),
       ),
-      
     );
   }
 }

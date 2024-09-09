@@ -1,15 +1,12 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/concentration.dart';
 import 'package:hane/drugs/models/indication.dart';
 
-
 export 'package:hane/drugs/models/dosage.dart';
 export 'package:hane/drugs/models/indication.dart';
 export 'package:hane/drugs/models/concentration.dart';
 export 'package:hane/drugs/models/dose.dart';
-
 
 class Drug extends ChangeNotifier {
   String? _name;
@@ -28,7 +25,7 @@ class Drug extends ChangeNotifier {
     bool? changedByUser,
     List<dynamic>? brandNames,
     List<dynamic>? categories,
-   List<Concentration>? concentrations = const [],
+    List<Concentration>? concentrations = const [],
     String? contraindication = '',
     List<Indication>? indications,
     String? notes = '',
@@ -42,8 +39,6 @@ class Drug extends ChangeNotifier {
         _indications = indications,
         _notes = notes,
         _brandNames = brandNames;
-
-  
 
   String? get name => _name;
   set name(String? newName) {
@@ -71,7 +66,6 @@ class Drug extends ChangeNotifier {
 
   String? get notes => _notes;
   set notes(String? newNotes) {
-
     if (_notes != newNotes) {
       _notes = newNotes;
       notifyListeners();
@@ -94,21 +88,20 @@ class Drug extends ChangeNotifier {
     }
   }
 
-
-
   List<Concentration>? get concentrations => _concentrations;
 
   set concentrations(List<Concentration>? newConcentrations) {
     if (_concentrations != newConcentrations) {
       _concentrations = newConcentrations;
-      
+
       notifyListeners();
     }
   }
 
   List<String>? getConcentrationsAsString() {
-
-    return _concentrations?.map((conc) => "${conc.amount} ${conc.unit}").toList();
+    return _concentrations
+        ?.map((conc) => "${conc.amount} ${conc.unit}")
+        .toList();
   }
 
   String? get contraindication => _contraindication;
@@ -117,7 +110,7 @@ class Drug extends ChangeNotifier {
       _contraindication = newContraindication;
       notifyListeners();
     }
-  } 
+  }
 
   void updateDrug() {
     notifyListeners();
@@ -130,18 +123,18 @@ class Drug extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   List<Indication>? get adultIndications {
     var adult = _indications?.where((ind) => !ind.isPediatric).toList();
     return adult ?? [];
   }
 
   List<Indication>? get pedIndications {
-      var ped = _indications?.where((ind) => ind.isPediatric).toList();
-      return ped ?? [];
-    }
+    var ped = _indications?.where((ind) => ind.isPediatric).toList();
+    return ped ?? [];
+  }
 
-void addIndication(Indication indication) {
+  void addIndication(Indication indication) {
     this.indications = this.indications ?? [];
     indications!.add(indication);
     notifyListeners();
@@ -160,8 +153,7 @@ void addIndication(Indication indication) {
       'notes': _notes,
       'lastUpdated': _lastUpdated
     };
-  } 
-
+  }
 
   // Factory constructor to create a Drug from a Map
   factory Drug.fromFirestore(Map<String, dynamic> map) {
@@ -169,16 +161,17 @@ void addIndication(Indication indication) {
       name: map['name'] as String?,
       changedByUser: map['changedByUser'] as bool?,
       categories: (map['categories'] as List<dynamic>?),
-      concentrations: (map['concentrations'] as List<dynamic>?)?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
-        .toList(),
-      brandNames:(map['brandNames'] as List<dynamic>?),
+      concentrations: (map['concentrations'] as List<dynamic>?)
+          ?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
+          .toList(),
+      brandNames: (map['brandNames'] as List<dynamic>?),
       contraindication: map['contraindication'] as String?,
-      indications: (map['indications'] as List?)?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>)).toList(),
+      indications: (map['indications'] as List?)
+          ?.map(
+              (item) => Indication.fromFirestore(item as Map<String, dynamic>))
+          .toList(),
       notes: map['notes'] as String?,
       lastUpdated: map['lastUpdated'] as Timestamp?,
     );
   }
-
-
-
 }

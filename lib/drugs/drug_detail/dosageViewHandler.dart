@@ -3,8 +3,7 @@ import "package:hane/drugs/models/drug.dart";
 import "package:hane/utils/unit_service.dart";
 import "package:hane/utils/smart_rounder.dart";
 
-enum AdministrationRoute{
-
+enum AdministrationRoute {
   po,
   iv,
   im,
@@ -35,9 +34,10 @@ class DosageViewHandler {
   }
 
   bool canConvertConcentration(Dose dose) {
-    if (availableConcentrations != null && dose.units.containsKey("substance")) {
-      var concentrationSubstanceUnits = availableConcentrations!
-          .map((c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
+    if (availableConcentrations != null &&
+        dose.units.containsKey("substance")) {
+      var concentrationSubstanceUnits = availableConcentrations!.map(
+          (c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
       var concentrationUnitTypes = concentrationSubstanceUnits
           .map((c) => UnitValidator.getUnitType(c))
           .toSet();
@@ -102,12 +102,10 @@ class DosageViewHandler {
         return AdministrationRoute.sc;
       case "Nasalt":
         return AdministrationRoute.nasal;
-      case "Inh": 
+      case "Inh":
         return AdministrationRoute.inh;
       default:
         return AdministrationRoute.other;
-      
-  
     }
   }
 
@@ -122,38 +120,32 @@ class DosageViewHandler {
       required Dose? maxDose,
       required bool shouldConvertDoses,
     }) {
-      final String conversionText = conversionInfo != null && conversionInfo.isNotEmpty
-          ? conversionInfo
-          : '';
-      
-      final String routeText = route != null && route.isNotEmpty
-          ? "$route. "
-          : '';
+      final String conversionText =
+          conversionInfo != null && conversionInfo.isNotEmpty
+              ? conversionInfo
+              : '';
 
-      final String instructionText = instruction != null && instruction.isNotEmpty
-          ? "$instruction: "
-          : '';
+      final String routeText =
+          route != null && route.isNotEmpty ? "$route. " : '';
 
-      final String doseText = dose != null
-          ? "${dose.toString()}. "
-          : '';
+      final String instructionText =
+          instruction != null && instruction.isNotEmpty ? "$instruction: " : '';
 
-      String doseRangeText () {
-       if (lowerLimitDose != null && higherLimitDose != null) {
-         if (dose != null) {
-           return "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}). ";
-           }
+      final String doseText = dose != null ? "${dose.toString()}. " : '';
 
-         else {
+      String doseRangeText() {
+        if (lowerLimitDose != null && higherLimitDose != null) {
+          if (dose != null) {
+            return "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}). ";
+          } else {
             return "${lowerLimitDose.toString()} - ${higherLimitDose.toString()}. ";
-         }
-       }
-          return "";
+          }
+        }
+        return "";
       }
 
-      final String maxDoseText = maxDose != null
-          ? "Maxdos: ${maxDose.toString()}."
-          : '';
+      final String maxDoseText =
+          maxDose != null ? "Maxdos: ${maxDose.toString()}." : '';
 
       return "$conversionText$routeText$instructionText$doseText${doseRangeText()}$maxDoseText";
     }
@@ -185,7 +177,9 @@ class DosageViewHandler {
             ? dose.convertedBy(
                 convertWeight: canConvertWeight(dose) ? conversionWeight : null,
                 convertTime: canConvertTime(dose) ? conversionTime : null,
-                convertConcentration: canConvertConcentration(dose) ? conversionConcentration : null,
+                convertConcentration: canConvertConcentration(dose)
+                    ? conversionConcentration
+                    : null,
               )
             : dose;
       }
@@ -196,16 +190,16 @@ class DosageViewHandler {
       Dose? maxDose = convertIfNeeded(dosage.maxDose);
 
       String? weightConversionInfo = conversionWeight != null
-        ? "vikt ${smartRound(conversionWeight!).toString()} kg"
-        : null;
+          ? "vikt ${smartRound(conversionWeight!).toString()} kg"
+          : null;
 
       String? concentrationConversionInfo = conversionConcentration != null
-        ? "koncentration ${conversionConcentration.toString()}"
-        : null;
+          ? "koncentration ${conversionConcentration.toString()}"
+          : null;
 
       String? timeConversionInfo = conversionTime != null
-        ? "tidsenhet ${conversionTime.toString()}"
-        : null;
+          ? "tidsenhet ${conversionTime.toString()}"
+          : null;
 
       List<String> conversionParts = [
         if (weightConversionInfo != null) weightConversionInfo,
@@ -214,8 +208,8 @@ class DosageViewHandler {
       ];
 
       String conversionInfo = conversionParts.isNotEmpty
-        ? "Konvertering baserat på ${conversionParts.join(', ')}: "
-        : "";
+          ? "Konvertering baserat på ${conversionParts.join(', ')}: "
+          : "";
 
       return Text.rich(
         TextSpan(
