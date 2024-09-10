@@ -5,6 +5,8 @@ class EditableRow extends StatefulWidget {
   final Widget editDialog;
   final bool isEditMode;
   final TextStyle? textStyle;
+  final bool nullWhenNotEditing;
+
 
   const EditableRow({
     Key? key,
@@ -12,6 +14,7 @@ class EditableRow extends StatefulWidget {
     required this.editDialog,
     required this.isEditMode,
     this.textStyle,
+    this.nullWhenNotEditing = false,
   }) : super(key: key);
 
   @override
@@ -57,6 +60,9 @@ class _EditableRowState extends State<EditableRow>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.nullWhenNotEditing && !widget.isEditMode) {
+      return Container();
+    }
     return GestureDetector(
       onTap: widget.isEditMode
           ? () {

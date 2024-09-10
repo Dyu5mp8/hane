@@ -112,7 +112,47 @@ class EditModeButton extends StatelessWidget {
     return Consumer<EditModeProvider>(
       builder: (context, editModeProvider, child) {
         var editMode = editModeProvider.editMode;
-        return  IconButton(
+
+        return Row(
+          children: [
+            // Conditionally show delete button only when in edit mode
+            if (editMode)
+              IconButton(
+                icon: Icon(Icons.delete, color: const Color.fromARGB(255, 134, 9, 0)),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Radera'),
+                        content: Text(
+                            'Är du säker på att du vill radera detta läkemedel?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Avbryt'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Provider.of<DrugListProvider>(context,
+                                      listen: false)
+                                  .deleteDrug(Provider.of<Drug>(context, listen: false));
+
+                              Navigator.pop(context); // Close dialog
+                              Navigator.pop(context); // Go back to previous screen
+                            },
+                            child: Text('Radera', style: TextStyle(color: Colors.red)),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            // Edit/Save button
+            IconButton(
               icon: editMode
                   ? Text(
                       "Spara",
@@ -128,7 +168,9 @@ class EditModeButton extends StatelessWidget {
                 }
                 editModeProvider.toggleEditMode();
               },
-            );
+            ),
+          ],
+        );
       },
     );
   }

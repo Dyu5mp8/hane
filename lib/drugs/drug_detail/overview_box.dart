@@ -11,17 +11,23 @@ class OverviewBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 350),
-      child: const SingleChildScrollView(
-        child: Column(
-          children: [
-            BasicInfoRow(),
-            NoteRow(),
-            Divider(indent: 10, endIndent: 10, thickness: 1),
-            ContraindicationRow(),
-            SizedBox(height: 20),
-          ],
+    return Container(
+            decoration: BoxDecoration(
+       
+        color: Theme.of(context).colorScheme.surface
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxHeight: 350),
+        child: const SingleChildScrollView(
+          child: Column(
+            children: [
+              BasicInfoRow(),
+              NoteRow(),
+              Divider(indent: 10, endIndent: 10, thickness: 1),
+              ContraindicationRow(),
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
@@ -38,6 +44,7 @@ class BasicInfoRow extends StatelessWidget {
     final concentrations = drug.concentrations;
 
     return Container(
+
       height: 100,
       padding: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,

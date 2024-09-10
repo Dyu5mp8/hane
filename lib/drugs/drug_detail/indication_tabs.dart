@@ -12,8 +12,8 @@ class IndicationTabs extends StatelessWidget {
     final List<Indication> indications = context.watch<Drug>().indications ?? [];
     return Container(
       height: 30,
-      decoration: const BoxDecoration(
-        color: Colors.white, // Set a solid, non-transparent background color
+      decoration: BoxDecoration(
+        color: Theme.of(context).canvasColor, // Set a solid, non-transparent background color
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +36,7 @@ class IndicationTabs extends StatelessWidget {
             child: TabBar(
               
               unselectedLabelStyle:
-                  const TextStyle(color: Color.fromARGB(255, 180, 180, 255)),
+                  const TextStyle(color: Color.fromARGB(255, 61, 61, 61)),
               labelColor: Colors.black,
               tabAlignment: TabAlignment.start,
               isScrollable: true,

@@ -2,18 +2,39 @@ import 'package:hane/drugs/models/dosage.dart';
 
 
 class Indication {
-  final String name;
+  // Private fields
+  String _name;
   List<Dosage>? dosages;
-  final String? notes;
+  String? _notes;
   bool isPediatric;
 
-
   Indication({
-    required this.name,
+    required String name,
     required this.isPediatric,
     this.dosages,
-    this.notes,
-  });
+    String? notes,
+  })  : _name = name,
+        _notes = notes;
+
+  // Getter for name
+  String get name => _name;
+
+  // Setter for name
+  set name(String newName) {
+    if (_name != newName) {
+      _name = newName;
+    }
+  }
+
+  // Getter for notes
+  String? get notes => _notes;
+
+  // Setter for notes
+  set notes(String? newNotes) {
+    if (_notes != newNotes) {
+      _notes = newNotes;
+    }
+  }
 
 
   // Convert an Indication instance to a Map
