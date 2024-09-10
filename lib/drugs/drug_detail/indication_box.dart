@@ -39,7 +39,13 @@ class IndicationBox extends StatelessWidget {
                 children: [
                   IndicationTabs(),
                   IndicationTabView(),
-                  const AddIndicationButton(),
+                  Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                   decoration: BoxDecoration(
+                     color: Theme.of(context).colorScheme.surface,
+                   ),
+                    child: const AddIndicationButton()),
                 ],
               ),
             ),
@@ -58,6 +64,7 @@ class AddIndicationButton extends StatelessWidget {
     var drug = Provider.of<Drug>(context, listen: false);
 
     return ElevatedButton(
+
       onPressed: () {
         Navigator.push(
             context,

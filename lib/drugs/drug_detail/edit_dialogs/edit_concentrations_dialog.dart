@@ -32,7 +32,9 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
   @override
   void initState() {
     super.initState();
-    concentrations = widget.drug.concentrations ?? [];
+    if (widget.drug.concentrations != null) {
+      concentrations = List.from(widget.drug.concentrations!);
+    }
   }
 
   void addConcentration() {

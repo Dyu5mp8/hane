@@ -82,22 +82,28 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                     decoration: const InputDecoration(
                       labelText: 'Namn',
                       border: OutlineInputBorder(),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
                     ),
                     minLines: 4,
-                    maxLines: 10),
+                    maxLines: 10,
+                    validator: val.validateName
+                    ),
+                    
 
-                const SizedBox(height: 8),
+                const SizedBox(height: 50),
 
                 TextFormField(
                   controller: _notesController,
                   autofocus: true,
                   decoration: const InputDecoration(
+                    alignLabelWithHint: true,
                     labelText: 'Anteckningar',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
                     border: OutlineInputBorder(),
                   ),
                   minLines: 4,
                   maxLines: 10,
-                  validator: val.validateName,
+         
                 ),
               ],
             ),

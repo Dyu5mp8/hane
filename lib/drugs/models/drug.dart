@@ -40,6 +40,18 @@ class Drug extends ChangeNotifier {
         _notes = notes,
         _brandNames = brandNames;
 
+  Drug.from(Drug drug)
+      : _name = drug.name,
+        _changedByUser = drug.changedByUser,
+        _lastUpdated = drug.lastUpdated,
+        _categories = drug.categories,
+        _concentrations = drug.concentrations,
+        _contraindication = drug.contraindication,
+        _indications = drug.indications,
+        _notes = drug.notes,
+        _brandNames = drug.brandNames;
+
+
   String? get name => _name;
   set name(String? newName) {
     if (_name != newName) {
@@ -115,6 +127,7 @@ class Drug extends ChangeNotifier {
   void updateDrug() {
     notifyListeners();
   }
+
 
   List<Indication>? get indications => _indications ?? [];
   set indications(List<Indication>? newIndications) {

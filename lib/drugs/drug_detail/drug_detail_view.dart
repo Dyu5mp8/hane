@@ -9,24 +9,26 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 
 class DrugDetailView extends StatefulWidget {
   final Drug drug;
-  final bool newDrug;
+  final bool isNewDrug;
 
-  const DrugDetailView({super.key, required this.drug, this.newDrug = false});
+  const DrugDetailView({super.key, required this.drug, this.isNewDrug = false});
 
   @override
   State<DrugDetailView> createState() => _DrugDetailViewState();
 }
 
 class _DrugDetailViewState extends State<DrugDetailView> {
-  bool editMode = false;
 
-  @override
+ late Drug _editableDrug;
+@override
   void initState() {
     super.initState();
 
+      _editableDrug = Drug.from(widget.drug); 
+
     // Example to show a dialog right after the widget has been built
-    Future.delayed(Duration(milliseconds: 300), () {
-      if (widget.newDrug) {
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (widget.isNewDrug) {
         _showNewDrugDialog();
       }
     });
@@ -36,7 +38,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return EditNameDialog(drug: widget.drug);
+        return EditNameDialog(drug: _editableDrug);
       },
     );
   }
@@ -44,61 +46,72 @@ class _DrugDetailViewState extends State<DrugDetailView> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider<Drug>.value(value: widget.drug),
+      ChangeNotifierProvider<Drug>.value(value: _editableDrug),
       ChangeNotifierProvider<EditModeProvider>.value(value: EditModeProvider())
     ],
      
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: editMode ? false : true,
+          leading: const backButton(),
           title: Text(widget.drug.name ?? 'Drug Details'),
           centerTitle: true,
           actions: [
-            if (editMode)
-              IconButton(
-                icon: Icon(Icons.delete, color: Color.fromARGB(255, 122, 0, 0)),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Radera läkemedel'),
-                        content: Text(
-                            'Är du säker på att du vill radera detta läkemedel?'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('Avbryt'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Provider.of<DrugListProvider>(context,
-                                      listen: false)
-                                  .deleteDrug(widget.drug);
-
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                            child: Text('Radera'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-            EditModeButton(),
+       
+            const EditModeButton(),
           ],
         ),
-        body: Column(
+        body: const Column(
           children: <Widget>[
             OverviewBox(),
             IndicationBox()
           ],
         ),
       ),
+    );
+  }
+}
+
+class backButton extends StatelessWidget {
+  const backButton({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        final editModeProvider = Provider.of<EditModeProvider>(context, listen: false);
+        final drugProvider = Provider.of<Drug>(context, listen: false);
+
+        if (editModeProvider.editMode) {
+          showDialog(
+            context: context,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: const Text('Ej sparade ändringar'),
+                content: const Text('Är du säker på att du vill stänga utan att avsluta redigeringen?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext); // Close the dialog
+                    },
+                    child: const Text('Nej'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      
+                      
+                      Navigator.pop(dialogContext); // Close the dialog
+                      Navigator.pop(context); // Go back to the previous screen
+                    },
+                    child: const Text('Ja'),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          Navigator.pop(context); // Go back to the previous screen
+        }
+      },
     );
   }
 }
@@ -118,21 +131,21 @@ class EditModeButton extends StatelessWidget {
             // Conditionally show delete button only when in edit mode
             if (editMode)
               IconButton(
-                icon: Icon(Icons.delete, color: const Color.fromARGB(255, 134, 9, 0)),
+                icon: const Icon(Icons.delete, color: Color.fromARGB(255, 134, 9, 0)),
                 onPressed: () {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Radera'),
-                        content: Text(
+                        title: const Text('Radera'),
+                        content: const Text(
                             'Är du säker på att du vill radera detta läkemedel?'),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('Avbryt'),
+                            child: const Text('Avbryt'),
                           ),
                           TextButton(
                             onPressed: () {
@@ -143,7 +156,7 @@ class EditModeButton extends StatelessWidget {
                               Navigator.pop(context); // Close dialog
                               Navigator.pop(context); // Go back to previous screen
                             },
-                            child: Text('Radera', style: TextStyle(color: Colors.red)),
+                            child: const Text('Radera', style: TextStyle(color: Colors.red)),
                           ),
                         ],
                       );
@@ -159,7 +172,7 @@ class EditModeButton extends StatelessWidget {
                       style: TextStyle(
                           color: Theme.of(context).primaryColor, fontSize: 16),
                     )
-                  : Icon(Icons.edit_note_sharp, size: 30),
+                  : const Icon(Icons.edit_note_sharp, size: 30),
               onPressed: () {
                 HapticFeedback.lightImpact();
                 if (editMode) {
