@@ -19,7 +19,11 @@
 
 - [x] Options for downloading master list items
 - [x] sidebar
-- [ ] redesign edit view
+- [x] redesign edit view
 - [ ] Autocomplete categories upon edit
 - [ ] Fix custom icons
+
+- [ ] Replace button for edit indication for the new edit toggle
+- [ ] Handle conversions for concentrations in another dose (eg. 2mg/ml with 0.5 mikrog/kg/min infusion)
+- [ ] Handle max dose conversions
 
