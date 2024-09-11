@@ -5,8 +5,12 @@ class EditableRow extends StatefulWidget {
   final Widget editDialog;
   final bool isEditMode;
   final TextStyle? textStyle;
-  final bool nullWhenNotEditing;
-
+  final bool hideWhenNotEditing;
+  final EdgeInsets? padding;
+  final Color? editingBackgroundColor;
+  final Color? nonEditingBackgroundColor;
+  final Duration animationDuration;
+  final double iconSize;
 
   const EditableRow({
     Key? key,
@@ -14,7 +18,12 @@ class EditableRow extends StatefulWidget {
     required this.editDialog,
     required this.isEditMode,
     this.textStyle,
-    this.nullWhenNotEditing = false,
+    this.hideWhenNotEditing = false,
+    this.padding,
+    this.editingBackgroundColor,
+    this.nonEditingBackgroundColor = Colors.transparent,
+    this.animationDuration = const Duration(milliseconds: 500),
+    this.iconSize = 20.0,
   }) : super(key: key);
 
   @override
@@ -30,7 +39,7 @@ class _EditableRowState extends State<EditableRow>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: widget.animationDuration,
       vsync: this,
     );
     _iconAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
@@ -49,6 +58,7 @@ class _EditableRowState extends State<EditableRow>
       _controller.repeat(reverse: true);
     } else {
       _controller.stop();
+      _controller.reset();
     }
   }
 
@@ -60,10 +70,16 @@ class _EditableRowState extends State<EditableRow>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.nullWhenNotEditing && !widget.isEditMode) {
-      return Container();
+    if (widget.hideWhenNotEditing && !widget.isEditMode) {
+      return const SizedBox.shrink();
     }
-    return GestureDetector(
+
+    final padding = widget.padding ??
+        (widget.isEditMode
+            ? const EdgeInsets.symmetric(vertical: 4, horizontal: 8)
+            : const EdgeInsets.only(top: 8));
+
+    return InkWell(
       onTap: widget.isEditMode
           ? () {
               showDialog(
@@ -73,13 +89,12 @@ class _EditableRowState extends State<EditableRow>
             }
           : null,
       child: Container(
-        padding: widget.isEditMode
-            ? EdgeInsets.symmetric(vertical: 4, horizontal: 8)
-            : EdgeInsets.only(top: 8),
+        padding: padding,
         decoration: BoxDecoration(
           color: widget.isEditMode
-              ? Theme.of(context).primaryColorLight
-              : Colors.transparent,
+              ? (widget.editingBackgroundColor ?? Theme.of(context).primaryColorLight)
+              : widget.nonEditingBackgroundColor,
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -87,21 +102,16 @@ class _EditableRowState extends State<EditableRow>
             Flexible(
               fit: FlexFit.loose,
               child: Text(
-                widget.text ?? "",
+                widget.text?.isNotEmpty == true ? widget.text! : "No Text",
                 style: widget.textStyle?.copyWith(
-                      color:
-                          widget.isEditMode ? Colors.blue[800] : Colors.black,
+                      color: widget.isEditMode ? Colors.blue[800] : Colors.black,
                       fontWeight: widget.isEditMode
                           ? FontWeight.bold
                           : FontWeight.normal,
                     ) ??
-                    Theme.of(context).textTheme.headlineLarge!.copyWith(
-                          color: widget.isEditMode
-                              ? Colors.blue[800]
-                              : Colors.black,
-                          fontWeight: widget.isEditMode
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                    Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          color: widget.isEditMode ? Colors.blue[800] : Colors.black,
+                          fontWeight: widget.isEditMode ? FontWeight.bold : FontWeight.normal,
                         ),
               ),
             ),
@@ -113,7 +123,7 @@ class _EditableRowState extends State<EditableRow>
                   child: Icon(
                     Icons.edit_note_outlined,
                     color: Colors.blue[800],
-                    size: 20,
+                    size: widget.iconSize,
                   ),
                 ),
               ),

@@ -75,16 +75,6 @@ class Dosage  {
     
   }
 
-  void updateDosage(Dosage updatedDosage) {
-    _instruction = updatedDosage.instruction;
-    _administrationRoute = updatedDosage.administrationRoute;
-    _dose = updatedDosage.dose;
-    _lowerLimitDose = updatedDosage.lowerLimitDose;
-    _higherLimitDose = updatedDosage.higherLimitDose;
-    _maxDose = updatedDosage.maxDose;
-    
-  }
-
   // Convert Dosage to JSON
   Map<String, dynamic> toJson() {
     return {
