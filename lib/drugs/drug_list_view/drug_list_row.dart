@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
+
 
 
 class DrugListRow extends StatelessWidget {
@@ -56,9 +58,19 @@ class DrugListRow extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DrugDetailView(drug: _drug),
+            builder: (context) => MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Drug>.value(
+            value: Drug.from(_drug )
+                ), // sets the editable drug as the provider drug
+        ChangeNotifierProvider<EditModeProvider>.value(
+            value: EditModeProvider()) // a provider for the edit mode
+      ],
+      child: DrugDetailView()
+            )
           ),
         );
+       
       },
     );
 

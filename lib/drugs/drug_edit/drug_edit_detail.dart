@@ -178,34 +178,8 @@ class _DrugEditDetailState extends State<DrugEditDetail> {
     if (_formKey.currentState!.validate()) {
       widget.drugForm.saveDrug(context);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          showCloseIcon: true,
-          closeIconColor: Colors.green,
-          content: const Row(
-            children: [
-              Icon(Icons.check_box, color: Colors.green),
-              SizedBox(width: 8),
-              Text("Ändringar sparade!"),
-            ],
-          ),
-          action: SnackBarAction(
-            label: 'Förhandsgranska resultat',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DrugDetailView(
-                    drug: widget.drugForm.createDrug(),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      );
-    }
     Navigator.pop(context);
   }
 
+  }
 }

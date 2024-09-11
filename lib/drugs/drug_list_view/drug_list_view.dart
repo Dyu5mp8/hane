@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/drug_list_view/menu_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/models/drug.dart';
@@ -122,11 +123,17 @@ class _DrugListViewState extends State<DrugListView> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChangeNotifierProvider.value(
-          value: Provider.of<DrugListProvider>(context, listen: false),
-          child: DrugDetailView(drug: Drug()),
-        ),
-      ),
+            builder: (context) => MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Drug>.value(
+            value: Drug())
+                , // sets the editable drug as the provider drug
+        ChangeNotifierProvider<EditModeProvider>.value(
+            value: EditModeProvider()) // a provider for the edit mode
+      ],
+      child: DrugDetailView(isNewDrug: true,)
+            )
+          ),
     );
   }
 

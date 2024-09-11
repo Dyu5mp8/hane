@@ -18,8 +18,8 @@ class IndicationTabView extends StatelessWidget {
         children: drug.indications!.map((indication)  {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Name and Notes section
+            children: [   
+              if (indication.notes != null && indication.notes!.isNotEmpty)           // Name and Notes section
               Container(
                 width: MediaQuery.of(context).size.width,
                 padding: const EdgeInsets.all(8),

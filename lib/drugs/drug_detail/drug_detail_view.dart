@@ -8,66 +8,51 @@ import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 
 class DrugDetailView extends StatefulWidget {
-  final Drug drug;
   final bool isNewDrug;
 
-  const DrugDetailView({super.key, required this.drug, this.isNewDrug = false});
+  const DrugDetailView({super.key, this.isNewDrug = false});
 
   @override
   State<DrugDetailView> createState() => _DrugDetailViewState();
 }
 
 class _DrugDetailViewState extends State<DrugDetailView> {
-
- late Drug _editableDrug;
-@override
+  late final Drug _editableDrug;
+  @override
   void initState() {
     super.initState();
+    _editableDrug = Provider.of<Drug>(context, listen: false);
 
-      _editableDrug = Drug.from(widget.drug); 
-
-      //open dialog for new drug if that is the case
+    //open dialog for new drug if that is the case
     Future.delayed(const Duration(milliseconds: 300), () {
       if (widget.isNewDrug) {
-        _showNewDrugDialog();
+        Provider.of<EditModeProvider>(context, listen: false).toggleEditMode();
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return EditNameDialog(drug: _editableDrug);
+          },
+        );
       }
     });
   }
 
-  // void reset
-
-  void _showNewDrugDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return EditNameDialog(drug: _editableDrug);
-      },
-    );
-  }
+  // void rese
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(providers: [
-      ChangeNotifierProvider<Drug>.value(value: _editableDrug), // sets the editable drug as the provider drug
-      ChangeNotifierProvider<EditModeProvider>.value(value: EditModeProvider()) // a provider for the edit mode
-    ],
-     
-      child: Scaffold(
-        appBar: AppBar(
-          leading: const BackButton(),
-          title: Text(widget.drug.name ?? 'Drug Details'),
-          centerTitle: true,
-          actions: [
-       
-            const EditModeButton(),
-          ],
-        ),
-        body: const Column(
-          children: <Widget>[
-            OverviewBox(),
-            IndicationBox()
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        leading: const BackButton(),
+        title: Text(_editableDrug.name ?? 'Drug Details'),
+        centerTitle: true,
+        actions: [
+          const EditModeButton(),
+        ],
+      ),
+      body: const Column(
+        children: <Widget>[OverviewBox(), IndicationBox()],
       ),
     );
   }
@@ -81,7 +66,8 @@ class BackButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        final editModeProvider = Provider.of<EditModeProvider>(context, listen: false);
+        final editModeProvider =
+            Provider.of<EditModeProvider>(context, listen: false);
 
         if (editModeProvider.editMode) {
           showDialog(
@@ -89,26 +75,22 @@ class BackButton extends StatelessWidget {
             builder: (BuildContext dialogContext) {
               return AlertDialog(
                 title: const Text('Ej sparade ändringar'),
-                content: const Text('Är du säker på att du vill stänga utan att avsluta redigeringen?'),
+                content: const Text(
+                    'Är du säker på att du vill stänga utan att avsluta redigeringen?'),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context); // Close the dialog
-                      
                     },
                     child: const Text('Nej'),
                   ),
                   TextButton(
                     onPressed: () {
-                      
-                      
                       Navigator.pop(context); // Close the dialog
                       editModeProvider.toggleEditMode();
                       Navigator.pop(context); // Go back to the previous screen
-              
                     },
                     child: const Text('Ja'),
-                    
                   ),
                 ],
               );
@@ -122,12 +104,12 @@ class BackButton extends StatelessWidget {
   }
 }
 
-
 class EditModeButton extends StatelessWidget {
   const EditModeButton({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Drug drug = Provider.of<Drug>(context, listen: false);
     return Consumer<EditModeProvider>(
       builder: (context, editModeProvider, child) {
         var editMode = editModeProvider.editMode;
@@ -137,7 +119,8 @@ class EditModeButton extends StatelessWidget {
             // Conditionally show delete button only when in edit mode
             if (editMode)
               IconButton(
-                icon: const Icon(Icons.delete, color: Color.fromARGB(255, 134, 9, 0)),
+                icon: const Icon(Icons.delete,
+                    color: Color.fromARGB(255, 134, 9, 0)),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -157,12 +140,14 @@ class EditModeButton extends StatelessWidget {
                             onPressed: () {
                               Provider.of<DrugListProvider>(context,
                                       listen: false)
-                                  .deleteDrug(Provider.of<Drug>(context, listen: false));
+                                  .deleteDrug(drug);
 
                               Navigator.pop(context); // Close dialog
-                              Navigator.pop(context); // Go back to previous screen
+                              Navigator.pop(
+                                  context); // Go back to previous screen
                             },
-                            child: const Text('Radera', style: TextStyle(color: Colors.red)),
+                            child: const Text('Radera',
+                                style: TextStyle(color: Colors.red)),
                           ),
                         ],
                       );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
-import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/drug_detail/ui_components/concentration_picker.dart';
 import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
 import 'package:hane/drugs/drug_detail/ui_components/route_text.dart';
@@ -221,8 +220,9 @@ class DosageSnippetState extends State<DosageSnippet> {
     // Calculate the number of active conversions
     int activeConversions = 0;
     if (widget.dosageViewHandler.conversionWeight != null) activeConversions++;
-    if (widget.dosageViewHandler.conversionConcentration != null)
+    if (widget.dosageViewHandler.conversionConcentration != null) {
       activeConversions++;
+    }
     if (widget.dosageViewHandler.conversionTime != null) activeConversions++;
 
     return Stack(

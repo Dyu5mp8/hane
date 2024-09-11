@@ -4,7 +4,9 @@ import 'package:hane/drugs/ui_components/custom_chip.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
 class EditNameDialog extends StatefulWidget {
   final Drug drug;
-  const EditNameDialog({super.key, required this.drug});
+  final bool isNewDrug;
+  const EditNameDialog({super.key, required this.drug, this.isNewDrug = false});
+  
 
   @override
   _EditNameDialogState createState() => _EditNameDialogState();
