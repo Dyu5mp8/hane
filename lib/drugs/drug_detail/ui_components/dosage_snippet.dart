@@ -228,7 +228,7 @@ class DosageSnippetState extends State<DosageSnippet> {
     return Stack(
       children: [
         ListTile(
-          key: ValueKey(widget.dosage),
+          key: ValueKey(_isConversionActive),
 
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

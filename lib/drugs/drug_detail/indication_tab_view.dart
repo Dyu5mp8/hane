@@ -39,8 +39,8 @@ class IndicationTabView extends StatelessWidget {
               // Dosages section
               if (indication.dosages != null)
                 Flexible(
-                  child: Stack(
-                    children:[ ListView.builder(
+    
+                    child: ListView.builder(
                                          
                                 
                       padding: const EdgeInsets.all(1),
@@ -76,28 +76,9 @@ class IndicationTabView extends StatelessWidget {
                         );
                       },
                     ),
-                     if (Provider.of<EditModeProvider>(context).editMode)
-                Positioned(
-                  bottom: 20, // Adjust this value to position the button vertically
-                  right: 20,  // Adjust this value to position the button horizontally
-                  child: FloatingActionButton.extended(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  EditIndicationDialog(indication: indication, drug: drug, withDosages: true))
-                      );
-           
-                    },
-                    icon: const Icon(Icons.edit_note_sharp),
-                    label: const Text('Redigera indikation'),
                     
-                  ),
                 ),
-                    ]
-                  ),
-                ),
+         
             ],
           );
         }).toList(),
