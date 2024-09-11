@@ -32,7 +32,7 @@ class _WeightSliderState extends State<WeightSlider> {
       height: 200,
       child: Column(
         children: [
-          Text("Adjust Weight", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text("Ange vikt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Slider(
             value: _currentWeight,
             min: 0,
@@ -49,7 +49,7 @@ class _WeightSliderState extends State<WeightSlider> {
               widget.onWeightSet(_currentWeight);
               Navigator.pop(context);
             },
-            child: Text("Set Weight"),
+            child: Text("Bekräfta"),
           ),
         ],
       ),

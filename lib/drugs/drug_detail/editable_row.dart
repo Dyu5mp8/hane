@@ -102,7 +102,7 @@ class _EditableRowState extends State<EditableRow>
             Flexible(
               fit: FlexFit.loose,
               child: Text(
-                widget.text?.isNotEmpty == true ? widget.text! : "No Text",
+                widget.text?.isNotEmpty == true ? widget.text! : "",
                 style: widget.textStyle?.copyWith(
                       color: widget.isEditMode ? Colors.blue[800] : Colors.black,
                       fontWeight: widget.isEditMode

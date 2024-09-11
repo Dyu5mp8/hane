@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import "package:flutter/material.dart";
 import "package:hane/drugs/drug_detail/dosageViewHandler.dart";
 import "package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart";
@@ -39,8 +41,9 @@ class IndicationTabView extends StatelessWidget {
               // Dosages section
               if (indication.dosages != null)
                 Flexible(
-    
-                    child: ListView.builder(
+                  child: Stack(
+                    children:[ ListView.builder(
+                     
                                          
                                 
                       padding: const EdgeInsets.all(1),
@@ -76,9 +79,28 @@ class IndicationTabView extends StatelessWidget {
                         );
                       },
                     ),
+                     if (Provider.of<EditModeProvider>(context).editMode)
+                Positioned(
+                  bottom: 20, // Adjust this value to position the button vertically
+                  right: 20,  // Adjust this value to position the button horizontally
+                  child: FloatingActionButton.extended(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  EditIndicationDialog(indication: indication, drug: drug, withDosages: true))
+                      );
+           
+                    },
+                    icon: const Icon(Icons.edit_note_sharp),
+                    label: const Text('Redigera indikation'),
                     
+                  ),
                 ),
-         
+                    ]
+                  ),
+                ),
             ],
           );
         }).toList(),

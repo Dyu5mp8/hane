@@ -1,17 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/drug_detail/editable_row.dart';
-import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
-import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
 import 'package:hane/drugs/models/drug.dart';
-
-
-
-
-
 
 class OverviewBox extends StatelessWidget {
   const OverviewBox({super.key});
@@ -19,10 +10,7 @@ class OverviewBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-            decoration: BoxDecoration(
-       
-        color: Theme.of(context).colorScheme.surface
-      ),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 350),
         child: const SingleChildScrollView(
@@ -46,12 +34,11 @@ class BasicInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   final editMode = context.watch<EditModeProvider>().editMode;
+    final editMode = context.watch<EditModeProvider>().editMode;
     final Drug drug = context.watch<Drug>();
     final concentrations = drug.concentrations;
 
     return Container(
-
       height: 100,
       padding: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width,
@@ -88,9 +75,6 @@ class BasicInfoRow extends StatelessWidget {
               ],
             ),
           ),
-
-          
-
           if (concentrations != null)
             Align(
               alignment: AlignmentDirectional.topEnd,
@@ -125,8 +109,10 @@ class NoteRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final drug = Provider.of<Drug>(context); // Access the drug from the Provider
-    final editMode = Provider.of<EditModeProvider>(context).editMode; // Access editMode from the Provider
+    final drug =
+        Provider.of<Drug>(context); // Access the drug from the Provider
+    final editMode = Provider.of<EditModeProvider>(context)
+        .editMode; // Access editMode from the Provider
 
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -135,16 +121,14 @@ class NoteRow extends StatelessWidget {
         children: [
           const Icon(Icons.notes),
           const SizedBox(width: 10),
-
-            Flexible(
-                  child: EditableRow(
-                    editDialog: EditNotesDialog(drug : drug),
-                    isEditMode: editMode,
-                    text: drug.notes,
-                    textStyle: const TextStyle(fontSize: 14),
-                  ),
-                )
-           
+          Flexible(
+            child: EditableRow(
+              editDialog: EditNotesDialog(drug: drug),
+              isEditMode: editMode,
+              text: drug.notes,
+              textStyle: const TextStyle(fontSize: 14),
+            ),
+          )
         ],
       ),
     );
@@ -156,8 +140,10 @@ class ContraindicationRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final drug = Provider.of<Drug>(context); // Access the drug from the Provider
-    final editMode = Provider.of<EditModeProvider>(context).editMode; // Access editMode from the Provider
+    final drug =
+        Provider.of<Drug>(context); // Access the drug from the Provider
+    final editMode = Provider.of<EditModeProvider>(context)
+        .editMode; // Access editMode from the Provider
 
     return Container(
       width: MediaQuery.of(context).size.width,
