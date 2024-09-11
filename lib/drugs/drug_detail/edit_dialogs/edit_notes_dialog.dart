@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:provider/provider.dart';
 
 class EditNotesDialog extends StatefulWidget {
   final Drug drug;
@@ -43,8 +42,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                 child: const Icon(Icons.close)),
             TextButton(
                 onPressed: () {
-                  widget.drug.notes =
-                      _notesController.text;
+                  widget.drug.notes = _notesController.text;
                   Navigator.pop(context);
                 },
                 child: const Icon(Icons.check)),

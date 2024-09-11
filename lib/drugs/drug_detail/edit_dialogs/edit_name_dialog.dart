@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/ui_components/custom_chip.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
-
 class EditNameDialog extends StatefulWidget {
   final Drug drug;
   const EditNameDialog({super.key, required this.drug});
@@ -194,10 +193,12 @@ class _EditNameDialogState extends State<EditNameDialog> {
               // Categories input
               const SizedBox(height: 8),
               TextFormField(
+
                 controller: _categoriesController,
                 decoration: InputDecoration(
                   labelText: 'Lägg till kategorier',
                   border: const OutlineInputBorder(),
+                
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () {

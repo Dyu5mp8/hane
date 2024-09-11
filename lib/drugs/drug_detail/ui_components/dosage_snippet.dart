@@ -6,20 +6,22 @@ import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
 import 'package:hane/drugs/drug_detail/ui_components/route_text.dart';
 import 'package:hane/drugs/drug_detail/ui_components/time_picker.dart';
 import 'package:hane/drugs/drug_detail/ui_components/weight_slider.dart';
-import 'package:hane/drugs/models/drug.dart'; 
+import 'package:hane/drugs/models/drug.dart';
 
 class DosageSnippet extends StatefulWidget {
   Dosage dosage;
   final bool editMode;
-  final Function(Dosage) onDosageUpdated; 
+  final Function(Dosage) onDosageUpdated;
   final DosageViewHandler dosageViewHandler;
+  final Function()? onDosageDeleted;
 
   DosageSnippet({
     super.key,
     required this.dosage,
     this.editMode = false,
     required this.onDosageUpdated, // Initialize the callback
-  }): dosageViewHandler = DosageViewHandler(key, dosage: dosage);
+    this.onDosageDeleted,
+  }) : dosageViewHandler = DosageViewHandler(key, dosage: dosage);
 
   @override
   DosageSnippetState createState() => DosageSnippetState();
@@ -227,7 +229,7 @@ class DosageSnippetState extends State<DosageSnippet> {
       children: [
         ListTile(
           key: ValueKey(widget.dosage),
-      
+
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           shape: RoundedRectangleBorder(
@@ -274,33 +276,73 @@ class DosageSnippetState extends State<DosageSnippet> {
                   )
                 else
                   _buildPopUpMenuButton(),
-          if (widget.editMode)
-  IconButton(
-    style: ButtonStyle(
+              if (widget.editMode)
+                IconButton(
+                  style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
-                        Color.fromARGB(255, 182, 216, 255)),
+                        const Color.fromARGB(255, 167, 0, 0)),
                     padding: WidgetStateProperty.all<EdgeInsets>(
                         const EdgeInsets.all(4)), // Compact padding
                     elevation: WidgetStateProperty.all<double>(
                         4.0), // Slight elevation for depth
                   ),
-    icon: Icon(
-      Icons.edit_note_sharp, 
-      color: Color.fromARGB(255, 20, 12, 2)),
-    onPressed: () {
-      showDialog(
-        context: context,
-        builder: (dialogContext) {
-          return EditDosageDialog(
-            dosage: widget.dosage,
-            onSave: (updatedDosage) {
-              _updateDosage(updatedDosage);
-            },
-          );
-        },
-      );
-    },
-  ),
+                  icon: const Icon(Icons.delete,
+                      color: Color.fromARGB(255, 255, 255, 255)),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return AlertDialog(
+                          title: const Text('Radera'),
+                          content: const Text(
+                              'Är du säker på att du vill radera denna dosering?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(dialogContext);
+                              },
+                              child: const Text('Avbryt'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _deleteDosage();
+                                Navigator.pop(dialogContext); // Close dialog
+                              },
+                              child: const Text('Radera',
+                                  style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              if (widget.editMode)
+                IconButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all<Color>(
+                        const Color.fromARGB(255, 182, 216, 255)),
+                    padding: WidgetStateProperty.all<EdgeInsets>(
+                        const EdgeInsets.all(4)), // Compact padding
+                    elevation: WidgetStateProperty.all<double>(
+                        4.0), // Slight elevation for depth
+                  ),
+                  icon: const Icon(Icons.edit_note_sharp,
+                      color: Color.fromARGB(255, 20, 12, 2)),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return EditDosageDialog(
+                          dosage: widget.dosage,
+                          onSave: (updatedDosage) {
+                            _updateDosage(updatedDosage);
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
             ],
           ),
           subtitle: _isConversionActive
@@ -318,11 +360,15 @@ class DosageSnippetState extends State<DosageSnippet> {
     );
   }
 
-void _updateDosage(Dosage updatedDosage) {
-  setState(() {
-    widget.dosage = updatedDosage;
-  });
-  // Notify the parent widget of the updated dosage
-  widget.onDosageUpdated(updatedDosage);
-}
+  void _updateDosage(Dosage updatedDosage) {
+    setState(() {
+      widget.dosage = updatedDosage;
+    });
+    // Notify the parent widget of the updated dosage
+    widget.onDosageUpdated(updatedDosage);
+  }
+
+  void _deleteDosage() {
+    widget.onDosageDeleted?.call();
+  }
 }

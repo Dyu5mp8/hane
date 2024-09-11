@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
-import 'package:hane/drugs/models/dosage.dart';
-import 'package:hane/drugs/models/dose.dart';
+
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/utils/unit_parser.dart';
 import 'package:hane/utils/validate_dosage_save.dart' as val;
-import 'package:provider/provider.dart';
+
 import 'package:icons_plus/icons_plus.dart';
 
-
 class EditDosageDialog extends StatefulWidget {
-  Dosage dosage;
+  final Dosage dosage;
 
-   final Function(Dosage) onSave; // Callback to notify parent
+  final Function(Dosage) onSave; // Callback to notify parent
 
-
-  EditDosageDialog({required this.dosage, required this.onSave});
+  EditDosageDialog({super.key, required this.dosage, required this.onSave});
 
   @override
   State<EditDosageDialog> createState() => _EditDosageDialogState();
@@ -38,16 +34,26 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   @override
   void initState() {
     super.initState();
-    instructionController = TextEditingController(text: widget.dosage.instruction ?? "");
-    administrationRouteController = TextEditingController(text: widget.dosage.administrationRoute ?? "");
-    doseAmountController = TextEditingController(text: widget.dosage.dose?.amount.toString() ?? "");
-    doseUnitController = TextEditingController(text: widget.dosage.dose?.unitString() ?? "");
-    lowerLimitDoseAmountController = TextEditingController(text: widget.dosage.lowerLimitDose?.amount.toString() ?? "");
-    lowerLimitDoseUnitController = TextEditingController(text: widget.dosage.lowerLimitDose?.unitString() ?? "");
-    higherLimitDoseAmountController = TextEditingController(text: widget.dosage.higherLimitDose?.amount.toString() ?? "");
-    higherLimitDoseUnitController = TextEditingController(text: widget.dosage.higherLimitDose?.unitString() ?? "");
-    maxDoseamountController = TextEditingController(text: widget.dosage.maxDose?.amount.toString() ?? "");
-    maxDoseUnitController = TextEditingController(text: widget.dosage.maxDose?.unitString() ?? "");
+    instructionController =
+        TextEditingController(text: widget.dosage.instruction ?? "");
+    administrationRouteController =
+        TextEditingController(text: widget.dosage.administrationRoute ?? "");
+    doseAmountController = TextEditingController(
+        text: widget.dosage.dose?.amount.toString() ?? "");
+    doseUnitController =
+        TextEditingController(text: widget.dosage.dose?.unitString() ?? "");
+    lowerLimitDoseAmountController = TextEditingController(
+        text: widget.dosage.lowerLimitDose?.amount.toString() ?? "");
+    lowerLimitDoseUnitController = TextEditingController(
+        text: widget.dosage.lowerLimitDose?.unitString() ?? "");
+    higherLimitDoseAmountController = TextEditingController(
+        text: widget.dosage.higherLimitDose?.amount.toString() ?? "");
+    higherLimitDoseUnitController = TextEditingController(
+        text: widget.dosage.higherLimitDose?.unitString() ?? "");
+    maxDoseamountController = TextEditingController(
+        text: widget.dosage.maxDose?.amount.toString() ?? "");
+    maxDoseUnitController =
+        TextEditingController(text: widget.dosage.maxDose?.unitString() ?? "");
   }
 
   InputDecoration customInputDecoration(String labelText) {
@@ -67,6 +73,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       ),
       backgroundColor: Theme.of(context).primaryColorLight,
       label: Text(label),
+      selectedColor: const Color.fromARGB(255, 234, 166, 94),
       selected: administrationRouteController.text == label,
       onSelected: (bool selected) {
         setState(() {
@@ -82,9 +89,12 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
         instruction: instructionController.text,
         administrationRoute: administrationRouteController.text,
         dose: _createDose(doseAmountController.text, doseUnitController.text),
-        lowerLimitDose: _createDose(lowerLimitDoseAmountController.text, lowerLimitDoseUnitController.text),
-        higherLimitDose: _createDose(higherLimitDoseAmountController.text, higherLimitDoseUnitController.text),
-        maxDose: _createDose(maxDoseamountController.text, maxDoseUnitController.text),
+        lowerLimitDose: _createDose(lowerLimitDoseAmountController.text,
+            lowerLimitDoseUnitController.text),
+        higherLimitDose: _createDose(higherLimitDoseAmountController.text,
+            higherLimitDoseUnitController.text),
+        maxDose: _createDose(
+            maxDoseamountController.text, maxDoseUnitController.text),
       );
 
       // Pass updated dosage back to the parent via the onSave callback
@@ -104,8 +114,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return AlertDialog(
       title: const Text("Redigera dosering"),
       content: SizedBox(
@@ -116,7 +124,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Allmänt", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Allmänt",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 const Text("Administrationsväg"),
                 const SizedBox(height: 8),
@@ -124,11 +133,16 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                   spacing: 5.0,
                   runSpacing: -5,
                   children: [
-                    _labelChip("PO", icon: const Icon(FontAwesome.pills_solid, size: 11)),
-                    _labelChip("IV", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("IM", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("SC", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("Inh", icon: const Icon(FontAwesome.lungs_solid, size: 11)),
+                    _labelChip("PO",
+                        icon: const Icon(FontAwesome.pills_solid, size: 11)),
+                    _labelChip("IV",
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("IM",
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("SC",
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("Inh",
+                        icon: const Icon(FontAwesome.lungs_solid, size: 11)),
                     _labelChip("Annat"),
                   ],
                 ),
@@ -138,10 +152,11 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                   decoration: customInputDecoration("Instruktion"),
                   minLines: 1,
                   maxLines: 3,
-                   // Only enabled when in edit mode
+                  // Only enabled when in edit mode
                 ),
                 const SizedBox(height: 24),
-                const Text("Dosering", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Dosering",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -150,7 +165,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         controller: doseAmountController,
                         decoration: customInputDecoration("Mängd"),
                         validator: val.validateAmountInput,
-                        
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -159,13 +173,13 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         controller: doseUnitController,
                         decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
-                        
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text("Dosintervall", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Dosintervall",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Row(
                   children: [
                     Expanded(
@@ -173,7 +187,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         controller: lowerLimitDoseAmountController,
                         decoration: customInputDecoration("Från"),
                         validator: val.validateAmountInput,
-                        
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -182,7 +195,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         controller: lowerLimitDoseUnitController,
                         decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
-                        
                       ),
                     ),
                   ],
@@ -195,7 +207,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         controller: higherLimitDoseAmountController,
                         decoration: customInputDecoration("Till"),
                         validator: val.validateAmountInput,
-                        
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -204,13 +215,13 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         controller: higherLimitDoseUnitController,
                         decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
-                        
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text("Maximal dosering (tak)", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Maximal dosering (tak)",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -219,7 +230,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         controller: maxDoseamountController,
                         decoration: customInputDecoration("Max"),
                         validator: val.validateAmountInput,
-                        
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -228,7 +238,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         controller: maxDoseUnitController,
                         decoration: customInputDecoration("Enhet"),
                         validator: val.validateUnitInput,
-                        
                       ),
                     ),
                   ],
@@ -243,11 +252,10 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text("Avbryt"),
         ),
-      
-          ElevatedButton(
-            onPressed: _saveForm,
-            child: const Text("Spara"),
-          ),
+        ElevatedButton(
+          onPressed: _saveForm,
+          child: const Text("Spara"),
+        ),
       ],
     );
   }

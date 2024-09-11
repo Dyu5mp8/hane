@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import "package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart";
 import "package:hane/drugs/drug_detail/edit_mode_provider.dart";
 import "package:hane/drugs/models/drug.dart";
-import "package:hane/drugs/models/indication.dart";
+
 
 
 

@@ -51,6 +51,12 @@ class IndicationTabView extends StatelessWidget {
                           children: [
                             DosageSnippet(
                               editMode: editMode,
+                              onDosageDeleted: () {
+                                // Remove the dosage from the list
+                                indication.dosages!.removeAt(index);
+                                // Optionally update the parent Drug if needed, e.g.,
+                                drug.updateDrug();
+                              },
 
                               dosage: indication.dosages![index],
                               onDosageUpdated: (updatedDosage) {
