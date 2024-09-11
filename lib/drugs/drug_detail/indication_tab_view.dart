@@ -9,14 +9,13 @@ import "package:hane/drugs/models/drug.dart";
 class IndicationTabView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final editMode = context.watch<EditModeProvider>().editMode;
-    final concentrations = context.watch<Drug>().concentrations;
     final drug = context.watch<Drug>();
-    final List<Indication> indications = context.watch<Drug>().indications ?? [];
+    final editMode = context.watch<EditModeProvider>().editMode;
 
     return Expanded(
       child: TabBarView(
-        children: indications.map((indication) {
+
+        children: drug.indications!.map((indication)  {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -51,6 +50,7 @@ class IndicationTabView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             DosageSnippet(
+                              editMode: editMode,
 
                               dosage: indication.dosages![index],
                               onDosageUpdated: (updatedDosage) {

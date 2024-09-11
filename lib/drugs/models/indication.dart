@@ -16,6 +16,12 @@ class Indication {
   })  : _name = name,
         _notes = notes;
 
+  Indication.from(Indication indication)
+      : _name = indication.name,
+        dosages = indication.dosages?.map((dosage) => Dosage.from(dosage)).toList(),
+        _notes = indication.notes,
+        isPediatric = indication.isPediatric;
+
   // Getter for name
   String get name => _name;
 

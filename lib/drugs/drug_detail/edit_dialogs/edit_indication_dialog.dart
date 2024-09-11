@@ -10,9 +10,10 @@ class EditIndicationDialog extends StatefulWidget {
   final Drug drug;
   final Indication indication;
   final bool withDosages;
+  final bool isNewIndication;
 
   const EditIndicationDialog(
-      {super.key, required this.indication, required this.drug, this.withDosages = false});
+      {super.key, required this.indication, required this.drug, this.withDosages = false, this.isNewIndication = false});
 
   @override
   _EditIndicationDialogState createState() => _EditIndicationDialogState();
@@ -22,18 +23,31 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    late List<Dosage> _tempDosages;
 
   @override
+
   void initState() {
     super.initState();
-    // Initialize the controllers with the existing data
+    // Create a deep copy of the dosages
+    _tempDosages = widget.indication.dosages
+        ?.map((dosage) => Dosage.from(dosage))
+        .toList() ?? [];
+
+    setData();
+  }
+
+  setData() {
     _nameController.text = widget.indication.name;
     _notesController.text = widget.indication.notes ?? '';
+
   }
 
   @override
   void dispose() {
     _notesController.dispose();
+    _nameController.dispose();
+
     super.dispose();
   }
 
@@ -42,26 +56,25 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
       // Update the drug name with the new value
       widget.indication.name = _nameController.text;
       widget.indication.notes = _notesController.text;
+      widget.indication.dosages = _tempDosages;
+
+      if (widget.isNewIndication) {
+        print('new indication');
+        widget.drug.indications?.add(widget.indication);
+      }
+
       widget.drug.updateDrug();
+  
+  
       Navigator.pop(context);
     }
   }
 
-    void _handleDosageUpdate(Dosage updatedDosage) {
-    // Update the relevant indication in the Drug object
-    setState(() {
-      widget.drug.indications?.forEach((indication) {
-        if (indication.dosages?.contains(updatedDosage) ?? false) {
-          indication.dosages = indication.dosages?.map((d) {
-            return d == updatedDosage ? updatedDosage : d;
-          }).toList();
-        }
-      });
-    });
-  }
 
   @override
+
   Widget build(BuildContext context) {
+ setData();
     return Scaffold(
       appBar: AppBar(
           title: Text(widget.indication.name),
@@ -71,7 +84,35 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
           actions: [
             TextButton(
                 onPressed: () {
+                  showDialog(context: context, builder: (ctx) => AlertDialog(
+                    title: const Text('Vill du ta bort indikationen?'),
+                  
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text('Avbryt')),
+                      TextButton(
+                          onPressed: () {
+                  widget.drug.indications?.remove(widget.indication);
+                  widget.drug.updateDrug();
                   Navigator.pop(context);
+                },
+                child: const Text('Ta bort', style: TextStyle(color: Colors.red)),
+              ),  
+            ],
+                    
+                  ));
+                },
+                child: const Icon(Icons.delete, color: Colors.red)),
+                
+            
+
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+         
                 },
                 child: const Icon(Icons.close)),
             TextButton(
@@ -129,22 +170,21 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
       const Text('Doseringar', style: TextStyle(fontSize: 20)),
       const SizedBox(height: 20),
       // Dosages
-      if (widget.indication.dosages != null)
+      if (_tempDosages != null)
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: widget.indication.dosages?.length,
+          itemCount: _tempDosages.length,
           itemBuilder: (ctx, index) {
             return DosageSnippet(
-              dosage: widget.indication.dosages![index], // Pass the correct dosage
+              dosage: _tempDosages[index], // Pass the correct dosage
               editMode: true,
               onDosageUpdated: (updatedDosage) {
                 setState(() {
                   // Update the indication with the modified dosage
-                  widget.indication.dosages![index] = updatedDosage;
+                  _tempDosages[index] = updatedDosage;
 
-                  // Optionally update the parent Drug if needed, e.g.,
-                  widget.drug.updateDrug();
+             
                 });
               }, // Callback to update the dosage
             );

@@ -26,13 +26,15 @@ class _DrugDetailViewState extends State<DrugDetailView> {
 
       _editableDrug = Drug.from(widget.drug); 
 
-    // Example to show a dialog right after the widget has been built
+      //open dialog for new drug if that is the case
     Future.delayed(const Duration(milliseconds: 300), () {
       if (widget.isNewDrug) {
         _showNewDrugDialog();
       }
     });
   }
+
+  // void reset
 
   void _showNewDrugDialog() {
     showDialog(
@@ -46,13 +48,13 @@ class _DrugDetailViewState extends State<DrugDetailView> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider<Drug>.value(value: _editableDrug),
-      ChangeNotifierProvider<EditModeProvider>.value(value: EditModeProvider())
+      ChangeNotifierProvider<Drug>.value(value: _editableDrug), // sets the editable drug as the provider drug
+      ChangeNotifierProvider<EditModeProvider>.value(value: EditModeProvider()) // a provider for the edit mode
     ],
      
       child: Scaffold(
         appBar: AppBar(
-          leading: const backButton(),
+          leading: const BackButton(),
           title: Text(widget.drug.name ?? 'Drug Details'),
           centerTitle: true,
           actions: [
@@ -71,15 +73,15 @@ class _DrugDetailViewState extends State<DrugDetailView> {
   }
 }
 
-class backButton extends StatelessWidget {
-  const backButton({Key? key}) : super(key: key);
+class BackButton extends StatelessWidget {
+  // final Function() onPress;
+  const BackButton({super.key});
   @override
   Widget build(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
         final editModeProvider = Provider.of<EditModeProvider>(context, listen: false);
-        final drugProvider = Provider.of<Drug>(context, listen: false);
 
         if (editModeProvider.editMode) {
           showDialog(
@@ -91,7 +93,8 @@ class backButton extends StatelessWidget {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
-                      Navigator.pop(dialogContext); // Close the dialog
+                      Navigator.pop(context); // Close the dialog
+                      
                     },
                     child: const Text('Nej'),
                   ),
@@ -99,10 +102,13 @@ class backButton extends StatelessWidget {
                     onPressed: () {
                       
                       
-                      Navigator.pop(dialogContext); // Close the dialog
+                      Navigator.pop(context); // Close the dialog
+                      editModeProvider.toggleEditMode();
                       Navigator.pop(context); // Go back to the previous screen
+              
                     },
                     child: const Text('Ja'),
+                    
                   ),
                 ],
               );

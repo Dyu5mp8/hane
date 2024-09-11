@@ -47,7 +47,9 @@ class Drug extends ChangeNotifier {
         _categories = drug.categories,
         _concentrations = drug.concentrations,
         _contraindication = drug.contraindication,
-        _indications = drug.indications,
+        _indications = drug._indications != null
+            ? List<Indication>.from(drug._indications!.map((ind) => Indication.from(ind)))
+            : null,
         _notes = drug.notes,
         _brandNames = drug.brandNames;
 

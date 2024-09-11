@@ -22,6 +22,17 @@ class Dosage  {
         _higherLimitDose = higherLimitDose,
         _maxDose = maxDose;
 
+
+  Dosage.from(Dosage dosage)
+      : _instruction = dosage.instruction,
+        _administrationRoute = dosage.administrationRoute,
+        _dose = dosage.dose,
+        _lowerLimitDose = dosage.lowerLimitDose,
+        _higherLimitDose = dosage.higherLimitDose,
+        _maxDose = dosage.maxDose;
+
+
+
   // Getters
   String? get instruction => _instruction;
   String? get administrationRoute => _administrationRoute;
@@ -29,6 +40,9 @@ class Dosage  {
   Dose? get lowerLimitDose => _lowerLimitDose;
   Dose? get higherLimitDose => _higherLimitDose;
   Dose? get maxDose => _maxDose;
+
+
+
 
   // Setters with notification
   set instruction(String? newInstruction) {

@@ -50,7 +50,6 @@ class DosageViewHandler {
 
   void setNewDosage(Dosage dosage){
     this.dosage = dosage;
-    print("now dosage is: ${dosage.toJson()}");
   }
 
 

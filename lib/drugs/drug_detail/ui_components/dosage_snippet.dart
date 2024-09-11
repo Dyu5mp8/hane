@@ -10,9 +10,9 @@ import 'package:hane/drugs/models/drug.dart';
 
 class DosageSnippet extends StatefulWidget {
   Dosage dosage;
-  bool editMode;
+  final bool editMode;
   final Function(Dosage) onDosageUpdated; 
-  DosageViewHandler dosageViewHandler;
+  final DosageViewHandler dosageViewHandler;
 
   DosageSnippet({
     super.key,
