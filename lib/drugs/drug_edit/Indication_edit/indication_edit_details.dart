@@ -131,13 +131,16 @@ class _IndicationDetailFormState extends State<IndicationDetail> {
                       itemBuilder: (ctx, index) {
                         return DosageSnippet(
                             dosage: widget.indicationDetailForm.indication.dosages![index],
-                            dosageViewHandler: DosageViewHandler(
-                                widget.key,
-                                dosage: widget.indicationDetailForm.indication.dosages![index],
-                               
-                            ));
-                      },
-                    ),
+                            onDosageUpdated: (Dosage updatedDosage) {
+                              setState(() {
+                                widget.indicationDetailForm.indication.dosages![index] = updatedDosage;
+                              });
+                            });
+                      }
+                          ),
+                      
+                      
+                    
                     TextButton(
                       child: const Text("Lägg till dosering"),
                       onPressed: () {

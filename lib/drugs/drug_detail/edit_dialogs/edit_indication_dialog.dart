@@ -47,6 +47,19 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
     }
   }
 
+    void _handleDosageUpdate(Dosage updatedDosage) {
+    // Update the relevant indication in the Drug object
+    setState(() {
+      widget.drug.indications?.forEach((indication) {
+        if (indication.dosages?.contains(updatedDosage) ?? false) {
+          indication.dosages = indication.dosages?.map((d) {
+            return d == updatedDosage ? updatedDosage : d;
+          }).toList();
+        }
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,32 +122,36 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                   maxLines: 10,
          
                 ),
-                if (widget.withDosages)
-                  Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      const Text('Doseringar', style: TextStyle(fontSize: 20)),
-                      const SizedBox(height: 20),
-                      // Dosages
-                       if (widget.indication.dosages != null)
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: widget.indication.dosages?.length,
-                      itemBuilder: (ctx, index) {
-                        return DosageSnippet(
-                            dosage: widget.indication.dosages![index],
-                            dosageViewHandler: DosageViewHandler(
-                                widget.key,
-                                dosage: widget.indication.dosages![index],
-                               
-                            ));
-                      },
-                    ),
-                      const SizedBox(height: 20),
-                     
-                
-                    ],
-                  ),
+              if (widget.withDosages)
+  Column(
+    children: [
+      const SizedBox(height: 20),
+      const Text('Doseringar', style: TextStyle(fontSize: 20)),
+      const SizedBox(height: 20),
+      // Dosages
+      if (widget.indication.dosages != null)
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: widget.indication.dosages?.length,
+          itemBuilder: (ctx, index) {
+            return DosageSnippet(
+              dosage: widget.indication.dosages![index], // Pass the correct dosage
+              editMode: true,
+              onDosageUpdated: (updatedDosage) {
+                setState(() {
+                  // Update the indication with the modified dosage
+                  widget.indication.dosages![index] = updatedDosage;
+
+                  // Optionally update the parent Drug if needed, e.g.,
+                  widget.drug.updateDrug();
+                });
+              }, // Callback to update the dosage
+            );
+          },
+        ),
+    ],
+  ),
               ],
             ),
           ),

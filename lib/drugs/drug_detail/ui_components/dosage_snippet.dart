@@ -10,10 +10,16 @@ import 'package:hane/drugs/models/drug.dart';
 
 class DosageSnippet extends StatefulWidget {
   Dosage dosage;
+  bool editMode;
+  final Function(Dosage) onDosageUpdated; 
   DosageViewHandler dosageViewHandler;
 
-  DosageSnippet(
-      {super.key, required this.dosage, required this.dosageViewHandler});
+  DosageSnippet({
+    super.key,
+    required this.dosage,
+    this.editMode = false,
+    required this.onDosageUpdated, // Initialize the callback
+  }): dosageViewHandler = DosageViewHandler(key, dosage: dosage);
 
   @override
   DosageSnippetState createState() => DosageSnippetState();
@@ -209,10 +215,7 @@ class DosageSnippetState extends State<DosageSnippet> {
 
   @override
   Widget build(BuildContext context) {
-    
-    print("build ${widget.dosageViewHandler.dosage.toJson()}");
-    bool editMode = context.read<EditModeProvider>().editMode;
-    Drug drug = context.read<Drug>();
+    widget.dosageViewHandler.setNewDosage(widget.dosage);
     // Calculate the number of active conversions
     int activeConversions = 0;
     if (widget.dosageViewHandler.conversionWeight != null) activeConversions++;
@@ -243,7 +246,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                     widget.dosageViewHandler.showDosage(isOriginalText: true),
               ),
               const SizedBox(width: 8),
-              if (_isConversionActive && !editMode)
+              if (_isConversionActive && !widget.editMode)
                 IconButton(
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
@@ -259,7 +262,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                   onPressed: _resetAllConversions,
                 ),
               SizedBox(width: 4),
-              if (!editMode &&
+              if (!widget.editMode &&
                   (widget.dosageViewHandler.ableToConvert.weight ||
                       widget.dosageViewHandler.ableToConvert.concentration ||
                       widget.dosageViewHandler.ableToConvert.time))
@@ -271,28 +274,23 @@ class DosageSnippetState extends State<DosageSnippet> {
                   )
                 else
                   _buildPopUpMenuButton(),
-              if (editMode)
-                IconButton(
-                  icon: const Icon(Icons.edit,
-                      color: Color.fromARGB(255, 20, 12, 2)),
-                  onPressed: () {
-                   showDialog(
-  context: context,
-  builder: (dialogContext) { // Use dialogContext here
-    Drug drug = context.read<Drug>(); // Access provider using dialogContext
-    return EditDosageDialog(
-
-      dosage: widget.dosage,
-      onSave: (updatedDosage) {
-        _updateDosage(updatedDosage);
-        drug.updateDrug(
-    );
-  },
-);
-                  },
-                );
-                  }
-                )
+          if (widget.editMode)
+  IconButton(
+    icon: const Icon(Icons.edit, color: Color.fromARGB(255, 20, 12, 2)),
+    onPressed: () {
+      showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return EditDosageDialog(
+            dosage: widget.dosage,
+            onSave: (updatedDosage) {
+              _updateDosage(updatedDosage);
+            },
+          );
+        },
+      );
+    },
+  ),
             ],
           ),
           subtitle: _isConversionActive
@@ -310,12 +308,11 @@ class DosageSnippetState extends State<DosageSnippet> {
     );
   }
 
-   void _updateDosage(Dosage updatedDosage) {
-    setState(() {
-      widget.dosage = updatedDosage;
-      Provider.of<Drug>(context, listen: false).updateDrug();
-      widget.dosageViewHandler = DosageViewHandler(ValueKey(updatedDosage.dose), dosage: updatedDosage);
-      
-    });
-  }
+void _updateDosage(Dosage updatedDosage) {
+  setState(() {
+    widget.dosage = updatedDosage;
+  });
+  // Notify the parent widget of the updated dosage
+  widget.onDosageUpdated(updatedDosage);
+}
 }

@@ -51,12 +51,19 @@ class IndicationTabView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             DosageSnippet(
+
                               dosage: indication.dosages![index],
-                              dosageViewHandler: DosageViewHandler(
-                                super.key,
-                                dosage: indication.dosages![index],
-                                availableConcentrations: concentrations,
-                              ),
+                              onDosageUpdated: (updatedDosage) {
+                            
+                                  // Update the indication with the modified dosage
+                                  indication.dosages![index] = updatedDosage;
+                                  // Optionally update the parent Drug if needed, e.g.,
+                                  drug.updateDrug();
+                                },
+                                
+                            
+
+                              
                             ),
                             SizedBox(height: 3), // Spacing between items
                           ],

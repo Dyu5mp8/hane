@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/dose.dart';
-class Dosage extends ChangeNotifier {
+class Dosage  {
   String? _instruction;
   String? _administrationRoute;
   Dose? _dose;
@@ -33,32 +33,32 @@ class Dosage extends ChangeNotifier {
   // Setters with notification
   set instruction(String? newInstruction) {
     _instruction = newInstruction;
-    notifyListeners();
+    
   }
 
   set administrationRoute(String? newRoute) {
     _administrationRoute = newRoute;
-    notifyListeners();
+    
   }
 
   set dose(Dose? newDose) {
     _dose = newDose;
-    notifyListeners();
+    
   }
 
   set lowerLimitDose(Dose? newLowerLimitDose) {
     _lowerLimitDose = newLowerLimitDose;
-    notifyListeners();
+    
   }
 
   set higherLimitDose(Dose? newHigherLimitDose) {
     _higherLimitDose = newHigherLimitDose;
-    notifyListeners();
+    
   }
 
   set maxDose(Dose? newMaxDose) {
     _maxDose = newMaxDose;
-    notifyListeners();
+    
   }
 
   void updateDosage(Dosage updatedDosage) {
@@ -68,7 +68,7 @@ class Dosage extends ChangeNotifier {
     _lowerLimitDose = updatedDosage.lowerLimitDose;
     _higherLimitDose = updatedDosage.higherLimitDose;
     _maxDose = updatedDosage.maxDose;
-    notifyListeners();
+    
   }
 
   // Convert Dosage to JSON
