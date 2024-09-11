@@ -1,34 +1,89 @@
+import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/dose.dart';
-
-class Dosage {
-  final String? instruction;
-  final String? administrationRoute;
-  final Dose? dose;
-  final Dose? lowerLimitDose;
-  final Dose? higherLimitDose;
-  final Dose? maxDose;
+class Dosage extends ChangeNotifier {
+  String? _instruction;
+  String? _administrationRoute;
+  Dose? _dose;
+  Dose? _lowerLimitDose;
+  Dose? _higherLimitDose;
+  Dose? _maxDose;
 
   Dosage({
-    this.instruction,
-    this.administrationRoute,
-    this.dose,
-    this.lowerLimitDose,
-    this.higherLimitDose,
-    this.maxDose,
-  });
+    String? instruction,
+    String? administrationRoute,
+    Dose? dose,
+    Dose? lowerLimitDose,
+    Dose? higherLimitDose,
+    Dose? maxDose,
+  })  : _instruction = instruction,
+        _administrationRoute = administrationRoute,
+        _dose = dose,
+        _lowerLimitDose = lowerLimitDose,
+        _higherLimitDose = higherLimitDose,
+        _maxDose = maxDose;
 
-  // Convert a BolusDosage instance to a Map
+  // Getters
+  String? get instruction => _instruction;
+  String? get administrationRoute => _administrationRoute;
+  Dose? get dose => _dose;
+  Dose? get lowerLimitDose => _lowerLimitDose;
+  Dose? get higherLimitDose => _higherLimitDose;
+  Dose? get maxDose => _maxDose;
+
+  // Setters with notification
+  set instruction(String? newInstruction) {
+    _instruction = newInstruction;
+    notifyListeners();
+  }
+
+  set administrationRoute(String? newRoute) {
+    _administrationRoute = newRoute;
+    notifyListeners();
+  }
+
+  set dose(Dose? newDose) {
+    _dose = newDose;
+    notifyListeners();
+  }
+
+  set lowerLimitDose(Dose? newLowerLimitDose) {
+    _lowerLimitDose = newLowerLimitDose;
+    notifyListeners();
+  }
+
+  set higherLimitDose(Dose? newHigherLimitDose) {
+    _higherLimitDose = newHigherLimitDose;
+    notifyListeners();
+  }
+
+  set maxDose(Dose? newMaxDose) {
+    _maxDose = newMaxDose;
+    notifyListeners();
+  }
+
+  void updateDosage(Dosage updatedDosage) {
+    _instruction = updatedDosage.instruction;
+    _administrationRoute = updatedDosage.administrationRoute;
+    _dose = updatedDosage.dose;
+    _lowerLimitDose = updatedDosage.lowerLimitDose;
+    _higherLimitDose = updatedDosage.higherLimitDose;
+    _maxDose = updatedDosage.maxDose;
+    notifyListeners();
+  }
+
+  // Convert Dosage to JSON
   Map<String, dynamic> toJson() {
     return {
-      'instruction': instruction,
-      'administration_route': administrationRoute,
-      'dose': dose?.toJson(),
-      'lower_limit_dose': lowerLimitDose?.toJson(),
-      'higher_limit_dose': higherLimitDose?.toJson(),
-      'max_dose': maxDose?.toJson(),
+      'instruction': _instruction,
+      'administration_route': _administrationRoute,
+      'dose': _dose?.toJson(),
+      'lower_limit_dose': _lowerLimitDose?.toJson(),
+      'higher_limit_dose': _higherLimitDose?.toJson(),
+      'max_dose': _maxDose?.toJson(),
     };
   }
 
+  // Factory to create Dosage from Firestore
   factory Dosage.fromFirestore(Map<String, dynamic> map) {
     return Dosage(
       instruction: map['instruction'] as String?,

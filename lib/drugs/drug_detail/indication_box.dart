@@ -39,13 +39,7 @@ class IndicationBox extends StatelessWidget {
                 children: [
                   IndicationTabs(),
                   IndicationTabView(),
-                  Container(
-                    height: 50,
-                    width: MediaQuery.of(context).size.width,
-                   decoration: BoxDecoration(
-                     color: Theme.of(context).colorScheme.surface,
-                   ),
-                    child: const AddIndicationButton()),
+                 
                 ],
               ),
             ),

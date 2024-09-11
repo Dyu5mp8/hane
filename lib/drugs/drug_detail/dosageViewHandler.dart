@@ -15,7 +15,7 @@ enum AdministrationRoute {
 }
 
 class DosageViewHandler {
-  final Dosage dosage;
+  Dosage dosage;
   double? conversionWeight;
   String? conversionTime;
   Concentration? conversionConcentration;
@@ -47,6 +47,12 @@ class DosageViewHandler {
     }
     return false;
   }
+
+  void setNewDosage(Dosage dosage){
+    this.dosage = dosage;
+    print("now dosage is: ${dosage.toJson()}");
+  }
+
 
   bool canConvertTime(Dose dose) {
     return dose.units.containsKey("time");

@@ -11,6 +11,7 @@ class IndicationTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     final editMode = context.watch<EditModeProvider>().editMode;
     final concentrations = context.watch<Drug>().concentrations;
+    final drug = context.watch<Drug>();
     final List<Indication> indications = context.watch<Drug>().indications ?? [];
 
     return Expanded(
@@ -22,65 +23,66 @@ class IndicationTabView extends StatelessWidget {
               // Name and Notes section
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(bottom: 8.0),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    EditableRow(
-                      nullWhenNotEditing: true,
-                      isEditMode: editMode,
-                      textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      editDialog: EditIndicationDialog(
-                        drug: Provider.of<Drug>(context, listen: false),
-                        indication: indication,
-                      ),
-                      text: indication.name,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 0.5,
                     ),
-                    if (indication.notes != null && indication.notes!.isNotEmpty || editMode)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: EditableRow(
-                          textStyle: TextStyle(
-                              fontSize: 14, color: Colors.black54),
-                          isEditMode: editMode,
-                          editDialog: EditIndicationDialog(
-                            drug: Provider.of<Drug>(context, listen: false),
-                            indication: indication,
-                          ),
-                          text: "Anteckningar: ${indication.notes}",
-                        ),
-                      ),
-                  ],
+                  ),
                 ),
+                child: Text(indication.notes ?? '', style: Theme.of(context).textTheme.labelLarge,)
               ),
+      
           
               // Dosages section
               if (indication.dosages != null)
                 Flexible(
-                  child: ListView.builder(
-                                       
-            
-                    padding: const EdgeInsets.all(1),
-                    itemCount: indication.dosages?.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DosageSnippet(
-                            dosage: indication.dosages![index],
-                            dosageViewHandler: DosageViewHandler(
-                              super.key,
+                  child: Stack(
+                    children:[ ListView.builder(
+                                         
+                                
+                      padding: const EdgeInsets.all(1),
+                      itemCount: indication.dosages?.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DosageSnippet(
                               dosage: indication.dosages![index],
-                              availableConcentrations: concentrations,
+                              dosageViewHandler: DosageViewHandler(
+                                super.key,
+                                dosage: indication.dosages![index],
+                                availableConcentrations: concentrations,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 3), // Spacing between items
-                        ],
+                            SizedBox(height: 3), // Spacing between items
+                          ],
+                        );
+                      },
+                    ),
+                     if (Provider.of<EditModeProvider>(context).editMode)
+                Positioned(
+                  bottom: 20, // Adjust this value to position the button vertically
+                  right: 20,  // Adjust this value to position the button horizontally
+                  child: FloatingActionButton.extended(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  EditIndicationDialog(indication: indication, drug: drug, withDosages: true))
                       );
+           
                     },
+                    icon: const Icon(Icons.edit_note_sharp),
+                    label: const Text('Redigera indikation'),
+                    
+                  ),
+                ),
+                    ]
                   ),
                 ),
             ],

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
+import 'package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
-import 'package:provider/provider.dart';
+
+
 
 class EditIndicationDialog extends StatefulWidget {
   final Drug drug;
   final Indication indication;
+  final bool withDosages;
 
   const EditIndicationDialog(
-      {super.key, required this.indication, required this.drug});
+      {super.key, required this.indication, required this.drug, this.withDosages = false});
 
   @override
   _EditIndicationDialogState createState() => _EditIndicationDialogState();
@@ -105,6 +109,32 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                   maxLines: 10,
          
                 ),
+                if (widget.withDosages)
+                  Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      const Text('Doseringar', style: TextStyle(fontSize: 20)),
+                      const SizedBox(height: 20),
+                      // Dosages
+                       if (widget.indication.dosages != null)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: widget.indication.dosages?.length,
+                      itemBuilder: (ctx, index) {
+                        return DosageSnippet(
+                            dosage: widget.indication.dosages![index],
+                            dosageViewHandler: DosageViewHandler(
+                                widget.key,
+                                dosage: widget.indication.dosages![index],
+                               
+                            ));
+                      },
+                    ),
+                      const SizedBox(height: 20),
+                     
+                
+                    ],
+                  ),
               ],
             ),
           ),
