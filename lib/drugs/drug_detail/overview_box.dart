@@ -1,8 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/drug_detail/editable_row.dart';
+import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
+import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
 import 'package:hane/drugs/models/drug.dart';
+
+
+
 
 
 
@@ -81,6 +88,9 @@ class BasicInfoRow extends StatelessWidget {
               ],
             ),
           ),
+
+          
+
           if (concentrations != null)
             Align(
               alignment: AlignmentDirectional.topEnd,

@@ -261,7 +261,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                       color: Color.fromARGB(255, 20, 12, 2)),
                   onPressed: _resetAllConversions,
                 ),
-              SizedBox(width: 4),
+              const SizedBox(width: 4),
               if (!widget.editMode &&
                   (widget.dosageViewHandler.ableToConvert.weight ||
                       widget.dosageViewHandler.ableToConvert.concentration ||
@@ -276,7 +276,17 @@ class DosageSnippetState extends State<DosageSnippet> {
                   _buildPopUpMenuButton(),
           if (widget.editMode)
   IconButton(
-    icon: const Icon(Icons.edit, color: Color.fromARGB(255, 20, 12, 2)),
+    style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all<Color>(
+                        Color.fromARGB(255, 182, 216, 255)),
+                    padding: WidgetStateProperty.all<EdgeInsets>(
+                        const EdgeInsets.all(4)), // Compact padding
+                    elevation: WidgetStateProperty.all<double>(
+                        4.0), // Slight elevation for depth
+                  ),
+    icon: Icon(
+      Icons.edit_note_sharp, 
+      color: Color.fromARGB(255, 20, 12, 2)),
     onPressed: () {
       showDialog(
         context: context,

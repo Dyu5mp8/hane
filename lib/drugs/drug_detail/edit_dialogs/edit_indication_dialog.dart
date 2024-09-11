@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
+import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
 import 'package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
@@ -81,8 +81,11 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
           automaticallyImplyLeading: false,
           centerTitle: true,
           leading: null,
+          
           actions: [
+            if (!widget.isNewIndication)
             TextButton(
+              
                 onPressed: () {
                   showDialog(context: context, builder: (ctx) => AlertDialog(
                     title: const Text('Vill du ta bort indikationen?'),
@@ -98,6 +101,7 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                   widget.drug.indications?.remove(widget.indication);
                   widget.drug.updateDrug();
                   Navigator.pop(context);
+                  Navigator.pop(context);
                 },
                 child: const Text('Ta bort', style: TextStyle(color: Colors.red)),
               ),  
@@ -105,7 +109,8 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                     
                   ));
                 },
-                child: const Icon(Icons.delete, color: Colors.red)),
+                child: const Text('Ta bort', style: TextStyle(color: Colors.red)),
+            ),
                 
             
 
@@ -167,7 +172,30 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
   Column(
     children: [
       const SizedBox(height: 20),
-      const Text('Doseringar', style: TextStyle(fontSize: 20)),
+      Row(
+        children: [
+          const Text('Doseringar', style: TextStyle(fontSize: 20)),
+          const Spacer(),
+          IconButton(
+            onPressed: () {
+      
+              Dosage newDosage = Dosage();
+              showDialog(context: context, builder:(context) => 
+              EditDosageDialog(
+                dosage: newDosage, 
+                onSave: (dosage) {
+                  setState(() {
+                    _tempDosages.add(dosage);
+                  });
+                }
+                ));
+
+       
+            },
+            icon: const Icon(Icons.add),
+          ),
+        ],
+      ),
       const SizedBox(height: 20),
       // Dosages
       if (_tempDosages != null)
