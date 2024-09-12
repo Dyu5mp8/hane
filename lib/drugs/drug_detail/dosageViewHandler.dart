@@ -130,11 +130,8 @@ class DosageViewHandler {
               ? conversionInfo
               : '';
 
-      final String routeText =
-          route != null && route.isNotEmpty ? "$route. " : '';
-
       final String instructionText =
-          instruction != null && instruction.isNotEmpty ? "$instruction: " : '';
+          instruction != null && instruction.isNotEmpty ? "$instruction " : '';
 
       final String doseText = dose != null ? "${dose.toString()}. " : '';
 
@@ -152,7 +149,7 @@ class DosageViewHandler {
       final String maxDoseText =
           maxDose != null ? "Maxdos: ${maxDose.toString()}." : '';
 
-      return "$conversionText$routeText$instructionText$doseText${doseRangeText()}$maxDoseText";
+      return "$conversionText$instructionText$doseText${doseRangeText()}$maxDoseText";
     }
 
     if (isOriginalText) {

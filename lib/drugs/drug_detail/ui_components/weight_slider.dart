@@ -35,8 +35,9 @@ class _WeightSliderState extends State<WeightSlider> {
           Text("Ange vikt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           Slider(
             value: _currentWeight,
-            min: 0,
-            max: 200,            
+     
+            min: 40,
+            max: 190,            
             onChanged: (value) {
               setState(() {
                 _currentWeight = value;

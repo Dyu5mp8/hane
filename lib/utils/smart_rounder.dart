@@ -1,8 +1,8 @@
+
 num smartRound(double value) {
   String str = value.toString();
   int decimalIndex = str.indexOf(".");
   if (decimalIndex == -1) {
-  
     return double.parse(value.toStringAsPrecision(3)).toInt();
   } else {
     var intString = str.substring(0, decimalIndex);
@@ -10,9 +10,9 @@ num smartRound(double value) {
     if (intString.length >= 3) {
       return double.parse(intPartDouble.toStringAsPrecision(3)).toInt();
     }
-    var intPart = double.parse(str.substring(0, decimalIndex));
+    var intPart = double.parse(intString);
 
-    var dec = str.substring(decimalIndex);
+    var dec = str.substring(decimalIndex, str.length);
     var dec_double = double.parse(dec);
     var dec_modified = intPart < 1
         ? dec_double.toStringAsPrecision((3))
