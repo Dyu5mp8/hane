@@ -76,6 +76,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
           automaticallyImplyLeading: false,
           centerTitle: true,
           leading: null,
+
           actions: [
             TextButton(
               onPressed: () {

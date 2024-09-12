@@ -52,22 +52,12 @@ class _ConcentrationPickerState extends State<ConcentrationPicker> {
               
               onSelectionChanged: (newSelection) {
                 setState(() {
-                  _currentConcentration = newSelection.first;
+                  widget.onConcentrationSet(newSelection.first);
                 });
+                  Navigator.pop(context);
+     
               }),
-          ElevatedButton(
-            onPressed: () {
-              if (_currentConcentration != null) {
-                widget.onConcentrationSet(_currentConcentration!);
-              }
-
-              Navigator.pop(context);
-            },
-            child:
-                _currentConcentration == null ? const Text("Återgå") : Text("Konvertera"),
-
-          
-          ),
+        
         ],
       ),
     );

@@ -61,6 +61,7 @@ class BasicInfoRow extends StatelessWidget {
                   text: drug.name!,
                   editDialog: EditNameDialog(drug: drug),
                   isEditMode: editMode,
+                  textStyle: Theme.of(context).textTheme.headlineLarge
                 ),
                 if (drug.brandNames != null)
                   Flexible(
