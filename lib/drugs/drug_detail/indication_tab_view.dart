@@ -60,9 +60,11 @@ class IndicationTabView extends StatelessWidget {
                                 // Optionally update the parent Drug if needed, e.g.,
                                 drug.updateDrug();
                               },
+                              availableConcentrations: drug.concentrations,
 
                               dosage: indication.dosages![index],
                               onDosageUpdated: (updatedDosage) {
+
                             
                                   // Update the indication with the modified dosage
                                   indication.dosages![index] = updatedDosage;

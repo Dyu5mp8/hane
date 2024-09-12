@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
+import 'package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart';
 import 'package:hane/drugs/drug_detail/indication_tab_view.dart';
 import 'package:hane/drugs/drug_detail/indication_tabs.dart';
-import 'package:hane/drugs/drug_edit/drug_detail_form.dart';
-import 'package:hane/drugs/drug_edit/drug_edit_detail.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:provider/provider.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
+
 
 class IndicationBox extends StatelessWidget {
   const IndicationBox({super.key});
@@ -60,16 +61,17 @@ class AddIndicationButton extends StatelessWidget {
     return ElevatedButton(
 
       onPressed: () {
+        Provider.of<EditModeProvider>(context, listen: false).setEditMode(true);
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    DrugEditDetail(drugForm: DrugForm(drug: drug))));
+                  EditIndicationDialog(isNewIndication: true, indication: Indication(name : "ny indikation", isPediatric: false), drug: drug)));
       },
       child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Redigera läkemedel'),
+          Text('Ny indikation'),
           SizedBox(width: 10),
           Icon(Icons.edit),
         ],

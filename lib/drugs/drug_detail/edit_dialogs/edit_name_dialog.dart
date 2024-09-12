@@ -80,6 +80,9 @@ class _EditNameDialogState extends State<EditNameDialog> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
+                if (widget.isNewDrug) {
+                  Navigator.pop(context);
+                }
               },
               child: const Icon(Icons.close),
             ),

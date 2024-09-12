@@ -13,6 +13,7 @@ class DosageSnippet extends StatefulWidget {
   final Function(Dosage) onDosageUpdated;
   final DosageViewHandler dosageViewHandler;
   final Function()? onDosageDeleted;
+  final List <Concentration>? availableConcentrations;
 
   DosageSnippet({
     super.key,
@@ -20,7 +21,8 @@ class DosageSnippet extends StatefulWidget {
     this.editMode = false,
     required this.onDosageUpdated, // Initialize the callback
     this.onDosageDeleted,
-  }) : dosageViewHandler = DosageViewHandler(key, dosage: dosage);
+    this.availableConcentrations,
+  }) : dosageViewHandler = DosageViewHandler(availableConcentrations: availableConcentrations ,key, dosage: dosage);
 
   @override
   DosageSnippetState createState() => DosageSnippetState();
@@ -216,7 +218,6 @@ class DosageSnippetState extends State<DosageSnippet> {
 
   @override
   Widget build(BuildContext context) {
-    widget.dosageViewHandler.setNewDosage(widget.dosage);
     // Calculate the number of active conversions
     int activeConversions = 0;
     if (widget.dosageViewHandler.conversionWeight != null) activeConversions++;

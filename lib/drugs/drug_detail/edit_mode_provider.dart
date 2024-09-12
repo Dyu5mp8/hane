@@ -11,6 +11,11 @@ class EditModeProvider with ChangeNotifier {
 
   bool get editMode => _editMode;
 
+  set editMode(bool value) {
+    _editMode = value;
+    notifyListeners();
+  }
+
   void toggleEditMode() {
     _editMode = !_editMode;
     notifyListeners();

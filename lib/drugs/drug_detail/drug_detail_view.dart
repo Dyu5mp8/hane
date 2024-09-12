@@ -31,7 +31,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return EditNameDialog(drug: _editableDrug);
+            return EditNameDialog(drug: _editableDrug, isNewDrug: true);
           },
         );
       }
