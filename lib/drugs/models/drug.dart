@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/concentration.dart';
 import 'package:hane/drugs/models/indication.dart';
@@ -8,7 +9,7 @@ export 'package:hane/drugs/models/indication.dart';
 export 'package:hane/drugs/models/concentration.dart';
 export 'package:hane/drugs/models/dose.dart';
 
-class Drug extends ChangeNotifier {
+class Drug extends ChangeNotifier with EquatableMixin{
   String? _name;
   List<dynamic>? _brandNames;
   List<dynamic>? _categories;
@@ -52,6 +53,19 @@ class Drug extends ChangeNotifier {
             : null,
         _notes = drug.notes,
         _brandNames = drug.brandNames;
+
+  @override
+  List<Object?> get props => [
+        _name,
+        _changedByUser,
+        _lastUpdated,
+        _categories,
+        _concentrations,
+        _contraindication,
+        _indications,
+        _notes,
+        _brandNames
+      ];
 
 
   String? get name => _name;

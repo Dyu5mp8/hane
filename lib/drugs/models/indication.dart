@@ -1,7 +1,8 @@
 import 'package:hane/drugs/models/dosage.dart';
+import 'package:equatable/equatable.dart';
 
 
-class Indication {
+class Indication with EquatableMixin {
   // Private fields
   String _name;
   List<Dosage>? dosages;
@@ -22,6 +23,8 @@ class Indication {
         _notes = indication.notes,
         isPediatric = indication.isPediatric;
 
+  @override
+  List<Object?> get props => [_name, dosages, _notes, isPediatric];
   // Getter for name
   String get name => _name;
 

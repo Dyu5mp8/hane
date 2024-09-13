@@ -18,4 +18,4 @@ The primary goal of Hane is to facilitate fast, convenient access to information
 
 - **Searchable Drug List**: Quickly search and find detailed information about anaesthesia-related drugs.
 - **Firebase Firestore Backend**: The app uses Firebase Firestore to store and manage drug data securely.
-- **Opt-In Synchronization**: Users can choose to sync with a centrally maintained drug list, ensuring they have the latest data.
+- **Opt-In Synchronization**: Out of the box, the user adds their own entries for future reference. Users can choose to sync with a centrally maintained drug list, preferably by their institution.
