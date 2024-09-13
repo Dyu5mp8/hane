@@ -158,16 +158,16 @@ Future<void> addDrug(Drug drug) async {
     if (existingDrugSnapshot.exists) {
       // Convert the existing data to a Drug object
       Drug existingDrug = Drug.fromFirestore(existingDrugSnapshot.data() as Map<String, dynamic>);
-    
 
       // Check if the existing drug is equal to the one you're trying to add
       if (existingDrug == drug) {
-        print("Drug already exists and is identical. No changes needed.");
-        return; // Exit the function early, no need to overwrite the data
+        // Drug is identical, no need to overwrite
+        return; 
       }
     }
-    // If the drug is not equal or does not exist, update the drug in Firestore
-    drug.changedByUser = true;
+
+    // Set the 'changedByUser' flag based on admin status
+    drug.changedByUser = !(isAdmin ?? false);
     drug.lastUpdated = Timestamp.now();
 
     // Use set with merge: true to overwrite if the drug already exists
