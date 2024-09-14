@@ -124,7 +124,7 @@ class DosageSnippetState extends State<DosageSnippet> {
         ListTile(
           key: ValueKey(_isConversionActive),
           contentPadding:
-              const EdgeInsets.only(left: 10, right: 4, top: 8, bottom: 8),
+              const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12.0),
             side: const BorderSide(

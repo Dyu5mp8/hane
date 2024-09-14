@@ -29,22 +29,26 @@ class _WeightSliderState extends State<WeightSlider> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(20),
-      height: 200,
+      height: 240,
       child: Column(
         children: [
-          Text("Ange vikt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+           Text("Ange vikt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 20),
+          Text("${_currentWeight.toString()} kg", style: TextStyle(fontSize: 18)),
+          SizedBox(height: 10),
+         
           Slider(
             value: _currentWeight,
      
             min: 40,
-            max: 190,            
+            max: 150,            
             onChanged: (value) {
               setState(() {
-                _currentWeight = value;
+                _currentWeight = value.round().toDouble();
               });
             },
           ),
-          Text("${_currentWeight.round().toString()} kg"),
+          
           ElevatedButton(
             onPressed: () {
               widget.onWeightSet(_currentWeight);

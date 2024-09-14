@@ -24,6 +24,8 @@
 - [ ] Fix custom icons
 
 - [x] Replace button for edit indication for the new edit toggle
-- [ ] Handle conversions for concentrations in another dose (eg. 2mg/ml with 0.5 mikrog/kg/min infusion)
+- [x] Handle conversions for concentrations in another dose (eg. 2mg/ml with 0.5 mikrog/kg/min infusion)
 - [ ] Handle max dose conversions
+- [ ] Reduce firestore reads if possible
+
 

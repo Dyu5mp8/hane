@@ -48,10 +48,9 @@ class DosageViewHandler {
     return false;
   }
 
-  void setNewDosage(Dosage dosage){
+  void setNewDosage(Dosage dosage) {
     this.dosage = dosage;
   }
-
 
   bool canConvertTime(Dose dose) {
     return dose.units.containsKey("time");
@@ -115,9 +114,8 @@ class DosageViewHandler {
   }
 
   Text showDosage({required bool isOriginalText}) {
-    String buildDosageText({
+    TextSpan buildDosageTextSpan({
       String? conversionInfo,
-      required String? route,
       required String? instruction,
       required Dose? dose,
       required Dose? lowerLimitDose,
@@ -125,46 +123,74 @@ class DosageViewHandler {
       required Dose? maxDose,
       required bool shouldConvertDoses,
     }) {
-      final String conversionText =
-          conversionInfo != null && conversionInfo.isNotEmpty
-              ? conversionInfo
-              : '';
+      final TextSpan instructionSpan = TextSpan(
+        text: instruction != null && instruction.isNotEmpty
+            ? "${instruction.trimRight()}${RegExp(r'[.,:]$').hasMatch(instruction) ? '' : ':'} "
+            : '',
+      );
+      final TextSpan doseSpan = TextSpan(
+        text: dose != null ? "${dose.toString()}. " : '',
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      );
 
-      final String instructionText =
-          instruction != null && instruction.isNotEmpty ? "$instruction " : '';
-
-      final String doseText = dose != null ? "${dose.toString()}. " : '';
-
-      String doseRangeText() {
+      TextSpan doseRangeSpan() {
         if (lowerLimitDose != null && higherLimitDose != null) {
           if (dose != null) {
-            return "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}). ";
+            return TextSpan(
+              text:
+                  "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}). ",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            );
           } else {
-            return "${lowerLimitDose.toString()} - ${higherLimitDose.toString()}. ";
+            return TextSpan(
+              text:
+                  "${lowerLimitDose.toString()} - ${higherLimitDose.toString()}. ",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            );
           }
         }
-        return "";
+        return const TextSpan(text: "");
       }
 
-      final String maxDoseText =
-          maxDose != null ? "Maxdos: ${maxDose.toString()}." : '';
+      final TextSpan maxDoseSpan = TextSpan(
+        text: maxDose != null ? "Maxdos: ${maxDose.toString()}." : '',
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      );
 
-      return "$conversionText$instructionText$doseText${doseRangeText()}$maxDoseText";
+      return TextSpan(
+        children: [
+          if (conversionInfo != null && conversionInfo.isNotEmpty)
+            TextSpan(
+              text: conversionInfo,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Color.fromARGB(255, 0, 0, 0),
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          instructionSpan,
+          doseSpan,
+          doseRangeSpan(),
+          maxDoseSpan,
+        ],
+      );
     }
 
     if (isOriginalText) {
       return Text.rich(
         TextSpan(
-          text: buildDosageText(
-            conversionInfo: '',
-            route: dosage.administrationRoute,
-            instruction: dosage.instruction,
-            dose: dosage.dose,
-            lowerLimitDose: dosage.lowerLimitDose,
-            higherLimitDose: dosage.higherLimitDose,
-            maxDose: dosage.maxDose,
-            shouldConvertDoses: false,
-          ),
+          text: '',
+          children: [
+            buildDosageTextSpan(
+              conversionInfo: '',
+              instruction: dosage.instruction,
+              dose: dosage.dose,
+              lowerLimitDose: dosage.lowerLimitDose,
+              higherLimitDose: dosage.higherLimitDose,
+              maxDose: dosage.maxDose,
+              shouldConvertDoses: false,
+            ),
+          ],
           style: const TextStyle(fontSize: 14),
         ),
       );
@@ -196,7 +222,7 @@ class DosageViewHandler {
           : null;
 
       String? concentrationConversionInfo = conversionConcentration != null
-          ? "koncentration ${conversionConcentration.toString()}"
+          ? "spädning ${conversionConcentration.toString()}"
           : null;
 
       String? timeConversionInfo = conversionTime != null
@@ -210,43 +236,23 @@ class DosageViewHandler {
       ];
 
       String conversionInfo = conversionParts.isNotEmpty
-          ? "Konvertering baserat på ${conversionParts.join(', ')}: "
+          ? "Beräknat på ${conversionParts.join(', ')}: "
           : "";
 
       return Text.rich(
         TextSpan(
           children: [
-            if (conversionInfo.isNotEmpty)
-              TextSpan(
-                text: '\n', // Newline before conversion info
-              ),
-            if (conversionInfo.isNotEmpty)
-              TextSpan(
-                text: conversionInfo,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            if (conversionInfo.isNotEmpty)
-              TextSpan(
-                text: '\n', // Newline after conversion info
-              ),
-            TextSpan(
-              text: buildDosageText(
-                conversionInfo: '',
-                route: null,
-                instruction: dosage.instruction,
-                dose: dose,
-                lowerLimitDose: lowerLimitDose,
-                higherLimitDose: higherLimitDose,
-                maxDose: maxDose,
-                shouldConvertDoses: shouldConvertDoses,
-              ),
-              style: const TextStyle(fontSize: 14),
+            buildDosageTextSpan(
+              conversionInfo: conversionInfo,
+              instruction: dosage.instruction,
+              dose: dose,
+              lowerLimitDose: lowerLimitDose,
+              higherLimitDose: higherLimitDose,
+              maxDose: maxDose,
+              shouldConvertDoses: shouldConvertDoses,
             ),
           ],
+          style: const TextStyle(fontSize: 14),
         ),
       );
     }
