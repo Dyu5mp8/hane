@@ -1,12 +1,14 @@
+import 'package:equatable/equatable.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/models/concentration.dart';
 import 'package:hane/utils/unit_service.dart';
 import 'package:hane/utils/smart_rounder.dart';
 import 'package:hane/utils/validation_exception.dart';
 
-class Dose {
+class Dose with EquatableMixin{
   final double amount;
   final Map<String, String> units;
+  
 
   Dose({required this.amount, required this.units});
 
@@ -19,6 +21,10 @@ class Dose {
   String unitString() {
     return units.values.join('/');
   }
+
+  @override
+  List<Object?> get props => [amount, units];
+
 
   @override
   String toString() {

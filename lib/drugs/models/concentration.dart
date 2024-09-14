@@ -1,7 +1,8 @@
+import "package:equatable/equatable.dart";
 import "package:hane/utils/unit_service.dart";
 import "package:hane/utils/validation_exception.dart";
 
-class Concentration {
+class Concentration with EquatableMixin {
   final double amount;
   final String unit;
 
@@ -21,6 +22,10 @@ class Concentration {
       'unit': unit,
     };
   }
+
+  @override
+  List<Object?> get props => [amount, unit];
+  
 
   set amount(double newAmount) {
     if (amount != newAmount) {

@@ -1,16 +1,21 @@
-# hane
+# Hane
 
-A new Flutter project.
+**DISCLAIMER:**
 
-## Getting Started
+This application is intended for informational purposes only. **It is not a substitute for professional medical advice, diagnosis, or treatment.** I, as the creator of this application, do not take responsibility for any medical decisions or outcomes based on the information provided. Always seek the guidance of a qualified healthcare professional with any questions you may have regarding medications or treatment.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## Hane: Drug Lookup for Anaesthesia
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Hane is an open-source project designed for medical practitioners.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Purpose
+
+The primary goal of Hane is to facilitate fast, convenient access to information about drugs frequently used in anaesthesia. 
+
+### Features
+
+- **Searchable Drug List**: Quickly search and find detailed information about anaesthesia-related drugs.
+- **Firebase Firestore Backend**: The app uses Firebase Firestore to store and manage drug data securely.
+- **Opt-In Synchronization**: Out of the box, the user adds their own entries for future reference. Users can choose to sync with a centrally maintained drug list, preferably by their institution.

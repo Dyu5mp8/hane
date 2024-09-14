@@ -147,30 +147,42 @@ class DrugListProvider with ChangeNotifier {
       rethrow;
     }
   }
+Future<void> addDrug(Drug drug) async {
+  var db = FirebaseFirestore.instance;
+  CollectionReference drugsCollection = db.collection('users').doc(user).collection('drugs');
 
-  Future<void> addDrug(Drug drug) async {
-    try {
-      var db = FirebaseFirestore.instance;
-      CollectionReference drugsCollection =
-          db.collection('users').doc(user).collection('drugs');
+  try {
+    // Fetch the existing drug from Firestore by name
+    DocumentSnapshot existingDrugSnapshot = await drugsCollection.doc(drug.name).get();
 
-      // Update the metadata before saving
-      drug.changedByUser = user != masterUID;
-      drug.lastUpdated = Timestamp.now();
+    if (existingDrugSnapshot.exists) {
+      // Convert the existing data to a Drug object
+      Drug existingDrug = Drug.fromFirestore(existingDrugSnapshot.data() as Map<String, dynamic>);
 
-      // Use set with merge: true to overwrite if the drug already exists
-      await drugsCollection
-          .doc(drug.name)
-          .set(drug.toJson(), SetOptions(merge: true));
-      if (isAdmin == true) {
-        await addDrugNameToIndex(drug.name!);
+      // Check if the existing drug is equal to the one you're trying to add
+      if (existingDrug == drug) {
+        // Drug is identical, no need to overwrite
+        return; 
       }
-    } catch (e) {
-      print("Failed to add drug: $e");
-      rethrow;
     }
-  }
 
+    // Set the 'changedByUser' flag based on admin status
+    drug.changedByUser = !(isAdmin ?? false);
+    drug.lastUpdated = Timestamp.now();
+
+    // Use set with merge: true to overwrite if the drug already exists
+    await drugsCollection.doc(drug.name).set(drug.toJson(), SetOptions(merge: true));
+
+    // If the user is an admin, update the drug index
+    if (isAdmin == true) {
+      await addDrugNameToIndex(drug.name!);
+    }
+
+  } catch (e) {
+    print("Failed to add drug: $e");
+    rethrow;
+  }
+}
   Future<void> deleteDrug(Drug drug) async {
     try {
       var db = FirebaseFirestore.instance;
@@ -187,6 +199,8 @@ class DrugListProvider with ChangeNotifier {
       rethrow;
     }
   }
+
+
 
   Future<void> copyMasterToUser() async {
     FirebaseFirestore db = FirebaseFirestore.instance;

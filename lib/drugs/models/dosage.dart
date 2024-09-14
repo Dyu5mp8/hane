@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+
 import 'package:hane/drugs/models/dose.dart';
-class Dosage  {
+import 'package:equatable/equatable.dart';
+class Dosage with EquatableMixin {
   String? _instruction;
   String? _administrationRoute;
   Dose? _dose;
@@ -31,7 +32,15 @@ class Dosage  {
         _higherLimitDose = dosage.higherLimitDose,
         _maxDose = dosage.maxDose;
 
-
+@override
+  List<Object?> get props => [
+        _instruction,
+        _administrationRoute,
+        _dose,
+        _lowerLimitDose,
+        _higherLimitDose,
+        _maxDose,
+      ];
 
   // Getters
   String? get instruction => _instruction;
