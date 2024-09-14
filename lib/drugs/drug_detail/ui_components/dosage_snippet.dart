@@ -209,7 +209,7 @@ class DosageSnippetState extends State<DosageSnippet> {
 
               if (widget.editMode)
                 IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: const Icon(Icons.delete, color:Color.fromARGB(255, 134, 9, 0)),
                   onPressed: () {
                     showDialog(
                       context: context,

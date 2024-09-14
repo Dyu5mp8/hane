@@ -49,7 +49,7 @@ class RouteText extends StatelessWidget {
       children: [
         if (routeIcon(iconSize: 12) != null) routeIcon(iconSize: 14)!,
         const SizedBox(width: 5),
-        Text(routeText()),
+        Text(routeText(), style: TextStyle(fontWeight: FontWeight.bold)),
       ],
     );
   }

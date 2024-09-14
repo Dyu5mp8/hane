@@ -42,7 +42,7 @@ class _EditableRowState extends State<EditableRow>
       duration: widget.animationDuration,
       vsync: this,
     );
-    _iconAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+    _iconAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
@@ -121,7 +121,7 @@ class _EditableRowState extends State<EditableRow>
                 child: ScaleTransition(
                   scale: _iconAnimation,
                   child: Icon(
-                    Icons.edit_note_outlined,
+                    Icons.edit,
                     color: Colors.blue[800],
                     size: widget.iconSize,
                   ),
