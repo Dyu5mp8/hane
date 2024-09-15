@@ -59,7 +59,6 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    setData();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.indication.name),
