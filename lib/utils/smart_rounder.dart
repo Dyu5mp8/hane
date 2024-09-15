@@ -1,4 +1,3 @@
-
 num smartRound(double value) {
   String str = value.toString();
   int decimalIndex = str.indexOf(".");
@@ -15,11 +14,14 @@ num smartRound(double value) {
     var dec = str.substring(decimalIndex, str.length);
     var dec_double = double.parse(dec);
     var dec_modified = intPart < 1
-        ? dec_double.toStringAsPrecision((3))
+        ? dec_double.toStringAsPrecision(3)
         : dec_double.toStringAsPrecision(3 - intString.length);
-    var doublePart = double.parse(dec_modified);
-    var finalDouble = intPart + doublePart;
 
+    var doublePart = double.parse(dec_modified);
+
+    var finalDouble = intPart + doublePart;
+    // Format finalDouble to 2 decimal places
+    finalDouble = double.parse(finalDouble.toStringAsFixed(2));
     return finalDouble;
   }
 }

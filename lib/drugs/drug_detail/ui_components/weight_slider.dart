@@ -34,7 +34,7 @@ class _WeightSliderState extends State<WeightSlider> {
         children: [
            Text("Ange vikt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           SizedBox(height: 20),
-          Text("${_currentWeight.toString()} kg", style: TextStyle(fontSize: 18)),
+          Text("${_currentWeight.toStringAsFixed(0)} kg", style: TextStyle(fontSize: 18)),
           SizedBox(height: 10),
          
           Slider(
