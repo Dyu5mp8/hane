@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/ui_components/custom_chip.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
+
 
 class EditNameDialog extends StatefulWidget {
   final Drug drug;
   final bool isNewDrug;
   const EditNameDialog({super.key, required this.drug, this.isNewDrug = false});
-  
 
   @override
   _EditNameDialogState createState() => _EditNameDialogState();
@@ -21,7 +23,13 @@ class _EditNameDialogState extends State<EditNameDialog> {
   List<String> _brandNames = [];
   List<String> _categories = [];
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final List<String> _suggestedCategories = ["Cirkulation", "Anestesi", "Smärta", "Andning", "Antidot"];
+  List<dynamic> _suggestedCategories = [
+    "Cirkulation",
+    "Anestesi",
+    "Smärta",
+    "Andning",
+    "Antidot"
+  ];
 
   @override
   void initState() {
@@ -32,10 +40,8 @@ class _EditNameDialogState extends State<EditNameDialog> {
         widget.drug.brandNames?.map((e) => e.toString()).toList() ?? [];
     _categories =
         widget.drug.categories?.map((e) => e.toString()).toList() ?? [];
+    _suggestedCategories = Provider.of<DrugListProvider>(context, listen: false).categories.toList();
   }
-
-
-
 
   @override
   void dispose() {
@@ -53,13 +59,15 @@ class _EditNameDialogState extends State<EditNameDialog> {
     }
   }
 
-  _findSuggestions(String query, List<String> suggestedCategories) {
+  _findSuggestions(String query, List<dynamic> suggestedCategories) {
+
     List<String> suggestions = [];
-    for (String suggestion in _categories) {
+    for (String suggestion in suggestedCategories) {
       if (suggestion.toLowerCase().contains(query.toLowerCase())) {
         suggestions.add(suggestion);
       }
     }
+    print(suggestions);
     return suggestions;
   }
 
@@ -92,13 +100,15 @@ class _EditNameDialogState extends State<EditNameDialog> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-          title: widget.isNewDrug ? const Text('Nytt läkemedel') : const Text('Redigera'),
+          title: widget.isNewDrug
+              ? const Text('Nytt läkemedel')
+              : const Text('Redigera'),
           automaticallyImplyLeading: false,
           centerTitle: true,
           leading: null,
-
           actions: [
             TextButton(
               onPressed: () {
@@ -221,30 +231,54 @@ class _EditNameDialogState extends State<EditNameDialog> {
               // Categories input
               const SizedBox(height: 8),
               TypeAheadField<String>(
-  suggestionsCallback: (search) => _findSuggestions(search, _suggestedCategories),
-    builder: (context, controller, focusNode) {
-      return TextFormField(
-        controller: controller,
-        focusNode: focusNode,
-        autofocus: true,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Lägg till kategorier',
-        )
-      );
-  },
-  itemBuilder: (context, category) {
-    return ListTile(
-      title: Text(category),
-      subtitle: Text(category),
-    );
-  },
-  onSelected: (category) {
-    _addCategory(suggestion: category
-    );
-  },
-),
-          
+                hideOnEmpty: true ,
+                debounceDuration: const Duration(milliseconds: 300),
+                hideOnLoading: true,
+                hideOnError: true ,
+                hideOnSelect: true,
+
+      
+           
+      
+                suggestionsCallback: (search) =>
+                    _findSuggestions(search, _suggestedCategories),
+                builder: (context, controller, focusNode) {
+                  return TextFormField(
+                    controller: controller,
+                    focusNode: focusNode,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      
+                    
+                      border: OutlineInputBorder(),
+                      labelText: 'Lägg till kategorier',
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          {
+
+                        
+                            _addCategory(suggestion: controller.text);
+                          }
+                        },
+                      ),
+                    ),
+                    textCapitalization: TextCapitalization.sentences,
+                  );
+                },
+                itemBuilder: (context, category) {
+                  return ListTile(
+
+                    dense: true,
+                    title: Text(category, style: const TextStyle(fontSize: 13)),
+                    tileColor: Colors.white,
+                    
+                  );
+                },
+                onSelected: (category) {
+                  _addCategory(suggestion: category);
+                },
+              ),
 
               const SizedBox(height: 8),
               // Display categories as chips
