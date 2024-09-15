@@ -67,7 +67,6 @@ class _EditNameDialogState extends State<EditNameDialog> {
         suggestions.add(suggestion);
       }
     }
-    print(suggestions);
     return suggestions;
   }
 
@@ -78,7 +77,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
   }
 
   void _addCategory({String? suggestion}) {
-    if (suggestion != null) {
+    if (suggestion != null && suggestion.isNotEmpty) {
       setState(() {
         _categories.add(suggestion);
         _categoriesController.clear();
@@ -230,15 +229,27 @@ class _EditNameDialogState extends State<EditNameDialog> {
               // Categories input
               const SizedBox(height: 8),
               TypeAheadField<String>(
+                decorationBuilder: (context, child) => Container(
+                  key: UniqueKey(),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: child,
+                ),
+                hideKeyboardOnDrag: true,
                 
+                hideOnUnfocus: true,
+                hideWithKeyboard: true,
                 hideOnEmpty: true,
-                debounceDuration: const Duration(milliseconds: 300),
+  
+                direction: VerticalDirection.up,
              
         
                 hideOnLoading: true,
                 hideOnError: true,
                 hideOnSelect: true,
-                hideKeyboardOnDrag: true,
                 
                 
         
