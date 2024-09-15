@@ -6,7 +6,6 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/ui_components/custom_chip.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
 
-
 class EditNameDialog extends StatefulWidget {
   final Drug drug;
   final bool isNewDrug;
@@ -40,7 +39,9 @@ class _EditNameDialogState extends State<EditNameDialog> {
         widget.drug.brandNames?.map((e) => e.toString()).toList() ?? [];
     _categories =
         widget.drug.categories?.map((e) => e.toString()).toList() ?? [];
-    _suggestedCategories = Provider.of<DrugListProvider>(context, listen: false).categories.toList();
+    _suggestedCategories = Provider.of<DrugListProvider>(context, listen: false)
+        .categories
+        .toList();
   }
 
   @override
@@ -60,7 +61,6 @@ class _EditNameDialogState extends State<EditNameDialog> {
   }
 
   _findSuggestions(String query, List<dynamic> suggestedCategories) {
-
     List<String> suggestions = [];
     for (String suggestion in suggestedCategories) {
       if (suggestion.toLowerCase().contains(query.toLowerCase())) {
@@ -100,7 +100,6 @@ class _EditNameDialogState extends State<EditNameDialog> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
           title: widget.isNewDrug
@@ -231,15 +230,18 @@ class _EditNameDialogState extends State<EditNameDialog> {
               // Categories input
               const SizedBox(height: 8),
               TypeAheadField<String>(
-                hideOnEmpty: true ,
+                
+                hideOnEmpty: true,
                 debounceDuration: const Duration(milliseconds: 300),
+             
+        
                 hideOnLoading: true,
-                hideOnError: true ,
+                hideOnError: true,
                 hideOnSelect: true,
-
-      
-           
-      
+                hideKeyboardOnDrag: true,
+                
+                
+        
                 suggestionsCallback: (search) =>
                     _findSuggestions(search, _suggestedCategories),
                 builder: (context, controller, focusNode) {
@@ -248,16 +250,12 @@ class _EditNameDialogState extends State<EditNameDialog> {
                     focusNode: focusNode,
                     autofocus: true,
                     decoration: InputDecoration(
-                      
-                    
                       border: OutlineInputBorder(),
                       labelText: 'Lägg till kategorier',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.add),
                         onPressed: () {
                           {
-
-                        
                             _addCategory(suggestion: controller.text);
                           }
                         },
@@ -266,9 +264,9 @@ class _EditNameDialogState extends State<EditNameDialog> {
                     textCapitalization: TextCapitalization.sentences,
                   );
                 },
+                
                 itemBuilder: (context, category) {
                   return ListTile(
-
                     dense: true,
                     title: Text(category, style: const TextStyle(fontSize: 13)),
                     tileColor: Colors.white,
