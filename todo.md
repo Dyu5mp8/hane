@@ -20,7 +20,7 @@
 - [x] Options for downloading master list items
 - [x] sidebar
 - [x] redesign edit view
-- [ ] Autocomplete categories upon edit
+- [x] Autocomplete categories upon edit
 - [ ] Fix custom icons
 
 - [x] Replace button for edit indication for the new edit toggle
