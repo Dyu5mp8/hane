@@ -15,23 +15,35 @@ class IndicationTabView extends StatelessWidget {
     final drug = context.watch<Drug>();
     final editMode = context.watch<EditModeProvider>().editMode;
 
-     if (drug.indications == null || drug.indications!.isEmpty) {
-          return Expanded(
-           
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                Icon(Icons.lightbulb_circle, color: Colors.grey, size: 50),
-                Text(
-                  "Inga indikationer ännu! Lägg till indikation eller gör andra ändringar...",
-                ),
-                SizedBox(height: 20),
-                AddIndicationButton(),
-              ],
+    if (drug.indications == null || drug.indications!.isEmpty) {
+  return Expanded(
+    child: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // Shrinks the column to fit its children
+          children: [
+            Icon(Icons.lightbulb_outline, color: Colors.grey[600], size: 80),
+            const SizedBox(height: 20),
+            Text(
+              "Inga indikationer ännu!",
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.grey[800]),
+              textAlign: TextAlign.center,
             ),
-          );
-        }
-
+            const SizedBox(height: 10),
+            Text(
+              "Lägg till en indikation för att komma igång.",
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey[600]),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 30),
+            const AddIndicationButton(),
+          ],
+        ),
+      ),
+    ),
+  );
+}
     return Expanded(
       
       child: TabBarView(
@@ -96,7 +108,7 @@ class IndicationTabView extends StatelessWidget {
 
                               
                             ),
-                            SizedBox(height: 3), // Spacing between items
+                            const SizedBox(height: 3), // Spacing between items
                           ],
                         );
                       },

@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 
 class ConversionButton extends StatelessWidget {
   final String label;
@@ -34,8 +35,15 @@ class ConversionButton extends StatelessWidget {
             fontSize: 13,
           ),
         ),
-        onPressed: onPressed,
+        onPressed: buttonPressed,
       ),
     );
+  }
+
+  void buttonPressed() {
+    HapticFeedback.selectionClick();
+
+    onPressed();
+
   }
 }
