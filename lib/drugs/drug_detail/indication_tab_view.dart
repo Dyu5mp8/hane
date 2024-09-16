@@ -5,6 +5,7 @@ import "package:hane/drugs/drug_detail/dosageViewHandler.dart";
 import "package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart";
 import "package:hane/drugs/drug_detail/edit_mode_provider.dart";
 import "package:hane/drugs/drug_detail/editable_row.dart";
+import "package:hane/drugs/drug_detail/ui_components/add_indication_button.dart";
 import "package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart";
 import "package:hane/drugs/models/drug.dart";
 
@@ -13,9 +14,27 @@ class IndicationTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     final drug = context.watch<Drug>();
     final editMode = context.watch<EditModeProvider>().editMode;
+     if (drug.indications == null || drug.indications!.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                SizedBox(height: 20),
+                Icon(Icons.lightbulb_circle, color: Colors.grey, size: 50),
+                Text(
+                  "Inga indikationer ännu! Lägg till indikation eller gör andra ändringar...",
+                ),
+                SizedBox(height: 20),
+                AddIndicationButton(),
+              ],
+            ),
+          );
+        }
 
     return Expanded(
+      
       child: TabBarView(
+        
 
         children: drug.indications!.map((indication)  {
           return Column(

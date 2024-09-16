@@ -9,9 +9,10 @@ class EditIndicationDialog extends StatefulWidget {
   final Indication indication;
   final bool withDosages;
   final bool isNewIndication;
+  final Function()? onSave;
 
   const EditIndicationDialog(
-      {super.key, required this.indication, required this.drug, this.withDosages = false, this.isNewIndication = false});
+      {super.key, required this.indication, required this.drug, this.withDosages = false, this.isNewIndication = false , this.onSave});
 
   @override
   _EditIndicationDialogState createState() => _EditIndicationDialogState();
@@ -49,7 +50,11 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
       widget.indication.dosages = _tempDosages;
 
       if (widget.isNewIndication) {
+  
+        widget.drug.indications ??= [];
+
         widget.drug.indications?.add(widget.indication);
+
       }
 
       widget.drug.updateDrug();

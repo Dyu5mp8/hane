@@ -30,6 +30,7 @@ class IndicationTabs extends StatelessWidget {
                 child: IconButton(
                     onPressed: () {
                       Indication newIndication = Indication(isPediatric: false, name: '', notes: '');
+                      
                       Navigator.push(
                           context,
                           MaterialPageRoute(
