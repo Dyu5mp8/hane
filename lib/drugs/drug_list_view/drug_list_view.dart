@@ -126,7 +126,7 @@ class _DrugListViewState extends State<DrugListView> {
             builder: (context) => MultiProvider(
       providers: [
         ChangeNotifierProvider<Drug>.value(
-            value: Drug())
+            value: Drug(indications: <Indication>[]))
                 , // sets the editable drug as the provider drug
         ChangeNotifierProvider<EditModeProvider>.value(
             value: EditModeProvider()) // a provider for the edit mode

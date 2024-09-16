@@ -8,7 +8,7 @@ class AddIndicationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var drug = Provider.of<Drug>(context, listen: false);
+    var drug = Provider.of<Drug>(context, listen: true);
 
     return ElevatedButton(
       onPressed: () {
@@ -19,11 +19,9 @@ class AddIndicationButton extends StatelessWidget {
                 builder: (context) => EditIndicationDialog(
                     withDosages: true,
                     isNewIndication: true,
-                    indication: Indication(name: "", isPediatric: false),
+                    indication: Indication(isPediatric: false, name: '', notes: ''),
                     drug: drug,
-                    onSave: (){
-                      drug.updateDrug();
-                    },)));
+             ) ));
       },
       child: const Row(
         mainAxisSize: MainAxisSize.min,

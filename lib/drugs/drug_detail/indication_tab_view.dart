@@ -14,9 +14,10 @@ class IndicationTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     final drug = context.watch<Drug>();
     final editMode = context.watch<EditModeProvider>().editMode;
+
      if (drug.indications == null || drug.indications!.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.all(10.0),
+          return Expanded(
+           
             child: Column(
               children: [
                 SizedBox(height: 20),

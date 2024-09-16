@@ -51,8 +51,6 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
 
       if (widget.isNewIndication) {
   
-        widget.drug.indications ??= [];
-
         widget.drug.indications?.add(widget.indication);
 
       }
