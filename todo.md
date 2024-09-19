@@ -28,6 +28,10 @@
 - [ ] Handle max dose conversions
 - [ ] Reduce firestore reads if possible
 - [ ] Sort out edit dosage dialog layout, consider enforcing same unit for all
-- 
+- [ ] Immutable base data.
+- [ ] Highlight generic names in color or italics.
+- [ ] Ability to rearrange dosages.
+- [ ] Enter weight manually.
+- [ ] Warning message for different weights on dosages?
 
 

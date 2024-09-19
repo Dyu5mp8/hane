@@ -39,7 +39,9 @@ class _DrugListViewState extends State<DrugListView> {
 
   @override
   Widget build(BuildContext context) {
+
     List<Drug>? drugs = Provider.of<List<Drug>?>(context);
+    print(drugs);
     Set<String>? drugNames = drugs
         ?.map((drug) => drug.name)
         .where((name) => name != null)

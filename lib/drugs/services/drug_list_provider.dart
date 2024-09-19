@@ -34,10 +34,13 @@ class DrugListProvider with ChangeNotifier {
       var drugsList = snapshot.docs.map((doc) {
         var drug = Drug.fromFirestore(doc.data());
         categories.addAll(drug.categories ?? []);
+        drug.id = doc.id;
         return drug;
       }).toList();
       drugsList.sort(
           (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+   
+
 
       return drugsList;
     });
@@ -153,8 +156,15 @@ Future<void> addDrug(Drug drug) async {
 
   try {
     // Fetch the existing drug from Firestore by name
-    DocumentSnapshot existingDrugSnapshot = await drugsCollection.doc(drug.name).get();
+ 
+    drug.changedByUser = !(isAdmin ?? false);
+    drug.lastUpdated = Timestamp.now();
 
+  if (drug.id == null) {
+    await drugsCollection.doc().set(drug.toJson());
+    return;
+  }
+   DocumentSnapshot existingDrugSnapshot = await drugsCollection.doc(drug.id).get();
     if (existingDrugSnapshot.exists) {
       // Convert the existing data to a Drug object
       Drug existingDrug = Drug.fromFirestore(existingDrugSnapshot.data() as Map<String, dynamic>);
@@ -164,14 +174,17 @@ Future<void> addDrug(Drug drug) async {
         // Drug is identical, no need to overwrite
         return; 
       }
-    }
+    
 
-    // Set the 'changedByUser' flag based on admin status
-    drug.changedByUser = !(isAdmin ?? false);
-    drug.lastUpdated = Timestamp.now();
 
     // Use set with merge: true to overwrite if the drug already exists
-    await drugsCollection.doc(drug.name).set(drug.toJson(), SetOptions(merge: true));
+    await drugsCollection.doc(drug.id).set(drug.toJson(), SetOptions(merge: true));
+    }
+
+    else{
+      await drugsCollection.doc(drug.id).set(drug.toJson());
+    
+    }
 
     // If the user is an admin, update the drug index
     if (isAdmin == true) {

@@ -1,0 +1,5 @@
+Oföränderlig grunddata.
+Generiska namn markeras i färg eller kursivt.
+Kunna flytta på doseringarna
+Skriv vikt manuellt
+Obs olika vikter på doseringar, varningsruta?
