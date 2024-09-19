@@ -3,7 +3,8 @@ import 'package:hane/drugs/models/drug.dart';
 
 class EditNotesDialog extends StatefulWidget {
   final Drug drug;
-  const EditNotesDialog({Key? key, required this.drug}) : super(key: key);
+  final bool isUserNote;
+  const EditNotesDialog({Key? key, required this.drug, required this.isUserNote}) : super(key: key);
 
   @override
   _EditNotesDialogState createState() => _EditNotesDialogState();
@@ -17,7 +18,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
   void initState() {
     super.initState();
     // Initialize the controllers with the existing data
-    _notesController.text = widget.drug.notes ?? '';
+    _notesController.text = widget.drug.userNotes ?? '';
   }
 
   @override
@@ -26,11 +27,13 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
     super.dispose();
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Anteckningar'),
+          title: Text(widget.isUserNote ? 'Dina anteckningar' : 'Anteckningar'),
           automaticallyImplyLeading: false,
           centerTitle: true,
           leading: null,
@@ -42,7 +45,11 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                 child: const Icon(Icons.close)),
             TextButton(
                 onPressed: () {
+                  if (widget.isUserNote) {
+                    widget.drug.userNotes = _notesController.text;
+                  } else {
                   widget.drug.notes = _notesController.text;
+                  }
                   Navigator.pop(context);
                 },
                 child: const Icon(Icons.check)),

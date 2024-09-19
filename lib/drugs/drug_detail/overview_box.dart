@@ -20,6 +20,8 @@ class OverviewBox extends StatelessWidget {
               NoteRow(),
               Divider(indent: 10, endIndent: 10, thickness: 1),
               ContraindicationRow(),
+              Divider(indent: 10, endIndent: 10, thickness: 1),
+              UserNoteRow(),
               SizedBox(height: 20),
             ],
           ),
@@ -124,7 +126,7 @@ class NoteRow extends StatelessWidget {
           const SizedBox(width: 10),
           Flexible(
             child: EditableRow(
-              editDialog: EditNotesDialog(drug: drug),
+              editDialog: EditNotesDialog(drug: drug, isUserNote: false),
               isEditMode: editMode,
               text: drug.notes,
               textStyle: const TextStyle(fontSize: 14),
@@ -168,3 +170,35 @@ class ContraindicationRow extends StatelessWidget {
     );
   }
 } 
+
+
+class UserNoteRow extends StatelessWidget {
+  const UserNoteRow({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final drug =
+        Provider.of<Drug>(context); // Access the drug from the Provider
+    final editMode = Provider.of<EditModeProvider>(context)
+        .editMode; // Access editMode from the Provider
+
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        children: [
+          const Icon(Icons.notes),
+          const SizedBox(width: 10),
+          Flexible(
+            child: EditableRow(
+              editDialog: EditNotesDialog(drug: drug, isUserNote: true),
+              isEditMode: editMode,
+              text: drug.userNotes,
+              textStyle: const TextStyle(fontSize: 14),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}

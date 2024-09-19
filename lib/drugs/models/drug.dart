@@ -19,7 +19,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
   bool? _changedByUser = false;
   Timestamp? _lastUpdated;
   String? _id;
-
+  String? _userNotes;
   String? _notes;
 
   Drug({
@@ -32,6 +32,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
     String? contraindication = '',
     List<Indication>? indications,
     String? notes = '',
+    String? userNotes,
     Timestamp? lastUpdated,
   })  : _name = name ?? '',
         _changedByUser = changedByUser,
@@ -42,7 +43,8 @@ class Drug extends ChangeNotifier with EquatableMixin{
         _indications = indications,
         _notes = notes,
         _brandNames = brandNames,
-        _id = id;
+        _id = id,
+        _userNotes = userNotes;
 
   Drug.from(Drug drug)
       : 
@@ -57,6 +59,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
             ? List<Indication>.from(drug._indications!.map((ind) => Indication.from(ind)))
             : null,
         _notes = drug.notes,
+        _userNotes = drug.userNotes,
         _brandNames = drug.brandNames;
 
   @override
@@ -85,6 +88,14 @@ class Drug extends ChangeNotifier with EquatableMixin{
   set name(String? newName) {
     if (_name != newName) {
       _name = newName;
+      notifyListeners();
+    }
+  }
+
+  String? get userNotes => _userNotes;
+  set userNotes(String? newUserNotes) {
+    if (_userNotes != newUserNotes) {
+      _userNotes = newUserNotes;
       notifyListeners();
     }
   }
@@ -201,7 +212,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
   // Factory constructor to create a Drug from a Map
   factory Drug.fromFirestore(Map<String, dynamic> map) {
     return Drug(
-      id: map['id'] as String,
+      id: map['id'] as String?,
       name: map['name'] as String?,
       changedByUser: map['changedByUser'] as bool?,
       categories: (map['categories'] as List<dynamic>?),
