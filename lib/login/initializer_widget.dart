@@ -3,20 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/services/drug_list_wrapper.dart';
 import 'package:hane/login/loginPage.dart';
 import 'package:hane/login/drug_init_screen.dart';
+import 'package:hane/login/preference_selection_screen.dart';
+import 'package:hane/login/user_status.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-enum UserStatus {
-  hasExistingUserData,
-  noExistingUserData,
-  isAdmin,
-}
 
 class InitializerWidget extends StatelessWidget {
   final bool firstLogin;
 
-  const InitializerWidget({super.key, this.firstLogin = false});
+  const InitializerWidget({Key? key, this.firstLogin = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,78 +47,118 @@ class InitializerWidget extends StatelessWidget {
         await _firstLoginSetup(userId);
       }
 
-      UserStatus userStatus = await _getUserStatus(user);
+      // 1. Check if user is admin
+      final isAdmin = await _checkIfUserIsAdmin(user);
+      if (isAdmin) {
+        await _logUserLogin(userId);
+        return _getHomeScreen(context, UserMode.isAdmin, userId);
+      }
 
-      return _getHomeScreen(context, userStatus, userId);
+      // 2. Check user's preference for synced mode
+      bool? preferSynced = await _preferSyncedMode(userId);
+
+      if (preferSynced == null) {
+        // No preference set yet; prompt user to select
+        return PreferenceSelectionScreen(user: userId);
+      } else if (preferSynced == true) {
+        // User prefers synced mode
+        await _logUserLogin(userId);
+        return _getHomeScreen(context, UserMode.syncedMode, userId);
+      } else {
+        // User prefers custom mode
+        // 3. Check if user has existing data
+        UserDataStatus dataStatus = await _determineUserDataStatus(userId);
+        await _logUserLogin(userId);
+        return _getCustomUserHomeScreen(context, dataStatus, userId);
+      }
     } else {
       return const LoginPage();
     }
   }
 
-  Future<UserStatus> _getUserStatus(User user) async {
+  Future<bool> _checkIfUserIsAdmin(User user) async {
     try {
-      await _logUserLogin(user.uid);
-      return await _determineUserStatus(user);
+      final idTokenResult = await user.getIdTokenResult(true);
+      return idTokenResult.claims?['admin'] == true;
     } catch (e) {
-      print("Failed to log user login or determine user status: $e");
-      return UserStatus.hasExistingUserData;
+      print("Failed to check if user is admin: $e");
+      return false;
     }
   }
 
-  Future<UserStatus> _determineUserStatus(User user) async {
-    final idTokenResult = await user.getIdTokenResult(true);
-    final isAdmin = idTokenResult.claims?['admin'] == true;
-
-    if (isAdmin) {
-      print("User is admin");
-      return UserStatus.isAdmin;
-    }
-
+  Future<UserDataStatus> _determineUserDataStatus(String userId) async {
     try {
       final userDrugRef = FirebaseFirestore.instance
           .collection('users')
-          .doc(user.uid)
+          .doc(userId)
           .collection('drugs');
 
-      final snapshot = await userDrugRef.limit(1).get().timeout(const Duration(seconds: 5));
+      final snapshot =
+          await userDrugRef.limit(1).get().timeout(const Duration(seconds: 5));
 
       return snapshot.docs.isNotEmpty
-          ? UserStatus.hasExistingUserData
-          : UserStatus.noExistingUserData;
+          ? UserDataStatus.hasExistingData
+          : UserDataStatus.noExistingData;
     } catch (e) {
       print("Fetching from network failed or timed out, trying from cache: $e");
-      return _getUserStatusFromCache(user.uid);
+      return _getUserDataStatusFromCache(userId);
     }
   }
 
-  Future<UserStatus> _getUserStatusFromCache(String userId) async {
+  Future<UserDataStatus> _getUserDataStatusFromCache(String userId) async {
     final userDrugRef = FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
         .collection('drugs');
 
-    final snapshot = await userDrugRef.get(const GetOptions(source: Source.cache));
+    final snapshot =
+        await userDrugRef.get(const GetOptions(source: Source.cache));
 
     return snapshot.docs.isNotEmpty
-        ? UserStatus.hasExistingUserData
-        : UserStatus.noExistingUserData;
+        ? UserDataStatus.hasExistingData
+        : UserDataStatus.noExistingData;
   }
 
-  Widget _getHomeScreen(BuildContext context, UserStatus status, String userId) {
-    final drugListProvider = Provider.of<DrugListProvider>(context, listen: false);
+  Future<bool?> _preferSyncedMode(String userId) async {
+    final prefs = FirebaseFirestore.instance.collection('users').doc(userId).collection('preferences').doc("preferSyncedMode");
+    final snapshot = await prefs.get();
+    print("Snapshot: $snapshot");
+    print(snapshot.data());
+    print(userId);
 
-    switch (status) {
-      case UserStatus.isAdmin:
-        drugListProvider.setUserData("master");
+
+    if (snapshot.exists) {
+      return snapshot.data()?['preferSyncedMode'];
+    } else {
+      return null;
+    }
+  }
+
+  Widget _getHomeScreen(BuildContext context, UserMode userMode, String userId) {
+    final drugListProvider =
+        Provider.of<DrugListProvider>(context, listen: false);
+
+    drugListProvider.setUserData(user: userId, userMode: userMode);
+
+    return const DrugListWrapper();
+  }
+
+  Widget _getCustomUserHomeScreen(
+      BuildContext context, UserDataStatus dataStatus, String userId) {
+    final drugListProvider =
+        Provider.of<DrugListProvider>(context, listen: false);
+
+    drugListProvider.setUserData(user: userId, userMode: UserMode.customMode);
+
+    switch (dataStatus) {
+      case UserDataStatus.hasExistingData:
         return const DrugListWrapper();
-      case UserStatus.hasExistingUserData:
-        drugListProvider.setUserData(userId);
-        return const DrugListWrapper();
-      case UserStatus.noExistingUserData:
-        drugListProvider.setUserData(userId);
+
+      case UserDataStatus.noExistingData:
         return DrugInitScreen(user: userId);
+
       default:
-        throw Exception("Unknown user status");
+        throw Exception("Unknown user data status");
     }
   }
 

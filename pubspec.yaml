@@ -51,6 +51,7 @@ dependencies:
   flutter_typeahead: ^5.2.0
   flutter_keyboard_visibility: ^6.0.0
   rxdart: ^0.28.0
+  shared_preferences: ^2.3.2
 
 
 dev_dependencies:

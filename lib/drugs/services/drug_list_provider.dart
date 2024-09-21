@@ -1,29 +1,38 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/login/user_status.dart';
 import 'package:rxdart/rxdart.dart';
 
+
 class DrugListProvider with ChangeNotifier {
+  String masterUID = "master";  
   String? user;
-  String masterUID = "master";
-  bool? isAdmin;
+  UserMode? userMode;
   Set<dynamic> categories = {};
 
-  DrugListProvider({this.user}) {
-    isAdmin = user == null ? null : user == masterUID;
+  DrugListProvider({this.user, this.userMode});
+
+  void setUserData({String? user, UserMode? userMode}) {
+    if (user != null) {
+      this.user = user;
+    }
+    if (userMode != null) {
+      this.userMode = userMode;
+    }
   }
 
-  void setUserData(String? user) {
-    this.user = user;
-    isAdmin = user == null ? null : user == masterUID;
-  }
+  bool get isAdmin => userMode == UserMode.isAdmin;
 
   void clearProvider() {
     // Clear any user-specific data and resources
     categories.clear();
-    setUserData(null);
+    user = null;
+    userMode = null;
+    
   }
 
   @override
@@ -32,67 +41,81 @@ class DrugListProvider with ChangeNotifier {
     super.dispose();
   }
 
+  Stream<List<Drug>> getDrugsStream() {
+    var db = FirebaseFirestore.instance;
+    String dataUserId;
 
-Stream<List<Drug>> getDrugsStream() {
-  var db = FirebaseFirestore.instance;
+    if (userMode == UserMode.isAdmin || userMode == UserMode.syncedMode) {
+      dataUserId = 'master'; // Admin and synced users read from master data
+    } else {
+      dataUserId = user!; // Custom users read from their own data
+    }
 
-  // Stream for the master drug data
-  Query<Map<String, dynamic>> drugsCollection =
-      db.collection('users').doc(user).collection('drugs');
+    Query<Map<String, dynamic>> drugsCollection =
+        db.collection('users').doc(dataUserId).collection('drugs');
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream = drugsCollection.snapshots();
+    Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
+        drugsCollection.snapshots();
 
-  // Stream for the user's custom notes
-  DocumentReference<Map<String, dynamic>> userNotesDocRef =
-      db.collection('users').doc(user).collection('indexes').doc('userNotesIndex');
+    if (userMode == UserMode.syncedMode) {
+      // Stream for the user's custom notes
+      DocumentReference<Map<String, dynamic>> userNotesDocRef = db
+          .collection('users')
+          .doc(user)
+          .collection('indexes')
+          .doc('userNotesIndex');
 
-  Stream<DocumentSnapshot<Map<String, dynamic>>> userNotesStream = userNotesDocRef.snapshots();
+      Stream<DocumentSnapshot<Map<String, dynamic>>> userNotesStream =
+          userNotesDocRef.snapshots();
 
-  // Combine both streams
-  return Rx.combineLatest2(
-    drugsStream,
-    userNotesStream,
-    (drugsSnapshot, userNotesSnapshot) {
-      // Check if the data was fetched from the server (billable) or from the cache (non-billable)
-      if (!drugsSnapshot.metadata.isFromCache) {
-        print(
-            'Firestore Read: Snapshot received from server with ${drugsSnapshot.docs.length} documents at ${DateTime.now()}');
-      } else {
-        print(
-            'Firestore Read: Snapshot served from cache with ${drugsSnapshot.docs.length} documents');
-      }
+      // Combine both streams
+      return Rx.combineLatest2(
+        drugsStream,
+        userNotesStream,
+        (drugsSnapshot, userNotesSnapshot) {
+          Map<String, dynamic> userNotesIndex = {};
 
-      Map<String, dynamic> userNotesIndex = {};
+          if (userNotesSnapshot.exists) {
+            userNotesIndex = userNotesSnapshot.data() ?? {};
+          }
 
-      if (isAdmin != true) {
-        // Extract user notes data
-        if (userNotesSnapshot.exists) {
-          userNotesIndex = userNotesSnapshot.data() ?? {};
-        }
-      }
+          // Convert each document to a Drug object
+          var drugsList = drugsSnapshot.docs.map((doc) {
+            var drug = Drug.fromFirestore(doc.data());
+            categories.addAll(drug.categories ?? []);
+            drug.id = doc.id;
 
-      // Convert each document to a Drug object
-      var drugsList = drugsSnapshot.docs.map((doc) {
-        var drug = Drug.fromFirestore(doc.data());
-        categories.addAll(drug.categories ?? []);
-        drug.id = doc.id;
+            // Set the userNotes from userNotesIndex
+            if (userNotesIndex.containsKey(drug.id)) {
+              drug.userNotes = userNotesIndex[drug.id] as String;
+            }
 
-        // Set the userNotes from userNotesIndex
-        if (userNotesIndex.containsKey(drug.id)) {
-          drug.userNotes = userNotesIndex[drug.id] as String;
-        }
+            return drug;
+          }).toList();
 
-        return drug;
-      }).toList();
+          drugsList.sort(
+              (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
-      drugsList.sort(
-          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+          return drugsList;
+        },
+      );
+    } else {
+      // For admin and synced users, return the drugsStream directly
+      return drugsStream.map((drugsSnapshot) {
+        var drugsList = drugsSnapshot.docs.map((doc) {
+          var drug = Drug.fromFirestore(doc.data());
+          categories.addAll(drug.categories ?? []);
+          drug.id = doc.id;
+          return drug;
+        }).toList();
 
-      return drugsList;
-    },
-  );
-}
+        drugsList.sort(
+            (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
+        return drugsList;
+      });
+    }
+  }
   Future<void> addDrugToIndex(String id, Timestamp timestamp) async {
     try {
       var db = FirebaseFirestore.instance;
@@ -147,21 +170,24 @@ Stream<List<Drug>> getDrugsStream() {
       rethrow;
     }
   }
-Future<void> addUserNotes(String id, String notes) async {
-  try {
-    var db = FirebaseFirestore.instance;
-    DocumentReference userNotesDocRef =
-        db.collection('users').doc(user).collection('indexes').doc('userNotesIndex');
 
-    // Use 'set' with 'merge: true' to add/update the notes for the drug ID
-    await userNotesDocRef.set({
-      id: notes
-    }, SetOptions(merge: true));
-  } catch (e) {
-    print("Failed to add user notes: $e");
-    rethrow; // Rethrow any errors
+  Future<void> addUserNotes(String id, String notes) async {
+    try {
+      var db = FirebaseFirestore.instance;
+      DocumentReference userNotesDocRef = db
+          .collection('users')
+          .doc(user)
+          .collection('indexes')
+          .doc('userNotesIndex');
+
+      // Use 'set' with 'merge: true' to add/update the notes for the drug ID
+      await userNotesDocRef.set({id: notes}, SetOptions(merge: true));
+    } catch (e) {
+      print("Failed to add user notes: $e");
+      rethrow; // Rethrow any errors
+    }
   }
-}
+
   Future<void> addDrug(Drug drug) async {
     var db = FirebaseFirestore.instance;
     CollectionReference drugsCollection =
@@ -183,10 +209,7 @@ Future<void> addUserNotes(String id, String notes) async {
         // If the user is an admin, add the new document's ID to the index
         if (isAdmin == true) {
           await addDrugToIndex(newDocRef.id, drug.lastUpdated!);
-        }
-
-        else if (drug.userNotes != null) {
-
+        } else if (drug.userNotes != null && drug.userNotes!.isNotEmpty && userMode == UserMode.syncedMode) {
           // If the user is not an admin, add the user notes to the user notes index
           await addUserNotes(newDocRef.id, drug.userNotes!);
         }
@@ -220,8 +243,7 @@ Future<void> addUserNotes(String id, String notes) async {
       // If the user is an admin, update the drug index with the drug's ID
       if (isAdmin == true) {
         await addDrugToIndex(drug.id!, drug.lastUpdated!);
-      }
-      else if (drug.userNotes != null) {
+      } else if (drug.userNotes != null && drug.userNotes!.isNotEmpty && userMode == UserMode.syncedMode) {
         // If the user is not an admin, add the user notes to the user notes index
         await addUserNotes(drug.id!, drug.userNotes!);
       }

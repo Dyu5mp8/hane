@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'app_theme.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -22,6 +23,7 @@ void main() async {
 
   firestore.settings = const Settings(persistenceEnabled: true, 
   cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+
 
     runApp(
     MultiProvider(
