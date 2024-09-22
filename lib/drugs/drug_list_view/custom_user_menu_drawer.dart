@@ -39,6 +39,7 @@ CustomUserMenuDrawer({Key? key, Set<String>? userDrugNames})
 
  @override 
 List<Widget> buildUserSpecificTiles(BuildContext context) {
+  var user = Provider.of<DrugListProvider>(context, listen: false).user;
     return [
    FutureBuilder<Set<String>>(
   future: Provider.of<DrugListProvider>(context).getDrugNamesFromMaster(), // Your future call
@@ -84,7 +85,7 @@ List<Widget> buildUserSpecificTiles(BuildContext context) {
   trailing: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
     future: FirebaseFirestore.instance
         .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .doc(user)
         .collection('preferences')
         .doc('preferSyncedMode')
         .get(),
@@ -105,7 +106,7 @@ List<Widget> buildUserSpecificTiles(BuildContext context) {
             // Update the preference in Firestore
             await FirebaseFirestore.instance
                 .collection('users')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .doc(user)
                 .collection('preferences')
                 .doc('preferSyncedMode')
                 .set({'preferSyncedMode': value});
