@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
-import 'package:hane/drugs/drug_list_view/menu_drawer.dart';
-import 'package:provider/provider.dart';
+import 'package:hane/login/user_status.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:hane/drugs/drug_list_view/drawers.dart';
 import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
 
 class DrugListView extends StatefulWidget {
@@ -37,6 +37,21 @@ class _DrugListViewState extends State<DrugListView> {
     });
   }
 
+  MenuDrawer buildDrawer(BuildContext context, Set<String>? userDrugNames) {
+    var userMode = Provider.of<DrugListProvider>(context).userMode;
+  switch (userMode) {
+    case UserMode.isAdmin:
+      return const AdminMenuDrawer();
+    case UserMode.syncedMode:
+      return const SyncedUserMenuDrawer();
+    case UserMode.customMode:
+      return CustomUserMenuDrawer(userDrugNames: userDrugNames);
+    default:
+      return CustomUserMenuDrawer(userDrugNames: userDrugNames);
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -58,9 +73,7 @@ class _DrugListViewState extends State<DrugListView> {
     if (drugs.isEmpty) {
       return Scaffold(
         appBar: _buildAppBar(context),
-        drawer: MenuDrawer(
-          userDrugNames: {},
-        ),
+        drawer: buildDrawer(context, drugNames),
         body: Center(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +99,7 @@ class _DrugListViewState extends State<DrugListView> {
 
     return Scaffold(
       appBar: _buildAppBar(context),
-      drawer: MenuDrawer(userDrugNames: drugNames!),
+      drawer: buildDrawer(context, drugNames),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(

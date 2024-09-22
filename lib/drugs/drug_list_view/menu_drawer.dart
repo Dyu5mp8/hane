@@ -6,18 +6,15 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/loginPage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 
+abstract class MenuDrawer extends StatelessWidget {
+  final Set<String>? userDrugNames;
+  const MenuDrawer({super.key, this.userDrugNames });
 
 
-
-
-class MenuDrawer extends StatelessWidget {
-  final Set<String> userDrugNames;
-  const MenuDrawer({super.key, this.userDrugNames = const {}});
-
-    void _onLogoutPressed(BuildContext context) {
+  // Common logout method for all users
+  void _onLogoutPressed(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
@@ -34,7 +31,6 @@ class MenuDrawer extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const LoginPage()),
-                  
                 );
                 FirebaseAuth.instance.signOut();
               },
@@ -46,109 +42,38 @@ class MenuDrawer extends StatelessWidget {
     );
   }
 
-  
-
-  Set<String> masterUserDifference(Set<String> masterList, Set<String> userList) {
-    return masterList.difference(userList);
-  }
-
-  void _onSyncPressed(BuildContext context, Set<String> difference) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return SyncDrugsDialog(difference: difference);
+  // Base drawer layout
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Provider.of<DrugListProvider>(context)
+          .getDrugNamesFromMaster()
+          .timeout(const Duration(seconds: 1)),
+      builder: (context, snapshot) {
+        return Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              const CustomDrawerHeader(),
+              buildLogoutTile(context), // Common logout tile
+              ...buildUserSpecificTiles(context), // User-specific tiles in subclasses
+            ],
+          ),
+        );
       },
     );
   }
-@override
-Widget build(BuildContext context) {
-  return FutureBuilder(
-    future: Provider.of<DrugListProvider>(context)
-        .getDrugNamesFromMaster()
-        .timeout(const Duration(seconds: 1)),
-    builder: (context, snapshot) {
-      return Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const CustomDrawerHeader(),
-            ListTile(
-              leading: Badge(
-                child: const Icon(Icons.settings),
-                label: snapshot.connectionState == ConnectionState.waiting
-                    ? const Text('...')
-                    : snapshot.hasError
-                        ? const Icon(Icons.error, color: Colors.red)
-                        : Text(masterUserDifference(snapshot.data as Set<String>, userDrugNames).length.toString()),
-              ),
-              title: const Text('Synka med stamlistan'),
-              onTap: () {
-                if (snapshot.connectionState == ConnectionState.done &&
-                    !snapshot.hasError) {
-                  _onSyncPressed(
-                    context,
-                    masterUserDifference(snapshot.data as Set<String>, userDrugNames),
-                  );
-                } else if (snapshot.hasError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: const Text('Failed to load data')),
-                  );
-                }
-              },
-            ),
-            ListTile(
-  leading: const Icon(Icons.sync),
-  title: const Text('Synced Mode'),
-  trailing: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-    future: FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('preferences')
-        .doc('preferSyncedMode')
-        .get(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(strokeWidth: 2),
-        );
-      } else if (snapshot.hasError) {
-        return const Icon(Icons.error, color: Colors.red);
-      } else {
-        bool preferSynced = snapshot.data?.data()?['preferSyncedMode'] ?? false;
-        return Switch(
-          value: preferSynced,
-          onChanged: (value) async {
-            // Update the preference in Firestore
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('preferences')
-                .doc('preferSyncedMode')
-                .set({'preferSyncedMode': value});
 
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const InitializerWidget()),
-            );
-          },
-        );
-      }
-    },
-  ),
-),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Logga ut'),
-              onTap: () {
-                _onLogoutPressed(context);
-              },
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
+  // Common logout tile for all users
+  ListTile buildLogoutTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.logout),
+      title: const Text('Logga ut'),
+      onTap: () {
+        _onLogoutPressed(context);
+      },
+    );
+  }
+  // Abstract method to be implemented in subclasses
+  List<Widget> buildUserSpecificTiles(BuildContext context);
 }

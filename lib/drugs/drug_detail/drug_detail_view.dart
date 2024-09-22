@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/indication_box.dart';
 import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/login/user_status.dart';
 
 class DrugDetailView extends StatefulWidget {
   final bool isNewDrug;
@@ -49,6 +48,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         title: Text(_editableDrug.name ?? 'Drug Details'),
         centerTitle: true,
         actions: [
+          if (_editableDrug.changedByUser)
           const EditModeButton(),
         ],
       ),
@@ -123,7 +123,7 @@ class EditModeButton extends StatelessWidget {
         return Row(
           children: [
             // Conditionally show delete button only when in edit mode
-            if (editMode && drug.changedByUser)
+            if (editMode)
               IconButton(
                 icon: const Icon(Icons.delete,
                     color: Color.fromARGB(255, 134, 9, 0)),
@@ -163,6 +163,7 @@ class EditModeButton extends StatelessWidget {
               ),
 
             // Edit/Save button
+
             IconButton(
               icon: editMode
                   ? Text(
