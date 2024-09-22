@@ -101,11 +101,11 @@ class AdminUserBehavior extends UserBehavior {
 
       if (snapshot.exists) {
         // Document exists, update it with the new ID and timestamp as a key-value pair
-        await indexDocRef.update({"drugs.$id": timestamp});
+        await indexDocRef.update({id: timestamp});
       } else {
         // Document does not exist, create it with the first key-value pair
         await indexDocRef.set({
-          "drugs": {id: timestamp}
+          id: timestamp
         });
       }
     } catch (e) {
@@ -130,7 +130,7 @@ class AdminUserBehavior extends UserBehavior {
         // Document exists, update it by removing the key-value pair for the drug ID
         print(id);
         await indexDocRef.update({
-          "drugs.$id": FieldValue
+          id: FieldValue
               .delete() // Remove the key-value pair where the key is the drug ID
         });
       } else {
