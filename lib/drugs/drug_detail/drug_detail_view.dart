@@ -174,20 +174,9 @@ class EditModeButton extends StatelessWidget {
               onPressed: () {
                 HapticFeedback.lightImpact();
                 if (editMode) {
-                  if (provider.userMode == UserMode.syncedMode &&
-                      drug.userNotes != null) {
-                    provider.addUserNotes(drug.id!, drug.userNotes!);
-                  }
 
                   provider.addDrug(Provider.of<Drug>(context, listen: false));
-                } else {
-                  if (provider.userMode == UserMode.syncedMode) {
-                    showDialog(
-                        context: context,
-                        builder: (context) =>
-                            EditNotesDialog(drug: drug, isUserNote: true));
-                  }
-                }
+                } 
 
                 editModeProvider.toggleEditMode();
               },

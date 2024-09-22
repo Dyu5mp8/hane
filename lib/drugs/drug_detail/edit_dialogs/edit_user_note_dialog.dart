@@ -4,7 +4,13 @@ import 'package:hane/drugs/models/drug.dart';
 class EditNotesDialog extends StatefulWidget {
   final Drug drug;
   final bool isUserNote;
-  const EditNotesDialog({Key? key, required this.drug, required this.isUserNote}) : super(key: key);
+  final Function()? onUserNotesSaved;
+  const EditNotesDialog(
+      {Key? key,
+      required this.drug,
+      required this.isUserNote,
+     this.onUserNotesSaved})
+      : super(key: key);
 
   @override
   _EditNotesDialogState createState() => _EditNotesDialogState();
@@ -27,7 +33,6 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
     super.dispose();
   }
 
-  
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +52,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                 onPressed: () {
                   if (widget.isUserNote) {
                     widget.drug.userNotes = _notesController.text;
+                    widget.onUserNotesSaved?.call();
                   } else {
                   widget.drug.notes = _notesController.text;
                   }

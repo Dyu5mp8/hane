@@ -13,27 +13,27 @@ class OverviewBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DrugListProvider provider = Provider.of<DrugListProvider>(context, listen: false);
-    bool shouldShowUserNotes = provider.userMode == UserMode.syncedMode;
+    Drug drug = Provider.of<Drug>(context, listen: false);
+    bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode && drug.changedByUser==false);
 
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 350),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                BasicInfoRow(),
-                NoteRow(),
-                Divider(indent: 10, endIndent: 10, thickness: 1),
-                ContraindicationRow(),
-            
-                if (shouldShowUserNotes)
-                Divider(indent: 10, endIndent: 10, thickness: 1),
-                if (shouldShowUserNotes)
-                UserNoteRow(),
-              ],
-            ),
+    return Container(
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxHeight: 350),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              BasicInfoRow(),
+              NoteRow(),
+              Divider(indent: 10, endIndent: 10, thickness: 1),
+              ContraindicationRow(),
+          
+              if (shouldShowUserNotes)
+              Divider(indent: 10, endIndent: 10, thickness: 1),
+              if (shouldShowUserNotes)
+              UserNoteRow(),
+              SizedBox(height: 10,)
+            ],
           ),
         ),
       ),
@@ -187,9 +187,6 @@ class UserNoteRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final drug =
         Provider.of<Drug>(context); // Access the drug from the Provider
-    final editMode = Provider.of<EditModeProvider>(context)
-        .editMode; // Access editMode from the Provider
-
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.all(5),
@@ -204,7 +201,11 @@ class UserNoteRow extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (context) =>
-                            EditNotesDialog(drug: drug, isUserNote: true),
+                            EditNotesDialog(drug: drug, isUserNote: true, onUserNotesSaved: () {
+                              // Update the user notes in the database
+                              Provider.of<DrugListProvider>(context, listen: false)
+                                  .addUserNotes(drug.id!, drug.userNotes ?? "");
+                            }),
                       );
                     },
                   ),

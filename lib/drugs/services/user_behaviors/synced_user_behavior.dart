@@ -12,9 +12,14 @@ class SyncedUserBehavior extends UserBehavior {
 
     Query<Map<String, dynamic>> drugsCollection =
         db.collection('users').doc(masterUID).collection('drugs');
+Query<Map<String, dynamic>> userDrugsCollection = db.collection('users').doc(user).collection('drugs');
+    
 
     Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
         drugsCollection.snapshots();
+
+    Stream<QuerySnapshot<Map<String, dynamic>>> userDrugsStream =
+        userDrugsCollection.snapshots();
 
     DocumentReference<Map<String, dynamic>> userNotesDocRef = db
         .collection('users')
@@ -26,18 +31,25 @@ class SyncedUserBehavior extends UserBehavior {
         userNotesDocRef.snapshots();
 
     // Combine both streams
-    return Rx.combineLatest2(
+    return Rx.combineLatest3(
+      userDrugsStream,
       drugsStream,
       userNotesStream,
-      (drugsSnapshot, userNotesSnapshot) {
+      (userDrugsSnapshot,drugsSnapshot, userNotesSnapshot) {
         Map<String, dynamic> userNotesIndex = {};
 
         if (userNotesSnapshot.exists) {
           userNotesIndex = userNotesSnapshot.data() ?? {};
         }
 
+        var userDrugs = userDrugsSnapshot.docs.map((doc) {
+          var drug = Drug.fromFirestore(doc.data());
+          drug.id = doc.id;
+          return drug;
+        }).toList();
+
         // Convert each document to a Drug object
-        var drugsList = drugsSnapshot.docs.map((doc) {
+        var masterDrugs = drugsSnapshot.docs.map((doc) {
           var drug = Drug.fromFirestore(doc.data());
           categories.addAll(drug.categories ?? []);
           drug.id = doc.id;
@@ -46,15 +58,15 @@ class SyncedUserBehavior extends UserBehavior {
           if (userNotesIndex.containsKey(drug.id)) {
             drug.userNotes = userNotesIndex[drug.id] as String;
           }
-          print(drug);
 
           return drug;
         }).toList();
+       var allDrugs = [...masterDrugs, ...userDrugs];
 
-        drugsList.sort(
+        allDrugs.sort(
             (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
-        return drugsList;
+        return allDrugs;
       },
     );
   }

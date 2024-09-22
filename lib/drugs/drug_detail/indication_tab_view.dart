@@ -8,6 +8,8 @@ import "package:hane/drugs/drug_detail/editable_row.dart";
 import "package:hane/drugs/drug_detail/ui_components/add_indication_button.dart";
 import "package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart";
 import "package:hane/drugs/models/drug.dart";
+import "package:hane/drugs/services/drug_list_provider.dart";
+import "package:hane/login/user_status.dart";
 
 class IndicationTabView extends StatelessWidget {
   @override
@@ -15,7 +17,7 @@ class IndicationTabView extends StatelessWidget {
     final drug = context.watch<Drug>();
     final editMode = context.watch<EditModeProvider>().editMode;
 
-    if (drug.indications == null || drug.indications!.isEmpty) {
+    if ((drug.indications == null || drug.indications!.isEmpty) && drug.changedByUser) {
   return Expanded(
     child: Center(
       child: Padding(
