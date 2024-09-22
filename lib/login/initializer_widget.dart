@@ -110,6 +110,11 @@ class InitializerWidget extends StatelessWidget {
         Provider.of<DrugListProvider>(context, listen: false);
     drugListProvider.user = userId;
     drugListProvider.setUserBehavior(userBehavior);
+    if (userBehavior is SyncedUserBehavior) {
+      drugListProvider.userMode = UserMode.syncedMode;
+    } else if (userBehavior is AdminUserBehavior) {
+      drugListProvider.userMode = UserMode.isAdmin;
+    }
     return const DrugListWrapper();
   }
 
@@ -120,6 +125,7 @@ class InitializerWidget extends StatelessWidget {
         Provider.of<DrugListProvider>(context, listen: false);
     drugListProvider.user = userId;
     drugListProvider.setUserBehavior(behavior);
+    drugListProvider.userMode = UserMode.customMode;
 
     var dataStatus = await drugListProvider.getDataStatus();
 

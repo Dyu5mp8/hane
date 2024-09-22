@@ -3,27 +3,37 @@ import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/drug_detail/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:hane/login/user_status.dart';
+
 
 class OverviewBox extends StatelessWidget {
   const OverviewBox({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 350),
-        child: const SingleChildScrollView(
-          child: Column(
-            children: [
-              BasicInfoRow(),
-              NoteRow(),
-              Divider(indent: 10, endIndent: 10, thickness: 1),
-              ContraindicationRow(),
-              // Divider(indent: 10, endIndent: 10, thickness: 1),
-              // UserNoteRow(),
-              // SizedBox(height: 20),
-            ],
+    DrugListProvider provider = Provider.of<DrugListProvider>(context, listen: false);
+    bool shouldShowUserNotes = provider.userMode == UserMode.syncedMode;
+
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 350),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                BasicInfoRow(),
+                NoteRow(),
+                Divider(indent: 10, endIndent: 10, thickness: 1),
+                ContraindicationRow(),
+            
+                if (shouldShowUserNotes)
+                Divider(indent: 10, endIndent: 10, thickness: 1),
+                if (shouldShowUserNotes)
+                UserNoteRow(),
+              ],
+            ),
           ),
         ),
       ),
@@ -60,11 +70,10 @@ class BasicInfoRow extends StatelessWidget {
                         .toList(),
                   ),
                 EditableRow(
-                  text: drug.name!,
-                  editDialog: EditNameDialog(drug: drug),
-                  isEditMode: editMode,
-                  textStyle: Theme.of(context).textTheme.headlineLarge
-                ),
+                    text: drug.name!,
+                    editDialog: EditNameDialog(drug: drug),
+                    isEditMode: editMode,
+                    textStyle: Theme.of(context).textTheme.headlineLarge),
                 if (drug.brandNames != null)
                   Flexible(
                     child: Text(
@@ -169,8 +178,7 @@ class ContraindicationRow extends StatelessWidget {
       ),
     );
   }
-} 
-
+}
 
 class UserNoteRow extends StatelessWidget {
   const UserNoteRow({Key? key}) : super(key: key);
@@ -184,21 +192,30 @@ class UserNoteRow extends StatelessWidget {
 
     return Container(
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          const Icon(Icons.notes),
-          const SizedBox(width: 10),
-          Flexible(
-            child: EditableRow(
-              editDialog: EditNotesDialog(drug: drug, isUserNote: true),
-              isEditMode: editMode,
-              text: drug.userNotes,
-              textStyle: const TextStyle(fontSize: 14),
-            ),
-          )
-        ],
-      ),
+      padding: const EdgeInsets.all(5),
+      child: Row(children: [
+       Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+           IconButton(
+               
+               icon: Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) =>
+                            EditNotesDialog(drug: drug, isUserNote: true),
+                      );
+                    },
+                  ),
+
+         ],
+       ),
+            
+
+        const SizedBox(width: 10),
+        Flexible(fit: FlexFit.loose, child: Text(drug.userNotes ?? "")),
+      ]),
     );
   }
 }

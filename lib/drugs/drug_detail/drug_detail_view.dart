@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/indication_box.dart';
 import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:hane/login/user_status.dart';
 
 class DrugDetailView extends StatefulWidget {
   final bool isNewDrug;
@@ -52,7 +53,10 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         ],
       ),
       body: const Column(
-        children: <Widget>[OverviewBox(), IndicationBox()],
+        children: <Widget>[
+          OverviewBox(), 
+          IndicationBox()
+          ],
       ),
     );
   }
@@ -110,6 +114,8 @@ class EditModeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Drug drug = Provider.of<Drug>(context, listen: false);
+    DrugListProvider provider =
+        Provider.of<DrugListProvider>(context, listen: false);
     return Consumer<EditModeProvider>(
       builder: (context, editModeProvider, child) {
         var editMode = editModeProvider.editMode;
@@ -117,7 +123,7 @@ class EditModeButton extends StatelessWidget {
         return Row(
           children: [
             // Conditionally show delete button only when in edit mode
-            if (editMode)
+            if (editMode && drug.changedByUser)
               IconButton(
                 icon: const Icon(Icons.delete,
                     color: Color.fromARGB(255, 134, 9, 0)),
@@ -155,6 +161,7 @@ class EditModeButton extends StatelessWidget {
                   );
                 },
               ),
+
             // Edit/Save button
             IconButton(
               icon: editMode
@@ -167,9 +174,21 @@ class EditModeButton extends StatelessWidget {
               onPressed: () {
                 HapticFeedback.lightImpact();
                 if (editMode) {
-                  Provider.of<DrugListProvider>(context, listen: false)
-                      .addDrug(Provider.of<Drug>(context, listen: false));
+                  if (provider.userMode == UserMode.syncedMode &&
+                      drug.userNotes != null) {
+                    provider.addUserNotes(drug.id!, drug.userNotes!);
+                  }
+
+                  provider.addDrug(Provider.of<Drug>(context, listen: false));
+                } else {
+                  if (provider.userMode == UserMode.syncedMode) {
+                    showDialog(
+                        context: context,
+                        builder: (context) =>
+                            EditNotesDialog(drug: drug, isUserNote: true));
+                  }
                 }
+
                 editModeProvider.toggleEditMode();
               },
             ),
