@@ -33,6 +33,8 @@ class CustomUserBehavior extends UserBehavior {
     var db = FirebaseFirestore.instance;
     CollectionReference drugsCollection =
         db.collection('users').doc(user).collection('drugs');
+    DocumentReference indexDocRef =
+        db.collection('users').doc(user).collection('indexes').doc("drugIndex");
 
     try {
       // Mark the drug as changed by the user if not an admin and update the timestamp
@@ -46,12 +48,18 @@ class CustomUserBehavior extends UserBehavior {
 
         // Save the new drug document to Firestore
         await newDocRef.set(drug.toJson());
+        indexDocRef.set({
+          newDocRef.id : drug.lastUpdated
+        }, SetOptions(merge: true));
         return; // Exit early as we are done adding the new drug
       }
       // If the existing drug is different, update it by merging the changes
       await drugsCollection
           .doc(drug.id)
           .set(drug.toJson(), SetOptions(merge: true));
+       indexDocRef.set({
+          drug.id : drug.lastUpdated
+        }, SetOptions(merge: true));
     } catch (e) {
       print("Failed to add drug: $e");
       rethrow; // Rethrow the error to handle it further up the call stack
@@ -103,32 +111,66 @@ class CustomUserBehavior extends UserBehavior {
       rethrow;
     }
   }
+Future<Set<String>> getDrugNamesFromMaster({String masterUser = 'master'}) async {
+  try {
+    var db = FirebaseFirestore.instance;
+    
+    // Fetch the master drug index
+    DocumentSnapshot indexSnapshot = await db
+        .collection('users')
+        .doc(masterUser)
+        .collection('indexes')
+        .doc('drugIndex')
+        .get();
 
-  Future<Set<String>> getDrugNamesFromMaster(
-      {String masterUser = 'master'}) async {
-    try {
-      var db = FirebaseFirestore.instance;
-      DocumentSnapshot indexSnapshot = await db
-          .collection('users')
-          .doc(masterUser)
-          .collection('indexes')
-          .doc('drugIndex')
-          .get();
+    // Fetch the user drug index
+    DocumentSnapshot userIndexSnapshot = await db
+        .collection('users')
+        .doc(user)
+        .collection('indexes')
+        .doc('drugIndex')
+        .get();
 
-      if (indexSnapshot.exists) {
-        // Document exists, retrieve the drug names
-        List<dynamic> drugNames = indexSnapshot.get('drugs');
-        return Set<String>.from(drugNames);
-      } else {
-        // Document does not exist, return an empty list
-        return {};
-      }
-    } catch (e) {
-      print("Failed to retrieve drug names: $e");
-      rethrow;
+    if (indexSnapshot.exists) {
+      // Retrieve the master and user drug maps (key: drug name, value: timestamp)
+      Map<String, dynamic> masterDrugIndex = indexSnapshot.get('drugs') as Map<String, dynamic>;
+      Map<String, dynamic> userDrugIndex = userIndexSnapshot.exists
+          ? userIndexSnapshot.data() as Map<String, dynamic>
+          : {};
+
+      // Convert master and user drug indexes to Map<String, Timestamp>
+      Map<String, Timestamp> masterDrugTimestamps = masterDrugIndex.map(
+        (key, value) => MapEntry(key, value as Timestamp),
+      );
+      Map<String, Timestamp> userDrugTimestamps = userDrugIndex.map(
+        (key, value) => MapEntry(key, value as Timestamp),
+      );
+
+      // Create a set of keys where the master drug is updated later than the user drug
+      Set<String> updatedDrugs = masterDrugTimestamps.keys.where((key) {
+        // Get the master and user timestamps
+        Timestamp? masterTimestamp = masterDrugTimestamps[key];
+        Timestamp? userTimestamp = userDrugTimestamps[key];
+
+        // Check if masterTimestamp is null, if so ignore this entry
+        if (masterTimestamp == null) {
+          return false; // Skip this entry if master timestamp is null
+        }
+
+        // Include the drug if the user timestamp is missing or if the master drug is updated later
+        return userTimestamp == null || masterTimestamp.compareTo(userTimestamp) > 0;
+      }).toSet();
+
+      return updatedDrugs;
+    } else {
+      // Master drug index does not exist, return an empty set
+      return {};
     }
+  } catch (e) {
+    print("Failed to retrieve drug names: $e");
+    rethrow;
   }
-
+}
   Future<void> addDrugsFromMaster(List<String> drugNames) async {
     CollectionReference masterDrugsCollection = FirebaseFirestore.instance
         .collection('users')
