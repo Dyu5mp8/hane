@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/login/user_status.dart';
@@ -9,20 +11,36 @@ import 'package:rxdart/rxdart.dart';
 
 
 class DrugListProvider with ChangeNotifier {
-  String masterUID = "master";  
-  String? user;
-  UserMode? userMode;
+  String _masterUID = "master";  
+  String? _user;
+  UserMode? _userMode;
   Set<dynamic> categories = {};
+  UserBehavior? userBehavior;
 
-  DrugListProvider({this.user, this.userMode});
+  DrugListProvider({this.userBehavior});
 
-  void setUserData({String? user, UserMode? userMode}) {
-    if (user != null) {
-      this.user = user;
-    }
-    if (userMode != null) {
-      this.userMode = userMode;
-    }
+  String get masterUID => _masterUID;
+
+  set masterUID(String value) {
+    _masterUID = value;
+    userBehavior!.masterUID = value;
+  }
+
+
+  String? get user => _user;
+  set user(String? value) {
+    _user = value;
+
+  }
+
+  UserMode? get userMode => _userMode;
+  set userMode(UserMode? value) {
+    _userMode = value;
+  }
+
+
+ void setUserBehavior(UserBehavior userBehavior) {
+    this.userBehavior = userBehavior;
   }
 
   bool get isAdmin => userMode == UserMode.isAdmin;
@@ -32,6 +50,7 @@ class DrugListProvider with ChangeNotifier {
     categories.clear();
     user = null;
     userMode = null;
+    userBehavior = null;
     
   }
 
@@ -42,313 +61,68 @@ class DrugListProvider with ChangeNotifier {
   }
 
   Stream<List<Drug>> getDrugsStream() {
-    var db = FirebaseFirestore.instance;
-    String dataUserId;
-
-    if (userMode == UserMode.isAdmin || userMode == UserMode.syncedMode) {
-      dataUserId = 'master'; // Admin and synced users read from master data
-    } else {
-      dataUserId = user!; // Custom users read from their own data
-    }
-
-    Query<Map<String, dynamic>> drugsCollection =
-        db.collection('users').doc(dataUserId).collection('drugs');
-
-    Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
-        drugsCollection.snapshots();
-
-    if (userMode == UserMode.syncedMode) {
-      // Stream for the user's custom notes
-      DocumentReference<Map<String, dynamic>> userNotesDocRef = db
-          .collection('users')
-          .doc(user)
-          .collection('indexes')
-          .doc('userNotesIndex');
-
-      Stream<DocumentSnapshot<Map<String, dynamic>>> userNotesStream =
-          userNotesDocRef.snapshots();
-
-      // Combine both streams
-      return Rx.combineLatest2(
-        drugsStream,
-        userNotesStream,
-        (drugsSnapshot, userNotesSnapshot) {
-          Map<String, dynamic> userNotesIndex = {};
-
-          if (userNotesSnapshot.exists) {
-            userNotesIndex = userNotesSnapshot.data() ?? {};
-          }
-
-          // Convert each document to a Drug object
-          var drugsList = drugsSnapshot.docs.map((doc) {
-            var drug = Drug.fromFirestore(doc.data());
-            categories.addAll(drug.categories ?? []);
-            drug.id = doc.id;
-
-            // Set the userNotes from userNotesIndex
-            if (userNotesIndex.containsKey(drug.id)) {
-              drug.userNotes = userNotesIndex[drug.id] as String;
-            }
-
-            return drug;
-          }).toList();
-
-          drugsList.sort(
-              (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
-
-          return drugsList;
-        },
-      );
-    } else {
-      // For admin and synced users, return the drugsStream directly
-      return drugsStream.map((drugsSnapshot) {
-        var drugsList = drugsSnapshot.docs.map((doc) {
-          var drug = Drug.fromFirestore(doc.data());
-          categories.addAll(drug.categories ?? []);
-          drug.id = doc.id;
-          return drug;
-        }).toList();
-
-        drugsList.sort(
-            (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
-
-        return drugsList;
-      });
-    }
-  }
-  Future<void> addDrugToIndex(String id, Timestamp timestamp) async {
-    try {
-      var db = FirebaseFirestore.instance;
-      DocumentReference indexDocRef = db
-          .collection('users')
-          .doc(user)
-          .collection('indexes')
-          .doc('drugIndex');
-
-      // Check if the document exists
-      DocumentSnapshot snapshot = await indexDocRef.get();
-
-      if (snapshot.exists) {
-        // Document exists, update it with the new ID and timestamp as a key-value pair
-        await indexDocRef.update({"drugs.$id": timestamp});
-      } else {
-        // Document does not exist, create it with the first key-value pair
-        await indexDocRef.set({
-          "drugs": {id: timestamp}
-        });
-      }
-    } catch (e) {
-      print("Failed to add drug ID and timestamp to index: $e");
-      rethrow;
-    }
-  }
-
-  Future<void> removeDrugFromIndex(String id) async {
-    try {
-      var db = FirebaseFirestore.instance;
-      DocumentReference indexDocRef = db
-          .collection('users')
-          .doc(user)
-          .collection('indexes')
-          .doc('drugIndex');
-
-      // Check if the document exists
-      DocumentSnapshot snapshot = await indexDocRef.get();
-
-      if (snapshot.exists) {
-        // Document exists, update it by removing the key-value pair for the drug ID
-        print(id);
-        await indexDocRef.update({
-          "drugs.$id": FieldValue
-              .delete() // Remove the key-value pair where the key is the drug ID
-        });
-      } else {
-        print("Index document does not exist. No need to remove.");
-      }
-    } catch (e) {
-      print("Failed to remove drug ID from index: $e");
-      rethrow;
-    }
+    return userBehavior!.getDrugsStream();
   }
 
   Future<void> addUserNotes(String id, String notes) async {
-    try {
-      var db = FirebaseFirestore.instance;
-      DocumentReference userNotesDocRef = db
-          .collection('users')
-          .doc(user)
-          .collection('indexes')
-          .doc('userNotesIndex');
-
-      // Use 'set' with 'merge: true' to add/update the notes for the drug ID
-      await userNotesDocRef.set({id: notes}, SetOptions(merge: true));
-    } catch (e) {
-      print("Failed to add user notes: $e");
-      rethrow; // Rethrow any errors
+    if (userBehavior is SyncedUserBehavior) {
+      await (userBehavior as SyncedUserBehavior).addUserNotes(id, notes);
     }
+    else {
+      throw Exception("User notes are not supported for this user mode.");
+    }
+    
   }
 
   Future<void> addDrug(Drug drug) async {
-    var db = FirebaseFirestore.instance;
-    CollectionReference drugsCollection =
-        db.collection('users').doc(user).collection('drugs');
-
-    try {
-      // Mark the drug as changed by the user if not an admin and update the timestamp
-      drug.changedByUser = !(isAdmin ?? false);
-      drug.lastUpdated = Timestamp.now();
-
-      // Check if the drug is new (i.e., it has no ID)
-      if (drug.id == null) {
-        // Generate a new document reference with an auto-generated ID
-        DocumentReference newDocRef = drugsCollection.doc();
-
-        // Save the new drug document to Firestore
-        await newDocRef.set(drug.toJson());
-
-        // If the user is an admin, add the new document's ID to the index
-        if (isAdmin == true) {
-          await addDrugToIndex(newDocRef.id, drug.lastUpdated!);
-        } else if (drug.userNotes != null && drug.userNotes!.isNotEmpty && userMode == UserMode.syncedMode) {
-          // If the user is not an admin, add the user notes to the user notes index
-          await addUserNotes(newDocRef.id, drug.userNotes!);
-        }
-
-        return; // Exit early as we are done adding the new drug
-      }
-
-      // If the drug already has an ID, check if the document exists in Firestore
-      DocumentSnapshot existingDrugSnapshot =
-          await drugsCollection.doc(drug.id).get();
-
-      if (existingDrugSnapshot.exists) {
-        // If the document exists, convert it to a Drug object
-        Drug existingDrug = Drug.fromFirestore(
-            existingDrugSnapshot.data() as Map<String, dynamic>);
-
-        // If the existing drug is identical to the one being added, no further action is needed
-        if (existingDrug == drug) {
-          return; // Exit early as there's no need to update
-        }
-
-        // If the existing drug is different, update it by merging the changes
-        await drugsCollection
-            .doc(drug.id)
-            .set(drug.toJson(), SetOptions(merge: true));
-      } else {
-        // If the document doesn't exist, create it using the provided ID
-        await drugsCollection.doc(drug.id).set(drug.toJson());
-      }
-
-      // If the user is an admin, update the drug index with the drug's ID
-      if (isAdmin == true) {
-        await addDrugToIndex(drug.id!, drug.lastUpdated!);
-      } else if (drug.userNotes != null && drug.userNotes!.isNotEmpty && userMode == UserMode.syncedMode) {
-        // If the user is not an admin, add the user notes to the user notes index
-        await addUserNotes(drug.id!, drug.userNotes!);
-      }
-    } catch (e) {
-      print("Failed to add drug: $e");
-      rethrow; // Rethrow the error to handle it further up the call stack
-    }
+    await userBehavior!.addDrug(drug);
   }
 
-  Future<void> deleteDrug(Drug drug) async {
-    try {
-      var db = FirebaseFirestore.instance;
-      CollectionReference drugsCollection =
-          db.collection('users').doc(user).collection('drugs');
-      if (drug.id != null) {
-        await drugsCollection.doc(drug.id).delete();
+ 
 
-        if (isAdmin == true) {
-          await removeDrugFromIndex(drug.id!);
-        }
-      }
-    } catch (e) {
-      print("Failed to delete drug: $e");
-      rethrow;
-    }
+  Future<void> deleteDrug(Drug drug) async {
+    await userBehavior!.deleteDrug(drug);
   }
 
   Future<void> copyMasterToUser() async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
-
-    CollectionReference<Map<String, dynamic>> masterDrugsCollection =
-        db.collection("users").doc(masterUID).collection("drugs");
-
-    CollectionReference<Map<String, dynamic>> userDrugsCollection =
-        db.collection("users").doc(user).collection("drugs");
-
-    try {
-      var userSnapshot = await userDrugsCollection.limit(1).get();
-      if (userSnapshot.docs.isNotEmpty) {
-        throw Exception("User already has drugs. Cannot copy master drugs.");
-      }
-
-      WriteBatch batch = db.batch();
-      QuerySnapshot<Map<String, dynamic>> masterSnapshot =
-          await masterDrugsCollection.get();
-
-      for (var doc in masterSnapshot.docs) {
-        DocumentReference userDocRef = userDrugsCollection.doc(doc.id);
-        batch.set(userDocRef, doc.data());
-      }
-
-      await batch.commit();
-    } catch (e) {
-      print("Failed to copy master drugs to user: $e");
-      rethrow;
+    if (userBehavior is CustomUserBehavior) {
+      await (userBehavior as CustomUserBehavior).copyMasterToUser();
+    }
+    else {
+      throw Exception("Copying master drugs is not supported for this user mode.");
     }
   }
 
-  Future<Set<String>> getDrugNamesFromMaster(
-      {String masterUser = 'master'}) async {
-    try {
-      var db = FirebaseFirestore.instance;
-      DocumentSnapshot indexSnapshot = await db
-          .collection('users')
-          .doc(masterUser)
-          .collection('indexes')
-          .doc('drugIndex')
-          .get();
-
-      if (indexSnapshot.exists) {
-        // Document exists, retrieve the drug names
-        List<dynamic> drugNames = indexSnapshot.get('drugs');
-        return Set<String>.from(drugNames);
-      } else {
-        // Document does not exist, return an empty list
-        return {};
-      }
-    } catch (e) {
-      print("Failed to retrieve drug names: $e");
-      rethrow;
+  Future<Set<String>> getDrugNamesFromMaster() async {
+    if (userBehavior is CustomUserBehavior) {
+      return (userBehavior as CustomUserBehavior).getDrugNamesFromMaster();
     }
+    else {
+      throw Exception("Getting drug names from master is not supported for this user mode.");
+    }
+
+
+
+   
   }
 
   Future<void> addDrugsFromMaster(List<String> drugNames) async {
-    CollectionReference masterDrugsCollection = FirebaseFirestore.instance
-        .collection('users')
-        .doc('master')
-        .collection('drugs');
-
-    try {
-      // Await the snapshot
-      final snapshot =
-          await masterDrugsCollection.where('name', whereIn: drugNames).get();
-
-      // Convert the documents into a list of Drug objects
-      final List<Drug> drugs = snapshot.docs
-          .map((doc) => Drug.fromFirestore(doc.data() as Map<String, dynamic>))
-          .toList();
-
-      for (var drug in drugs) {
-        await addDrug(drug);
-      }
-    } catch (e) {
-      print("Failed to add drugs from master: $e");
-      rethrow;
+    if (userBehavior is CustomUserBehavior) {
+      await (userBehavior as CustomUserBehavior).addDrugsFromMaster(drugNames);
+    }
+    else {
+      throw Exception("Adding drugs from master is not supported for this user mode.");
     }
   }
+
+  Future<bool> getDataStatus () async {
+    if (userBehavior is CustomUserBehavior) {
+     return await (userBehavior as CustomUserBehavior).getDataStatus();
+    }
+    else {
+      throw Exception("Getting data status is not supported for this user mode.");
+    }
+  }
+
+
 }

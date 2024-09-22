@@ -128,7 +128,6 @@ Widget build(BuildContext context) {
                 .doc('preferSyncedMode')
                 .set({'preferSyncedMode': value});
 
-            // Re-initialize the app after setting preference
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const InitializerWidget()),
