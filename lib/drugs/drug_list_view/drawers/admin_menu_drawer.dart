@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 
-import 'package:hane/drugs/drug_list_view/menu_drawer.dart';
+import 'package:hane/drugs/drug_list_view/drawers/menu_drawer.dart';
 import 'package:hane/drugs/ui_components/custom_drawer_header.dart';
 
 import 'package:provider/provider.dart';

@@ -5,7 +5,7 @@ import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/drugs/drug_list_view/drawers.dart';
+import 'package:hane/drugs/drug_list_view/drawers/drawers.dart';
 import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
 
 class DrugListView extends StatefulWidget {

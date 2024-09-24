@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'loginPage.dart';
-import 'Widget/bezierContainer.dart';
+import 'login_background/bezierContainer.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, this.title});
@@ -19,6 +19,9 @@ class _SignUpPageState extends State<SignUpPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String? errorMessage;
+
+  
 
   Widget _backButton() {
     return InkWell(
@@ -39,6 +42,16 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  void showErrorMessage(String message) async {
+    setState(() {
+      errorMessage = message;
+    });
+    await Future.delayed(const Duration(seconds: 3));
+    setState(() {
+      errorMessage = null;
+    });
   }
 
   Widget _entryField(String title, TextEditingController controller,
@@ -76,28 +89,42 @@ class _SignUpPageState extends State<SignUpPage> {
       MaterialPageRoute(builder: (context) => const InitializerWidget(firstLogin: true,)),
     );
   }
-
-  void _onFailedRegistration() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Av någon anledning kunde vi inte registrera dig."),
-    ));
+void _onFailedRegistration(FirebaseAuthException e) {
+  String message;
+  if (e.code == 'email-already-in-use') {
+    message = 'E-postadressen är redan registrerad.';
+  } else if (e.code == 'weak-password') {
+    message = 'Lösenordet är för svagt.';
+  } else if (e.code == 'invalid-email') {
+    message = 'E-postadressen är ogiltig.';
   }
+    else if (e.code == 'invalid-password') {
+    message = 'Lösenordet får inte vara tomt.';
+  } else {
+    message = 'Registreringen misslyckades: ${e.message}';
+  }
+  setState(() {
+    showErrorMessage(message);
+  });
+
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
 
   Widget _submitButton() {
     return InkWell(
-      onTap: () async {
-        try {
-          await _auth.createUserWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
-          await _auth.currentUser!.sendEmailVerification();
-          _onSuccessfulRegistration();
-
-        } catch (e) {
-          _onFailedRegistration();
-        }
-      },
+     // In your onTap:
+onTap: () async {
+  try {
+    await _auth.createUserWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+    await _auth.currentUser!.sendEmailVerification();
+    _onSuccessfulRegistration();
+  } on FirebaseAuthException catch (e) {
+    _onFailedRegistration(e);
+  } 
+},
       child: Container(
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.symmetric(vertical: 15),
@@ -190,8 +217,15 @@ class _SignUpPageState extends State<SignUpPage> {
                     _emailPasswordWidget(),
                     const SizedBox(height: 20),
                     _submitButton(),
+                         SizedBox(height: 20),
+                    if (errorMessage != null)
+                      Text(
+                        errorMessage!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
                     SizedBox(height: height * .14),
                     _loginAccountLabel(),
+               
                   ],
                 ),
               ),

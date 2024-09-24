@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/indication_box.dart';
 import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:hane/login/user_status.dart';
 
 class DrugDetailView extends StatefulWidget {
   final bool isNewDrug;
@@ -48,7 +49,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         title: Text(_editableDrug.name ?? 'Drug Details'),
         centerTitle: true,
         actions: [
-          if (_editableDrug.changedByUser)
+          if (_editableDrug.changedByUser || Provider.of<DrugListProvider>(context, listen: false).userMode == UserMode.isAdmin)
           const EditModeButton(),
         ],
       ),
@@ -63,7 +64,6 @@ class _DrugDetailViewState extends State<DrugDetailView> {
 }
 
 class BackButton extends StatelessWidget {
-  // final Function() onPress;
   const BackButton({super.key});
   @override
   Widget build(BuildContext context) {

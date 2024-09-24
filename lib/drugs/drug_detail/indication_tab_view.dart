@@ -4,7 +4,7 @@ import "package:flutter/material.dart";
 import "package:hane/drugs/drug_detail/dosageViewHandler.dart";
 import "package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart";
 import "package:hane/drugs/drug_detail/edit_mode_provider.dart";
-import "package:hane/drugs/drug_detail/editable_row.dart";
+import "package:hane/drugs/drug_detail/ui_components/editable_row.dart";
 import "package:hane/drugs/drug_detail/ui_components/add_indication_button.dart";
 import "package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart";
 import "package:hane/drugs/models/drug.dart";

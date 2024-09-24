@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'signup.dart';
-import 'Widget/bezierContainer.dart';
+import 'login_background/bezierContainer.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, this.title, this.emailNotVerified}) : super(key: key);

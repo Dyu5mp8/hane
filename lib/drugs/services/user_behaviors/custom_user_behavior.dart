@@ -79,37 +79,41 @@ class CustomUserBehavior extends UserBehavior {
       rethrow;
     }
   }
+Future<void> copyMasterToUser() async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<void> copyMasterToUser() async {
-    FirebaseFirestore db = FirebaseFirestore.instance;
+  CollectionReference<Map<String, dynamic>> masterDrugsCollection =
+      db.collection("users").doc(masterUID).collection("drugs");
 
-    CollectionReference<Map<String, dynamic>> masterDrugsCollection =
-        db.collection("users").doc(masterUID).collection("drugs");
+  CollectionReference<Map<String, dynamic>> userDrugsCollection =
+      db.collection("users").doc(user).collection("drugs");
 
-    CollectionReference<Map<String, dynamic>> userDrugsCollection =
-        db.collection("users").doc(user).collection("drugs");
-
-    try {
-      var userSnapshot = await userDrugsCollection.limit(1).get();
-      if (userSnapshot.docs.isNotEmpty) {
-        throw Exception("User already has drugs. Cannot copy master drugs.");
-      }
-
-      WriteBatch batch = db.batch();
-      QuerySnapshot<Map<String, dynamic>> masterSnapshot =
-          await masterDrugsCollection.get();
-
-      for (var doc in masterSnapshot.docs) {
-        DocumentReference userDocRef = userDrugsCollection.doc(doc.id);
-        batch.set(userDocRef, doc.data());
-      }
-
-      await batch.commit();
-    } catch (e) {
-      print("Failed to copy master drugs to user: $e");
-      rethrow;
+  try {
+    var userSnapshot = await userDrugsCollection.limit(1).get();
+    if (userSnapshot.docs.isNotEmpty) {
+      throw Exception("User already has drugs. Cannot copy master drugs.");
     }
+
+    WriteBatch batch = db.batch();
+    QuerySnapshot<Map<String, dynamic>> masterSnapshot =
+        await masterDrugsCollection.get();
+
+    for (var doc in masterSnapshot.docs) {
+      DocumentReference userDocRef = userDrugsCollection.doc(doc.id);
+
+      // Copy the data and modify the `changedByUser` field
+      Map<String, dynamic> drugData = doc.data();
+      drugData['changedByUser'] = true;
+
+      batch.set(userDocRef, drugData);
+    }
+
+    await batch.commit();
+  } catch (e) {
+    print("Failed to copy master drugs to user: $e");
+    rethrow;
   }
+}
 Future<Set<String>> getDrugNamesFromMaster({String masterUser = 'master'}) async {
   try {
     var db = FirebaseFirestore.instance;
