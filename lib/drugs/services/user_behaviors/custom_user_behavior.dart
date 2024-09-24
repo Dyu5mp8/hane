@@ -57,7 +57,7 @@ class CustomUserBehavior extends UserBehavior {
           .doc(drug.id)
           .set(drug.toJson(), SetOptions(merge: true));
        indexDocRef.set({
-          drug.id : drug.lastUpdated
+          drug.id! : drug.lastUpdated
         }, SetOptions(merge: true));
     } catch (e) {
       print("Failed to add drug: $e");

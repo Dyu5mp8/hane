@@ -25,7 +25,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   late TextEditingController doseAmountController;
   late TextEditingController lowerLimitDoseAmountController;
   late TextEditingController higherLimitDoseAmountController;
-  // Removed maxDoseamountController since we're not focusing on it now
 
   String? selectedNumeratorUnit;
   String? selectedDenominatorUnit1;
@@ -36,6 +35,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   List<String> denominatorUnits2 = [];
 
   Map<String, String> unitDisplayMap = {};
+
+  String? errorMessage; // Variable to hold error message
 
   @override
   void initState() {
@@ -50,13 +51,13 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
         text: widget.dosage.lowerLimitDose?.amount.toString() ?? "");
     higherLimitDoseAmountController = TextEditingController(
         text: widget.dosage.higherLimitDose?.amount.toString() ?? "");
-    // Removed maxDoseamountController initialization
 
     // Populate units lists using UnitValidator
     numeratorUnits = ['-']; // Placeholder and default selection
     numeratorUnits.addAll(UnitValidator.validSubstanceUnits().keys);
 
     denominatorUnits1 = ['-', 'kg']; // Placeholder and default selection
+
 
     denominatorUnits2 = ['-']; // Placeholder and default selection
     denominatorUnits2.addAll(UnitValidator.validTimeUnits().keys);
@@ -127,18 +128,45 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   }
 
   void _saveForm() {
+    setState(() {
+      errorMessage = null; // Reset error message
+    });
+
     // Validation logic
     bool isDoseAmountFilled = doseAmountController.text.isNotEmpty;
     bool isFromAndToFilled = lowerLimitDoseAmountController.text.isNotEmpty &&
         higherLimitDoseAmountController.text.isNotEmpty;
+
     if (!isDoseAmountFilled && !isFromAndToFilled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              Text('Du måste fylla i antingen dos eller från och till doser.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      setState(() {
+        errorMessage =
+            'Du måste fylla i antingen dos eller både från och till doser.';
+      });
+      return;
+    }
+
+    if (isFromAndToFilled) {
+      double? lowerLimit = double.tryParse(lowerLimitDoseAmountController.text);
+      double? higherLimit =
+          double.tryParse(higherLimitDoseAmountController.text);
+      if (lowerLimit == null || higherLimit == null) {
+        setState(() {
+          errorMessage = 'Från och till doserna måste vara giltiga nummer.';
+        });
+        return;
+      }
+      if (lowerLimit > higherLimit) {
+        setState(() {
+          errorMessage = 'Från dosen kan inte vara större än till dosen.';
+        });
+        return;
+      }
+    }
+
+    if (selectedNumeratorUnit == null || selectedNumeratorUnit == '-') {
+      setState(() {
+        errorMessage = 'Du måste välja en primär enhet för doseringen.';
+      });
       return;
     }
 
@@ -148,7 +176,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       dose: _createDose(doseAmountController.text),
       lowerLimitDose: _createDose(lowerLimitDoseAmountController.text),
       higherLimitDose: _createDose(higherLimitDoseAmountController.text),
-      // maxDose: _createDose(maxDoseamountController.text), // Ignored as per instruction
     );
 
     // Pass updated dosage back to the parent via the onSave callback
@@ -212,14 +239,11 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                     _labelChip("PO",
                         icon: const Icon(FontAwesome.pills_solid, size: 11)),
                     _labelChip("IV",
-                        icon:
-                            const Icon(FontAwesome.syringe_solid, size: 11)),
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
                     _labelChip("IM",
-                        icon:
-                            const Icon(FontAwesome.syringe_solid, size: 11)),
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
                     _labelChip("SC",
-                        icon:
-                            const Icon(FontAwesome.syringe_solid, size: 11)),
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
                     _labelChip("Inh",
                         icon: const Icon(FontAwesome.lungs_solid, size: 11)),
                     _labelChip("Annat"),
@@ -275,8 +299,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                               selectedNumeratorUnit = newValue;
                             });
                           },
-                          // Remove animation
-                          dropdownColor: Theme.of(context).cardColor,
+                
                           menuMaxHeight: 300,
                         ),
                       ),
@@ -310,8 +333,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                               selectedDenominatorUnit1 = newValue;
                             });
                           },
-                          // Remove animation
-                      
+                         
                           menuMaxHeight: 300,
                         ),
                       ),
@@ -345,8 +367,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                               selectedDenominatorUnit2 = newValue;
                             });
                           },
-                          // Remove animation
-                        
+          
                           menuMaxHeight: 300,
                         ),
                       ),
@@ -369,6 +390,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
                         buildCounter: (context,
                                 {required int currentLength,
                                 required bool isFocused,
@@ -388,6 +411,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
                         buildCounter: (context,
                                 {required int currentLength,
                                 required bool isFocused,
@@ -407,6 +432,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
                         buildCounter: (context,
                                 {required int currentLength,
                                 required bool isFocused,
@@ -416,10 +443,16 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                     ),
                     const SizedBox(width: 8),
                     Text(") ${getUnitString()}",
-                        style: TextStyle(fontSize: 18)),
+                        style: TextStyle(fontSize: 15)),
                   ],
                 ),
-                // Removed Max Dose section as per instruction
+                if (errorMessage != null) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    errorMessage!,
+                    style: TextStyle(color: Color.fromARGB(255, 127, 11, 0)),
+                  ),
+                ],
               ],
             ),
           ),
