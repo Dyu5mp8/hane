@@ -26,9 +26,9 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   late TextEditingController lowerLimitDoseAmountController;
   late TextEditingController higherLimitDoseAmountController;
 
-  String? selectedNumeratorUnit;
-  String? selectedDenominatorUnit1;
-  String? selectedDenominatorUnit2;
+  late String selectedNumeratorUnit;
+  late String selectedDenominatorUnit1;
+  late String selectedDenominatorUnit2;
 
   List<String> numeratorUnits = [];
   List<String> denominatorUnits1 = [];
@@ -53,14 +53,16 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
         text: widget.dosage.higherLimitDose?.amount.toString() ?? "");
 
     // Populate units lists using UnitValidator
-    numeratorUnits = ['-']; // Placeholder and default selection
-    numeratorUnits.addAll(UnitValidator.validSubstanceUnits().keys);
+    Set<String> numeratorUnitsSet = {'-'};
+    numeratorUnitsSet.addAll(UnitValidator.validSubstanceUnits().keys);
+    numeratorUnits = numeratorUnitsSet.toList();
 
-    denominatorUnits1 = ['-', 'kg']; // Placeholder and default selection
+    Set<String> denominatorUnits1Set = {'-', "kg"};
+    denominatorUnits1 = denominatorUnits1Set.toList();
 
-
-    denominatorUnits2 = ['-']; // Placeholder and default selection
-    denominatorUnits2.addAll(UnitValidator.validTimeUnits().keys);
+    Set<String> denominatorUnits2Set = {'-'};
+    denominatorUnits2Set.addAll(UnitValidator.validTimeUnits().keys);
+    denominatorUnits2 = denominatorUnits2Set.toList();
 
     // Create unit display map
     unitDisplayMap = {
@@ -87,13 +89,13 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
 
     // Ensure units are valid
     if (!numeratorUnits.contains(selectedNumeratorUnit)) {
-      numeratorUnits.add(selectedNumeratorUnit!);
+      numeratorUnits.add(selectedNumeratorUnit);
     }
     if (!denominatorUnits1.contains(selectedDenominatorUnit1)) {
-      denominatorUnits1.add(selectedDenominatorUnit1!);
+      denominatorUnits1.add(selectedDenominatorUnit1);
     }
     if (!denominatorUnits2.contains(selectedDenominatorUnit2)) {
-      denominatorUnits2.add(selectedDenominatorUnit2!);
+      denominatorUnits2.add(selectedDenominatorUnit2);
     }
   }
 
@@ -136,11 +138,32 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     bool isDoseAmountFilled = doseAmountController.text.isNotEmpty;
     bool isFromAndToFilled = lowerLimitDoseAmountController.text.isNotEmpty &&
         higherLimitDoseAmountController.text.isNotEmpty;
+    bool isFromAndToNotBothFilled =
+        lowerLimitDoseAmountController.text.isNotEmpty && higherLimitDoseAmountController.text.isEmpty || lowerLimitDoseAmountController.text.isEmpty && higherLimitDoseAmountController.text.isNotEmpty;
+
+  
 
     if (!isDoseAmountFilled && !isFromAndToFilled) {
       setState(() {
         errorMessage =
             'Du måste fylla i antingen dos eller både från och till doser.';
+      });
+      return;
+    }
+
+    if (isDoseAmountFilled) {
+      double? doseAmount = double.tryParse(doseAmountController.text);
+      if (doseAmount == null) {
+        setState(() {
+          errorMessage = 'Dosmängden måste vara ett giltigt nummer.';
+        });
+        return;
+      }
+    }
+
+    if (isFromAndToNotBothFilled) {
+      setState(() {
+        errorMessage = 'Du måste fylla i både från och till doser.';
       });
       return;
     }
@@ -163,7 +186,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       }
     }
 
-    if (selectedNumeratorUnit == null || selectedNumeratorUnit == '-') {
+    if (selectedNumeratorUnit == '-' || selectedNumeratorUnit.isEmpty) {
       setState(() {
         errorMessage = 'Du måste välja en primär enhet för doseringen.';
       });
@@ -188,23 +211,28 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   Dose? _createDose(String amount) {
     String unit = getUnitString();
     if (amount.isEmpty || unit.isEmpty) return null;
+    double? normalizedAmount = UnitParser.normalizeDouble(amount);
+    if (normalizedAmount == null) {
+      setState(() {
+        errorMessage = 'Ange en giltig dosmängd.';
+      });
+      return null;
+    }
     return Dose(
-        amount: UnitParser.normalizeDouble(amount),
+        amount: normalizedAmount,
         units: Dose.getDoseUnitsAsMap(unit));
   }
 
   String getUnitString() {
     List<String> units = [];
-    if (selectedNumeratorUnit != null && selectedNumeratorUnit != '-') {
-      units.add(selectedNumeratorUnit!);
+    if (selectedNumeratorUnit != '-') {
+      units.add(selectedNumeratorUnit);
     }
-    if (selectedDenominatorUnit1 != null &&
-        selectedDenominatorUnit1 != '-') {
-      units.add(selectedDenominatorUnit1!);
+    if (selectedDenominatorUnit1 != '-') {
+      units.add(selectedDenominatorUnit1);
     }
-    if (selectedDenominatorUnit2 != null &&
-        selectedDenominatorUnit2 != '-') {
-      units.add(selectedDenominatorUnit2!);
+    if (selectedDenominatorUnit2 != '-') {
+      units.add(selectedDenominatorUnit2);
     }
     return units.join('/');
   }
@@ -213,9 +241,42 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     return unitDisplayMap[unit] ?? unit;
   }
 
+  Widget buildDropdownButtonFormField({
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Expanded(
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<String>(
+          value: value,
+          isExpanded: true,
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          items: items.map((String unit) {
+            return DropdownMenuItem<String>(
+              value: unit,
+              child: Text(
+                getUnitDisplayName(unit),
+                style: const TextStyle(fontSize: 12),
+              ),
+            );
+          }).toList(),
+          onChanged: onChanged,
+          menuMaxHeight: 300,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextStyle dropdownTextStyle = TextStyle(fontSize: 12); // Smaller text
+    const TextStyle dropdownTextStyle = TextStyle(fontSize: 12); // Smaller text
+    const TextStyle labelTextStyle = TextStyle(fontSize: 15);
+    const TextStyle errorTextStyle = TextStyle(color: Color.fromARGB(255, 127, 11, 0));
 
     return AlertDialog(
       title: const Text("Redigera dosering"),
@@ -227,8 +288,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Allmänt",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Allmänt", style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 const Text("Administrationsväg"),
                 const SizedBox(height: 8),
@@ -236,24 +296,18 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                   spacing: 5.0,
                   runSpacing: -5,
                   children: [
-                    _labelChip("PO",
-                        icon: const Icon(FontAwesome.pills_solid, size: 11)),
-                    _labelChip("IV",
-                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("IM",
-                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("SC",
-                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("Inh",
-                        icon: const Icon(FontAwesome.lungs_solid, size: 11)),
+                    _labelChip("PO", icon: const Icon(FontAwesome.pills_solid, size: 11)),
+                    _labelChip("IV", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("IM", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("SC", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("Inh", icon: const Icon(FontAwesome.lungs_solid, size: 11)),
                     _labelChip("Annat"),
                   ],
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: instructionController,
-                  decoration:
-                      customInputDecoration(labelText: "Instruktion"),
+                  decoration: customInputDecoration(labelText: "Instruktion"),
                   minLines: 1,
                   maxLines: 3,
                 ),
@@ -273,110 +327,43 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Expanded(
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButtonFormField<String>(
-                          value: selectedNumeratorUnit,
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                          ),
-                          items: numeratorUnits.map((String unit) {
-                            return DropdownMenuItem<String>(
-                              value: unit,
-                              child: Text(
-                                getUnitDisplayName(unit),
-                                style: dropdownTextStyle,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedNumeratorUnit = newValue;
-                            });
-                          },
-                
-                          menuMaxHeight: 300,
-                        ),
-                      ),
+                    buildDropdownButtonFormField(
+                      value: selectedNumeratorUnit,
+                      items: numeratorUnits,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedNumeratorUnit = newValue!;
+                        });
+                      },
                     ),
                     const SizedBox(width: 8),
                     const Text("/"),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButtonFormField<String>(
-                          value: selectedDenominatorUnit1,
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                          ),
-                          items: denominatorUnits1.map((String unit) {
-                            return DropdownMenuItem<String>(
-                              value: unit,
-                              child: Text(
-                                getUnitDisplayName(unit),
-                                style: dropdownTextStyle,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedDenominatorUnit1 = newValue;
-                            });
-                          },
-                         
-                          menuMaxHeight: 300,
-                        ),
-                      ),
+                    buildDropdownButtonFormField(
+                      value: selectedDenominatorUnit1,
+                      items: denominatorUnits1,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedDenominatorUnit1 = newValue!;
+                        });
+                      },
                     ),
                     const SizedBox(width: 8),
                     const Text("/"),
                     const SizedBox(width: 8),
-                    Expanded(
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButtonFormField<String>(
-                          value: selectedDenominatorUnit2,
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8)),
-                          ),
-                          items: denominatorUnits2.map((String unit) {
-                            return DropdownMenuItem<String>(
-                              value: unit,
-                              child: Text(
-                                getUnitDisplayName(unit),
-                                style: dropdownTextStyle,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedDenominatorUnit2 = newValue;
-                            });
-                          },
-          
-                          menuMaxHeight: 300,
-                        ),
-                      ),
+                    buildDropdownButtonFormField(
+                      value: selectedDenominatorUnit2,
+                      items: denominatorUnits2,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedDenominatorUnit2 = newValue!;
+                        });
+                      },
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text("Dosering och intervall",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Dosering och intervall", style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -386,71 +373,55 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                       child: AutoSizeTextField(
                         controller: doseAmountController,
                         decoration: customInputDecoration(),
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Text("(", style: TextStyle(fontSize: 18)),
+                    const Text("(", style: TextStyle(fontSize: 18)),
                     const SizedBox(width: 8),
                     Expanded(
                       flex: 1,
                       child: AutoSizeTextField(
                         controller: lowerLimitDoseAmountController,
                         decoration: customInputDecoration(),
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text("-", style: TextStyle(fontSize: 18)),
+                    const Text("-", style: TextStyle(fontSize: 18)),
                     const SizedBox(width: 8),
                     Expanded(
                       flex: 1,
                       child: AutoSizeTextField(
                         controller: higherLimitDoseAmountController,
                         decoration: customInputDecoration(),
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(") ${getUnitString()}",
-                        style: TextStyle(fontSize: 15)),
+                    Text(") ${getUnitString()}", style: labelTextStyle),
                   ],
                 ),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 16),
                   Text(
                     errorMessage!,
-                    style: TextStyle(color: Color.fromARGB(255, 127, 11, 0)),
+                    style: errorTextStyle,
                   ),
                 ],
               ],
