@@ -152,7 +152,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     }
 
     if (isDoseAmountFilled) {
-      double? doseAmount = double.tryParse(doseAmountController.text);
+      double? doseAmount = double.tryParse(doseAmountController.text.replaceAll(",", "."));
       if (doseAmount == null) {
         setState(() {
           errorMessage = 'Dosmängden måste vara ett giltigt nummer.';
@@ -169,9 +169,9 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     }
 
     if (isFromAndToFilled) {
-      double? lowerLimit = double.tryParse(lowerLimitDoseAmountController.text);
+      double? lowerLimit = double.tryParse(lowerLimitDoseAmountController.text.replaceAll(",", "."));
       double? higherLimit =
-          double.tryParse(higherLimitDoseAmountController.text);
+          double.tryParse(higherLimitDoseAmountController.text.replaceAll(",", "."));
       if (lowerLimit == null || higherLimit == null) {
         setState(() {
           errorMessage = 'Från och till doserna måste vara giltiga nummer.';
