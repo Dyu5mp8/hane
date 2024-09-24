@@ -45,3 +45,4 @@ app.*.map.json
 
 # Ignore the entire config directory
 config/
+firebase_error_codes.txt
