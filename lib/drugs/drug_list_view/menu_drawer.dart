@@ -1,19 +1,14 @@
 import "package:flutter/material.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/ui_components/custom_drawer_header.dart';
-import 'package:hane/drugs/drug_list_view/sync_drugs_dialog.dart';
-import 'package:hane/login/initializer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/loginPage.dart';
 
-
 abstract class MenuDrawer extends StatelessWidget {
   final Set<String>? userDrugNames;
-  const MenuDrawer({super.key, this.userDrugNames });
+  const MenuDrawer({super.key, this.userDrugNames});
 
-
-  // Common logout method for all users
   void _onLogoutPressed(BuildContext context) {
     showDialog(
       context: context,
@@ -26,13 +21,16 @@ abstract class MenuDrawer extends StatelessWidget {
               child: const Text('Avbryt'),
             ),
             TextButton(
-              onPressed: () {
-                Provider.of<DrugListProvider>(context, listen: false).clearProvider();
-                Navigator.pushReplacement(
-                  context,
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close the dialog
+                Provider.of<DrugListProvider>(context, listen: false)
+                    .clearProvider();
+                await FirebaseAuth.instance.signOut();
+                // Clear the navigation stack
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const LoginPage()),
+                  (Route<dynamic> route) => false,
                 );
-                FirebaseAuth.instance.signOut();
               },
               child: const Text('Logga ut'),
             ),
@@ -56,7 +54,8 @@ abstract class MenuDrawer extends StatelessWidget {
             children: <Widget>[
               const CustomDrawerHeader(),
               buildLogoutTile(context), // Common logout tile
-              ...buildUserSpecificTiles(context), // User-specific tiles in subclasses
+              ...buildUserSpecificTiles(
+                  context), // User-specific tiles in subclasses
             ],
           ),
         );
@@ -74,6 +73,7 @@ abstract class MenuDrawer extends StatelessWidget {
       },
     );
   }
+
   // Abstract method to be implemented in subclasses
   List<Widget> buildUserSpecificTiles(BuildContext context);
 }

@@ -7,28 +7,30 @@ class PreferenceSelectionScreen extends StatelessWidget {
   final String user;
   
   
-  const PreferenceSelectionScreen({Key? key, required this.user}) : super(key: key);
+  const PreferenceSelectionScreen({super.key, required this.user});
 
-  Future<void> _setPreference(BuildContext context, bool preferSynced) async {
-    final prefs = FirebaseFirestore.instance.collection('users').doc(user).collection('preferences').doc("preferSyncedMode");
-    final snapshot = await prefs.get().timeout(const Duration(seconds: 5));
+Future<void> _setPreference(BuildContext context, bool preferSynced) async {
+  // Store preference in SharedPreferences
+  final SharedPreferences localPrefs = await SharedPreferences.getInstance();
+  await localPrefs.setString('preferSyncedMode', preferSynced.toString());
 
-    if (snapshot.exists) {
-      await prefs.update({
-        'preferSyncedMode': preferSynced,
-      });
-    } else {
-      await prefs.set({
-        'preferSyncedMode': preferSynced,
-      });
-    }
+  // Store preference in Firestore
+  final prefs = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user)
+      .collection('preferences')
+      .doc("preferSyncedMode");
 
-    // Re-initialize the app after setting preference
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const InitializerWidget()),
-    );
-  }
+  await prefs.set({
+    'preferSyncedMode': preferSynced,
+  }, SetOptions(merge: true));
+
+  // Re-initialize the app after setting preference
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => const InitializerWidget()),
+  );
+}
 
   @override
   Widget build(BuildContext context) {

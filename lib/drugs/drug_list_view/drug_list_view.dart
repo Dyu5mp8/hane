@@ -16,7 +16,7 @@ class DrugListView extends StatefulWidget {
 class _DrugListViewState extends State<DrugListView> {
   String _searchQuery = '';
   String? _selectedCategory;
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -39,22 +39,20 @@ class _DrugListViewState extends State<DrugListView> {
 
   MenuDrawer buildDrawer(BuildContext context, Set<String>? userDrugNames) {
     var userMode = Provider.of<DrugListProvider>(context).userMode;
-  switch (userMode) {
-    case UserMode.isAdmin:
-      return const AdminMenuDrawer();
-    case UserMode.syncedMode:
-      return const SyncedUserMenuDrawer();
-    case UserMode.customMode:
-      return CustomUserMenuDrawer(userDrugNames: userDrugNames);
-    default:
-      return CustomUserMenuDrawer(userDrugNames: userDrugNames);
+    switch (userMode) {
+      case UserMode.isAdmin:
+        return const AdminMenuDrawer();
+      case UserMode.syncedMode:
+        return const SyncedUserMenuDrawer();
+      case UserMode.customMode:
+        return CustomUserMenuDrawer(userDrugNames: userDrugNames);
+      default:
+        return CustomUserMenuDrawer(userDrugNames: userDrugNames);
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
-
     List<Drug>? drugs = Provider.of<List<Drug>?>(context);
     Set<String>? drugNames = drugs
         ?.map((drug) => drug.name)
@@ -78,7 +76,7 @@ class _DrugListViewState extends State<DrugListView> {
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Inga läkemedel i listan'),
+            const Text('Inga läkemedel i listan'),
             TextButton.icon(
                 onPressed: _onAddDrugPressed,
                 label: const Text('Lägg till ett läkemedel'),
@@ -137,17 +135,20 @@ class _DrugListViewState extends State<DrugListView> {
     Navigator.push(
       context,
       MaterialPageRoute(
-            builder: (context) => MultiProvider(
-      providers: [
-        ChangeNotifierProvider<Drug>.value(
-            value: Drug(indications: <Indication>[], changedByUser: true))
-                , // sets the editable drug as the provider drug
-        ChangeNotifierProvider<EditModeProvider>.value(
-            value: EditModeProvider()) // a provider for the edit mode
-      ],
-      child: DrugDetailView(isNewDrug: true,)
-            )
-          ),
+          builder: (context) => MultiProvider(
+                  providers: [
+                    ChangeNotifierProvider<Drug>.value(
+                        value: Drug(
+                            indications: <Indication>[],
+                            changedByUser:
+                                true)), // sets the editable drug as the provider drug
+                    ChangeNotifierProvider<EditModeProvider>.value(
+                        value:
+                            EditModeProvider()) // a provider for the edit mode
+                  ],
+                  child: const DrugDetailView(
+                    isNewDrug: true,
+                  ))),
     );
   }
 
@@ -224,7 +225,7 @@ class _DrugListViewState extends State<DrugListView> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 4.0, vertical: 2.0),
                 );
-              }).toList(),
+              }),
             ],
           ),
         ],
@@ -265,7 +266,7 @@ class _DrugListViewState extends State<DrugListView> {
           const Text('Läkemedel'),
           Consumer<DrugListProvider>(
             builder: (context, drugListProvider, child) {
-              return drugListProvider.isAdmin ?? false
+              return drugListProvider.isAdmin
                   ? const Text(
                       'Admin: ÄNDRINGAR SKER I STAMLISTAN',
                       style: TextStyle(
@@ -281,11 +282,6 @@ class _DrugListViewState extends State<DrugListView> {
           )
         ],
       ),
-      // leading: IconButton(
-      //   icon: const Icon(Icons.exit_to_app),
-      //   onPressed: _onLogoutPressed,
-      // ),
-
       actions: [
         IconButton(
           icon: const Icon(Icons.add),

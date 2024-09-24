@@ -93,12 +93,6 @@ class DosageSnippetState extends State<DosageSnippet> {
         });
   }
 
-  String _conversionButtonText(
-      String setText, String resetText, dynamic conversionAddress) {
-    return conversionAddress == null ? setText : resetText;
-  }
-
-
   void _resetWeightConversion() {
     setState(() {
       widget.dosageViewHandler.conversionWeight = null;

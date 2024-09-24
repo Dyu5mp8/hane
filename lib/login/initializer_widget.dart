@@ -1,35 +1,32 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/services/drug_list_wrapper.dart';
 import 'package:hane/drugs/services/user_behaviors/user_behavior.dart';
-import 'package:hane/login/loginPage.dart';
 import 'package:hane/login/drug_init_screen.dart';
 import 'package:hane/login/preference_selection_screen.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class InitializerWidget extends StatelessWidget {
   final bool firstLogin;
 
   const InitializerWidget({Key? key, this.firstLogin = false})
       : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Widget>(
       future: _initializeApp(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            decoration: const BoxDecoration(color: Colors.white),
-            child: const Center(child: CircularProgressIndicator()),
+          return const Scaffold(
+            body: const Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
-          return Center(
-            child: Text("An error occurred: ${snapshot.error}"),
+          return Scaffold(
+            body: Center(
+              child: Text("An error occurred: ${snapshot.error}"),
+            ),
           );
         } else {
           return snapshot.data!;
@@ -39,11 +36,7 @@ class InitializerWidget extends StatelessWidget {
   }
 
   Future<Widget> _initializeApp(BuildContext context) async {
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-      return const LoginPage(); // Return early if no user is logged in
-    }
+    final user = FirebaseAuth.instance.currentUser!;
 
     String userId = user.uid;
     UserBehavior? behavior;
@@ -70,7 +63,7 @@ class InitializerWidget extends StatelessWidget {
 
         case false: // User prefers custom mode
           // 3. Set behavior for custom user
-          behavior = CustomUserBehavior(masterUID: 'master' , user: userId);
+          behavior = CustomUserBehavior(masterUID: 'master', user: userId);
           return _getCustomUserHomeScreen(context, behavior, userId);
       }
     }
@@ -85,7 +78,7 @@ class InitializerWidget extends StatelessWidget {
       return false;
     }
   }
-  
+
   Future<bool?> _preferSyncedMode(String userId) async {
     final prefs = FirebaseFirestore.instance
         .collection('users')
@@ -104,6 +97,8 @@ class InitializerWidget extends StatelessWidget {
     }
   }
 
+  
+
   Widget _getHomeScreen(
       BuildContext context, UserBehavior userBehavior, String userId) {
     final drugListProvider =
@@ -119,7 +114,6 @@ class InitializerWidget extends StatelessWidget {
   }
 
   Future<Widget> _getCustomUserHomeScreen(
-
       BuildContext context, UserBehavior behavior, String userId) async {
     final drugListProvider =
         Provider.of<DrugListProvider>(context, listen: false);

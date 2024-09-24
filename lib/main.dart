@@ -7,6 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hane/login/loginPage.dart';
 
 
 
@@ -37,21 +39,39 @@ void main() async {
     ),
   );
 }
-
 class MyApp extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
-   
     return MaterialApp(
       title: 'AnestesiH',
       debugShowCheckedModeBanner: false,
-   
-       theme: appTheme,
-      home: const InitializerWidget(),
-
+      theme: appTheme,
+      home: AuthGate(),
     );
   }
-
 }
+
+class AuthGate extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(), // Listen to auth state changes
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show loading screen
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else if (snapshot.hasData) {
+          // User is logged in
+          return InitializerWidget();
+        } else {
+          // User is not logged in
+          return LoginPage();
+        }
+      },
+    );
+  }
+}
+
 

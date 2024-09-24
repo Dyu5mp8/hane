@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
-import 'package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart';
 import 'package:hane/drugs/drug_detail/indication_tab_view.dart';
 import 'package:hane/drugs/drug_detail/indication_tabs.dart';
 import 'package:hane/drugs/models/drug.dart';
