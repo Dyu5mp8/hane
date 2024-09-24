@@ -51,8 +51,6 @@ class InitializerWidget extends StatelessWidget {
       // 2. Check user's preference for synced mode
       final preferSynced = await _preferSyncedMode(userId);
 
-      print("Prefer synced: $preferSynced");
-
       switch (preferSynced) {
         case null: // No preference set yet
           return PreferenceSelectionScreen(user: userId);
@@ -86,9 +84,7 @@ class InitializerWidget extends StatelessWidget {
         .collection('preferences')
         .doc("preferSyncedMode");
     final snapshot = await prefs.get();
-    print("Snapshot: $snapshot");
-    print(snapshot.data());
-    print(userId);
+ 
 
     if (snapshot.exists) {
       return snapshot.data()?['preferSyncedMode'];

@@ -52,6 +52,7 @@ dependencies:
   flutter_keyboard_visibility: ^6.0.0
   rxdart: ^0.28.0
   shared_preferences: ^2.3.2
+  auto_size_text_field: ^2.2.4
 
 
 dev_dependencies:

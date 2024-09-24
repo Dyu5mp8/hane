@@ -26,7 +26,7 @@ class UnitValidator {
 
 static validSubstanceUnits() {
   return Map.fromEntries(
-    _validUnits.entries.where((entry) =>(entry.value == "unitunit"|| entry.value == "molar")|| entry.value == "mass")
+    _validUnits.entries.where((entry) =>(entry.value == "unitunit"|| entry.value == "molar")|| entry.value == "mass" || entry.key == "ml")
   );
 }
 

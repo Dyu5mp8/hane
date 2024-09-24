@@ -128,7 +128,6 @@ class AdminUserBehavior extends UserBehavior {
 
       if (snapshot.exists) {
         // Document exists, update it by removing the key-value pair for the drug ID
-        print(id);
         await indexDocRef.update({
           id: FieldValue
               .delete() // Remove the key-value pair where the key is the drug ID
