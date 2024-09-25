@@ -26,16 +26,16 @@ class _SignUpPageState extends State<SignUpPage> {
       },
     );
   }
-
-  void showErrorMessage(String message) async {
-    setState(() {
-      errorMessage = message;
-    });
-    await Future.delayed(const Duration(seconds: 3));
-    setState(() {
-      errorMessage = null;
-    });
-  }
+void showErrorMessage(String message) async {
+  setState(() {
+    errorMessage = message;
+  });
+  await Future.delayed(const Duration(seconds: 3));
+  if (!mounted) return; // Check if the widget is still mounted
+  setState(() {
+    errorMessage = null;
+  });
+}
 
   Widget _entryField(String title, TextEditingController controller,
       {bool isPassword = false}) {
@@ -88,9 +88,7 @@ class _SignUpPageState extends State<SignUpPage> {
     } else {
       message = 'Registreringen misslyckades: ${e.message}';
     }
-    setState(() {
-      showErrorMessage(message);
-    });
+    showErrorMessage(message);
 
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
@@ -205,4 +203,12 @@ class _SignUpPageState extends State<SignUpPage> {
           fontSize: 28, fontWeight: FontWeight.w700, color: Colors.black87),
     );
   }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
 }

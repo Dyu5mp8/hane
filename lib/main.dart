@@ -8,44 +8,87 @@ import 'app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/login/loginPage.dart';
+import 'package:hane/startup_errors.dart';
 
-
-
-
-
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  var firestore = FirebaseFirestore.instance;
-
-  firestore.settings = const Settings(persistenceEnabled: true, 
-  cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
-
-
-    runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => DrugListProvider(),
-        ),
-        // Other providers...
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
-class MyApp extends StatelessWidget {
+
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Future<FirebaseApp> _initialization;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialization = initializeFirebase();
+  }
+
+  Future<FirebaseApp> initializeFirebase() async {
+    try {
+      final app = await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+
+      var firestore = FirebaseFirestore.instance;
+      firestore.settings = const Settings(
+        persistenceEnabled: true,
+        cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+      );
+
+      return app;
+    } catch (e) {
+      rethrow; // Propagate the error to be caught in the FutureBuilder
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'AnestesiH',
-      debugShowCheckedModeBanner: false,
-      theme: appTheme,
-      home: AuthGate(),
+    return FutureBuilder<FirebaseApp>(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show loading indicator
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          // Show error widget with retry option
+          return MaterialApp(
+            home: GenericErrorWidget(
+              errorMessage: 'Failed to initialize Firebase: ${snapshot.error}',
+              onRetry: () {
+                setState(() {
+                  _initialization = initializeFirebase();
+                });
+              },
+            ),
+          );
+        } else {
+          // Firebase initialized successfully
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                create: (_) => DrugListProvider(),
+              ),
+              // Other providers...
+            ],
+            child: MaterialApp(
+              title: 'AnestesiH',
+              debugShowCheckedModeBanner: false,
+              theme: appTheme,
+              home: AuthGate(),
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -61,6 +104,18 @@ class AuthGate extends StatelessWidget {
           return Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
+        } else if (snapshot.hasError) {
+          // Handle authentication errors
+          return AuthErrorWidget(
+            errorDetails: snapshot.error.toString(),
+            onRetry: () {
+              // Optionally, you can navigate back or refresh the stream
+              // For simplicity, we'll rebuild the widget
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => AuthGate()),
+              );
+            },
+          );
         } else if (snapshot.hasData) {
           // User is logged in
           return InitializerWidget();
@@ -72,5 +127,3 @@ class AuthGate extends StatelessWidget {
     );
   }
 }
-
-
