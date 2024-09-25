@@ -44,7 +44,7 @@ class PreferenceSelectionScreen extends StatelessWidget {
               context,
               title: 'Synkat läge (rekommenderat)',
               description:
-                  'I detta läge synkas listan med stamlistan som är under kontinuerlig revision och uppdatering. Du kan inte ändra läkemedlena från stamlistan. Däremot kan du lägga till egna anteckningar till dessa läkemedel. Du har även möjlighet att lägga till egna läkemedel där du har möjlighet att redigera doseringar och så vidare.',
+                  'I detta läge synkas listan med stamlistan som är under kontinuerlig revision och uppdatering. Du kan inte ändra läkemedlena från stamlistan.',
               buttonText: 'Använd Synkat läge',
               onPressed: () => _setPreference(context, true),
               icon: Icons.sync, // Adding an icon
@@ -56,7 +56,7 @@ class PreferenceSelectionScreen extends StatelessWidget {
               context,
               title: 'Användarskapat läge',
               description:
-                  'I detta läge kan du redigera listan fritt och lägga till och ta bort läkemedel, och har mer kontroll över vad som visas under varje läkemedel. Väljer du detta läge kommer du få möjligheten att kopiera över läkemedel från stamlistan eller påbörja en helt tom ny lista. Väljer du att kopiera över läkemedel från stamlistan kommer dessa inte att uppdateras automatiskt.',
+                  'I detta läge kan du redigera listan fritt och lägga till och ta bort läkemedel, och har mer kontroll över vad som visas under varje läkemedel. ',
               buttonText: 'Använd användarskapat läge',
               onPressed: () => _setPreference(context, false),
               icon: Icons.settings,
