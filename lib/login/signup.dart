@@ -1,10 +1,7 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'loginPage.dart';
-import 'login_background/bezierContainer.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, this.title});
@@ -21,26 +18,12 @@ class _SignUpPageState extends State<SignUpPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? errorMessage;
 
-  
-
   Widget _backButton() {
-    return InkWell(
-      onTap: () {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back, color: Colors.black),
+      onPressed: () {
         Navigator.pop(context);
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Row(
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.only(left: 0, top: 10, bottom: 10),
-              child: const Icon(Icons.keyboard_arrow_left, color: Colors.black),
-            ),
-            const Text('Tillbaka',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500))
-          ],
-        ),
-      ),
     );
   }
 
@@ -56,27 +39,28 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _entryField(String title, TextEditingController controller,
       {bool isPassword = false}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          const SizedBox(height: 10),
-          TextField(
-            controller: controller,
-            obscureText: isPassword,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-              fillColor: Color(0xfff3f3f4),
-              filled: true,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+        ),
+        const SizedBox(height: 10),
+        TextField(
+          controller: controller,
+          obscureText: isPassword,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              borderSide: BorderSide(color: Colors.grey),
             ),
+            filled: true,
+            fillColor: Colors.white,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 15),
+      ],
     );
   }
 
@@ -86,67 +70,57 @@ class _SignUpPageState extends State<SignUpPage> {
     ));
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const InitializerWidget(firstLogin: true,)),
+      MaterialPageRoute(
+          builder: (context) => const InitializerWidget(firstLogin: true)),
     );
   }
-void _onFailedRegistration(FirebaseAuthException e) {
-  String message;
-  if (e.code == 'email-already-in-use') {
-    message = 'E-postadressen är redan registrerad.';
-  } else if (e.code == 'weak-password') {
-    message = 'Lösenordet är för svagt.';
-  } else if (e.code == 'invalid-email') {
-    message = 'E-postadressen är ogiltig.';
-  }
-    else if (e.code == 'invalid-password') {
-    message = 'Lösenordet får inte vara tomt.';
-  } else {
-    message = 'Registreringen misslyckades: ${e.message}';
-  }
-  setState(() {
-    showErrorMessage(message);
-  });
 
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-}
+  void _onFailedRegistration(FirebaseAuthException e) {
+    String message;
+    if (e.code == 'email-already-in-use') {
+      message = 'E-postadressen är redan registrerad.';
+    } else if (e.code == 'weak-password') {
+      message = 'Lösenordet är för svagt.';
+    } else if (e.code == 'invalid-email') {
+      message = 'E-postadressen är ogiltig.';
+    } else if (e.code == 'invalid-password') {
+      message = 'Lösenordet får inte vara tomt.';
+    } else {
+      message = 'Registreringen misslyckades: ${e.message}';
+    }
+    setState(() {
+      showErrorMessage(message);
+    });
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
 
   Widget _submitButton() {
-    return InkWell(
-     // In your onTap:
-onTap: () async {
-  try {
-    await _auth.createUserWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-    );
-    await _auth.currentUser!.sendEmailVerification();
-    _onSuccessfulRegistration();
-  } on FirebaseAuthException catch (e) {
-    _onFailedRegistration(e);
-  } 
-},
-      child: Container(
-        width: MediaQuery.of(context).size.width,
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black87,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         padding: const EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: Colors.grey.shade200,
-                offset: const Offset(2, 4),
-                blurRadius: 5,
-                spreadRadius: 2),
-          ],
-          gradient: const LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xfffbb448), Color(0xfff7892b)]),
-        ),
-        child: const Text(
-          'Registrera dig nu',
-          style: TextStyle(fontSize: 20, color: Colors.white),
-        ),
+        minimumSize: Size(double.infinity, 45), // Full width button
+      ),
+      onPressed: () async {
+        try {
+          await _auth.createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+          await _auth.currentUser!.sendEmailVerification();
+          _onSuccessfulRegistration();
+        } on FirebaseAuthException catch (e) {
+          _onFailedRegistration(e);
+        }
+      },
+      child: const Text(
+        'Registrera dig nu',
+        style: TextStyle(fontSize: 18, color: Colors.white),
       ),
     );
   }
@@ -157,24 +131,22 @@ onTap: () async {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => LoginPage()));
       },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20),
-        padding: const EdgeInsets.all(15),
-        alignment: Alignment.bottomCenter,
-        child: const Row(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: const [
             Text(
               'Har du redan ett konto?',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
-            SizedBox(width: 10),
+            SizedBox(width: 5),
             Text(
               'Logga in',
               style: TextStyle(
-                  color: Color(0xfff79c4f),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blueAccent),
             ),
           ],
         ),
@@ -185,7 +157,7 @@ onTap: () async {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Epost", _emailController),
+        _entryField("E-post", _emailController),
         _entryField("Lösenord", _passwordController, isPassword: true),
       ],
     );
@@ -195,42 +167,31 @@ onTap: () async {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: SizedBox(
-        height: height,
-        child: Stack(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: _backButton(),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Positioned(
-              top: -MediaQuery.of(context).size.height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: const BezierContainer(),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    _title(),
-                    const SizedBox(height: 50),
-                    _emailPasswordWidget(),
-                    const SizedBox(height: 20),
-                    _submitButton(),
-                         SizedBox(height: 20),
-                    if (errorMessage != null)
-                      Text(
-                        errorMessage!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    SizedBox(height: height * .14),
-                    _loginAccountLabel(),
-               
-                  ],
-                ),
+            SizedBox(height: height * .05),
+            _title(),
+            const SizedBox(height: 50),
+            _emailPasswordWidget(),
+            const SizedBox(height: 20),
+            _submitButton(),
+            const SizedBox(height: 20),
+            if (errorMessage != null)
+              Text(
+                errorMessage!,
+                style: const TextStyle(color: Colors.red),
               ),
-            ),
-            Positioned(top: 40, left: 0, child: _backButton()),
+            const SizedBox(height: 40),
+            _loginAccountLabel(),
           ],
         ),
       ),
@@ -240,7 +201,8 @@ onTap: () async {
   Widget _title() {
     return const Text(
       'Registrera dig',
-      style: TextStyle(fontSize: 30, fontWeight: FontWeight.w700, color: Colors.black),
+      style: TextStyle(
+          fontSize: 28, fontWeight: FontWeight.w700, color: Colors.black87),
     );
   }
 }

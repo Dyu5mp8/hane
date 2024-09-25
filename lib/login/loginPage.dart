@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hane/login/initializer_widget.dart';
-import 'signup.dart';
-import 'login_background/bezierContainer.dart';
+import 'package:hane/login/signup.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, this.title, this.emailNotVerified}) : super(key: key);
@@ -19,6 +17,8 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  final Color accentColor = Color.fromARGB(255, 41, 51, 81);
+
   Widget _submitButton() {
     return InkWell(
       onTap: () async {
@@ -30,34 +30,25 @@ class _LoginPageState extends State<LoginPage> {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Inloggad!"),
           ));
-         Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const InitializerWidget()),
-          );
+          // Navigate to initializer or home
         } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Kunde inte logga in: $e"),
-          ));
+          _onFailedLogin(e as FirebaseAuthException);
         }
       },
       child: Container(
-        width: MediaQuery.of(context).size.width/2,
+        width: MediaQuery.of(context).size.width / 2.5,
         padding: const EdgeInsets.symmetric(vertical: 15),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(5)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: Colors.grey.shade200,
-              offset: const Offset(2, 4),
-              blurRadius: 5,
-              spreadRadius: 2,
-            ),
-          ],
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.black, width: 2),
           gradient: const LinearGradient(
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
-            colors: [Color(0xfffbb448), Color(0xfff7892b)],
+            colors: [
+              Color.fromARGB(255, 47, 52, 108),
+              Color.fromARGB(255, 65, 79, 106),
+            ],
           ),
         ),
         child: const Text(
@@ -68,44 +59,57 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
- Widget _entryField(String title, TextEditingController controller,
-    {bool isPassword = false}) {
+  void _onFailedLogin(FirebaseAuthException e){
 
-  // Assign the appropriate autofill hint based on the field type
-  List<String> autofillHints = isPassword
-      ? [AutofillHints.password]
-      : [AutofillHints.email];
+    if (e.code == 'user-not-found') {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Användaren finns inte."),
+      ));
+    } else if (e.code == 'wrong-password') {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Användare eller lösenord felaktigt"),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Kunde inte logga in."),
+      ));
+    }
+  }
 
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 10),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          controller: controller,
-          obscureText: isPassword,
-          autofillHints: autofillHints, // Provide the correct autofill hints
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            fillColor: Color(0xfff3f3f4),
-            filled: true,
+  Widget _entryField(String title, TextEditingController controller, {bool isPassword = false}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
           ),
-        ),
-      ],
-    ),
-  );
-}
+       
+          TextField(
+            
+            controller: controller,
+            obscureText: isPassword,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              fillColor: Color.fromARGB(255, 232, 232, 255),
+              filled: true,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _divider() {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
-      child: const Row(
-        children: <Widget>[
+      child: Row(
+        children: const <Widget>[
           SizedBox(width: 20),
           Expanded(
             child: Padding(
@@ -129,27 +133,24 @@ class _LoginPageState extends State<LoginPage> {
   Widget _createAccountLabel() {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SignUpPage()),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (context) => SignUpPage()));
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 20),
         padding: const EdgeInsets.all(15),
         alignment: Alignment.bottomCenter,
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               'Inget konto ännu?',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
-              'Registera ny användare',
+              'Registrera ny användare',
               style: TextStyle(
-                color: Color(0xfff79c4f),
+                color: accentColor,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -172,21 +173,20 @@ class _LoginPageState extends State<LoginPage> {
   Widget _title() {
     return RichText(
       textAlign: TextAlign.center,
-      text: const TextSpan(
+      text: TextSpan(
         text: '',
-        style: TextStyle(
-          fontSize: 30,
+        style: const TextStyle(
+          fontSize: 50,
           fontWeight: FontWeight.w700,
-          color: Color(0xffe46b10),
         ),
         children: [
           TextSpan(
             text: 'Anestesi',
-            style: TextStyle(color: Colors.black, fontSize: 30),
+            style: TextStyle(color: accentColor, fontSize: 50),
           ),
-          TextSpan(
+          const TextSpan(
             text: 'H',
-            style: TextStyle(color: Color(0xffe46b10), fontSize: 30),
+            style: TextStyle(color: Color.fromARGB(255, 255, 112, 30), fontSize: 50),
           ),
         ],
       ),
@@ -196,15 +196,33 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Container(
         height: height,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: const AssetImage("assets/images/concrete.jpg"), // Set your image path here
+            fit: BoxFit.cover,
+          
+          ),
+        ),
         child: Stack(
           children: <Widget>[
-            Positioned(
-              top: -height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: const BezierContainer(),
+            // Gradient overlay for smooth fade effect
+            Container(
+              height: height,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.center,
+                  colors: [
+                    Colors.transparent, // Start with transparent at the top
+                    Color.fromARGB(255, 203, 223, 254),       // Fade to white at the bottom
+                  ],
+                  stops: [0, 0.8], // Adjust this to fade at 30% from the bottom
+                ),
+              ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -218,19 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 50),
                     _emailPasswordWidget(),
                     const SizedBox(height: 20),
-                   
                     _submitButton(),
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(vertical: 10),
-                    //   alignment: Alignment.centerRight,
-                    //   child: const Text(
-                    //     'Forgot Password?',
-                    //     style: TextStyle(
-                    //       fontSize: 14,
-                    //       fontWeight: FontWeight.w500,
-                    //     ),
-                    //   ),
-                    // ),
                     _divider(),
                     SizedBox(height: height * .055),
                     _createAccountLabel(),

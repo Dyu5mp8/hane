@@ -274,7 +274,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
 
   @override
   Widget build(BuildContext context) {
-    const TextStyle dropdownTextStyle = TextStyle(fontSize: 12); // Smaller text
     const TextStyle labelTextStyle = TextStyle(fontSize: 15);
     const TextStyle errorTextStyle = TextStyle(color: Color.fromARGB(255, 127, 11, 0));
 
