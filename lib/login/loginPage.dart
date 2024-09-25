@@ -182,12 +182,22 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           TextSpan(
             text: 'Anestesi',
-            style: TextStyle(color: accentColor, fontSize: 50),
+            style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+              fontWeight: FontWeight.bold,
+              color:accentColor,
+              fontSize: 50,
+            ),
           ),
-          const TextSpan(
+          
+          TextSpan(
             text: 'H',
-            style: TextStyle(color: Color.fromARGB(255, 255, 112, 30), fontSize: 50),
-          ),
+            style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+              fontWeight: FontWeight.bold,
+              color:Color.fromARGB(255, 255, 112, 30),
+              fontSize: 50,
+            )),
+            
+       
         ],
       ),
     );
