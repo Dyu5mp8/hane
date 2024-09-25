@@ -201,39 +201,50 @@ class DosageSnippetState extends State<DosageSnippet> {
 
 
               if (widget.editMode)
-                IconButton(
-                  icon: const Icon(Icons.delete, color:Color.fromARGB(255, 134, 9, 0)),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) {
-                        return AlertDialog(
-                          title: const Text('Radera'),
-                          content: const Text(
-                              'Är du säker på att du vill radera denna dosering?'),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(dialogContext);
-                              },
-                              child: const Text('Avbryt'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                _deleteDosage();
-                                Navigator.pop(dialogContext);
-                              },
-                              child: const Text('Radera',
-                                  style: TextStyle(color: Colors.red)),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-              if (widget.editMode)
-                IconButton(
+
+                SizedBox(
+
+                  width: 100,
+                  
+                  child: Row(
+                  
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.delete, color:Color.fromARGB(255, 134, 9, 0)),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) {
+                              return AlertDialog(
+                                title: const Text('Radera'),
+                                content: const Text(
+                                    'Är du säker på att du vill radera denna dosering?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(dialogContext);
+                                    },
+                                    child: const Text('Avbryt'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      _deleteDosage();
+                                      Navigator.pop(dialogContext);
+                                    },
+                                    child: const Text('Radera',
+                                        style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                        IconButton(
+
+                  
                   icon: const Icon(Icons.edit, color: Colors.blue),
                   onPressed: () {
                     showDialog(
@@ -249,11 +260,14 @@ class DosageSnippetState extends State<DosageSnippet> {
                     );
                   },
                 ),
+                    ],
+                  ),
+                ),
+         
+              
             ],
           ),
-          subtitle: widget.dosageViewHandler.conversionWeight != null ||
-                  widget.dosageViewHandler.conversionConcentration != null ||
-                  widget.dosageViewHandler.conversionTime != null
+          subtitle: _isConversionActive
               ? widget.dosageViewHandler.showDosage(isOriginalText: false)
               : null,
         ),
