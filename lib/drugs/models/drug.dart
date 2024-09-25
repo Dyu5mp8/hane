@@ -21,11 +21,13 @@ class Drug extends ChangeNotifier with EquatableMixin{
   String? _id;
   String? _userNotes;
   String? _notes;
+  String? _reviewedBy;
 
   Drug({
     String? id,
     String? name,
     bool? changedByUser,
+    String? reviewedBy,
     List<dynamic>? brandNames,
     List<dynamic>? categories,
     List<Concentration>? concentrations = const [],
@@ -36,6 +38,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
     Timestamp? lastUpdated,
   })  : _name = name ?? '',
         _changedByUser = changedByUser,
+        _reviewedBy = reviewedBy,
         _lastUpdated = lastUpdated,
         _categories = categories,
         _concentrations = concentrations,
@@ -46,10 +49,12 @@ class Drug extends ChangeNotifier with EquatableMixin{
         _id = id,
         _userNotes = userNotes;
 
+
   Drug.from(Drug drug)
       : 
         _id = drug.id,
         _name = drug.name,
+        _reviewedBy = drug._reviewedBy,
         _changedByUser = drug.changedByUser,
         _lastUpdated = drug.lastUpdated,
         _categories = drug.categories,
@@ -66,6 +71,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
   List<Object?> get props => [
         _id,
         _name,
+        _reviewedBy,
         _changedByUser,
         _lastUpdated,
         _categories,
@@ -104,6 +110,14 @@ class Drug extends ChangeNotifier with EquatableMixin{
   set changedByUser(bool newChangedByUser) {
     if (_changedByUser != newChangedByUser) {
       _changedByUser = newChangedByUser;
+      notifyListeners();
+    }
+  }
+
+  String? get reviewedBy => _reviewedBy;
+  set reviewedBy(String? newReviewedBy) {
+    if (_reviewedBy != newReviewedBy) {
+      _reviewedBy = newReviewedBy;
       notifyListeners();
     }
   }
@@ -199,6 +213,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
       'id': _id,
       'name': _name,
       'changedByUser': _changedByUser,
+      'reviewedBy': _reviewedBy,
       'brandNames': _brandNames,
       'categories': _categories,
       'concentrations': concentrations?.map((c) => c.toJson()).toList(),
@@ -215,6 +230,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
       id: map['id'] as String?,
       name: map['name'] as String?,
       changedByUser: map['changedByUser'] as bool?,
+      reviewedBy: map['reviewedBy'] as String?,
       categories: (map['categories'] as List<dynamic>?),
       concentrations: (map['concentrations'] as List<dynamic>?)
           ?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))

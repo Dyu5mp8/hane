@@ -49,19 +49,23 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         title: Text(_editableDrug.name ?? 'Drug Details'),
         centerTitle: true,
         actions: [
-          if (_editableDrug.changedByUser || Provider.of<DrugListProvider>(context, listen: false).userMode == UserMode.isAdmin)
-          const EditModeButton(),
+          InfoButton(),
+          if (_editableDrug.changedByUser ||
+              Provider.of<DrugListProvider>(context, listen: false).userMode ==
+                  UserMode.isAdmin)
+            const EditModeButton(),
         ],
       ),
       body: const Column(
-        children: <Widget>[
-          OverviewBox(), 
-          IndicationBox()
-          ],
+        children: <Widget>[OverviewBox(), IndicationBox()],
       ),
     );
   }
 }
+
+
+//Appbar elements
+
 
 class BackButton extends StatelessWidget {
   const BackButton({super.key});
@@ -103,6 +107,76 @@ class BackButton extends StatelessWidget {
         } else {
           Navigator.pop(context); // Go back to the previous screen
         }
+      },
+    );
+  }
+}
+class InfoButton extends StatelessWidget {
+  InfoButton({super.key});  
+
+  @override
+  Widget build(BuildContext context) {
+    Drug drug = Provider.of<Drug>(context, listen: false); // Get the drug object
+    bool editMode = Provider.of<EditModeProvider>(context).editMode; // Get the editMode boolean
+    String? reviewedBy = drug.reviewedBy; // Get the reviewedBy string
+    bool isAdmin = Provider.of<DrugListProvider>(context, listen: false).userMode == UserMode.isAdmin;
+
+    // Initialize the TextEditingController with the current value of 'reviewedBy'
+    TextEditingController _reviewedByController = TextEditingController(text: reviewedBy ?? '');
+
+    return IconButton(
+      icon: const Icon(Icons.info_outline),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Info'),
+              content: isAdmin && editMode
+                  ? SizedBox(
+                      height: 200,
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _reviewedByController,
+                            decoration: const InputDecoration(
+                              labelText: 'Senast granskad av:',
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              drug.reviewedBy = _reviewedByController.text;
+                              drug.updateDrug();
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Spara text"),
+                          ),
+                        ],
+                      ),
+                    )
+                  : reviewedBy != null && reviewedBy.isNotEmpty
+                      ? SizedBox(
+                          height: 200,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              const Text('Senast granskad av:'),
+                              Text(reviewedBy),
+                            ],
+                          ),
+                        )
+                      : const Text('Ej granskat ännu.'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Stäng'),
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
@@ -175,9 +249,8 @@ class EditModeButton extends StatelessWidget {
               onPressed: () {
                 HapticFeedback.lightImpact();
                 if (editMode) {
-
                   provider.addDrug(Provider.of<Drug>(context, listen: false));
-                } 
+                }
 
                 editModeProvider.toggleEditMode();
               },
