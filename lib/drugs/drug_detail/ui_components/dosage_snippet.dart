@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
 import 'package:hane/drugs/drug_detail/ui_components/concentration_picker.dart';
 import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
@@ -55,6 +56,7 @@ class DosageSnippetState extends State<DosageSnippet> {
         return WeightSlider(
           initialWeight: _weightSliderValue,
           onWeightSet: (newWeight) {
+            HapticFeedback.mediumImpact();
             setConversionWeight(newWeight);
           },
         );
@@ -69,6 +71,7 @@ class DosageSnippetState extends State<DosageSnippet> {
         return ConcentrationPicker(
           concentrations: widget.dosageViewHandler.availableConcentrations!,
           onConcentrationSet: (newConcentration) {
+            HapticFeedback.mediumImpact();
             setState(() {
               widget.dosageViewHandler.conversionConcentration =
                   newConcentration;
@@ -85,6 +88,7 @@ class DosageSnippetState extends State<DosageSnippet> {
         builder: (BuildContext context) {
           return TimePicker(
             onTimeUnitSet: (newTime) {
+              HapticFeedback.mediumImpact();
               setState(() {
                 widget.dosageViewHandler.conversionTime = newTime;
               });
@@ -114,19 +118,14 @@ class DosageSnippetState extends State<DosageSnippet> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+
       children: [
         ListTile(
-          key: ValueKey(_isConversionActive),
+          
           contentPadding:
               const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-            side: const BorderSide(
-              color: Color.fromARGB(255, 220, 220, 220),
-              width: 0.5,
-            ),
-          ),
-          tileColor: Colors.white,
+         
+          
           minVerticalPadding: 20,
           title: Row(
             children: [

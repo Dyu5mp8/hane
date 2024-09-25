@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/ui_components/dosage_list.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
 import 'package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart';
 import 'package:hane/drugs/models/drug.dart';
@@ -12,7 +13,7 @@ class EditIndicationDialog extends StatefulWidget {
   final Function()? onSave;
 
   const EditIndicationDialog(
-      {super.key, required this.indication, required this.drug, this.withDosages = false, this.isNewIndication = false , this.onSave});
+      {super.key, required this.indication, required this.drug, this.withDosages = false, this.isNewIndication = false, this.onSave});
 
   @override
   _EditIndicationDialogState createState() => _EditIndicationDialogState();
@@ -50,9 +51,7 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
       widget.indication.dosages = _tempDosages;
 
       if (widget.isNewIndication) {
-  
         widget.drug.indications?.add(widget.indication);
-
       }
 
       widget.drug.updateDrug();
@@ -66,12 +65,12 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
       appBar: AppBar(
         title: Text(widget.indication.name),
         leading: IconButton(
-            icon: const Icon(Icons.close, size: 20),
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+          icon: const Icon(Icons.close, size: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         centerTitle: true,
         actions: [
           if (!widget.isNewIndication)
@@ -103,7 +102,6 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
               },
               child: const Text('Ta bort', style: TextStyle(color: Colors.red)),
             ),
-        
           IconButton(
             icon: const Icon(Icons.check, size: 20),
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -176,26 +174,14 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _tempDosages.length,
-                        itemBuilder: (ctx, index) {
-                          return DosageSnippet(
-                            dosage: _tempDosages[index],
-                            onDosageDeleted: () {
-                              setState(() {
-                                _tempDosages.removeAt(index);
-                              });
-                            },
-                            editMode: true,
-                            onDosageUpdated: (updatedDosage) {
-                              setState(() {
-                                _tempDosages[index] = updatedDosage;
-                              });
-                            },
-                          );
-                        },
+                      // Wrap ReorderableListView in a SizedBox with a fixed height
+                      SizedBox(
+                        height: 300, // Provide a fixed height for the list
+                        child: DosageList(
+                          dosages: _tempDosages,
+                          drug: widget.drug,
+                          editMode: true,
+                        ),
                       ),
                     ],
                   ),
