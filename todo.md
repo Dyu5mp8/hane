@@ -23,11 +23,12 @@
 - [x] Autocomplete categories upon edit
 - [ ] Fix custom icons
 
+- [x] Review info button
 - [x] Replace button for edit indication for the new edit toggle
 - [x] Handle conversions for concentrations in another dose (eg. 2mg/ml with 0.5 mikrog/kg/min infusion)
 - [ ] Handle max dose conversions
 - [ ] Reduce firestore reads if possible
-- [ ] Sort out edit dosage dialog layout, consider enforcing same unit for all
+- [x] Sort out edit dosage dialog layout, consider enforcing same unit for all
 - [x] Immutable base data.
 - [ ] Highlight generic names in color or italics.
 - [x] Ability to rearrange dosages.

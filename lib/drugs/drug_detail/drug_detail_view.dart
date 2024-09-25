@@ -49,7 +49,8 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         title: Text(_editableDrug.name ?? 'Drug Details'),
         centerTitle: true,
         actions: [
-          InfoButton(),
+          if (!_editableDrug.changedByUser) 
+            InfoButton(),
           if (_editableDrug.changedByUser ||
               Provider.of<DrugListProvider>(context, listen: false).userMode ==
                   UserMode.isAdmin)

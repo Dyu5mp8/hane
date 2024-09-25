@@ -24,7 +24,8 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
   void initState() {
     super.initState();
     // Initialize the controllers with the existing data
-    _notesController.text = widget.drug.userNotes ?? '';
+    _notesController.text = widget.isUserNote ? widget.drug.userNotes ?? '' : widget.drug.notes ?? '';
+
   }
 
   @override
