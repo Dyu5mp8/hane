@@ -45,4 +45,5 @@ app.*.map.json
 
 # Ignore the entire config directory
 config/
+möten/
 firebase_error_codes.txt
