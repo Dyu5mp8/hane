@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/signup.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, this.title, this.emailNotVerified}) : super(key: key);
@@ -27,6 +29,10 @@ class _LoginPageState extends State<LoginPage> {
             email: _emailController.text.trim(),
             password: _passwordController.text.trim(),
           );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const InitializerWidget()));
+          
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Inloggad!"),
           ));
