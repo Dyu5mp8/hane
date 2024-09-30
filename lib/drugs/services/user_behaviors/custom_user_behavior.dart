@@ -50,7 +50,7 @@ class CustomUserBehavior extends UserBehavior {
         indexDocRef.set({
           newDocRef.id : drug.lastUpdated
         }, SetOptions(merge: true));
-        drug.id = newDocRef.id;
+        drug.id = newDocRef.id; //intended side effect
         return; // Exit early as we are done adding the new drug
       }
       // If the existing drug is different, update it by merging the changes
