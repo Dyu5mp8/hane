@@ -89,6 +89,7 @@ Query<Map<String, dynamic>> userDrugsCollection = db.collection('users').doc(use
 
         // Save the new drug document to Firestore
         await newDocRef.set(drug.toJson());
+        drug.id = newDocRef.id;
         return; // Exit early as we are done adding the new drug
       }
       // If the existing drug is different, update it by merging the changes

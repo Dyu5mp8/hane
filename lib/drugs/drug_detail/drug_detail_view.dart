@@ -253,6 +253,8 @@ class EditModeButton extends StatelessWidget {
                   provider.addDrug(Provider.of<Drug>(context, listen: false));
                 }
 
+                print(drug.id);
+
                 editModeProvider.toggleEditMode();
               },
             ),

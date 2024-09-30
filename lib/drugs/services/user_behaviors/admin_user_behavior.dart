@@ -46,6 +46,7 @@ class AdminUserBehavior extends UserBehavior {
         // Save the new drug document to Firestore
         await newDocRef.set(drug.toJson());
         await addDrugToIndex(newDocRef.id, drug.lastUpdated!);
+        drug.id = newDocRef.id; //intended side effect of updating passed drugs id.
 
         return; // Exit early as we are done adding the new drug
       }
@@ -115,22 +116,28 @@ class AdminUserBehavior extends UserBehavior {
   }
 
   Future<void> removeDrugFromIndex(String id) async {
+
     try {
       var db = FirebaseFirestore.instance;
       DocumentReference indexDocRef = db
           .collection('users')
-          .doc(user)
+          .doc(masterUID)
           .collection('indexes')
           .doc('drugIndex');
 
       // Check if the document exists
       DocumentSnapshot snapshot = await indexDocRef.get();
 
+
+
       if (snapshot.exists) {
         // Document exists, update it by removing the key-value pair for the drug ID
         await indexDocRef.update({
           id: FieldValue
               .delete() // Remove the key-value pair where the key is the drug ID
+
+            
+
         });
       } else {
         print("Index document does not exist. No need to remove.");
