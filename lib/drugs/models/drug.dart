@@ -12,6 +12,7 @@ export 'package:hane/drugs/models/dose.dart';
 class Drug extends ChangeNotifier with EquatableMixin{
   String? _name;
   List<dynamic>? _brandNames;
+  String? _genericName;
   List<dynamic>? _categories;
   List<Concentration>? _concentrations;
   String? _contraindication;
@@ -29,6 +30,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
     bool? changedByUser,
     String? reviewedBy,
     List<dynamic>? brandNames,
+    String? genericName,
     List<dynamic>? categories,
     List<Concentration>? concentrations = const [],
     String? contraindication = '',
@@ -46,6 +48,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
         _indications = indications,
         _notes = notes,
         _brandNames = brandNames,
+        _genericName = genericName,
         _id = id,
         _userNotes = userNotes;
 
@@ -54,6 +57,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
       : 
         _id = drug.id,
         _name = drug.name,
+        _genericName = drug._genericName,
         _reviewedBy = drug._reviewedBy,
         _changedByUser = drug.changedByUser,
         _lastUpdated = drug.lastUpdated,
@@ -71,6 +75,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
   List<Object?> get props => [
         _id,
         _name,
+        _genericName,
         _reviewedBy,
         _changedByUser,
         _lastUpdated,
@@ -146,6 +151,14 @@ class Drug extends ChangeNotifier with EquatableMixin{
     }
   }
 
+  String? get genericName => _genericName;
+  set genericName(String? newGenericName) {
+    if (_genericName != newGenericName) {
+      _genericName = newGenericName;
+      notifyListeners();
+    }
+  }
+
   List<dynamic>? get categories => _categories;
   set categories(List<dynamic>? newcategories) {
     if (_categories != newcategories) {
@@ -212,6 +225,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
     return {
       'id': _id,
       'name': _name,
+      'genericName': _genericName,
       'changedByUser': _changedByUser,
       'reviewedBy': _reviewedBy,
       'brandNames': _brandNames,
@@ -229,6 +243,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
     return Drug(
       id: map['id'] as String?,
       name: map['name'] as String?,
+      genericName: map['genericName'] as String?,
       changedByUser: map['changedByUser'] as bool?,
       reviewedBy: map['reviewedBy'] as String?,
       categories: (map['categories'] as List<dynamic>?),

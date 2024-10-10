@@ -4,6 +4,7 @@ import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/ui_components/custom_chip.dart';
+import 'package:hane/drugs/ui_components/custom_chip_with_radio.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
 
 class EditNameDialog extends StatefulWidget {
@@ -21,6 +22,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
   final TextEditingController _categoriesController = TextEditingController();
   List<String> _brandNames = [];
   List<String> _categories = [];
+  String? _genericName;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   List<dynamic> _suggestedCategories = [
     "Cirkulation",
@@ -29,6 +31,8 @@ class _EditNameDialogState extends State<EditNameDialog> {
     "Andning",
     "Antidot"
   ];
+  
+
 
   @override
   void initState() {
@@ -42,6 +46,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
     _suggestedCategories = Provider.of<DrugListProvider>(context, listen: false)
         .categories
         .toList();
+    _genericName = widget.drug.genericName;
   }
 
   @override
@@ -150,6 +155,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
                                   widget.drug.name = _nameController.text;
                                   widget.drug.brandNames = _brandNames;
                                   widget.drug.categories = _categories;
+                                  widget.drug.genericName = _genericName;
                                   Navigator.pop(context);
                                   Navigator.pop(context);
                                 },
@@ -162,6 +168,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
                     widget.drug.name = _nameController.text;
                     widget.drug.brandNames = _brandNames;
                     widget.drug.categories = _categories;
+                    widget.drug.genericName = _genericName;
 
                     Navigator.pop(context);
                   }
@@ -213,19 +220,44 @@ class _EditNameDialogState extends State<EditNameDialog> {
 
               const SizedBox(height: 8),
               // Display brand names as chips
-              SizedBox(
-                height: 40,
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: _brandNames
-                      .map((name) => CustomChip(
-                            label: name,
-                            onDeleted: () => _removeBrandName(name),
-                          ))
-                      .toList(),
-                ),
-              ),
+        // Display brand names with an option to select generic name
+        
+
+Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Row(
+      children: [
+        const Text(
+          'Om det finns ett generiskt namn, markera detta',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ],
+    ),
+    const SizedBox(height: 8),
+
+SizedBox(
+  height: 40,
+  child: Wrap(
+    spacing: 8,
+    runSpacing: 4,
+    children: _brandNames
+        .map((name) => CustomChipWithRadio(
+              label: name,
+              isSelected: _genericName == name,
+              onSelected: (selected) {
+                setState(() {
+                  _genericName = selected! ? name : null;
+
+                });
+              },
+              onDeleted: () => _removeBrandName(name),
+            ))
+        .toList(),
+  ),
+),
+  ]
+),
               // Categories input
               const SizedBox(height: 8),
               TypeAheadField<String>(
