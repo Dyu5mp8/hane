@@ -53,6 +53,7 @@ class DrugListProvider with ChangeNotifier {
 
   Stream<List<Drug>> getDrugsStream() {
     categories = userBehavior!.categories;
+
     return userBehavior!.getDrugsStream();
   }
 

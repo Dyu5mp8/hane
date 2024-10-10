@@ -11,20 +11,28 @@ class AdminUserBehavior extends UserBehavior {
 
     Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
         drugsCollection.snapshots();
+return drugsStream.map((drugsSnapshot) {
+  print("Stream triggered. Snapshot: ${drugsSnapshot.docs.length} docs");
 
-    return drugsStream.map((drugsSnapshot) {
-      var drugsList = drugsSnapshot.docs.map((doc) {
-        var drug = Drug.fromFirestore(doc.data());
-        categories.addAll(drug.categories ?? []);
-        drug.id = doc.id;
-        return drug;
-      }).toList();
+  var drugsList = drugsSnapshot.docs.map((doc) {
+    try {
 
-      drugsList.sort(
-          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
-      return drugsList;
-    });
+      var drug = Drug.fromFirestore(doc.data());
+      drug.id = doc.id;
+      
+
+      return drug;
+
+    } catch (e) {
+      // Log the error and skip the problematic document
+      print("Error mapping document with ID ${doc.id}: $e");
+      return null; // Return null to indicate this document should be skipped
+    }
+  }).where((drug) => drug != null).cast<Drug>().toList(); // Filter out null values
+
+  return drugsList;
+});
   }
 
   @override

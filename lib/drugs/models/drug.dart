@@ -238,26 +238,28 @@ class Drug extends ChangeNotifier with EquatableMixin{
     };
   }
 
-  // Factory constructor to create a Drug from a Map
   factory Drug.fromFirestore(Map<String, dynamic> map) {
-    return Drug(
-      id: map['id'] as String?,
-      name: map['name'] as String?,
-      genericName: map['genericName'] as String?,
-      changedByUser: map['changedByUser'] as bool?,
-      reviewedBy: map['reviewedBy'] as String?,
-      categories: (map['categories'] as List<dynamic>?),
-      concentrations: (map['concentrations'] as List<dynamic>?)
-          ?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
-          .toList(),
-      brandNames: (map['brandNames'] as List<dynamic>?),
-      contraindication: map['contraindication'] as String?,
-      indications: (map['indications'] as List?)
-          ?.map(
-              (item) => Indication.fromFirestore(item as Map<String, dynamic>))
-          .toList(),
-      notes: map['notes'] as String?,
-      lastUpdated: map['lastUpdated'] as Timestamp?,
-    );
+  // Debugging print to log the document being parsed
+
+
+  return Drug(
+    id: map['id'] as String?,
+    name: map['name'] as String?,
+    genericName: map.containsKey('genericName') ? map['genericName'] as String? : null,
+    changedByUser: map['changedByUser'] as bool?,
+    reviewedBy: map['reviewedBy'] as String?,
+    categories: (map['categories'] as List<dynamic>?),
+    concentrations: (map['concentrations'] as List<dynamic>?)
+        ?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
+        .toList(),
+    brandNames: (map['brandNames'] as List<dynamic>?),
+    contraindication: map['contraindication'] as String?,
+    indications: (map['indications'] as List?)
+        ?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>))
+        .toList(),
+    notes: map['notes'] as String?,
+    lastUpdated: map['lastUpdated'] as Timestamp?,
+  );
+
   }
 }
