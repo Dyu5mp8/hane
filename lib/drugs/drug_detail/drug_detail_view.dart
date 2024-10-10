@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:hane/drugs/drug_detail/drug_chat/drug_chat.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
@@ -7,6 +8,7 @@ import 'package:hane/drugs/drug_detail/indication_box.dart';
 import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
+
 
 class DrugDetailView extends StatefulWidget {
   final bool isNewDrug;
@@ -49,6 +51,9 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         title: Text(_editableDrug.name ?? 'Drug Details'),
         centerTitle: true,
         actions: [
+          if (Provider.of<DrugListProvider>(context, listen: false).userMode ==
+              UserMode.isAdmin)
+            ChatButton(),
           if (!_editableDrug.changedByUser) 
             InfoButton(),
           if (_editableDrug.changedByUser ||
@@ -112,6 +117,27 @@ class BackButton extends StatelessWidget {
     );
   }
 }
+
+class ChatButton extends StatelessWidget {
+  const ChatButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final drug = Provider.of<Drug>(context, listen: false);
+    return IconButton(
+      icon: const Icon(Icons.chat_bubble_outline),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DrugChat(drugId: drug.id!)
+          ),
+        );
+      },
+    );
+  }
+}
+
 class InfoButton extends StatelessWidget {
   InfoButton({super.key});  
 
