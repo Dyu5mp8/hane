@@ -127,86 +127,99 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
         });
       },
     );
-  }
+  }void _saveForm() {
+  setState(() {
+    errorMessage = null; // Reset error message
+  });
 
-  void _saveForm() {
+  // Check if fields are filled
+  bool isDoseAmountFilled = doseAmountController.text.isNotEmpty;
+  bool isFromAndToFilled = lowerLimitDoseAmountController.text.isNotEmpty &&
+      higherLimitDoseAmountController.text.isNotEmpty;
+  bool isFromAndToNotBothFilled =
+      lowerLimitDoseAmountController.text.isNotEmpty && higherLimitDoseAmountController.text.isEmpty || lowerLimitDoseAmountController.text.isEmpty && higherLimitDoseAmountController.text.isNotEmpty;
+  bool isInstructionFilled = instructionController.text.isNotEmpty;
+  bool isUnitFilled = selectedNumeratorUnit != '-' && selectedNumeratorUnit.isNotEmpty;
+
+  // Rule 1: You must have either a valid dose or a valid instruction.
+  if (!isDoseAmountFilled && !isFromAndToFilled && !isInstructionFilled) {
     setState(() {
-      errorMessage = null; // Reset error message
+      errorMessage =
+          'Du måste fylla i antingen dos eller både från och till doser. Alternativt skriv endast i instruktionsfältet.';
     });
-
-    // Validation logic
-    bool isDoseAmountFilled = doseAmountController.text.isNotEmpty;
-    bool isFromAndToFilled = lowerLimitDoseAmountController.text.isNotEmpty &&
-        higherLimitDoseAmountController.text.isNotEmpty;
-    bool isFromAndToNotBothFilled =
-        lowerLimitDoseAmountController.text.isNotEmpty && higherLimitDoseAmountController.text.isEmpty || lowerLimitDoseAmountController.text.isEmpty && higherLimitDoseAmountController.text.isNotEmpty;
-
-  
-
-    if (!isDoseAmountFilled && !isFromAndToFilled) {
-      setState(() {
-        errorMessage =
-            'Du måste fylla i antingen dos eller både från och till doser.';
-      });
-      return;
-    }
-
-    if (isDoseAmountFilled) {
-      double? doseAmount = double.tryParse(doseAmountController.text.replaceAll(",", "."));
-      if (doseAmount == null) {
-        setState(() {
-          errorMessage = 'Dosmängden måste vara ett giltigt nummer.';
-        });
-        return;
-      }
-    }
-
-    if (isFromAndToNotBothFilled) {
-      setState(() {
-        errorMessage = 'Du måste fylla i både från och till doser.';
-      });
-      return;
-    }
-
-    if (isFromAndToFilled) {
-      double? lowerLimit = double.tryParse(lowerLimitDoseAmountController.text.replaceAll(",", "."));
-      double? higherLimit =
-          double.tryParse(higherLimitDoseAmountController.text.replaceAll(",", "."));
-      if (lowerLimit == null || higherLimit == null) {
-        setState(() {
-          errorMessage = 'Från och till doserna måste vara giltiga nummer.';
-        });
-        return;
-      }
-      if (lowerLimit > higherLimit) {
-        setState(() {
-          errorMessage = 'Från dosen kan inte vara större än till dosen.';
-        });
-        return;
-      }
-    }
-
-    if (selectedNumeratorUnit == '-' || selectedNumeratorUnit.isEmpty) {
-      setState(() {
-        errorMessage = 'Du måste välja en primär enhet för doseringen.';
-      });
-      return;
-    }
-
-    var updatedDosage = Dosage(
-      instruction: instructionController.text,
-      administrationRoute: administrationRouteController.text,
-      dose: _createDose(doseAmountController.text),
-      lowerLimitDose: _createDose(lowerLimitDoseAmountController.text),
-      higherLimitDose: _createDose(higherLimitDoseAmountController.text),
-    );
-
-    // Pass updated dosage back to the parent via the onSave callback
-    widget.onSave(updatedDosage);
-
-    // Close the dialog
-    Navigator.pop(context);
+    return;
   }
+
+  // Rule 2: If a dose is filled, it must be valid.
+  if (isDoseAmountFilled) {
+    double? doseAmount = double.tryParse(doseAmountController.text.replaceAll(",", "."));
+    if (doseAmount == null) {
+      setState(() {
+        errorMessage = 'Dosmängden måste vara ett giltigt nummer.';
+      });
+      return;
+    }
+  }
+
+  // Rule 3: If from/to dose is filled, both must be valid.
+  if (isFromAndToNotBothFilled) {
+    setState(() {
+      errorMessage = 'Du måste fylla i både från och till doser.';
+    });
+    return;
+  }
+
+  if (isFromAndToFilled) {
+    double? lowerLimit = double.tryParse(lowerLimitDoseAmountController.text.replaceAll(",", "."));
+    double? higherLimit = double.tryParse(higherLimitDoseAmountController.text.replaceAll(",", "."));
+    if (lowerLimit == null || higherLimit == null) {
+      setState(() {
+        errorMessage = 'Från och till doserna måste vara giltiga nummer.';
+      });
+      return;
+    }
+    if (lowerLimit > higherLimit) {
+      setState(() {
+        errorMessage = 'Från dosen kan inte vara större än till dosen.';
+      });
+      return;
+    }
+  }
+
+  // Rule 4: If an instruction is filled and no dose is provided, units should not be filled
+  if (isInstructionFilled && !isDoseAmountFilled && !isFromAndToFilled && isUnitFilled) {
+    setState(() {
+      errorMessage = 'Du kan inte välja en enhet utan att fylla i dosen.';
+      
+    });
+    return;
+  }
+
+  // Rule 5: Ensure a valid unit is selected if any dose value is provided
+  if ((isDoseAmountFilled || isFromAndToFilled) &&
+      (selectedNumeratorUnit == '-' || selectedNumeratorUnit.isEmpty)) {
+    setState(() {
+      errorMessage = 'Du måste välja en primär enhet för doseringen om dos anges.';
+      
+    });
+    return;
+  }
+
+  // If all validations pass, proceed to create the dosage object
+  var updatedDosage = Dosage(
+    instruction: instructionController.text,
+    administrationRoute: administrationRouteController.text,
+    dose: _createDose(doseAmountController.text),
+    lowerLimitDose: _createDose(lowerLimitDoseAmountController.text),
+    higherLimitDose: _createDose(higherLimitDoseAmountController.text),
+  );
+
+  // Pass updated dosage back to the parent via the onSave callback
+  widget.onSave(updatedDosage);
+
+  // Close the dialog
+  Navigator.pop(context);
+}
 
   Dose? _createDose(String amount) {
     String unit = getUnitString();
