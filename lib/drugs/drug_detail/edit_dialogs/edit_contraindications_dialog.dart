@@ -33,7 +33,7 @@ class _EditContraindicationsDialogState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Kontraindikationer'),
+          title: const Text('CAVE'),
           automaticallyImplyLeading: false,
           centerTitle: true,
           leading: null,
@@ -66,7 +66,7 @@ class _EditContraindicationsDialogState
                     controller: _contraindicationController,
                     autofocus: true,
                     decoration: const InputDecoration(
-                      labelText: 'Kontraindikationer',
+                      labelText: 'Varningar och försiktighet',
                       border: OutlineInputBorder(),
                     ),
                     minLines: 3,
