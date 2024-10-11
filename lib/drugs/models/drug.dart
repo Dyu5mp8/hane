@@ -76,7 +76,9 @@ class Drug extends ChangeNotifier with EquatableMixin{
         _notes = drug.notes,
         _userNotes = drug.userNotes,
         _brandNames = drug.brandNames,
-        _lastMessageTimestamp = drug._lastMessageTimestamp;
+        _lastMessageTimestamp = drug._lastMessageTimestamp,
+        hasUnreadMessages = drug.hasUnreadMessages;
+
 
   @override
   List<Object?> get props => [
@@ -132,6 +134,13 @@ class Drug extends ChangeNotifier with EquatableMixin{
       _reviewedBy = newReviewedBy;
       notifyListeners();
     }
+  }
+
+  markMessagesAsRead() {
+    print(hasUnreadMessages);
+    hasUnreadMessages = false;
+    notifyListeners();
+    print(hasUnreadMessages);
   }
 
   Timestamp? get lastUpdated => _lastUpdated;

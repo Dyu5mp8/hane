@@ -8,9 +8,9 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:intl/intl.dart';
 
 class DrugChat extends StatefulWidget {
-  final String drugId; // ID of the drug for which the chat is displayed
+  final Drug drug;// ID of the drug for which the chat is displayed
 
-  DrugChat({required this.drugId});
+  DrugChat({required this.drug});
 
   @override
   _DrugChatState createState() => _DrugChatState();
@@ -18,15 +18,13 @@ class DrugChat extends StatefulWidget {
 
 class _DrugChatState extends State<DrugChat> {
   final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    // Scroll to the bottom when the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
-     Provider.of<DrugListProvider>(context, listen: false).updateLastReadTimestamp(widget.drugId);
-
-  }
+@override
+void initState() {
+  super.initState();
+  Future.delayed(Duration.zero, () {
+    markAsRead();
+  });
+}
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -34,8 +32,14 @@ class _DrugChatState extends State<DrugChat> {
     }
   }
 
+  void markAsRead() {
+    Provider.of<DrugListProvider>(context, listen: false).updateLastReadTimestamp(widget.drug.id!);
+  
+    widget.drug.markMessagesAsRead();
+  }
+
   void _onNewMessage() {
-    Provider.of<DrugListProvider>(context, listen: false).updateLastReadTimestamp(widget.drugId);
+    markAsRead();
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
@@ -51,7 +55,7 @@ class _DrugChatState extends State<DrugChat> {
           Expanded(
             child: StreamBuilder(
               stream: Provider.of<DrugListProvider>(context)
-                  .getChatStream(widget.drugId),
+                  .getChatStream(widget.drug.id!),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator()); // Loading indicator
@@ -94,7 +98,7 @@ class _DrugChatState extends State<DrugChat> {
             ),
           ),
           ChatInputField(
-            drugId: widget.drugId,
+            drugId: widget.drug.id!,
             onNewMessage: _onNewMessage, // Notify when a new message is sent
           ),
         ],

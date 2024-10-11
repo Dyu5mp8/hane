@@ -39,7 +39,7 @@ class DrugListRow extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         subtitle: _buildBrandNamesText(context),
-        trailing: _drug.hasUnreadMessages ? Text("new messg") : null,
+        trailing: _drug.hasUnreadMessages ? _buildNewMessageChip(context) : null,
 
 
         onTap: () {
@@ -61,6 +61,21 @@ class DrugListRow extends StatelessWidget {
       );
     }
   }
+
+  Chip _buildNewMessageChip(BuildContext context) {
+    return Chip(
+      label: Text('Nytt meddelande', style: Theme.of(context).textTheme.labelSmall),
+      labelPadding: EdgeInsets.all(0),
+      backgroundColor: Color.fromARGB(255, 252, 220, 200),
+      shape: RoundedRectangleBorder(
+     
+        side: BorderSide.none
+
+      ),
+    );
+  }
+
+  
 
   Widget _buildBrandNamesText(BuildContext context) {
     if (_drug.brandNames == null || _drug.brandNames!.isEmpty) {

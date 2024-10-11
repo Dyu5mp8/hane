@@ -52,7 +52,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         centerTitle: true,
         actions: [
           if (Provider.of<DrugListProvider>(context, listen: false).userMode ==
-              UserMode.isAdmin)
+              UserMode.isAdmin && !Provider.of<EditModeProvider>(context).editMode) 
             ChatButton(),
           if (!_editableDrug.changedByUser) 
             InfoButton(),
@@ -123,14 +123,21 @@ class ChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final drug = Provider.of<Drug>(context, listen: false);
+    final drug = Provider.of<Drug>(context, listen: true);
     return IconButton(
-      icon: const Icon(Icons.chat_bubble_outline),
+      icon: drug.hasUnreadMessages ? Badge(backgroundColor: Colors.red, smallSize: 10,
+           
+              
+              
+              child: Icon(Icons.comment_outlined),
+            ):
+      
+      const Icon(Icons.comment_outlined),
       onPressed: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => DrugChat(drugId: drug.id!)
+            builder: (context) => DrugChat(drug: drug)
           ),
         );
       },

@@ -31,7 +31,7 @@ Stream<List<Drug>> getDrugsStream() {
         userSnapshot.data()?['lastReadTimestamps'] ?? {};
 
     return drugsStream.map((drugsSnapshot) {
-      print("Stream triggered. Snapshot: ${drugsSnapshot.docs.length} docs");
+
 
       var drugsList = drugsSnapshot.docs.map((doc) {
         try {
@@ -42,11 +42,10 @@ Stream<List<Drug>> getDrugsStream() {
 
           // Get the last message timestamp from the drug data
           Timestamp? lastMessageTimestamp = drugData['lastMessageTimestamp'];
-         print("drug: ${drug.name} lastMessageTimestamp: $lastMessageTimestamp");
+
 
           // Get the user's last read timestamp for this drug
           Timestamp? userLastReadTimestamp = lastReadTimestamps[drug.id];
-          print("drug: ${drug.name} userLastReadTimestamp: $userLastReadTimestamp");
 
           // Determine if there are unread messages
           if (lastMessageTimestamp != null &&

@@ -1,9 +1,9 @@
-import "package:flutter/material.dart";
-import "package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart";
-import "package:hane/drugs/drug_detail/edit_mode_provider.dart";
-import "package:hane/drugs/drug_detail/ui_components/add_indication_button.dart";
-import "package:hane/drugs/models/drug.dart";
-import "ui_components/dosage_list.dart";
+import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
+import 'package:hane/drugs/drug_detail/ui_components/add_indication_button.dart';
+import 'package:hane/drugs/models/drug.dart';
+import 'ui_components/dosage_list.dart';
 
 class IndicationTabView extends StatelessWidget {
   @override
@@ -13,42 +13,39 @@ class IndicationTabView extends StatelessWidget {
 
     if ((drug.indications == null || drug.indications!.isEmpty) &&
         drug.changedByUser) {
-      return Expanded(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize:
-                  MainAxisSize.min, // Shrinks the column to fit its children
-              children: [
-                Icon(Icons.lightbulb_outline,
-                    color: Colors.grey[600], size: 80),
-                const SizedBox(height: 20),
-                Text(
-                  "Inga indikationer ännu!",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(color: Colors.grey[800]),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Lägg till en indikation för att komma igång.",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.grey[600]),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 30),
-                const AddIndicationButton(),
-              ],
-            ),
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Shrinks the column to fit its children
+            children: [
+              Icon(Icons.lightbulb_outline, color: Colors.grey[600], size: 80),
+              const SizedBox(height: 20),
+              Text(
+                "Inga indikationer ännu!",
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.grey[800]),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Lägg till en indikation för att komma igång.",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 30),
+              const AddIndicationButton(),
+            ],
           ),
         ),
       );
     }
+
     return Expanded(
       child: TabBarView(
         children: drug.indications!.map((indication) {
@@ -58,7 +55,7 @@ class IndicationTabView extends StatelessWidget {
               // Name and Notes section
               if (indication.notes != null && indication.notes!.isNotEmpty)
                 Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: double.infinity,
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
@@ -74,23 +71,22 @@ class IndicationTabView extends StatelessWidget {
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ),
-
               // Dosages section
               if (indication.dosages != null)
-                Flexible(
+                Expanded(
                   child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                     DosageList(
+                      DosageList(
                         drug: drug,
                         dosages: indication.dosages!,
                         editMode: editMode,
                       ),
-
                       // Floating action button for editing the indication
                       if (editMode)
                         Positioned(
-                          bottom: 20, // Adjust this value to position the button vertically
-                          right: 20, // Adjust this value to position the button horizontally
+                          bottom: 20,
+                          right: 20,
                           child: FloatingActionButton.extended(
                             onPressed: () {
                               Navigator.push(
