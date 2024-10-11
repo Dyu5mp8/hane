@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
@@ -23,6 +24,7 @@ class DrugListRow extends StatelessWidget {
       );
     } else {
       return ListTile(
+        
         dense: true,
         contentPadding: const EdgeInsets.only(right: 16.0, top: 0, bottom: 5),
         minLeadingWidth: 0,
@@ -37,11 +39,9 @@ class DrugListRow extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         subtitle: _buildBrandNamesText(context),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          size: 16,
-          color: Colors.grey[600],
-        ),
+        trailing: _drug.hasUnreadMessages ? Text("new messg") : null,
+
+
         onTap: () {
           Navigator.push(
             context,

@@ -1,39 +1,78 @@
+import "package:firebase_auth/firebase_auth.dart";
 import "package:hane/drugs/services/user_behaviors/user_behavior.dart";
+import 'package:rxdart/rxdart.dart';
 
 class AdminUserBehavior extends UserBehavior {
 
   AdminUserBehavior({required String masterUID}) : super(masterUID: masterUID);
   @override
-  Stream<List<Drug>> getDrugsStream() {
-    var db = FirebaseFirestore.instance;
-    Query<Map<String, dynamic>> drugsCollection =
-        db.collection('users').doc(masterUID).collection('drugs');
+@override
 
-    Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
-        drugsCollection.snapshots();
-return drugsStream.map((drugsSnapshot) {
-  print("Stream triggered. Snapshot: ${drugsSnapshot.docs.length} docs");
+@override
+Stream<List<Drug>> getDrugsStream() {
+  var db = FirebaseFirestore.instance;
+  Query<Map<String, dynamic>> drugsCollection =
+      db.collection('users').doc(masterUID).collection('drugs');
 
-  var drugsList = drugsSnapshot.docs.map((doc) {
-    try {
+  // Get current user ID
+  String userId = FirebaseAuth.instance.currentUser!.uid;
 
+  // Stream of user's last read timestamps
+  Stream<DocumentSnapshot<Map<String, dynamic>>> userStream =
+      db.collection('users').doc(userId).snapshots();
 
-      var drug = Drug.fromFirestore(doc.data());
-      drug.id = doc.id;
-      
+  // Stream of drugs
+  Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
+      drugsCollection.snapshots();
 
-      return drug;
+  // Combine the streams using switchMap
+  return userStream.switchMap((userSnapshot) {
+    Map<String, dynamic> lastReadTimestamps =
+        userSnapshot.data()?['lastReadTimestamps'] ?? {};
 
-    } catch (e) {
-      // Log the error and skip the problematic document
-      print("Error mapping document with ID ${doc.id}: $e");
-      return null; // Return null to indicate this document should be skipped
-    }
-  }).where((drug) => drug != null).cast<Drug>().toList(); // Filter out null values
+    return drugsStream.map((drugsSnapshot) {
+      print("Stream triggered. Snapshot: ${drugsSnapshot.docs.length} docs");
 
-  return drugsList;
-});
-  }
+      var drugsList = drugsSnapshot.docs.map((doc) {
+        try {
+          var drugData = doc.data();
+
+          var drug = Drug.fromFirestore(drugData);
+          drug.id = doc.id;
+
+          // Get the last message timestamp from the drug data
+          Timestamp? lastMessageTimestamp = drugData['lastMessageTimestamp'];
+         print("drug: ${drug.name} lastMessageTimestamp: $lastMessageTimestamp");
+
+          // Get the user's last read timestamp for this drug
+          Timestamp? userLastReadTimestamp = lastReadTimestamps[drug.id];
+          print("drug: ${drug.name} userLastReadTimestamp: $userLastReadTimestamp");
+
+          // Determine if there are unread messages
+          if (lastMessageTimestamp != null &&
+              (userLastReadTimestamp == null ||
+                  lastMessageTimestamp.compareTo(userLastReadTimestamp) > 0)) {
+            drug.hasUnreadMessages = true;
+          } else {
+            drug.hasUnreadMessages = false;
+          }
+
+          return drug;
+        } catch (e) {
+          // Log the error and skip the problematic document
+          print("Error mapping document with ID ${doc.id}: $e");
+          return null;
+        }
+      }).whereType<Drug>().toList(); // Filter out null values
+
+      drugsList.sort(
+          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+
+      return drugsList;
+    });
+  });
+}
+  
 
   @override
   Future<void> addDrug(Drug drug) async {
@@ -155,4 +194,8 @@ return drugsStream.map((drugsSnapshot) {
       rethrow;
     }
   }
+
+  
+
+
 }

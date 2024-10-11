@@ -23,6 +23,9 @@ class Drug extends ChangeNotifier with EquatableMixin{
   String? _userNotes;
   String? _notes;
   String? _reviewedBy;
+  bool hasUnreadMessages = false;
+  int unreadMessageCount = 0;
+  Timestamp? _lastMessageTimestamp;
 
   Drug({
     String? id,
@@ -38,6 +41,8 @@ class Drug extends ChangeNotifier with EquatableMixin{
     String? notes = '',
     String? userNotes,
     Timestamp? lastUpdated,
+    Timestamp? lastMessageTimestamp
+
   })  : _name = name ?? '',
         _changedByUser = changedByUser,
         _reviewedBy = reviewedBy,
@@ -50,7 +55,8 @@ class Drug extends ChangeNotifier with EquatableMixin{
         _brandNames = brandNames,
         _genericName = genericName,
         _id = id,
-        _userNotes = userNotes;
+        _userNotes = userNotes,
+        _lastMessageTimestamp = lastMessageTimestamp;
 
 
   Drug.from(Drug drug)
@@ -69,7 +75,8 @@ class Drug extends ChangeNotifier with EquatableMixin{
             : null,
         _notes = drug.notes,
         _userNotes = drug.userNotes,
-        _brandNames = drug.brandNames;
+        _brandNames = drug.brandNames,
+        _lastMessageTimestamp = drug._lastMessageTimestamp;
 
   @override
   List<Object?> get props => [
@@ -234,7 +241,9 @@ class Drug extends ChangeNotifier with EquatableMixin{
       'contraindication': _contraindication,
       'indications': indications?.map((ind) => ind.toJson()).toList(),
       'notes': _notes,
-      'lastUpdated': _lastUpdated
+      'lastUpdated': _lastUpdated,
+      'lastMessageTimestamp': _lastMessageTimestamp,
+
     };
   }
 
@@ -259,6 +268,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
         .toList(),
     notes: map['notes'] as String?,
     lastUpdated: map['lastUpdated'] as Timestamp?,
+    lastMessageTimestamp: map['lastMessageTimestamp'],
   );
 
   }
