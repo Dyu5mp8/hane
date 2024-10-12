@@ -19,6 +19,7 @@ class UnitValidator {
       "E" : "unitunit",
       "FE" : "unitunit",
       "mmol" : "molar",
+      "mE" : "unitunit"
       };
 
 

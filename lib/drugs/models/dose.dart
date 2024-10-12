@@ -164,52 +164,60 @@ class Dose with EquatableMixin{
 
     return (newValue, newUnits);
   }
+(double, Map) _scaledDose(double value, Map fromUnits) {
+  String? substanceUnit = fromUnits["substance"];
 
-  // Scale the dose
-  (double, Map) _scaledDose(double value, Map fromUnits) {
-    List<String> units = ["g", "mg", "mikrog"];
-
-    // Check if the substance unit is valid
-    if (fromUnits["substance"] == null ||
-        !units.contains(fromUnits["substance"])) {
-      return (value, fromUnits);
-    }
-
-    int currentIndex = units.indexOf(fromUnits["substance"]!);
-    int newIndex =
-        currentIndex + _conversionStep(value, minimum: 0.5, maximum: 1000);
-
-    // Ensure the new index is within bounds
-    if (newIndex < 0) {
-      newIndex = 0; // Can't scale below the smallest unit
-    } else if (newIndex >= units.length) {
-      newIndex = units.length - 1; // Can't scale above the largest unit
-    }
-
-    // Adjust the dose value according to the units changing
-    double newValue = value;
-    if (newIndex > currentIndex) {
-      for (int i = currentIndex; i < newIndex; i++) {
-        newValue *= 1000; // Scaling down
-      }
-    } else if (newIndex < currentIndex) {
-      for (int i = currentIndex; i > newIndex; i--) {
-        newValue /= 1000; // Scaling up
-      }
-    }
-
-    // Continue scaling down if possible
-    while (newValue < 0.1 && newIndex < units.length - 1) {
-      newValue *= 1000;
-      newIndex++;
-    }
-    Map<String, String> newUnits = Map.from(fromUnits);
-
-    newUnits["substance"] = units[newIndex];
-
-    // Return the new Dose with adjusted value and unit
-    return (newValue, newUnits);
+  // Check if the substance unit is valid
+  if (substanceUnit == null || !UnitValidator.isValidUnit(substanceUnit)) {
+    return (value, fromUnits);
   }
+
+  // Get the unit type
+  String unitType = UnitValidator.getUnitType(substanceUnit);
+
+  // Define units list based on unit type
+  List<String> units;
+
+  if (unitType == "mass") {
+    units = ["g", "mg", "mikrog", "ng"];
+  } else if (unitType == "unitunit") {
+    units = ["E", "mE"];
+  } else {
+    // For other unit types, no scaling
+    return (value, fromUnits);
+  }
+
+  if (!units.contains(substanceUnit)) {
+    return (value, fromUnits);
+  }
+
+  int currentIndex = units.indexOf(substanceUnit);
+  int newIndex = currentIndex + _conversionStep(value, minimum: 0.5, maximum: 1000);
+
+  // Ensure the new index is within bounds
+  if (newIndex < 0) {
+    newIndex = 0; // Can't scale below the smallest unit
+  } else if (newIndex >= units.length) {
+    newIndex = units.length - 1; // Can't scale above the largest unit
+  }
+
+  // Adjust the dose value according to the units changing
+  double newValue = value;
+  if (newIndex > currentIndex) {
+    for (int i = currentIndex; i < newIndex; i++) {
+      newValue *= 1000; // Scaling down
+    }
+  } else if (newIndex < currentIndex) {
+    for (int i = currentIndex; i > newIndex; i--) {
+      newValue /= 1000; // Scaling up
+    }
+  }
+
+  Map<String, String> newUnits = Map.from(fromUnits);
+  newUnits["substance"] = units[newIndex];
+
+  return (newValue, newUnits);
+}
 
   // Calculate the conversion step for scaling the dose
   int _conversionStep(double amount,

@@ -32,6 +32,7 @@ class UnitParser{
         "IE": 1,
         "E": 1,
         "FE": 1,
+        "mE" : 1000
       };
       return conversionFactorMap[fromUnit] / conversionFactorMap[toUnit];
     }
