@@ -68,14 +68,15 @@ class InitializerWidget extends StatelessWidget {
   }
 
   Future<bool> _checkIfUserIsAdmin(User user) async {
-    try {
-      final idTokenResult = await user.getIdTokenResult(true);
-      return idTokenResult.claims?['admin'] == true;
-    } catch (e) {
-      print("Failed to check if user is admin: $e");
-      return false;
-    }
+  try {
+    final idTokenResult = await user.getIdTokenResult();
+    return idTokenResult.claims?['admin'] == true;
+  } catch (e) {
+    print("Failed to check if user is admin: $e");
+    // Assume not admin when offline
+    return false;
   }
+}
 
   Future<bool?> _preferSyncedMode(String userId) async {
     final prefs = FirebaseFirestore.instance
