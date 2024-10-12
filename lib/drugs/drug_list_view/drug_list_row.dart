@@ -7,8 +7,9 @@ import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 
 class DrugListRow extends StatelessWidget {
   final Drug _drug;
+  final void Function()? onDetailPopped;
 
-  const DrugListRow(this._drug, {super.key});
+  const DrugListRow(this._drug, {super.key, this.onDetailPopped});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,11 @@ class DrugListRow extends StatelessWidget {
                 child: DrugDetailView(),
               ),
             ),
-          );
+          ).then((_) {
+            if (onDetailPopped != null) {
+              onDetailPopped!();
+            }
+          });
         },
       );
     }

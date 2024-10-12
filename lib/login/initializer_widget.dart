@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/services/drug_list_wrapper.dart';
 import 'package:hane/drugs/services/user_behaviors/user_behavior.dart';
 import 'package:hane/login/drug_init_screen.dart';
+import 'package:hane/login/loginPage.dart';
 import 'package:hane/login/preference_selection_screen.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +37,11 @@ class InitializerWidget extends StatelessWidget {
   }
 
   Future<Widget> _initializeApp(BuildContext context) async {
-    final user = FirebaseAuth.instance.currentUser!;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // Handle the case where the user is not logged in
+      return LoginPage(); // Or appropriate action
+    }
 
     String userId = user.uid;
     UserBehavior? behavior;

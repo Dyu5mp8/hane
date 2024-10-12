@@ -30,6 +30,13 @@ class _LoginPageState extends State<LoginPage> {
     _loadUserEmail(); // Load email and "Remember Me" preference
   }
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   // Load saved email and "Remember Me" checkbox state
   Future<void> _loadUserEmail() async {
     final prefs = await SharedPreferences.getInstance();
@@ -45,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('remember_me', value);
   }
+
   // Save email and "Remember Me" checkbox state
   Future<void> _saveUserEmail() async {
     final prefs = await SharedPreferences.getInstance();
@@ -62,7 +70,6 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = true;
         });
 
-
         try {
           await _auth.signInWithEmailAndPassword(
             email: _emailController.text.trim(),
@@ -73,8 +80,14 @@ class _LoginPageState extends State<LoginPage> {
             context,
             MaterialPageRoute(builder: (context) => const InitializerWidget()),
           );
+        } on FirebaseAuthException catch (e) {
+          _onFailedLogin(e);
         } catch (e) {
-          _onFailedLogin(e as FirebaseAuthException);
+          // Handle other exceptions
+          print('An unexpected error occurred: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Ett oväntat fel inträffade.")),
+          );
         } finally {
           setState(() {
             _isLoading = false;
@@ -107,21 +120,20 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Handle failed login
   void _onFailedLogin(FirebaseAuthException e) {
-    if (e.code == 'user-not-found') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Användaren finns inte.")),
-      );
-    } else if (e.code == 'wrong-password') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Användare eller lösenord felaktigt")),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Kunde inte logga in.")),
-      );
-    }
+    final errorMessages = {
+      'user-not-found': 'Användaren finns inte.',
+      'wrong-password': 'Användare eller lösenord felaktigt',
+      'invalid-email': 'Ogiltig e-postadress',
+      'missing-password': 'Lösenord saknas',
+      'invalid-credential': 'Fel användarnamn eller lösenord',
+    };
+
+    String message = errorMessages[e.code] ?? 'Kunde inte logga in.';
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   // Email & Password input field with autofill hints

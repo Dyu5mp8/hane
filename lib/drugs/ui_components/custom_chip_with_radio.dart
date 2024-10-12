@@ -21,7 +21,6 @@ class CustomChipWithRadio extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () {
-          print(isSelected);
           if (isSelected) {
             onSelected(false); // Unselect if already selected
           } else {

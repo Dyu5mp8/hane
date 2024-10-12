@@ -46,52 +46,51 @@ class _MyAppState extends State<MyApp> {
       rethrow; // Propagate the error to be caught in the FutureBuilder
     }
   }
-
-  @override
+@override
   Widget build(BuildContext context) {
     return FutureBuilder<FirebaseApp>(
       future: _initialization,
       builder: (context, snapshot) {
+        Widget homeWidget;
+
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show loading indicator
-          return MaterialApp(
-            home: Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            ),
+          homeWidget = Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
-          // Show error widget with retry option
-          return MaterialApp(
-            home: GenericErrorWidget(
-              errorMessage: 'Failed to initialize Firebase: ${snapshot.error}',
-              onRetry: () {
-                setState(() {
-                  _initialization = initializeFirebase();
-                });
-              },
-            ),
+          homeWidget = GenericErrorWidget(
+            errorMessage: 'Failed to initialize Firebase: ${snapshot.error}',
+            onRetry: () {
+              setState(() {
+                _initialization = initializeFirebase();
+              });
+            },
           );
         } else {
-          // Firebase initialized successfully
-          return MultiProvider(
-            providers: [
-              ChangeNotifierProvider(
-                create: (_) => DrugListProvider(),
-              ),
-              // Other providers...
-            ],
-            child: MaterialApp(
-              title: 'AnestesiH',
-              debugShowCheckedModeBanner: false,
-              theme: appTheme,
-              home: AuthGate(),
-            ),
-          );
+          homeWidget = AuthGate();
         }
+
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider(
+              create: (_) => DrugListProvider(),
+            ),
+            // Other providers...
+          ],
+          child: MaterialApp(
+            title: 'AnestesiH',
+            debugShowCheckedModeBanner: false,
+            theme: appTheme,
+            home: homeWidget,
+          ),
+        );
       },
     );
   }
 }
+
+
+
 class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
