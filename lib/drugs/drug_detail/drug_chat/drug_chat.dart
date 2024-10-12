@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,10 +9,10 @@ import 'package:intl/intl.dart';
 class DrugChat extends StatefulWidget {
   final Drug drug;// ID of the drug for which the chat is displayed
 
-  DrugChat({required this.drug});
+  const DrugChat({super.key, required this.drug});
 
   @override
-  _DrugChatState createState() => _DrugChatState();
+  State<DrugChat> createState() => _DrugChatState();
 }
 
 class _DrugChatState extends State<DrugChat> {
@@ -65,10 +64,10 @@ void initState() {
                   .getChatStream(widget.drug.id!),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator()); // Loading indicator
+                  return const Center(child: CircularProgressIndicator()); // Loading indicator
                 }
                 if (snapshot.data!.docs.isEmpty) {
-                  return Center(
+                  return const Center(
                     child: Text("Ingen diskussion ännu"), // Displayed when there are no messages
                   );
                 }
@@ -80,7 +79,7 @@ void initState() {
                 return ListView.builder(
                   controller: _scrollController,
                   shrinkWrap: true, // Take only the space needed
-                  physics: AlwaysScrollableScrollPhysics(), // Allow scrolling when content is less
+                  physics: const AlwaysScrollableScrollPhysics(), // Allow scrolling when content is less
                   itemCount: chatDocs.length,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   reverse: true, // Reverse the list and scroll direction
@@ -123,7 +122,7 @@ class MessageBubble extends StatelessWidget {
   final bool isCurrentUser;
   final Timestamp timestamp;
 
-  const MessageBubble({
+  const MessageBubble({super.key, 
     required this.message,
     required this.user,
     required this.isCurrentUser,
@@ -149,19 +148,19 @@ class MessageBubble extends StatelessWidget {
                 CircleAvatar(
                   child: Text(user[0].toUpperCase()),
                 ),
-              if (!isCurrentUser) SizedBox(width: 10),
+              if (!isCurrentUser) const SizedBox(width: 10),
               Flexible(
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   decoration: BoxDecoration(
                     color: isCurrentUser ? Colors.blueAccent : Colors.grey[200],
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
+                      topLeft: const Radius.circular(12),
+                      topRight: const Radius.circular(12),
                       bottomLeft:
-                          isCurrentUser ? Radius.circular(12) : Radius.circular(0),
+                          isCurrentUser ? const Radius.circular(12) : const Radius.circular(0),
                       bottomRight:
-                          isCurrentUser ? Radius.circular(0) : Radius.circular(12),
+                          isCurrentUser ? const Radius.circular(0) : const Radius.circular(12),
                     ),
                   ),
                   child: Text(
@@ -173,7 +172,7 @@ class MessageBubble extends StatelessWidget {
                   ),
                 ),
               ),
-              if (isCurrentUser) SizedBox(width: 10),
+              if (isCurrentUser) const SizedBox(width: 10),
               if (isCurrentUser)
                 CircleAvatar(
                   child: Text(user[0].toUpperCase()),
@@ -181,7 +180,7 @@ class MessageBubble extends StatelessWidget {
             ],
           ),
           // Spacing between bubble and metadata
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           // User and timestamp below the bubble
           Row(
             mainAxisAlignment:
@@ -189,12 +188,12 @@ class MessageBubble extends StatelessWidget {
             children: [
               Text(
                 user,
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               Text(
                 formattedTime, // Display the formatted timestamp
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
@@ -209,10 +208,10 @@ class ChatInputField extends StatefulWidget {
   final String drugId;
   final VoidCallback onNewMessage; // Callback when a new message is sent
 
-  ChatInputField({required this.drugId, required this.onNewMessage});
+  const ChatInputField({super.key, required this.drugId, required this.onNewMessage});
 
   @override
-  _ChatInputFieldState createState() => _ChatInputFieldState();
+State<ChatInputField> createState() => _ChatInputFieldState();
 }
 
 class _ChatInputFieldState extends State<ChatInputField> {
@@ -226,9 +225,12 @@ class _ChatInputFieldState extends State<ChatInputField> {
       _controller.clear();
       widget.onNewMessage(); // Notify that a new message has been sent
     } catch (e) {
-      // Handle any errors that occur during sending the message
-      print("Failed to send message: $e");
+      if (context.mounted){    // Handle any errors that occur during sending the message
+         ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Kunde inte skicka meddelandet')),
+      );
       // Optionally, show an error message to the user
+    }
     }
   }
 
@@ -246,7 +248,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
                 filled: true,
                 fillColor: Colors.grey[200],
                 contentPadding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 hintText: 'Skicka ett meddelande...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -259,10 +261,10 @@ class _ChatInputFieldState extends State<ChatInputField> {
              maxLines: 3,
             ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           GestureDetector(
             onTap: _sendMessage,
-            child: CircleAvatar(
+            child: const CircleAvatar(
               backgroundColor: Colors.blueAccent,
               child: Icon(Icons.send, color: Colors.white),
             ),

@@ -242,7 +242,7 @@ SizedBox(
     spacing: 8,
     runSpacing: 4,
     children: _brandNames
-        .map((name) => CustomChipWithRadio(
+        .map((name) => CustomChipWithCheckbox(
               label: name,
               isSelected: _genericName == name,
               onSelected: (selected) {

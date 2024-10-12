@@ -23,7 +23,6 @@ class _DrugListViewState extends State<DrugListView> {
     super.initState();
     _searchController.addListener(_onSearchChanged);
   }
-  
 
   @override
   void dispose() {
@@ -129,7 +128,10 @@ class _DrugListViewState extends State<DrugListView> {
               : SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      return DrugListRow(filteredDrugs[index], onDetailPopped: _onDetailsPopped,);
+                      return DrugListRow(
+                        filteredDrugs[index],
+                        onDetailPopped: _onDetailsPopped,
+                      );
                     },
                     childCount: filteredDrugs.length,
                   ),

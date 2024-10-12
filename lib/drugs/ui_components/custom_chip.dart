@@ -13,24 +13,25 @@ class CustomChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var chipTheme = Theme.of(context).chipTheme;
     return InputChip(
       label: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 12, // Smaller font size
-          color: Colors.white, // Text color
+          color: chipTheme.labelStyle?.color, // Text color
         ),
         overflow: TextOverflow.ellipsis, // Handle text overflow
       ),
       visualDensity: VisualDensity.compact,
-      backgroundColor: Color.fromARGB(255, 96, 41, 11), // Adjusted background color
+      backgroundColor: chipTheme.backgroundColor, // Use theme color
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Smaller padding
-      deleteIcon: const Icon(
+      deleteIcon: Icon(
         Icons.cancel,
         size: 16, // Smaller delete icon
-        color: Colors.white, // Delete icon color
+        color: chipTheme.labelStyle?.color, // Use theme color
       ),
-      deleteIconColor: Colors.white, // Consistent delete icon color
+      deleteIconColor: chipTheme.labelStyle?.color,  // Consistent delete icon color
       onDeleted: onDeleted,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20), // Slightly rounded edges

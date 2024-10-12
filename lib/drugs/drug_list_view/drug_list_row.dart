@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
+
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
@@ -25,7 +24,6 @@ class DrugListRow extends StatelessWidget {
       );
     } else {
       return ListTile(
-        
         dense: true,
         contentPadding: const EdgeInsets.only(right: 16.0, top: 0, bottom: 5),
         minLeadingWidth: 0,
@@ -40,9 +38,8 @@ class DrugListRow extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         subtitle: _buildBrandNamesText(context),
-        trailing: _drug.hasUnreadMessages ? _buildNewMessageChip(context) : null,
-
-
+        trailing:
+            _drug.hasUnreadMessages ? _buildNewMessageChip(context) : null,
         onTap: () {
           Navigator.push(
             context,
@@ -52,9 +49,10 @@ class DrugListRow extends StatelessWidget {
                   ChangeNotifierProvider<Drug>.value(
                       value: Drug.from(_drug)), // sets the editable drug
                   ChangeNotifierProvider<EditModeProvider>.value(
-                      value: EditModeProvider()), // a provider for the edit mode
+                      value:
+                          EditModeProvider()), // a provider for the edit mode
                 ],
-                child: DrugDetailView(),
+                child: const DrugDetailView(),
               ),
             ),
           ).then((_) {
@@ -69,22 +67,19 @@ class DrugListRow extends StatelessWidget {
 
   Chip _buildNewMessageChip(BuildContext context) {
     return Chip(
-      label: Text('Nytt meddelande', style: Theme.of(context).textTheme.labelSmall),
-      labelPadding: EdgeInsets.all(0),
-      backgroundColor: Color.fromARGB(255, 252, 220, 200),
+      label: Text('Nytt meddelande',
+          style: Theme.of(context).textTheme.labelSmall),
+      labelPadding: const EdgeInsets.all(0),
+      backgroundColor: const Color.fromARGB(255, 252, 220, 200),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
-     
-        side: BorderSide(
+        side: const BorderSide(
           color: Color.fromARGB(0, 126, 36, 29),
           width: 1,
         ),
-
       ),
     );
   }
-
-  
 
   Widget _buildBrandNamesText(BuildContext context) {
     if (_drug.brandNames == null || _drug.brandNames!.isEmpty) {
@@ -93,7 +88,8 @@ class DrugListRow extends StatelessWidget {
 
     // Get the list of brand names
     List<dynamic> brandNames = _drug.brandNames!;
-    String? genericName = _drug.genericName; // Assuming `genericName` is in Drug class
+    String? genericName =
+        _drug.genericName; // Assuming `genericName` is in Drug class
 
     // Construct the rich text for brand names
     List<TextSpan> textSpans = [];
@@ -102,7 +98,10 @@ class DrugListRow extends StatelessWidget {
       textSpans.add(TextSpan(
         text: name,
         style: name == genericName
-            ? const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, fontStyle: FontStyle.italic)
+            ? const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                fontStyle: FontStyle.italic)
             : const TextStyle(fontStyle: FontStyle.italic, fontSize: 11),
       ));
 

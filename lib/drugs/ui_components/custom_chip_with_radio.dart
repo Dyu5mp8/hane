@@ -1,15 +1,11 @@
 import "package:flutter/material.dart";
-import "package:hane/drugs/ui_components/custom_chip.dart";
-
-
-
-class CustomChipWithRadio extends StatelessWidget {
+import "package:hane/drugs/ui_components/custom_chip.dart";class CustomChipWithCheckbox extends StatelessWidget {
   final String label;
   final VoidCallback? onDeleted;
   final bool isSelected;
   final ValueChanged<bool?> onSelected;
 
-  const CustomChipWithRadio({
+  const CustomChipWithCheckbox({
     Key? key,
     required this.label,
     required this.isSelected,
@@ -19,54 +15,53 @@ class CustomChipWithRadio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var chipTheme = Theme.of(context).chipTheme;
     return GestureDetector(
-        onTap: () {
-          if (isSelected) {
-            onSelected(false); // Unselect if already selected
-          } else {
-            onSelected(true); // Select if not selected
-          }
-        },
+      onTap: () {
+        onSelected(!isSelected);  // Toggle selection on tap
+      },
       child: InputChip(
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Transform.scale(
-              scale: 0.8,  // Reduce the size of the Radio button
-              child: Radio<bool>(
-                value: true,
-                groupValue: isSelected,
-                onChanged: (value) {
-                  onSelected(value); // Handle radio tap to select it
-                },
-                activeColor: Colors.white, // Customize radio button color
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 150),  // Animation duration
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return ScaleTransition(scale: animation, child: child);  // Scale animation
+              },
+              child: Icon(
+                isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                key: ValueKey<bool>(isSelected),  // Key for AnimatedSwitcher
+                size: 16,  // Adjust the size as needed
+                color: chipTheme.labelStyle?.color // Customize color
               ),
             ),
-            const SizedBox(width: 4), // Space between radio button and label
+            const SizedBox(width: 4), // Space between checkbox icon and label
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: Colors.white,
+                color: chipTheme.labelStyle?.color ?? Colors.white,  // Use theme color
               ),
               overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
-        visualDensity: VisualDensity.compact,
-        backgroundColor: const Color.fromARGB(255, 96, 41, 11),
-        padding: const EdgeInsets.symmetric(horizontal: 4), // Reduce padding
-        deleteIcon: const Icon(
+        labelStyle: chipTheme.labelStyle,
+        visualDensity: VisualDensity.compact,  // Compact the chip's layout
+        backgroundColor: chipTheme.backgroundColor,  // Use theme color
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),  // Reduced padding
+        deleteIcon: Icon(
           Icons.cancel,
           size: 16,
-          color: Colors.white,
+          color: chipTheme.labelStyle?.color,  // Use theme color
         ),
         deleteIconColor: Colors.white,
         onDeleted: onDeleted,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,  // Shrink tap target size
       ),
     );
   }

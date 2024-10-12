@@ -73,15 +73,15 @@ class InitializerWidget extends StatelessWidget {
   }
 
   Future<bool> _checkIfUserIsAdmin(User user) async {
-  try {
-    final idTokenResult = await user.getIdTokenResult();
-    return idTokenResult.claims?['admin'] == true;
-  } catch (e) {
-    print("Failed to check if user is admin: $e");
-    // Assume not admin when offline
-    return false;
+    try {
+      final idTokenResult = await user.getIdTokenResult();
+      return idTokenResult.claims?['admin'] == true;
+    } catch (e) {
+      print("Failed to check if user is admin: $e");
+      // Assume not admin when offline
+      return false;
+    }
   }
-}
 
   Future<bool?> _preferSyncedMode(String userId) async {
     final prefs = FirebaseFirestore.instance
@@ -90,7 +90,6 @@ class InitializerWidget extends StatelessWidget {
         .collection('preferences')
         .doc("preferSyncedMode");
     final snapshot = await prefs.get();
- 
 
     if (snapshot.exists) {
       return snapshot.data()?['preferSyncedMode'];
@@ -98,8 +97,6 @@ class InitializerWidget extends StatelessWidget {
       return null;
     }
   }
-
-  
 
   Widget _getHomeScreen(
       BuildContext context, UserBehavior userBehavior, String userId) {

@@ -60,6 +60,17 @@ final ThemeData appTheme = ThemeData(
     scrolledUnderElevation: 0
 
   ),
+  chipTheme: ChipThemeData(
+    backgroundColor: Color.fromARGB(255, 252, 220, 200),
+    labelStyle: GoogleFonts.rubik(
+      fontSize: 12,
+      color: Colors.black,
+
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
 
   cardColor:  Color.fromARGB(255, 0, 79, 104),
   cardTheme: CardTheme(
