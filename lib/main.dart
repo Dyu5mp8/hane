@@ -92,38 +92,17 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
 class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(), // Listen to auth state changes
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show loading screen
-          return Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        } else if (snapshot.hasError) {
-          // Handle authentication errors
-          return AuthErrorWidget(
-            errorDetails: snapshot.error.toString(),
-            onRetry: () {
-              // Optionally, you can navigate back or refresh the stream
-              // For simplicity, we'll rebuild the widget
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => AuthGate()),
-              );
-            },
-          );
-        } else if (snapshot.hasData) {
-          // User is logged in
-          return InitializerWidget();
-        } else {
-          // User is not logged in
-          return LoginPage();
-        }
-      },
-    );
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // User is logged in
+      return InitializerWidget();
+    } else {
+      // User is not logged in
+      return LoginPage();
+    }
   }
 }

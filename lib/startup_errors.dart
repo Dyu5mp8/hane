@@ -31,6 +31,7 @@ class GenericErrorWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 16),
+              
               Text(
                 errorMessage,
                 textAlign: TextAlign.center,
