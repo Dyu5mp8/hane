@@ -44,11 +44,52 @@ class OverviewBox extends StatelessWidget {
 class BasicInfoRow extends StatelessWidget {
   const BasicInfoRow({Key? key}) : super(key: key);
 
+
+
+  
+
   @override
   Widget build(BuildContext context) {
     final editMode = context.watch<EditModeProvider>().editMode;
     final Drug drug = context.watch<Drug>();
     final concentrations = drug.concentrations;
+
+    Text _buildBrandNamesText() {
+      if (drug.brandNames == null || drug.brandNames!.isEmpty) {
+        return const Text(''); // No brand names, return empty widget
+      }
+
+      // Get the list of brand names
+      List<dynamic> brandNames = drug.brandNames!;
+      String? genericName =
+          drug.genericName; // Assuming `genericName` is in Drug class
+
+      // Construct the rich text for brand names
+      List<TextSpan> textSpans = [];
+
+      for (var name in brandNames) {
+        textSpans.add(TextSpan(
+          text: name,
+          style: name == genericName
+              ? const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic)
+              : const TextStyle(fontStyle: FontStyle.italic, fontSize: 11),
+        ));
+
+        // Add a comma separator if it's not the last item
+        if (name != brandNames.last) {
+          textSpans.add(const TextSpan(text: ', '));
+        }
+      }
+
+      return Text.rich(
+        TextSpan(
+          children: textSpans,
+        ),
+      );
+    }
 
     return Container(
       height: 100,
@@ -76,13 +117,7 @@ class BasicInfoRow extends StatelessWidget {
                     textStyle: Theme.of(context).textTheme.headlineLarge),
                 if (drug.brandNames != null)
                   Flexible(
-                    child: Text(
-                      drug.brandNames!.join(", "),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontStyle: FontStyle.italic),
-                    ),
+                    child: _buildBrandNamesText(),
                   ),
               ],
             ),
