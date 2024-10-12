@@ -194,7 +194,5 @@ Stream<List<Drug>> getDrugsStream() {
     }
   }
 
-  
-
 
 }

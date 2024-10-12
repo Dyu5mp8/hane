@@ -47,8 +47,15 @@ void initState() {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Diskussion'),
-      ),
+        title: 
+            Text(
+              'Diskussion: ${widget.drug.name}',
+          
+            ),
+
+        ),
+        
+      
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end, // Aligns children to the bottom
         children: [
@@ -97,9 +104,12 @@ void initState() {
               },
             ),
           ),
-          ChatInputField(
-            drugId: widget.drug.id!,
-            onNewMessage: _onNewMessage, // Notify when a new message is sent
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ChatInputField(
+              drugId: widget.drug.id!,
+              onNewMessage: _onNewMessage, // Notify when a new message is sent
+            ),
           ),
         ],
       ),
@@ -245,6 +255,8 @@ class _ChatInputFieldState extends State<ChatInputField> {
               ),
               textInputAction: TextInputAction.send,
               onSubmitted: (value) => _sendMessage(),
+              minLines: 1,
+             maxLines: 3,
             ),
           ),
           SizedBox(width: 10),

@@ -68,8 +68,12 @@ class DrugListRow extends StatelessWidget {
       labelPadding: EdgeInsets.all(0),
       backgroundColor: Color.fromARGB(255, 252, 220, 200),
       shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
      
-        side: BorderSide.none
+        side: BorderSide(
+          color: Color.fromARGB(0, 126, 36, 29),
+          width: 1,
+        ),
 
       ),
     );

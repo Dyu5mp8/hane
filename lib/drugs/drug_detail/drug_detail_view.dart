@@ -129,10 +129,10 @@ class ChatButton extends StatelessWidget {
            
               
               
-              child: Icon(Icons.comment_outlined),
+              child: Icon(Icons.forum),
             ):
       
-      const Icon(Icons.comment_outlined),
+      const Icon(Icons.forum),
       onPressed: () {
         Navigator.push(
           context,

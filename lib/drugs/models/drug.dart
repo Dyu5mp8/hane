@@ -137,10 +137,9 @@ class Drug extends ChangeNotifier with EquatableMixin{
   }
 
   markMessagesAsRead() {
-    print(hasUnreadMessages);
     hasUnreadMessages = false;
     notifyListeners();
-    print(hasUnreadMessages);
+
   }
 
   Timestamp? get lastUpdated => _lastUpdated;

@@ -180,4 +180,37 @@ class DrugListProvider with ChangeNotifier {
     },
   }, SetOptions(merge: true));
 }
+
+
+  Future<void> markEveryMessageAsRead(List<Drug> drugs) async {
+    try {
+      var db = FirebaseFirestore.instance;
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentReference userDocRef = db.collection('users').doc(userId);
+
+      Map<String, dynamic> lastReadTimestamps = {};
+      Timestamp now = Timestamp.now();
+
+      for (var drug in drugs) {
+        if (drug.id != null) {
+          lastReadTimestamps[drug.id!] = now;
+        }
+      }
+
+      // Update the user's lastReadTimestamps field
+      await userDocRef.set({
+        'lastReadTimestamps': lastReadTimestamps,
+      }, SetOptions(merge: true));
+
+      // Optionally, set a flag indicating that lastReadTimestamps have been initialized
+      await userDocRef.set({
+        'lastReadTimestampsInitialized': true,
+      }, SetOptions(merge: true));
+
+    } catch (e) {
+      print("Failed to mark every message as read: $e");
+      rethrow;
+    }
+  }
 }
+
