@@ -106,12 +106,13 @@ class _DrugListViewState extends State<DrugListView> {
       appBar: _buildAppBar(context),
       drawer: buildDrawer(context, drugNames),
       body: CustomScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: [
           SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSearchField(),
+      
                 if (Provider.of<DrugListProvider>(context)
                     .categories
                     .isNotEmpty)
@@ -159,7 +160,11 @@ class _DrugListViewState extends State<DrugListView> {
                   child: const DrugDetailView(
                     isNewDrug: true,
                   ))),
-    );
+    ).then((_) {
+
+       _onDetailsPopped();
+
+    });
   }
 
   Widget _buildSearchField() {
@@ -269,35 +274,46 @@ class _DrugListViewState extends State<DrugListView> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text('Läkemedel'),
-          Consumer<DrugListProvider>(
-            builder: (context, drugListProvider, child) {
-              return drugListProvider.isAdmin
-                  ? const Text(
+  return AppBar(
+    forceMaterialTransparency: true,
+    title: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text('Läkemedel'),
+        Consumer<DrugListProvider>(
+          builder: (context, drugListProvider, child) {
+            return drugListProvider.isAdmin
+                ? const Padding(
+                    padding: EdgeInsets.only(top: 4.0,), // Reduce padding
+                    child: Text(
                       'Admin: ÄNDRINGAR SKER I STAMLISTAN',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14, // Reduced font size
                         color: Color.fromARGB(255, 255, 77, 0),
                       ),
-                    )
-                  : const SizedBox.shrink();
-            },
-          ),
-          const SizedBox(
-            height: 10,
-          )
-        ],
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: _onAddDrugPressed,
+                    ),
+                  )
+                : const SizedBox.shrink();
+          },
         ),
       ],
-    );
-  }
+    ),
+    bottom: PreferredSize(
+      preferredSize: const Size.fromHeight(50), // Adjusted height to fit content
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: _buildSearchField(),
+        )),
+    ),
+    actions: [
+      IconButton(
+        icon: const Icon(Icons.add),
+        onPressed: _onAddDrugPressed,
+      ),
+    ],
+  );
 }
+  }
+

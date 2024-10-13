@@ -61,7 +61,7 @@ final ThemeData appTheme = ThemeData(
 
   ),
   chipTheme: ChipThemeData(
-    backgroundColor: Color.fromARGB(255, 252, 220, 200),
+    backgroundColor: Color.fromRGBO(255, 230, 218, 1),
     labelStyle: GoogleFonts.rubik(
       fontSize: 12,
       color: Colors.black,

@@ -221,8 +221,8 @@ class _ChatInputFieldState extends State<ChatInputField> {
     if (_controller.text.isEmpty) return;
 
     try {
-      await provider.sendChatMessage(widget.drugId, _controller.text);
       _controller.clear();
+      await provider.sendChatMessage(widget.drugId, _controller.text);
       widget.onNewMessage(); // Notify that a new message has been sent
     } catch (e) {
       if (context.mounted){    // Handle any errors that occur during sending the message
