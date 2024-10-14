@@ -318,6 +318,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
                   controller: instructionController,
                   decoration: customInputDecoration(labelText: "Instruktion"),
                   minLines: 1,
@@ -415,6 +416,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                     Expanded(
                       flex: 1,
                       child: AutoSizeTextField(
+                        
                         controller: higherLimitDoseAmountController,
                         decoration: customInputDecoration(),
                         style: const TextStyle(fontSize: 16),

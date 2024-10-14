@@ -200,6 +200,8 @@ class _DrugListViewState extends State<DrugListView> {
             runSpacing: -8,
             children: [
               ChoiceChip(
+                visualDensity: VisualDensity.compact,
+                side: BorderSide.none,
                 showCheckmark: false,
                 label: Text("Alla",
                     style: Theme.of(context)
@@ -209,7 +211,7 @@ class _DrugListViewState extends State<DrugListView> {
                 selected: _selectedCategory == null,
                 shape: RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(20), // Slightly rounded edges
+                      BorderRadius.circular(10), // Slightly rounded edges
                 ),
                 onSelected: (bool selected) {
                   setState(() {
@@ -221,24 +223,29 @@ class _DrugListViewState extends State<DrugListView> {
               ),
               ...categories.map((dynamic category) {
                 return ChoiceChip(
+                  visualDensity: VisualDensity.compact,
+                  side: BorderSide.none,
+                  
                   showCheckmark: false,
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
                   label: Text(category,
                       style: Theme.of(context)
                           .textTheme
                           .displaySmall
                           ?.copyWith(fontSize: 11)),
                   selected: _selectedCategory == category,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20), // Slightly rounded edges
-                  ),
+                  
                   onSelected: (bool selected) {
                     setState(() {
                       _selectedCategory = selected ? category : null;
                     });
                   },
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Slightly rounded edges
+                  ),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 4.0, vertical: 2.0),
+                      horizontal: 4.0, vertical: .0),
                 );
               }),
             ],

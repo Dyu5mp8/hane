@@ -220,9 +220,12 @@ class _ChatInputFieldState extends State<ChatInputField> {
     var provider = Provider.of<DrugListProvider>(context, listen: false);
     if (_controller.text.isEmpty) return;
 
+    String message = _controller.text;
+    _controller.clear();  
+
     try {
-      _controller.clear();
-      await provider.sendChatMessage(widget.drugId, _controller.text);
+      
+      await provider.sendChatMessage(widget.drugId, message);
       widget.onNewMessage(); // Notify that a new message has been sent
     } catch (e) {
       if (context.mounted){    // Handle any errors that occur during sending the message
@@ -231,6 +234,12 @@ class _ChatInputFieldState extends State<ChatInputField> {
       );
       // Optionally, show an error message to the user
     }
+    }
+    finally {
+      if (context.mounted) {
+        FocusScope.of(context).unfocus(); // Hide the keyboard after sending the message
+      }
+
     }
   }
 

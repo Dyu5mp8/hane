@@ -136,6 +136,7 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                 TextFormField(
                   controller: _notesController,
                   autofocus: true,
+                  textCapitalization: TextCapitalization.sentences,
                   decoration: const InputDecoration(
                     alignLabelWithHint: true,
                     labelText: 'Anteckningar',

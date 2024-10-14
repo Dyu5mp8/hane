@@ -38,6 +38,7 @@ Stream<List<Drug>> getDrugsStream() {
           var drugData = doc.data();
 
           var drug = Drug.fromFirestore(drugData);
+          categories.addAll(drug.categories ?? []);
           drug.id = doc.id;
 
           // Get the last message timestamp from the drug data

@@ -81,7 +81,9 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                       border: OutlineInputBorder(),
                     ),
                     minLines: 4,
-                    maxLines: 10),
+                    maxLines: 10,
+                    textCapitalization: TextCapitalization.sentences,),
+                  
               ],
             ),
           ),
