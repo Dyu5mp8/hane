@@ -34,7 +34,7 @@ class CustomChip extends StatelessWidget {
       deleteIconColor: chipTheme.labelStyle?.color,  // Consistent delete icon color
       onDeleted: onDeleted,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20), // Slightly rounded edges
+        borderRadius: BorderRadius.circular(10), // Slightly rounded edges
       
       ),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Make the chip smaller

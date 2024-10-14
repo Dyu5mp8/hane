@@ -46,7 +46,8 @@ class _MyAppState extends State<MyApp> {
       rethrow; // Propagate the error to be caught in the FutureBuilder
     }
   }
-@override
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<FirebaseApp>(
       future: _initialization,
@@ -77,19 +78,30 @@ class _MyAppState extends State<MyApp> {
             ),
             // Other providers...
           ],
-          child: MaterialApp(
-            title: 'AnestesiH',
-            debugShowCheckedModeBanner: false,
-            theme: appTheme,
-            home: homeWidget,
+          child: Builder(
+            builder: (context) {
+              // Retrieve the current MediaQuery data
+              final MediaQueryData data = MediaQuery.of(context);
+
+              // Clamp the text scale factor to be between 0.8 and 1.3
+              final scale = data.textScaler.clamp(maxScaleFactor: 1.2, minScaleFactor: 0.8);
+              // Apply the modified MediaQuery data to the MaterialApp
+              return MediaQuery(
+                data: data.copyWith(textScaler: scale),
+                child: MaterialApp(
+                  title: 'AnestesiH',
+                  debugShowCheckedModeBanner: false,
+                  theme: appTheme,
+                  home: homeWidget,
+                ),
+              );
+            },
           ),
         );
       },
     );
   }
 }
-
-
 
 class AuthGate extends StatelessWidget {
   @override

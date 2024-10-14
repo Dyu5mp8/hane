@@ -80,7 +80,16 @@ class _IndicationTabsState extends State<IndicationTabs> {
                     tabs: indications
                         .map((indication) => Tab(
                                 child: Row(children: [
-                              Icon(Icons.drag_handle, size: 15,),
+                              Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: Transform.scale(
+                                  scaleX: 0.6,
+                                  origin: Offset(-10, 0),
+                                    child: Icon(
+                                  Icons.drag_handle,
+                                  size: 30,
+                                )),
+                              ),
                               Text(indication.name)
                             ])))
                         .toList(),

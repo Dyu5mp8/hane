@@ -3,7 +3,6 @@
 - [x] work on web based client
 - [x] create admin mode where it is possible to edit master lists
 - [x] work on version control user vs master list.
-- [ ] Consider using typesense
 
 # Drug detail view
 - [x] Banner header
@@ -30,7 +29,7 @@
 - [ ] Reduce firestore reads if possible
 - [x] Sort out edit dosage dialog layout, consider enforcing same unit for all
 - [x] Immutable base data.
-- [ ] Highlight generic names in color or italics.
+- [x] Highlight generic names in color or italics.
 - [x] Ability to rearrange dosages.
 - [ ] Enter weight manually.
 - [ ] Warning message for different weights on dosages?

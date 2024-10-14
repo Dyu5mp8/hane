@@ -224,39 +224,41 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  Widget _createAccountLabel() {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignUpPage()));
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 20),
-        padding: const EdgeInsets.all(15),
-        alignment: Alignment.bottomCenter,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Inget konto ännu?',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+Widget _createAccountLabel() {
+  return InkWell(
+    onTap: () {
+      Navigator.push(
+        context, 
+        MaterialPageRoute(builder: (context) => SignUpPage()),
+      );
+    },
+    child: Container(
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.all(15),
+      alignment: Alignment.bottomCenter,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            'Inget konto ännu?',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            textAlign: TextAlign.center, // Center-align the text
+          ),
+          const SizedBox(height: 10), // Add space between texts
+          Text(
+            'Registrera ny användare',
+            style: TextStyle(
+              color: accentColor,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(width: 10),
-            Text(
-              'Registrera ny användare',
-              style: TextStyle(
-                color: accentColor,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center, // Center-align the text
+          ),
+        ],
       ),
-    );
-  }
-
+    ),
+  );
+}
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;

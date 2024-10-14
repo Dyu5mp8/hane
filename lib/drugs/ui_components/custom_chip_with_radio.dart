@@ -59,7 +59,7 @@ import "package:hane/drugs/ui_components/custom_chip.dart";class CustomChipWithC
         deleteIconColor: Colors.white,
         onDeleted: onDeleted,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
         ),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,  // Shrink tap target size
       ),
