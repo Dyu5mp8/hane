@@ -22,7 +22,8 @@ class _IndicationTabsState extends State<IndicationTabs> {
     return Container(
       height: 30,
       decoration: BoxDecoration(
-        color: Theme.of(context).canvasColor, // Set a solid, non-transparent background color
+        color: Theme.of(context)
+            .canvasColor, // Set a solid, non-transparent background color
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,17 +78,19 @@ class _IndicationTabsState extends State<IndicationTabs> {
                       border: Border.all(color: Colors.black, width: 0.5),
                     ),
                     tabs: indications
-                        .map((indication) => Tab(text: indication.name))
+                        .map((indication) => Tab(
+                                child: Row(children: [
+                              Icon(Icons.drag_handle, size: 15,),
+                              Text(indication.name)
+                            ])))
                         .toList(),
                     onReorder: (int oldIndex, int newIndex) {
                       // Fix reordering logic
                       if (oldIndex != newIndex) {
                         setState(() {
-                                                  
                           Indication temp = indications.removeAt(oldIndex);
                           indications.insert(newIndex, temp);
 
-                    
                           // Update the indications list in the drug object
                           drug.indications = indications;
                           drug.updateDrug(); // Update the drug with the reordered list
@@ -96,8 +99,7 @@ class _IndicationTabsState extends State<IndicationTabs> {
                     },
                   )
                 : TabBar(
-                  tabAlignment: TabAlignment.start,
-                 
+                    tabAlignment: TabAlignment.start,
                     unselectedLabelStyle: const TextStyle(
                       color: Color.fromARGB(255, 61, 61, 61),
                     ),
