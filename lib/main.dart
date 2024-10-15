@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hane/onboarding/onboarding_screen.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'app_theme.dart';
@@ -68,7 +69,7 @@ class _MyAppState extends State<MyApp> {
             },
           );
         } else {
-          homeWidget = AuthGate();
+          homeWidget = AuthGate(); // test OnboardingScreen();
         }
 
         return MultiProvider(

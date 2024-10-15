@@ -1,12 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
+import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 import 'package:hane/login/user_status.dart';
-import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drawers/drawers.dart';
 import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
+import 'package:hane/onboarding/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class DrugListView extends StatefulWidget {
   @override
@@ -22,6 +26,7 @@ class _DrugListViewState extends State<DrugListView> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    showTutorialScreenIfNew();
   }
 
   @override
@@ -29,6 +34,24 @@ class _DrugListViewState extends State<DrugListView> {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
+  }
+
+  void showTutorialScreenIfNew() async {
+    var db = FirebaseFirestore.instance;
+    bool? seenTutorial = await db
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) => value.data()?['seenTutorial']);
+    if (seenTutorial == null || !seenTutorial) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OnboardingScreen()),
+      );
+      db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({
+        'seenTutorial': true,
+      });
+    }
   }
 
   void _onDetailsPopped() {
