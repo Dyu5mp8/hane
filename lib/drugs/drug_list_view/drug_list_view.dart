@@ -9,7 +9,7 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drawers/drawers.dart';
 import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 
 class DrugListView extends StatefulWidget {
@@ -43,6 +43,8 @@ class _DrugListViewState extends State<DrugListView> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((value) => value.data()?['seenTutorial']);
+
+        
     if (seenTutorial == null || !seenTutorial) {
       Navigator.push(
         context,
@@ -211,72 +213,71 @@ class _DrugListViewState extends State<DrugListView> {
     );
   }
 
-  Widget _buildCategoryChips(List<dynamic> categories) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 5.0, // horizontal space between chips
-            runSpacing: -8,
-            children: [
-              ChoiceChip(
+Widget _buildCategoryChips(List<dynamic> categories) {
+  final isWeb = kIsWeb;
+  final screenWidth = MediaQuery.of(context).size.width;
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: isWeb ? 5.0 : 5.0, // Adjust spacing for web
+          runSpacing: isWeb ? 5.0 : -8, // Adjust vertical space between rows
+          alignment: WrapAlignment.start, // Center the chips for web
+          children: [
+            ChoiceChip(
+              visualDensity: VisualDensity.compact,
+              side: BorderSide.none,
+              showCheckmark: false,
+              label: Text("Alla",
+                  style: Theme.of(context)
+                      .textTheme
+                      .displaySmall
+                      ?.copyWith(fontSize: isWeb ? 14 : 11)), // Larger font on web
+              selected: _selectedCategory == null,
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(isWeb ? 12 : 10), // Adjust rounding for web
+              ),
+              onSelected: (bool selected) {
+                setState(() {
+                  _selectedCategory = null;
+                });
+              },
+              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+            ),
+            ...categories.map((dynamic category) {
+              return ChoiceChip(
                 visualDensity: VisualDensity.compact,
                 side: BorderSide.none,
                 showCheckmark: false,
-                label: Text("Alla",
+                labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                label: Text(category,
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall
-                        ?.copyWith(fontSize: 11)),
-                selected: _selectedCategory == null,
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10), // Slightly rounded edges
-                ),
+                        ?.copyWith(fontSize: isWeb ? 14 : 11)), // Adjust font size for web
+                selected: _selectedCategory == category,
                 onSelected: (bool selected) {
                   setState(() {
-                    _selectedCategory = null;
+                    _selectedCategory = selected ? category : null;
                   });
                 },
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-              ),
-              ...categories.map((dynamic category) {
-                return ChoiceChip(
-                  visualDensity: VisualDensity.compact,
-                  side: BorderSide.none,
-                  
-                  showCheckmark: false,
-                  labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-                  label: Text(category,
-                      style: Theme.of(context)
-                          .textTheme
-                          .displaySmall
-                          ?.copyWith(fontSize: 11)),
-                  selected: _selectedCategory == category,
-                  
-                  onSelected: (bool selected) {
-                    setState(() {
-                      _selectedCategory = selected ? category : null;
-                    });
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(10), // Slightly rounded edges
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 4.0, vertical: .0),
-                );
-              }),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(isWeb ? 12 : 10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0), // Increased padding for web
+              );
+            }),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 
   final Map<String, String> _drugSearchCache = {};
 

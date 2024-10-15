@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -13,20 +14,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final pages = [
-           _buildOnboardingPage(
+      _buildOnboardingPage(
         context,
         image: 'assets/images/welcome.png',
         imageFit: BoxFit.contain,
         imageHeight: MediaQuery.of(context).size.height * 0.5, // Make it responsive
         title: 'Välkommen!',
-        description: 'Hitta snabbt till det du behöver samlat på en plats. ',
+        description: 'Hitta blixtsnabbt till det du vill använda',
       ),
       _buildOnboardingPage(
         context,
         image: 'assets/images/milrinone.png',
-        imageHeight: MediaQuery.of(context).size.height * 0.55, // Make it responsive
+        imageHeight: MediaQuery.of(context).size.height * 0.6, // Make it responsive
         title: 'Översikt',
-        description: 'Se det nödvändiga på en sida.',
+        description: 'Se allt nödvändigt på en sida',
       ),
       _buildOnboardingPage(
         context,
@@ -38,10 +39,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _buildOnboardingPage(
         context,
         image: 'assets/images/milrinone_composite.png',
-        imageHeight: MediaQuery.of(context).size.height * 0.45,
+        imageHeight: MediaQuery.of(context).size.height * 0.50,
         title: 'Omvandla doser snabbt och enkelt',
         description:
-            'Omvandla doser direkt i rutan. Välj vikt, läkemedelsspädning, tidsenhet eller en kombination av de alla.',
+            'Omvandla doser direkt i rutan. Välj vikt, läkemedelsspädning, tidsenhet eller en kombination',
       ),
     ];
 
@@ -49,7 +50,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       backgroundColor: Color.fromRGBO(216, 214, 202, 1),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          padding: const EdgeInsets.only(top: 16, bottom: 6),
           child: Column(
             children: [
               Expanded(
@@ -67,6 +68,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
               SmoothPageIndicator(
+                onDotClicked: (index) {
+                  _pageController.animateToPage(
+                    index,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+                },
                 controller: _pageController,
                 count: pages.length,
                 effect: WormEffect(
@@ -78,36 +86,44 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   dotColor: Colors.grey.shade400,
                 ),
               ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: _currentPage == pages.length - 1
-                    ? ElevatedButton(
+              const SizedBox(height: 8),
+              (_currentPage == pages.length - 1)
+                  ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48), // Full-width button
+                        
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(15),
                           ),
+                          backgroundColor: Color.fromARGB(255, 236, 159, 117),
+                          foregroundColor: Colors.black,
                         ),
-                        child: const Text('Vi kör!'),
-                      )
-                    : TextButton(
-                        onPressed: () {
-                          _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48), // Full-width button
-                        ),
-                        child: const Text('Nästa'),
+                        child: const Text('Vi kör!', style: TextStyle(fontSize: 18)),
                       ),
-              ),
-              const SizedBox(height: 32),
+                  )
+                  : (kIsWeb
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(), // Placeholder for alignment
+                            IconButton(
+                              icon: Icon(Icons.arrow_forward_rounded),
+                              onPressed: () {
+                                _pageController.nextPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                              iconSize: 36,
+                            ),
+                          ],
+                        )
+                      : const SizedBox()),
+             
             ],
           ),
         ),
@@ -139,11 +155,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
-            Image.asset(
-              image,
-              height: imageHeight,
-              fit: imageFit
-            ),
+            Image.asset(image, height: imageHeight, fit: imageFit),
             const SizedBox(height: 16),
             Text(
               description,
