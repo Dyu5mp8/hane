@@ -203,10 +203,12 @@ void _onDetailsPopped() {
         placeholder: 'Sök efter läkemedel',
         onChanged: (value) {
           setState(() {
+            if (!mounted) return; // Add this line to check if the widget is still mounted
             _searchQuery = value; // Update the search query as the user types
           });
         },
         onSubmitted: (value) {
+          if (!mounted) return; // Add this line to check if the widget is still mounted
           setState(() {
             _searchQuery = value; // Final value after user submits search
           });
