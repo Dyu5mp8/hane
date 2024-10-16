@@ -56,7 +56,9 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                     widget.drug.userNotes = _notesController.text;
                     widget.onUserNotesSaved?.call();
                   } else {
+                    print("hej");
                   widget.drug.notes = _notesController.text;
+                  print (widget.drug.notes);
                   }
                   Navigator.pop(context);
                 },
