@@ -163,7 +163,7 @@ void showErrorMessage(String message) async {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
+    final height = 80;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

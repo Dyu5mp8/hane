@@ -79,17 +79,7 @@ class _MyAppState extends State<MyApp> {
             ),
             // Other providers...
           ],
-          child: Builder(
-            builder: (context) {
-              // Retrieve the current MediaQuery data
-              final MediaQueryData data = MediaQuery.of(context);
-
-              // Clamp the text scale factor to be between 0.8 and 1.3
-              final scale = data.textScaler.clamp(maxScaleFactor: 1.2, minScaleFactor: 0.8);
-              // Apply the modified MediaQuery data to the MaterialApp
-              return MediaQuery(
-                data: data.copyWith(textScaler: scale),
-                child: MaterialApp(
+          child: MaterialApp(
                   title: 'AnestesiH',
                   debugShowCheckedModeBanner: false,
                   theme: appTheme,
@@ -97,11 +87,12 @@ class _MyAppState extends State<MyApp> {
                 ),
               );
             },
-          ),
-        );
-      },
-    );
+          );
   }
+        
+   
+  
+  
 }
 
 class AuthGate extends StatelessWidget {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 
 class EditableRow extends StatefulWidget {
   final String? text;
@@ -70,7 +72,8 @@ class _EditableRowState extends State<EditableRow>
 
   @override
   Widget build(BuildContext context) {
-    print ("EditableRow build of ${widget.text}");
+    bool isEditMode = Provider.of<EditModeProvider>(context).editMode;
+
     if (widget.hideWhenNotEditing && !widget.isEditMode) {
       return const SizedBox.shrink();
     }
@@ -81,8 +84,9 @@ class _EditableRowState extends State<EditableRow>
             : const EdgeInsets.only(top: 8));
 
     return InkWell(
-      onTap: widget.isEditMode
+      onTap: isEditMode
           ? () {
+          
               showDialog(
                 context: context,
                 builder: (context) => widget.editDialog,
@@ -92,7 +96,7 @@ class _EditableRowState extends State<EditableRow>
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
-          color: widget.isEditMode
+          color: isEditMode
               ? (widget.editingBackgroundColor ?? Theme.of(context).primaryColorLight)
               : widget.nonEditingBackgroundColor,
           borderRadius: BorderRadius.circular(4),
