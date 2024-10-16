@@ -12,6 +12,7 @@ class DrugListRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     if (_drug.name == null) {
       return const ListTile(
         title: Text(

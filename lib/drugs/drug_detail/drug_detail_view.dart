@@ -25,6 +25,8 @@ class _DrugDetailViewState extends State<DrugDetailView> {
   void initState() {
     super.initState();
     _editableDrug = Provider.of<Drug>(context, listen: false);
+  
+  
 
     //open dialog for new drug if that is the case
     Future.delayed(const Duration(milliseconds: 300), () {

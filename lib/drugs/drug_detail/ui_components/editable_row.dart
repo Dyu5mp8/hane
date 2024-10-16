@@ -70,6 +70,7 @@ class _EditableRowState extends State<EditableRow>
 
   @override
   Widget build(BuildContext context) {
+    print ("EditableRow build of ${widget.text}");
     if (widget.hideWhenNotEditing && !widget.isEditMode) {
       return const SizedBox.shrink();
     }

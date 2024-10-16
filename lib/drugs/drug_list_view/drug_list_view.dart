@@ -56,14 +56,15 @@ class _DrugListViewState extends State<DrugListView> {
     }
   }
 
-  void _onDetailsPopped() {
-    setState(() {
-      _searchController.clear();
-      _selectedCategory = null;
-    });
-  }
-
+void _onDetailsPopped() {
+  if (!mounted) return; // Add this line to check if the widget is still mounted
+  setState(() {
+    _searchController.clear();
+    _selectedCategory = null;
+  });
+}
   void _onSearchChanged() {
+    if (!mounted) return;
     setState(() {
       _searchQuery = _searchController.text;
     });
@@ -85,7 +86,8 @@ class _DrugListViewState extends State<DrugListView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Drug>? drugs = Provider.of<List<Drug>?>(context);
+    print("building DrugListView");
+    List<Drug>? drugs = Provider.of<List<Drug>?>(context, listen: true);
     Set<String>? drugNames = drugs
         ?.map((drug) => drug.name)
         .where((name) => name != null)

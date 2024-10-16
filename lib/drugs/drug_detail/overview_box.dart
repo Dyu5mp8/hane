@@ -12,6 +12,8 @@ class OverviewBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    print("building OverviewBox");
     DrugListProvider provider = Provider.of<DrugListProvider>(context, listen: false);
     Drug drug = Provider.of<Drug>(context, listen: false);
     bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode && drug.changedByUser==false);
@@ -44,109 +46,112 @@ class OverviewBox extends StatelessWidget {
 class BasicInfoRow extends StatelessWidget {
   const BasicInfoRow({Key? key}) : super(key: key);
 
-
-
-  
-
   @override
   Widget build(BuildContext context) {
-    final editMode = context.watch<EditModeProvider>().editMode;
-    final Drug drug = context.watch<Drug>();
-    final concentrations = drug.concentrations;
+    print("building BasicinfoRow box");
 
-    Text _buildBrandNamesText() {
-      if (drug.brandNames == null || drug.brandNames!.isEmpty) {
-        return const Text(''); // No brand names, return empty widget
-      }
+    return Consumer<Drug>(
+      builder: (context, drug, child) {
+        // Use only the Drug object here
+        final concentrations = drug.concentrations;
 
-      // Get the list of brand names
-      List<dynamic> brandNames = drug.brandNames!;
-      String? genericName =
-          drug.genericName; // Assuming `genericName` is in Drug class
+        Text _buildBrandNamesText() {
+          if (drug.brandNames == null || drug.brandNames!.isEmpty) {
+            return const Text(''); // No brand names, return empty widget
+          }
 
-      // Construct the rich text for brand names
-      List<TextSpan> textSpans = [];
+          List<dynamic> brandNames = drug.brandNames!;
+          String? genericName = drug.genericName;
 
-      for (var name in brandNames) {
-        textSpans.add(TextSpan(
-          text: name,
-          style: name == genericName
-              ? const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 11,
-                  fontStyle: FontStyle.italic)
-              : const TextStyle(fontStyle: FontStyle.italic, fontSize: 11),
-        ));
+          List<TextSpan> textSpans = [];
 
-        // Add a comma separator if it's not the last item
-        if (name != brandNames.last) {
-          textSpans.add(const TextSpan(text: ', '));
+          for (var name in brandNames) {
+            textSpans.add(TextSpan(
+              text: name,
+              style: name == genericName
+                  ? const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic)
+                  : const TextStyle(fontStyle: FontStyle.italic, fontSize: 11),
+            ));
+
+            if (name != brandNames.last) {
+              textSpans.add(const TextSpan(text: ', '));
+            }
+          }
+
+          return Text.rich(TextSpan(children: textSpans));
         }
-      }
 
-      return Text.rich(
-        TextSpan(
-          children: textSpans,
-        ),
-      );
-    }
-
-    return Container(
-      height: 100,
-      padding: const EdgeInsets.all(10),
-      width: MediaQuery.of(context).size.width,
-      child: Row(
-        children: [
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (drug.categories != null)
-                  Row(
-                    children: drug.categories!
-                        .map((dynamic category) => Text(
-                              "#$category ",
-                              style: Theme.of(context).textTheme.displaySmall,
-                            ))
-                        .toList(),
-                  ),
-                EditableRow(
-                    text: drug.name!,
-                    editDialog: EditNameDialog(drug: drug),
-                    isEditMode: editMode,
-                    textStyle: Theme.of(context).textTheme.headlineLarge),
-                if (drug.brandNames != null)
-                  Flexible(
-                    child: _buildBrandNamesText(),
-                  ),
-              ],
-            ),
-          ),
-          if (concentrations != null)
-            Align(
-              alignment: AlignmentDirectional.topEnd,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 100),
-                child: FittedBox(
-                  child: Column(
-                    children: [
-                      EditableRow(
-                        text: "Spädningar",
-                        textStyle: Theme.of(context).textTheme.bodySmall,
-                        editDialog: EditConcentrationsDialog(drug: drug),
-                        isEditMode: editMode,
+        return Container(
+          height: 100,
+          padding: const EdgeInsets.all(10),
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            children: [
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (drug.categories != null)
+                      Row(
+                        children: drug.categories!
+                            .map((dynamic category) => Text(
+                                  "#$category ",
+                                  style: Theme.of(context).textTheme.displaySmall,
+                                ))
+                            .toList(),
                       ),
-                      ...drug
-                          .getConcentrationsAsString()!
-                          .map((conc) => Text(conc))
-                          .toList(),
-                    ],
-                  ),
+                    Consumer<EditModeProvider>(
+                      builder: (context, editModeProvider, child) {
+                        return EditableRow(
+                            text: drug.name!,
+                            editDialog: EditNameDialog(drug: drug),
+                            isEditMode: editModeProvider.editMode,
+                            textStyle:
+                                Theme.of(context).textTheme.headlineLarge);
+                      },
+                    ),
+                    if (drug.brandNames != null)
+                      Flexible(
+                        child: _buildBrandNamesText(),
+                      ),
+                  ],
                 ),
               ),
-            ),
-        ],
-      ),
+              if (concentrations != null)
+                Align(
+                  alignment: AlignmentDirectional.topEnd,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 100),
+                    child: FittedBox(
+                      child: Column(
+                        children: [
+                          Consumer<EditModeProvider>(
+                            builder: (context, editModeProvider, child) {
+                              return EditableRow(
+                                text: "Spädningar",
+                                textStyle: Theme.of(context).textTheme.bodySmall,
+                                editDialog:
+                                    EditConcentrationsDialog(drug: drug),
+                                isEditMode: editModeProvider.editMode,
+                              );
+                            },
+                          ),
+                          ...drug
+                              .getConcentrationsAsString()!
+                              .map((conc) => Text(conc))
+                              .toList(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
