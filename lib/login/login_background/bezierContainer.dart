@@ -13,8 +13,8 @@ class BezierContainer extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.62,
-              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.sizeOf(context).height * 0.62,
+              width: MediaQuery.sizeOf(context).width,
               decoration: BoxDecoration(
                 image: const DecorationImage(
                   image: AssetImage("assets/images/concrete.jpg"), // Replace with your image path
@@ -24,8 +24,8 @@ class BezierContainer extends StatelessWidget {
             ),
             // Gradient overlay for smooth transition
             Container(
-              height: MediaQuery.of(context).size.height * 0.62,
-              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.sizeOf(context).height * 0.62,
+              width: MediaQuery.sizeOf(context).width,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.transparent, Colors.white],

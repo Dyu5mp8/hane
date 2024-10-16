@@ -87,7 +87,7 @@ class BasicInfoRow extends StatelessWidget {
         return Container(
           height: 100,
           padding: const EdgeInsets.all(10),
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.sizeOf(context).width,
           child: Row(
             children: [
               Flexible(
@@ -167,7 +167,7 @@ class NoteRow extends StatelessWidget {
         .editMode; // Access editMode from the Provider
 
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.sizeOf(context).width,
       padding: const EdgeInsets.all(10),
       child: Row(
         children: [
@@ -198,7 +198,7 @@ class ContraindicationRow extends StatelessWidget {
         .editMode; // Access editMode from the Provider
 
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.sizeOf(context).width,
       padding: const EdgeInsets.all(10),
       child: Row(
         children: [
@@ -228,7 +228,7 @@ class UserNoteRow extends StatelessWidget {
     final drug =
         Provider.of<Drug>(context); // Access the drug from the Provider
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.sizeOf(context).width,
       padding: const EdgeInsets.all(5),
       child: Row(children: [
        Column(

@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       child: Container(
-        width: MediaQuery.of(context).size.width / 2.5,
+        width: MediaQuery.sizeOf(context).width / 2.5,
         padding: const EdgeInsets.symmetric(vertical: 15),
         alignment: Alignment.center,
         decoration: BoxDecoration(
@@ -261,7 +261,7 @@ Widget _createAccountLabel() {
 }
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
+    final height = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
       body: Container(

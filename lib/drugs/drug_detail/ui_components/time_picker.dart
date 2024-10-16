@@ -24,7 +24,7 @@ class _TimePickerState extends State<TimePicker> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.sizeOf(context).width,
       height: 200,
       child: Column(
         children: [

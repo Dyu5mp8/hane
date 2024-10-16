@@ -219,7 +219,7 @@ void _onDetailsPopped() {
 
 Widget _buildCategoryChips(List<dynamic> categories) {
   final isWeb = kIsWeb;
-  final screenWidth = MediaQuery.of(context).size.width;
+  final screenWidth = MediaQuery.sizeOf(context).width;
 
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10.0),

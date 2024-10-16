@@ -18,28 +18,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         context,
         image: 'assets/images/welcome.png',
         imageFit: BoxFit.contain,
-        imageHeight: MediaQuery.of(context).size.height * 0.5, // Make it responsive
+        imageHeight: MediaQuery.sizeOf(context).height * 0.5, // Make it responsive
         title: 'Välkommen!',
         description: 'Hitta blixtsnabbt till det du vill använda',
       ),
       _buildOnboardingPage(
         context,
         image: 'assets/images/milrinone.png',
-        imageHeight: MediaQuery.of(context).size.height * 0.6, // Make it responsive
+        imageHeight: MediaQuery.sizeOf(context).height * 0.6, // Make it responsive
         title: 'Översikt',
         description: 'Se allt nödvändigt på en sida',
       ),
       _buildOnboardingPage(
         context,
         image: 'assets/images/milrinone_dosage_snippet.png',
-        imageHeight: MediaQuery.of(context).size.height * 0.1, // Adjust for smaller images
+        imageHeight: MediaQuery.sizeOf(context).height * 0.1, // Adjust for smaller images
         title: 'Doseringsrutan',
         description: 'Välj indikation och se doseringsförslag.',
       ),
       _buildOnboardingPage(
         context,
         image: 'assets/images/milrinone_composite.png',
-        imageHeight: MediaQuery.of(context).size.height * 0.50,
+        imageHeight: MediaQuery.sizeOf(context).height * 0.50,
         title: 'Omvandla doser snabbt och enkelt',
         description:
             'Omvandla doser direkt i rutan. Välj vikt, läkemedelsspädning, tidsenhet eller en kombination',
