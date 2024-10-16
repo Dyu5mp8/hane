@@ -12,8 +12,7 @@ class OverviewBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-    print("building OverviewBox");
+
     DrugListProvider provider = Provider.of<DrugListProvider>(context, listen: false);
     Drug drug = Provider.of<Drug>(context, listen: false);
     bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode && drug.changedByUser==false);
@@ -48,7 +47,6 @@ class BasicInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("building BasicinfoRow box");
 
     return Consumer<Drug>(
       builder: (context, drug, child) {

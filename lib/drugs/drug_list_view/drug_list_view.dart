@@ -86,7 +86,6 @@ void _onDetailsPopped() {
 
   @override
   Widget build(BuildContext context) {
-    print("building DrugListView");
     List<Drug>? drugs = Provider.of<List<Drug>?>(context, listen: true);
     Set<String>? drugNames = drugs
         ?.map((drug) => drug.name)
