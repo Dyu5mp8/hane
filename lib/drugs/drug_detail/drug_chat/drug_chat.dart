@@ -132,7 +132,7 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Format the timestamp to a readable time (HH:mm)
-    String formattedTime = DateFormat('HH:mm').format(timestamp.toDate());
+    String formattedTime = DateFormat('d MMM HH:mm').format(timestamp.toDate());
 
     return Align(
       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
