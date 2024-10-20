@@ -194,8 +194,9 @@ class Drug extends ChangeNotifier with EquatableMixin{
 
   List<String>? getConcentrationsAsString() {
     return _concentrations
-        ?.map((conc) => "${conc.amount} ${conc.unit}")
+        ?.map((conc) => conc.toString())
         .toList();
+  
   }
 
   String? get contraindication => _contraindication;

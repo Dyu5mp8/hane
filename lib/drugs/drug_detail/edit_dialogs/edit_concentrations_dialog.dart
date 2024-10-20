@@ -3,6 +3,7 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/ui_components/custom_chip.dart';
 import 'package:hane/utils/unit_parser.dart';
 import 'package:hane/utils/validate_concentration_save.dart' as val;
+import 'package:hane/utils/unit_validator.dart';
 
 class EditConcentrationsDialog extends StatefulWidget {
   final Drug drug;
@@ -17,15 +18,16 @@ class EditConcentrationsDialog extends StatefulWidget {
 class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
   final TextEditingController concentrationAmountController =
       TextEditingController();
-  final TextEditingController concentrationUnitController =
-      TextEditingController();
   final _formKey = GlobalKey<FormState>();
   List<Concentration> concentrations = [];
+
+  // List of units for the dropdown
+  List<String> units = UnitValidator.validSubstanceUnits().keys.toList();
+  String? selectedUnit;
 
   @override
   void dispose() {
     concentrationAmountController.dispose();
-    concentrationUnitController.dispose();
     super.dispose();
   }
 
@@ -37,16 +39,24 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
     }
   }
 
+  List<String> unitsToSymbols(List<String> units) {
+    return units.map((unit) {
+      return unit == 'mikrog' ? 'μg' : unit;
+    }).toList();
+  }
+
+
+
   void addConcentration() {
     if (_formKey.currentState!.validate()) {
       setState(() {
         concentrations.add(Concentration(
           amount:
               UnitParser.normalizeDouble(concentrationAmountController.text),
-          unit: concentrationUnitController.text,
+          unit: '$selectedUnit/ml',
         ));
         concentrationAmountController.clear();
-        concentrationUnitController.clear();
+        selectedUnit = null;
       });
     }
   }
@@ -71,14 +81,15 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
           ),
           TextButton(
             onPressed: () {
-              if (concentrationAmountController.text.isNotEmpty) {
+              if (concentrationAmountController.text.isNotEmpty ||
+                  selectedUnit != null) {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Ej tillagda ändringar'),
                       content: Text(
-                          'Ej sparat fält: ${concentrationAmountController.text}. Spara utan att lägga till den inskrivna koncentrationen?'),
+                          'Ej sparat fält: ${concentrationAmountController.text} ${selectedUnit ?? ''}. Spara utan att lägga till den inskrivna koncentrationen?'),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -122,7 +133,6 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
               child: Row(
                 children: <Widget>[
                   // Concentration Amount Input
-
                   Expanded(
                     child: TextFormField(
                         controller: concentrationAmountController,
@@ -136,21 +146,32 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true)),
                   ),
-
                   const SizedBox(width: 16),
-                  // Concentration Unit Input
+                  // Concentration Unit Dropdown
                   Expanded(
-                    child: TextFormField(
-                        controller: concentrationUnitController,
-                        decoration: const InputDecoration(
-                          labelText: 'Enhet',
-                          hintText: "ex. mg/ml",
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          errorMaxLines: 2,
-                        ),
-                        validator: val.validateConcentrationUnit),
+                    child: DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        labelText: 'Enhet',
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        errorMaxLines: 2,
+                      ),
+                      value: selectedUnit,
+                      items: unitsToSymbols(units).map((String unit) {
+                        return DropdownMenuItem<String>(
+                          value: unit,
+                          child: Text(unit),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedUnit = newValue;
+                        });
+                      },
+                      validator: (value) {
+                       val.validateConcentrationUnit(value);
+                      },
+                    ),
                   ),
-
                   IconButton(
                     icon: const Icon(
                       Icons.add_circle_sharp,

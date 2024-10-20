@@ -19,7 +19,10 @@ class Dose with EquatableMixin{
 
   // Get the unit string representation
   String unitString() {
-    return units.values.join('/');
+    var joinedUnits = units.values.join('/');
+    var visuallyModifiedUnits = joinedUnits.replaceAll("mikrog", "μg");
+  
+    return visuallyModifiedUnits;
   }
 
   @override

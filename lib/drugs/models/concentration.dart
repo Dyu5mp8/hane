@@ -41,7 +41,8 @@ class Concentration with EquatableMixin {
 
   @override
   String toString() {
-    return "$amount $unit";
+    var visuallyModifiedUnit = unit.replaceAll("mikrog", "μg");
+    return "$amount $visuallyModifiedUnit";
   }
 
   Map concentrationUnit = {
