@@ -1,18 +1,17 @@
 import "package:flutter/material.dart";
-import 'package:provider/provider.dart';
 import "package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart";
 import "package:hane/drugs/drug_detail/edit_mode_provider.dart";
 import "package:hane/drugs/models/drug.dart";
 import "package:reorderable_tabbar/reorderable_tabbar.dart";
 
 class IndicationTabs extends StatefulWidget {
+  const IndicationTabs({super.key});
+
   @override
-  _IndicationTabsState createState() => _IndicationTabsState();
+  State<IndicationTabs> createState() => _IndicationTabsState();
 }
 
 class _IndicationTabsState extends State<IndicationTabs> {
-  int _selectedIndex = 0; // Track the selected tab index
-
   @override
   Widget build(BuildContext context) {
     final editMode = context.watch<EditModeProvider>().editMode;
@@ -84,8 +83,8 @@ class _IndicationTabsState extends State<IndicationTabs> {
                                 padding: const EdgeInsets.all(0),
                                 child: Transform.scale(
                                   scaleX: 0.6,
-                                  origin: Offset(-10, 0),
-                                    child: Icon(
+                                  origin: const Offset(-10, 0),
+                                    child: const Icon(
                                   Icons.drag_handle,
                                   size: 30,
                                 )),
