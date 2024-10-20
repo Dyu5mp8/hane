@@ -4,6 +4,7 @@ class CustomUserBehavior extends UserBehavior {
   CustomUserBehavior({required String user, required String masterUID})
       : super(user: user, masterUID: masterUID);
   @override
+   @override
   Stream<List<Drug>> getDrugsStream() {
     var db = FirebaseFirestore.instance;
     Query<Map<String, dynamic>> drugsCollection =
@@ -14,11 +15,17 @@ class CustomUserBehavior extends UserBehavior {
 
     return drugsStream.map((drugsSnapshot) {
       var drugsList = drugsSnapshot.docs.map((doc) {
-        var drug = Drug.fromFirestore(doc.data());
-        categories.addAll(drug.categories ?? []);
-        drug.id = doc.id;
-        return drug;
-      }).toList();
+        try {
+          var drug = Drug.fromFirestore(doc.data());
+          categories.addAll(drug.categories ?? []);
+          drug.id = doc.id;
+          return drug;
+        } catch (e) {
+          // Log the error and skip the problematic document
+          print("Error mapping drug with ID ${doc.id}: $e");
+          return null;
+        }
+      }).whereType<Drug>().toList(); // Filter out null values
 
       drugsList.sort(
           (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));

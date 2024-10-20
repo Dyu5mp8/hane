@@ -31,46 +31,59 @@ Query<Map<String, dynamic>> userDrugsCollection = db.collection('users').doc(use
         userNotesDocRef.snapshots();
 
     // Combine both streams
-    return Rx.combineLatest3(
-      userDrugsStream,
-      drugsStream,
-      userNotesStream,
-      (userDrugsSnapshot,drugsSnapshot, userNotesSnapshot) {
-        Map<String, dynamic> userNotesIndex = {};
+   return Rx.combineLatest3(
+  userDrugsStream,
+  drugsStream,
+  userNotesStream,
+  (userDrugsSnapshot, drugsSnapshot, userNotesSnapshot) {
+    Map<String, dynamic> userNotesIndex = {};
 
-        if (userNotesSnapshot.exists) {
-          userNotesIndex = userNotesSnapshot.data() ?? {};
+    // Initialize user notes index if it exists
+    if (userNotesSnapshot.exists) {
+      userNotesIndex = userNotesSnapshot.data() ?? {};
+    }
+
+    // Parse userDrugs with error handling
+    var userDrugs = userDrugsSnapshot.docs.map((doc) {
+      try {
+        var drug = Drug.fromFirestore(doc.data());
+        drug.id = doc.id;
+        return drug;
+      } catch (e) {
+        // Log and skip the problematic document
+        print("Error mapping user drug with ID ${doc.id}: $e");
+        return null;
+      }
+    }).whereType<Drug>().toList(); // Filter out null values
+
+    // Parse master drugs with error handling
+    var masterDrugs = drugsSnapshot.docs.map((doc) {
+      try {
+        var drug = Drug.fromFirestore(doc.data());
+        categories.addAll(drug.categories ?? []);
+        drug.id = doc.id;
+
+        // Set the userNotes from userNotesIndex
+        if (userNotesIndex.containsKey(drug.id)) {
+          drug.userNotes = userNotesIndex[drug.id] as String;
         }
 
-        var userDrugs = userDrugsSnapshot.docs.map((doc) {
-          var drug = Drug.fromFirestore(doc.data());
-          drug.id = doc.id;
-          return drug;
-        }).toList();
+        return drug;
+      } catch (e) {
+        // Log and skip the problematic document
+        print("Error mapping master drug with ID ${doc.id}: $e");
+        return null;
+      }
+    }).whereType<Drug>().toList(); // Filter out null values
 
-        // Convert each document to a Drug object
-        var masterDrugs = drugsSnapshot.docs.map((doc) {
-          var drug = Drug.fromFirestore(doc.data());
-          categories.addAll(drug.categories ?? []);
-          drug.id = doc.id;
+    // Combine the two lists and sort them
+    var allDrugs = [...masterDrugs, ...userDrugs];
+    allDrugs.sort(
+        (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
-          // Set the userNotes from userNotesIndex
-          if (userNotesIndex.containsKey(drug.id)) {
-            drug.userNotes = userNotesIndex[drug.id] as String;
-          }
-
-          return drug;
-        }).toList();
-       var allDrugs = [...masterDrugs, ...userDrugs];
-
-        allDrugs.sort(
-            (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
-
-        return allDrugs;
-      },
-    );
+    return allDrugs;
+  }); 
   }
-
   @override
   Future<void> addDrug(Drug drug) async {
     var db = FirebaseFirestore.instance;
