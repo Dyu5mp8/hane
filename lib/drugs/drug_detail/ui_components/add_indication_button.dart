@@ -11,6 +11,16 @@ class AddIndicationButton extends StatelessWidget {
     var drug = Provider.of<Drug>(context, listen: true);
 
     return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color.fromRGBO(194, 221, 248, 1),
+      
+   
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: Theme.of(context).primaryColor),
+        ),
+      ),
+
       onPressed: () {
         Provider.of<EditModeProvider>(context, listen: false).setEditMode(true);
         Navigator.push(

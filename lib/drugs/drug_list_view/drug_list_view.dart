@@ -86,6 +86,7 @@ void _onDetailsPopped() {
 
   @override
   Widget build(BuildContext context) {
+    print('Building DrugListView');
     List<Drug>? drugs = Provider.of<List<Drug>?>(context, listen: true);
     Set<String>? drugNames = drugs
         ?.map((drug) => drug.name)
@@ -174,14 +175,12 @@ void _onDetailsPopped() {
       MaterialPageRoute(
           builder: (context) => MultiProvider(
                   providers: [
-                    ChangeNotifierProvider<Drug>.value(
-                        value: Drug(
+                    ChangeNotifierProvider<Drug>(
+                        create: (_) => Drug(
                             indications: <Indication>[],
                             changedByUser:
                                 true)), // sets the editable drug as the provider drug
-                    ChangeNotifierProvider<EditModeProvider>.value(
-                        value:
-                            EditModeProvider()) // a provider for the edit mode
+                    ChangeNotifierProvider<EditModeProvider>(create: (_) => EditModeProvider()),
                   ],
                   child: const DrugDetailView(
                     isNewDrug: true,
@@ -218,7 +217,7 @@ void _onDetailsPopped() {
 
 Widget _buildCategoryChips(List<dynamic> categories) {
   final isWeb = kIsWeb;
-  final screenWidth = MediaQuery.sizeOf(context).width;
+
 
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 10.0),

@@ -20,7 +20,7 @@ class IndicationBox extends StatelessWidget {
               child: Column(
                 children: [
                   IndicationTabs(),
-                  IndicationTabView(),
+                  Expanded(child: IndicationTabView()),
                 ],
               ),
             ),

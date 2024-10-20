@@ -47,11 +47,8 @@ class DrugListRow extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => MultiProvider(
                 providers: [
-                  ChangeNotifierProvider<Drug>.value(
-                      value: Drug.from(_drug)), // sets the editable drug
-                  ChangeNotifierProvider<EditModeProvider>.value(
-                      value:
-                          EditModeProvider()), // a provider for the edit mode
+                  ChangeNotifierProvider<Drug>(create: (_) => Drug.from(_drug)),
+                  ChangeNotifierProvider<EditModeProvider>(create: (_) => EditModeProvider()),
                 ],
                 child: const DrugDetailView(),
               ),
