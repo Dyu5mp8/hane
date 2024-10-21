@@ -72,6 +72,7 @@ class SyncedUserMenuDrawer extends MenuDrawer {
             children: <Widget>[
               const CustomDrawerHeader(),
               ...buildUserSpecificTiles(context),
+              buildTutorialTile(context),
               buildLogoutTile(context),
             ],
           ),

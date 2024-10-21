@@ -4,6 +4,7 @@ import 'package:hane/drugs/ui_components/custom_drawer_header.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/loginPage.dart';
+import 'package:hane/onboarding/onboarding_screen.dart';
 
 abstract class MenuDrawer extends StatelessWidget {
   final Set<String>? userDrugNames;
@@ -53,9 +54,11 @@ abstract class MenuDrawer extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: <Widget>[
               const CustomDrawerHeader(),
-              buildLogoutTile(context), // Common logout tile
-              ...buildUserSpecificTiles(
-                  context), // User-specific tiles in subclasses
+        
+
+              ...buildUserSpecificTiles(context),
+              buildLogoutTile(
+                  context), // Common logout tile// User-specific tiles in subclasses
             ],
           ),
         );
@@ -70,6 +73,18 @@ abstract class MenuDrawer extends StatelessWidget {
       title: const Text('Logga ut'),
       onTap: () {
         _onLogoutPressed(context);
+      },
+    );
+  }
+
+  ListTile buildTutorialTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.help),
+      title: const Text('Hur funkar det?'),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => OnboardingScreen()),
+        );
       },
     );
   }

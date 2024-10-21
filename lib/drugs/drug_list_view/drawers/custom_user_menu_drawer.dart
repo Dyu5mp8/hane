@@ -32,44 +32,6 @@ class CustomUserMenuDrawer extends MenuDrawer {
   List<Widget> buildUserSpecificTiles(BuildContext context) {
     var user = Provider.of<DrugListProvider>(context, listen: false).user;
     return [
-      FutureBuilder<Set<String>>(
-        future: Provider.of<DrugListProvider>(context)
-            .getDrugNamesFromMaster(), // Your future call
-        builder: (context, snapshot) {
-          return ListTile(
-            leading: Badge(
-              label: snapshot.connectionState == ConnectionState.waiting
-                  ? const Text('...')
-                  : snapshot.hasError
-                      ? const Icon(Icons.error, color: Colors.red)
-                      : Text(
-                          masterUserDifference(
-                            snapshot.data ?? const {},
-                            userDrugNames,
-                          ).length.toString(),
-                        ),
-              child: const Icon(Icons.settings),
-            ),
-            title: const Text('Synka med stamlistan'),
-            onTap: () {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  !snapshot.hasError) {
-                _onSyncPressed(
-                  context,
-                  masterUserDifference(
-                    snapshot.data ?? const {},
-                    userDrugNames,
-                  ),
-                );
-              } else if (snapshot.hasError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Failed to load data')),
-                );
-              }
-            },
-          );
-        },
-      ),
       ListTile(
         leading: const Icon(Icons.sync),
         title: const Text('Synkat läge'),
@@ -130,6 +92,7 @@ class CustomUserMenuDrawer extends MenuDrawer {
             children: <Widget>[
               const CustomDrawerHeader(),
               ...buildUserSpecificTiles(context),
+              buildTutorialTile(context),
               buildLogoutTile(context),
             ],
           ),
