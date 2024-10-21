@@ -125,10 +125,10 @@ class DosageSnippetState extends State<DosageSnippet> {
         ListTile(
           
           contentPadding:
-              const EdgeInsets.only(left: 10, right: 10, top: 2, bottom: 2),
+              const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
          
           
-          minVerticalPadding: 20,
+          minVerticalPadding: 12,
           title: Row(
             children: [
               Expanded(
