@@ -28,6 +28,15 @@ class Dose with EquatableMixin{
     return visuallyModifiedUnits;
   }
 
+String substanceUnitString() {
+  if (units.containsKey("substance")) {
+    var unit = units["substance"]!.replaceAll("mikrog", "μg");
+    return unit;
+  }
+
+    return "";
+  }
+
   @override
   List<Object?> get props => [amount, units];
 
