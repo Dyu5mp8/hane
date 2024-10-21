@@ -154,7 +154,7 @@ class BasicInfoRow extends StatelessWidget {
                           Consumer<EditModeProvider>(
                             builder: (context, editModeProvider, child) {
                               return EditableRow(
-                                text: "Spädningar",
+                                text: "Styrkor",
                                 textStyle:
                                     Theme.of(context).textTheme.bodySmall,
                                 editDialog:
@@ -166,7 +166,7 @@ class BasicInfoRow extends StatelessWidget {
                           ...drug
                               .getConcentrationsAsString()!
                               .map((conc) => Text(conc))
-                              .toList(),
+                              
                         ],
                       ),
                     ),
