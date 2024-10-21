@@ -56,13 +56,15 @@ class _DrugListViewState extends State<DrugListView> {
     }
   }
 
-void _onDetailsPopped() {
-  if (!mounted) return; // Add this line to check if the widget is still mounted
-  setState(() {
-    _searchController.clear();
-    _selectedCategory = null;
-  });
-}
+// This is for clearing the search query and selected category when the details view is popped. Not used right now but might be requested. 
+
+// void _onDetailsPopped() {
+//   if (!mounted) return; // Add this line to check if the widget is still mounted
+//   setState(() {
+//     _searchController.clear();
+//     _selectedCategory = null;
+//   });
+// }
   void _onSearchChanged() {
     if (!mounted) return;
     setState(() {
@@ -86,7 +88,6 @@ void _onDetailsPopped() {
 
   @override
   Widget build(BuildContext context) {
-    print('Building DrugListView');
     List<Drug>? drugs = Provider.of<List<Drug>?>(context, listen: true);
     Set<String>? drugNames = drugs
         ?.map((drug) => drug.name)
@@ -158,7 +159,7 @@ void _onDetailsPopped() {
                     (context, index) {
                       return DrugListRow(
                         filteredDrugs[index],
-                        onDetailPopped: _onDetailsPopped,
+                        // onDetailPopped: _onDetailsPopped,
                       );
                     },
                     childCount: filteredDrugs.length,
@@ -187,7 +188,7 @@ void _onDetailsPopped() {
                   ))),
     ).then((_) {
 
-       _onDetailsPopped();
+      //  _onDetailsPopped();
 
     });
   }
@@ -238,7 +239,7 @@ Widget _buildCategoryChips(List<dynamic> categories) {
                   style: Theme.of(context)
                       .textTheme
                       .displaySmall
-                      ?.copyWith(fontSize: isWeb ? 14 : 11)), // Larger font on web
+                      ?.copyWith(fontSize: isWeb ? 14 : 11, fontWeight: FontWeight.w800)), // Larger font on web
               selected: _selectedCategory == null,
               shape: RoundedRectangleBorder(
                 borderRadius:
