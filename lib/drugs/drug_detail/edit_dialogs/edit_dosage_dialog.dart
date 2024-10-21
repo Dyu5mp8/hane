@@ -213,7 +213,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     lowerLimitDose: _createDose(lowerLimitDoseAmountController.text),
     higherLimitDose: _createDose(higherLimitDoseAmountController.text),
   );
-  print(updatedDosage);
 
   // Pass updated dosage back to the parent via the onSave callback
   widget.onSave(updatedDosage);
@@ -224,7 +223,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
 
   Dose? _createDose(String amount) {
     String unit = getUnitString();
-    print("Unit: $unit");
     if (amount.isEmpty || unit.isEmpty) return null;
     double? normalizedAmount = UnitParser.normalizeDouble(amount);
     if (normalizedAmount == null) {
@@ -233,7 +231,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       });
       return null;
     }
-    print("dose: ${Dose.fromString(amount: normalizedAmount, unit: unit)}");
 
     return Dose.fromString(
         amount: normalizedAmount,

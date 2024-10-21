@@ -56,7 +56,6 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
           unit: '$selectedUnit/ml',
         
         ));
-        print(concentrations);
     
         concentrationAmountController.clear();
         selectedUnit = null;

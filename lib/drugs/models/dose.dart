@@ -39,7 +39,7 @@ class Dose with EquatableMixin{
 
   // Get the dose units as a map
   static Map<String, String> getDoseUnitsAsMap(String unitInput) {
-    print("unitInput: $unitInput");
+
     Map validUnits = UnitValidator.validUnits;
 
     Map<String, String> unitMap = {};
