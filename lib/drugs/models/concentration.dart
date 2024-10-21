@@ -8,6 +8,10 @@ class Concentration with EquatableMixin {
 
   Concentration({required this.amount, required this.unit});
 
+  Concentration.fromString({required this.amount, required String unit})
+      : unit = unit.replaceAll("μg", "mikrog");
+
+
   factory Concentration.fromMap(Map<String, dynamic> map) {
     num amount = map['amount'] as num;
     return Concentration(

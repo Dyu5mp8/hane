@@ -7,7 +7,7 @@ import 'package:hane/utils/validation_exception.dart';
 
 class Dose with EquatableMixin{
   final double amount;
-  final Map<String, String> units;
+  Map<String, String> units;
   
 
   Dose({required this.amount, required this.units});
@@ -15,7 +15,10 @@ class Dose with EquatableMixin{
   // Constructor to create a Dose from a string representation
   Dose.fromString({required double amount, required String unit})
       : this.amount = amount,
-        units = getDoseUnitsAsMap(unit);
+      
+        
+        this.units = getDoseUnitsAsMap(unit.replaceAll("μg", "mikrog"));
+
 
   // Get the unit string representation
   String unitString() {
@@ -36,6 +39,7 @@ class Dose with EquatableMixin{
 
   // Get the dose units as a map
   static Map<String, String> getDoseUnitsAsMap(String unitInput) {
+    print("unitInput: $unitInput");
     Map validUnits = UnitValidator.validUnits;
 
     Map<String, String> unitMap = {};
@@ -56,6 +60,7 @@ class Dose with EquatableMixin{
         throw ValidationException("$part inte en giltig enhet");
       }
     }
+
     return unitMap;
   }
 
@@ -72,7 +77,7 @@ class Dose with EquatableMixin{
   Map<String, dynamic> toJson() {
     return {
       'amount': amount,
-      'unit': unitString(),
+      'unit': units.values.join('/')
     };
   }
 

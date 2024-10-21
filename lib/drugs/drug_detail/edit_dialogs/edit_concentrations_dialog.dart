@@ -50,11 +50,14 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
   void addConcentration() {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        concentrations.add(Concentration(
+        concentrations.add(Concentration.fromString(
           amount:
               UnitParser.normalizeDouble(concentrationAmountController.text),
           unit: '$selectedUnit/ml',
+        
         ));
+        print(concentrations);
+    
         concentrationAmountController.clear();
         selectedUnit = null;
       });
