@@ -257,4 +257,17 @@ class DosageViewHandler {
       );
     }
   }
+
+  String? getCommonUnitSymbol() {
+    if (dosage.dose != null) {
+      return dosage.dose!.substanceUnitString();
+    }
+    else if (dosage.lowerLimitDose != null) {
+      return dosage.lowerLimitDose!.substanceUnitString();
+    }
+    else if (dosage.higherLimitDose != null) {
+      return dosage.higherLimitDose!.substanceUnitString();
+    }
+    return null;
+  }
 }
