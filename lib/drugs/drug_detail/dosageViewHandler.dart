@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:hane/drugs/models/drug.dart";
 import "package:hane/utils/unit_service.dart";
 import "package:hane/utils/smart_rounder.dart";
+import "package:flutter/foundation.dart";
 
 enum AdministrationRoute {
   po,
@@ -212,10 +213,37 @@ class DosageViewHandler {
             : dose;
       }
 
-      Dose? dose = convertIfNeeded(dosage.dose);
-      Dose? lowerLimitDose = convertIfNeeded(dosage.lowerLimitDose);
-      Dose? higherLimitDose = convertIfNeeded(dosage.higherLimitDose);
-      Dose? maxDose = convertIfNeeded(dosage.maxDose);
+      Map<String, String> unitsExcludingWeight(Map<String, String> units) {
+        return Map.from(units)..remove('patientWeight');
+      }
+
+      Dose? maxDose = dosage.maxDose;
+
+      Dose? clampDoseIfExceedsMax(Dose? dose) {
+        if (dose != null && maxDose != null) {
+          var maxDoseUnits = unitsExcludingWeight(maxDose.units);
+          // Use setEquals to compare the key sets
+          if (setEquals(dose.units.keys.toSet(), maxDoseUnits.keys.toSet())) {
+            if (dose.compareTo(maxDose) > 0) {
+              // Return maxDose if dose exceeds maxDose
+              return maxDose;
+            } else {
+              return dose;
+            }
+          } else {
+            return dose;
+          }
+        }
+        return dose;
+      }
+
+      Dose? dose = clampDoseIfExceedsMax(convertIfNeeded(dosage.dose));
+      Dose? lowerLimitDose =
+          clampDoseIfExceedsMax(convertIfNeeded(dosage.lowerLimitDose));
+      Dose? higherLimitDose =
+          clampDoseIfExceedsMax(convertIfNeeded(dosage.higherLimitDose));
+
+      // check for maxdose, and if the units match the converted higherLimitDose it will clamp the higherLimitDose to the maxDose
 
       String? weightConversionInfo = conversionWeight != null
           ? "vikt ${smartRound(conversionWeight!).toString()} kg"

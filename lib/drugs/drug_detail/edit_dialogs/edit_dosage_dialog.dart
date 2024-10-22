@@ -25,6 +25,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   late TextEditingController doseAmountController;
   late TextEditingController lowerLimitDoseAmountController;
   late TextEditingController higherLimitDoseAmountController;
+  late TextEditingController maxDoseAmountController;
 
   late String selectedNumeratorUnit;
   late String selectedDenominatorUnit1;
@@ -51,6 +52,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
         text: widget.dosage.lowerLimitDose?.amount.toString() ?? "");
     higherLimitDoseAmountController = TextEditingController(
         text: widget.dosage.higherLimitDose?.amount.toString() ?? "");
+    maxDoseAmountController = TextEditingController(
+        text: widget.dosage.maxDose?.amount.toString() ?? "");
 
     // Populate units lists using UnitValidator
     Set<String> numeratorUnitsSet = {'-'};
@@ -127,99 +130,125 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
         });
       },
     );
-  }void _saveForm() {
-  setState(() {
-    errorMessage = null; // Reset error message
-  });
-
-  // Check if fields are filled
-  bool isDoseAmountFilled = doseAmountController.text.isNotEmpty;
-  bool isFromAndToFilled = lowerLimitDoseAmountController.text.isNotEmpty &&
-      higherLimitDoseAmountController.text.isNotEmpty;
-  bool isFromAndToNotBothFilled =
-      lowerLimitDoseAmountController.text.isNotEmpty && higherLimitDoseAmountController.text.isEmpty || lowerLimitDoseAmountController.text.isEmpty && higherLimitDoseAmountController.text.isNotEmpty;
-  bool isInstructionFilled = instructionController.text.isNotEmpty;
-  bool isUnitFilled = selectedNumeratorUnit != '-' && selectedNumeratorUnit.isNotEmpty;
-
-  // Rule 1: You must have either a valid dose or a valid instruction.
-  if (!isDoseAmountFilled && !isFromAndToFilled && !isInstructionFilled) {
-    setState(() {
-      errorMessage =
-          'Du måste fylla i antingen dos eller både från och till doser. Alternativt skriv endast i instruktionsfältet.';
-    });
-    return;
   }
 
-  // Rule 2: If a dose is filled, it must be valid.
-  if (isDoseAmountFilled) {
-    double? doseAmount = double.tryParse(doseAmountController.text.replaceAll(",", "."));
-    if (doseAmount == null) {
+  void _saveForm() {
+    setState(() {
+      errorMessage = null; // Reset error message
+    });
+
+    // Check if fields are filled
+    bool isDoseAmountFilled = doseAmountController.text.isNotEmpty;
+    bool isFromAndToFilled = lowerLimitDoseAmountController.text.isNotEmpty &&
+        higherLimitDoseAmountController.text.isNotEmpty;
+    bool isFromAndToNotBothFilled =
+        lowerLimitDoseAmountController.text.isNotEmpty &&
+                higherLimitDoseAmountController.text.isEmpty ||
+            lowerLimitDoseAmountController.text.isEmpty &&
+                higherLimitDoseAmountController.text.isNotEmpty;
+    bool isInstructionFilled = instructionController.text.isNotEmpty;
+
+    bool isMaxDoseFilled = maxDoseAmountController.text.isNotEmpty;
+    bool isUnitFilled =
+        selectedNumeratorUnit != '-' && selectedNumeratorUnit.isNotEmpty;
+
+    // Rule 1: You must have either a valid dose or a valid instruction.
+    if (!isDoseAmountFilled && !isFromAndToFilled && !isInstructionFilled) {
       setState(() {
-        errorMessage = 'Dosmängden måste vara ett giltigt nummer.';
+        errorMessage =
+            'Du måste fylla i antingen dos eller både från och till doser. Alternativt skriv endast i instruktionsfältet.';
       });
       return;
     }
-  }
 
-  // Rule 3: If from/to dose is filled, both must be valid.
-  if (isFromAndToNotBothFilled) {
-    setState(() {
-      errorMessage = 'Du måste fylla i både från och till doser.';
-    });
-    return;
-  }
+    // Rule 2: If a dose is filled, it must be valid.
+    if (isDoseAmountFilled) {
+      double? doseAmount =
+          double.tryParse(doseAmountController.text.replaceAll(",", "."));
+      if (doseAmount == null) {
+        setState(() {
+          errorMessage = 'Dosmängden måste vara ett giltigt nummer.';
+        });
+        return;
+      }
+    }
 
-  if (isFromAndToFilled) {
-    double? lowerLimit = double.tryParse(lowerLimitDoseAmountController.text.replaceAll(",", "."));
-    double? higherLimit = double.tryParse(higherLimitDoseAmountController.text.replaceAll(",", "."));
-    if (lowerLimit == null || higherLimit == null) {
+    // Rule 3: If from/to dose is filled, both must be valid.
+    if (isFromAndToNotBothFilled) {
       setState(() {
-        errorMessage = 'Från och till doserna måste vara giltiga nummer.';
+        errorMessage = 'Du måste fylla i både från och till doser.';
       });
       return;
     }
-    if (lowerLimit > higherLimit) {
+
+    if (isFromAndToFilled) {
+      double? lowerLimit = double.tryParse(
+          lowerLimitDoseAmountController.text.replaceAll(",", "."));
+      double? higherLimit = double.tryParse(
+          higherLimitDoseAmountController.text.replaceAll(",", "."));
+      if (lowerLimit == null || higherLimit == null) {
+        setState(() {
+          errorMessage = 'Från och till doserna måste vara giltiga nummer.';
+        });
+        return;
+      }
+      if (lowerLimit > higherLimit) {
+        setState(() {
+          errorMessage = 'Från dosen kan inte vara större än till dosen.';
+        });
+        return;
+      }
+    }
+
+    // Rule 4: If an instruction is filled and no dose is provided, units should not be filled
+    if (isInstructionFilled &&
+        !isDoseAmountFilled &&
+        !isFromAndToFilled &&
+        isUnitFilled) {
       setState(() {
-        errorMessage = 'Från dosen kan inte vara större än till dosen.';
+        errorMessage = 'Du kan inte välja en enhet utan att fylla i dosen.';
       });
       return;
     }
+
+    // Rule 5: Ensure a valid unit is selected if any dose value is provided
+    if ((isDoseAmountFilled || isFromAndToFilled) &&
+        (selectedNumeratorUnit == '-' || selectedNumeratorUnit.isEmpty)) {
+      setState(() {
+        errorMessage =
+            'Du måste välja en primär enhet för doseringen om dos anges.';
+      });
+      return;
+    }
+
+    Dose? maxDose;
+
+    if (isMaxDoseFilled){
+
+      Dose? tempDose = _createDose(maxDoseAmountController.text);
+      Map<String,String>? units = tempDose!.units;
+      print(units);
+      units.removeWhere((key, value) => key == 'patientWeight');
+      print (units);
+      maxDose = Dose(amount: tempDose.amount, units: units);
+    }
+
+    // If all validations pass, proceed to create the dosage object
+    var updatedDosage = Dosage(
+      instruction: instructionController.text,
+      administrationRoute: administrationRouteController.text,
+      dose: _createDose(doseAmountController.text),
+      lowerLimitDose: _createDose(lowerLimitDoseAmountController.text),
+      higherLimitDose: _createDose(higherLimitDoseAmountController.text),
+      maxDose: maxDose,
+    );
+
+    // Pass updated dosage back to the parent via the onSave callback
+    widget.onSave(updatedDosage);
+
+    // Close the dialog
+    Navigator.pop(context);
   }
-
-  // Rule 4: If an instruction is filled and no dose is provided, units should not be filled
-  if (isInstructionFilled && !isDoseAmountFilled && !isFromAndToFilled && isUnitFilled) {
-    setState(() {
-      errorMessage = 'Du kan inte välja en enhet utan att fylla i dosen.';
-      
-    });
-    return;
-  }
-
-  // Rule 5: Ensure a valid unit is selected if any dose value is provided
-  if ((isDoseAmountFilled || isFromAndToFilled) &&
-      (selectedNumeratorUnit == '-' || selectedNumeratorUnit.isEmpty)) {
-    setState(() {
-      errorMessage = 'Du måste välja en primär enhet för doseringen om dos anges.';
-      
-    });
-    return;
-  }
-
-  // If all validations pass, proceed to create the dosage object
-  var updatedDosage = Dosage(
-    instruction: instructionController.text,
-    administrationRoute: administrationRouteController.text,
-    dose: _createDose(doseAmountController.text),
-    lowerLimitDose: _createDose(lowerLimitDoseAmountController.text),
-    higherLimitDose: _createDose(higherLimitDoseAmountController.text),
-  );
-
-  // Pass updated dosage back to the parent via the onSave callback
-  widget.onSave(updatedDosage);
-
-  // Close the dialog
-  Navigator.pop(context);
-}
 
   Dose? _createDose(String amount) {
     String unit = getUnitString();
@@ -232,9 +261,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       return null;
     }
 
-    return Dose.fromString(
-        amount: normalizedAmount,
-        unit: unit);
+    return Dose.fromString(amount: normalizedAmount, unit: unit);
   }
 
   String getUnitString() {
@@ -267,7 +294,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
           isExpanded: true,
           decoration: InputDecoration(
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           ),
           items: items.map((String unit) {
@@ -289,7 +317,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   @override
   Widget build(BuildContext context) {
     const TextStyle labelTextStyle = TextStyle(fontSize: 15);
-    const TextStyle errorTextStyle = TextStyle(color: Color.fromARGB(255, 127, 11, 0));
+    const TextStyle errorTextStyle =
+        TextStyle(color: Color.fromARGB(255, 127, 11, 0));
 
     return AlertDialog(
       title: const Text("Redigera dosering"),
@@ -301,7 +330,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Allmänt", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Allmänt",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 const Text("Administrationsväg"),
                 const SizedBox(height: 8),
@@ -309,11 +339,16 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                   spacing: 5.0,
                   runSpacing: -5,
                   children: [
-                    _labelChip("PO", icon: const Icon(FontAwesome.pills_solid, size: 11)),
-                    _labelChip("IV", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("IM", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("SC", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("Inh", icon: const Icon(FontAwesome.lungs_solid, size: 11)),
+                    _labelChip("PO",
+                        icon: const Icon(FontAwesome.pills_solid, size: 11)),
+                    _labelChip("IV",
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("IM",
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("SC",
+                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("Inh",
+                        icon: const Icon(FontAwesome.lungs_solid, size: 11)),
                     _labelChip("Annat"),
                   ],
                 ),
@@ -377,7 +412,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text("Dosering och intervall", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Dosering och intervall",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -391,8 +427,13 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        buildCounter: (context,
+                                {required int currentLength,
+                                required bool isFocused,
+                                required int? maxLength}) =>
+                            null,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -407,8 +448,13 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        buildCounter: (context,
+                                {required int currentLength,
+                                required bool isFocused,
+                                required int? maxLength}) =>
+                            null,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -417,20 +463,48 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                     Expanded(
                       flex: 1,
                       child: AutoSizeTextField(
-                        
                         controller: higherLimitDoseAmountController,
                         decoration: customInputDecoration(),
                         style: const TextStyle(fontSize: 16),
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        buildCounter: (context,
+                                {required int currentLength,
+                                required bool isFocused,
+                                required int? maxLength}) =>
+                            null,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(") ${getUnitString()}", style: labelTextStyle),
                   ],
+                ),
+                const SizedBox(height: 16),
+                const Text("Maxdos"),
+                const SizedBox(height: 8),
+                Row(children: [SizedBox(
+                  width: 100,
+                  child: AutoSizeTextField(
+                    controller: maxDoseAmountController,
+                    decoration: customInputDecoration(),
+                    style: const TextStyle(fontSize: 16),
+                    minFontSize: 12,
+                    maxLines: 1,
+                    maxLength: 5,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    buildCounter: (context,
+                            {required int currentLength,
+                            required bool isFocused,
+                            required int? maxLength}) =>
+                        null,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                    Text(getUnitString().replaceAll("/kg", ""), style: labelTextStyle),
+                ],
                 ),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 16),

@@ -254,4 +254,16 @@ String substanceUnitString() {
     }
     return count;
   }
+
+   int compareTo(Dose other) {
+
+    dynamic conversionFactor = UnitParser.getUnitConversionFactor(
+      fromUnit: units["substance"]!,
+      toUnit: other.units["substance"]!,
+    );
+    double convertedAmount = amount / conversionFactor;
+    return convertedAmount.compareTo(other.amount);
+
+
+}
 }
