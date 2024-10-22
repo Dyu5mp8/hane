@@ -125,7 +125,7 @@ class DosageSnippetState extends State<DosageSnippet> {
         ListTile(
           
           contentPadding:
-              const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+              const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
          
           
           minVerticalPadding: 12,
@@ -139,14 +139,17 @@ class DosageSnippetState extends State<DosageSnippet> {
               Column(children: [
                                    if (!widget.editMode &&
                         widget.dosageViewHandler.ableToConvert.concentration)
-                    ConversionSwitch(isActive: (widget.dosageViewHandler.conversionConcentration != null), onSwitched: (value) {
-                      HapticFeedback.mediumImpact();
-                      if (value) {
-                        _showConcentrationPicker(context);
-                      } else {
-                        _resetConcentrationConversion();
-                      }
-                    }, unit: widget.dosageViewHandler.getCommonUnitSymbol()),
+                    Transform.scale(
+                      scale: 0.9,
+                      child: ConversionSwitch(isActive: (widget.dosageViewHandler.conversionConcentration != null), onSwitched: (value) {
+                        HapticFeedback.mediumImpact();
+                        if (value) {
+                          _showConcentrationPicker(context);
+                        } else {
+                          _resetConcentrationConversion();
+                        }
+                      }, unit: widget.dosageViewHandler.getCommonUnitSymbol()),
+                    ),
 
 
                 Row(children:  [

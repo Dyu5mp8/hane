@@ -4,7 +4,9 @@ class ConversionSwitch extends StatefulWidget {
   final bool isActive;
   final Function(bool) onSwitched;
   final String? unit;
-
+  final activeColor = const Color.fromARGB(255, 254, 112, 56);
+  final inactiveColor = const Color.fromARGB(255, 195, 225, 240);
+  
   const ConversionSwitch({
     Key? key,
     required this.isActive,
@@ -19,22 +21,23 @@ class ConversionSwitch extends StatefulWidget {
 class _ConversionSwitchState extends State<ConversionSwitch> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (widget.unit != null)
-        Text(widget.unit!, style: TextStyle(fontSize: 14, fontWeight: !widget.isActive ? FontWeight.bold : FontWeight.normal)),
-  
-
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Switch.adaptive(
-            value: widget.isActive,
-            onChanged: widget.onSwitched,
-            activeColor: Theme.of(context).primaryColor,
-          ),
-        ),
-        Text("ml", style: TextStyle(fontSize: 14, fontWeight: widget.isActive ? FontWeight.bold : FontWeight.normal)),
-      ],
-    );
+    return
+     Row(
+           children: [
+             if (widget.unit != null)
+             Text(widget.unit!, style: TextStyle(fontSize: 14, fontWeight: !widget.isActive ? FontWeight.bold : FontWeight.normal)),
+       
+     
+             Switch.adaptive(
+               value: widget.isActive,
+               onChanged: widget.onSwitched,
+               activeColor: widget.activeColor,
+                inactiveTrackColor: widget.inactiveColor,
+               
+             
+             ),
+             Text("ml", style: TextStyle(fontSize: 14, fontWeight: widget.isActive ? FontWeight.bold : FontWeight.normal)),
+           ],
+         );
   }
 }

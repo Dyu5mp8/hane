@@ -165,7 +165,7 @@ class DosageViewHandler {
               style: const TextStyle(
                 fontSize: 14,
                 color: Color.fromARGB(255, 0, 0, 0),
-                decoration: TextDecoration.underline,
+                fontStyle: FontStyle.italic
               ),
             ),
           instructionSpan,
@@ -222,7 +222,7 @@ class DosageViewHandler {
           : null;
 
       String? concentrationConversionInfo = conversionConcentration != null
-          ? "spädning ${conversionConcentration.toString()}"
+          ? "styrka ${conversionConcentration.toString()}"
           : null;
 
       String? timeConversionInfo = conversionTime != null
@@ -236,7 +236,7 @@ class DosageViewHandler {
       ];
 
       String conversionInfo = conversionParts.isNotEmpty
-          ? "Beräknat på ${conversionParts.join(', ')}: "
+          ? "Beräknat på ${conversionParts.join(', ')}:\n"
           : "";
 
       return Text.rich(
