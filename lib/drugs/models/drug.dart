@@ -223,6 +223,12 @@ class Drug extends ChangeNotifier with EquatableMixin {
   }
 
   String? get expandedContraindication => _expandedContraindication;
+  set expandedContraindication(String? newExpandedContraindication) {
+    if (_expandedContraindication != newExpandedContraindication) {
+      _expandedContraindication = newExpandedContraindication;
+      notifyListeners();
+    }
+  }
 
   List<Indication>? get indications => _indications ?? [];
   set indications(List<Indication>? newIndications) {

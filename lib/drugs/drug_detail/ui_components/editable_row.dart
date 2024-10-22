@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
@@ -5,6 +7,7 @@ import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 class EditableRow extends StatefulWidget {
   final String? text;
   final Widget editDialog;
+  final Widget? expandedDialog;
   final bool isEditMode;
   final TextStyle? textStyle;
   final bool hideWhenNotEditing;
@@ -13,11 +16,13 @@ class EditableRow extends StatefulWidget {
   final Color? nonEditingBackgroundColor;
   final Duration animationDuration;
   final double iconSize;
+  
 
   const EditableRow({
     Key? key,
     required this.text,
     required this.editDialog,
+    this.expandedDialog,
     required this.isEditMode,
     this.textStyle,
     this.hideWhenNotEditing = false,
@@ -92,7 +97,14 @@ class _EditableRowState extends State<EditableRow>
                 builder: (context) => widget.editDialog,
               );
             }
-          : null,
+          : (){
+            if (widget.expandedDialog == null) return;
+
+            showDialog(
+              context: context,
+            builder: (context) => widget.expandedDialog!
+            );
+          },
       child: Container(
         padding: padding,
         decoration: BoxDecoration(

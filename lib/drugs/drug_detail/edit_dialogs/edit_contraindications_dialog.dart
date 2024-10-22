@@ -14,6 +14,8 @@ class _EditContraindicationsDialogState
     extends State<EditContraindicationsDialog> {
   final TextEditingController _contraindicationController =
       TextEditingController();
+  final TextEditingController _expandedContraindicationController =
+      TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -21,6 +23,8 @@ class _EditContraindicationsDialogState
     super.initState();
     // Initialize the controllers with the existing data
     _contraindicationController.text = widget.drug.contraindication ?? '';
+    _expandedContraindicationController.text =
+        widget.drug.expandedContraindication ?? '';
   }
 
   @override
@@ -48,6 +52,9 @@ class _EditContraindicationsDialogState
                   // Update the drug name with the new value
                   widget.drug.contraindication =
                       _contraindicationController.text;
+                  widget.drug.expandedContraindication = _expandedContraindicationController.text;
+                      
+
 
                   Navigator.pop(context);
                 },
@@ -67,6 +74,17 @@ class _EditContraindicationsDialogState
                     autofocus: true,
                     decoration: const InputDecoration(
                       labelText: 'Varningar och försiktighet',
+                      border: OutlineInputBorder(),
+                    ),
+                    minLines: 3,
+                    maxLines: 10),
+
+                const SizedBox(height: 20),
+
+                TextFormField(
+                    controller: _expandedContraindicationController,
+                    decoration: const InputDecoration(
+                      labelText: 'Utökad information',
                       border: OutlineInputBorder(),
                     ),
                     minLines: 3,

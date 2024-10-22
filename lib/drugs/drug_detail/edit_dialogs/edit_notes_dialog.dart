@@ -18,6 +18,7 @@ class EditNotesDialog extends StatefulWidget {
 
 class _EditNotesDialogState extends State<EditNotesDialog> {
   final TextEditingController _notesController = TextEditingController();
+  final TextEditingController _expandedNotesController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -25,6 +26,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
     super.initState();
     // Initialize the controllers with the existing data
     _notesController.text = widget.isUserNote ? widget.drug.userNotes ?? '' : widget.drug.notes ?? '';
+    _expandedNotesController.text = widget.drug.expandedNotes ?? '';
 
   }
 
@@ -57,6 +59,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                     widget.onUserNotesSaved?.call();
                   } else {
                   widget.drug.notes = _notesController.text;
+                  widget.drug.expandedNotes = _expandedNotesController.text;
   
                   }
                   Navigator.pop(context);
@@ -79,6 +82,18 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                     autofocus: true,
                     decoration: const InputDecoration(
                       labelText: 'Anteckningar',
+                      border: OutlineInputBorder(),
+                    ),
+                    minLines: 4,
+                    maxLines: 10,
+                    textCapitalization: TextCapitalization.sentences,),
+
+                 const SizedBox(height: 8),
+                TextFormField(
+                    controller: _expandedNotesController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Detaljerad info',
                       border: OutlineInputBorder(),
                     ),
                     minLines: 4,
