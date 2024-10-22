@@ -9,59 +9,62 @@ export 'package:hane/drugs/models/indication.dart';
 export 'package:hane/drugs/models/concentration.dart';
 export 'package:hane/drugs/models/dose.dart';
 
-class Drug extends ChangeNotifier with EquatableMixin{
+class Drug extends ChangeNotifier with EquatableMixin {
   String? _name;
   List<dynamic>? _brandNames;
   String? _genericName;
   List<dynamic>? _categories;
   List<Concentration>? _concentrations;
   String? _contraindication;
+  String? _expandedContraindication;
   List<Indication>? _indications;
   bool? _changedByUser = false;
   Timestamp? _lastUpdated;
   String? _id;
   String? _userNotes;
   String? _notes;
+  String? _expandedNotes;
   String? _reviewedBy;
   bool hasUnreadMessages = false;
   int unreadMessageCount = 0;
   Timestamp? _lastMessageTimestamp;
 
-  Drug({
-    String? id,
-    String? name,
-    bool? changedByUser,
-    String? reviewedBy,
-    List<dynamic>? brandNames,
-    String? genericName,
-    List<dynamic>? categories,
-    List<Concentration>? concentrations = const [],
-    String? contraindication = '',
-    List<Indication>? indications,
-    String? notes = '',
-    String? userNotes,
-    Timestamp? lastUpdated,
-    Timestamp? lastMessageTimestamp
-
-  })  : _name = name ?? '',
+  Drug(
+      {String? id,
+      String? name,
+      bool? changedByUser,
+      String? reviewedBy,
+      List<dynamic>? brandNames,
+      String? genericName,
+      List<dynamic>? categories,
+      List<Concentration>? concentrations = const [],
+      String? contraindication = '',
+      String? expandedContraindication = '',
+      List<Indication>? indications,
+      String? notes = '',
+      String? expandedNotes = '',
+      String? userNotes,
+      Timestamp? lastUpdated,
+      Timestamp? lastMessageTimestamp})
+      : _name = name ?? '',
         _changedByUser = changedByUser,
         _reviewedBy = reviewedBy,
         _lastUpdated = lastUpdated,
         _categories = categories,
         _concentrations = concentrations,
         _contraindication = contraindication,
+        _expandedContraindication = expandedContraindication,
         _indications = indications,
         _notes = notes,
+        _expandedNotes = expandedNotes,
         _brandNames = brandNames,
         _genericName = genericName,
         _id = id,
         _userNotes = userNotes,
         _lastMessageTimestamp = lastMessageTimestamp;
 
-
   Drug.from(Drug drug)
-      : 
-        _id = drug.id,
+      : _id = drug.id,
         _name = drug.name,
         _genericName = drug._genericName,
         _reviewedBy = drug._reviewedBy,
@@ -70,15 +73,17 @@ class Drug extends ChangeNotifier with EquatableMixin{
         _categories = drug.categories,
         _concentrations = drug.concentrations,
         _contraindication = drug.contraindication,
+        _expandedContraindication = drug._expandedContraindication,
         _indications = drug._indications != null
-            ? List<Indication>.from(drug._indications!.map((ind) => Indication.from(ind)))
+            ? List<Indication>.from(
+                drug._indications!.map((ind) => Indication.from(ind)))
             : null,
         _notes = drug.notes,
+        _expandedNotes = drug._expandedNotes,
         _userNotes = drug.userNotes,
         _brandNames = drug.brandNames,
         _lastMessageTimestamp = drug._lastMessageTimestamp,
         hasUnreadMessages = drug.hasUnreadMessages;
-
 
   @override
   List<Object?> get props => [
@@ -91,10 +96,21 @@ class Drug extends ChangeNotifier with EquatableMixin{
         _categories,
         _concentrations,
         _contraindication,
+        _expandedContraindication,
         _indications,
         _notes,
+        _expandedNotes,
         _brandNames
       ];
+
+  void updateDrug() {
+    notifyListeners();
+  }
+
+  markMessagesAsRead() {
+    hasUnreadMessages = false;
+    notifyListeners();
+  }
 
   String? get id => _id;
   set id(String? newId) {
@@ -136,12 +152,6 @@ class Drug extends ChangeNotifier with EquatableMixin{
     }
   }
 
-  markMessagesAsRead() {
-    hasUnreadMessages = false;
-    notifyListeners();
-
-  }
-
   Timestamp? get lastUpdated => _lastUpdated;
   set lastUpdated(Timestamp? newLastUpdated) {
     if (_lastUpdated != newLastUpdated) {
@@ -154,6 +164,14 @@ class Drug extends ChangeNotifier with EquatableMixin{
   set notes(String? newNotes) {
     if (_notes != newNotes) {
       _notes = newNotes;
+      notifyListeners();
+    }
+  }
+
+  String? get expandedNotes => _expandedNotes;
+  set expandedNotes(String? newExpandedNotes) {
+    if (_expandedNotes != newExpandedNotes) {
+      _expandedNotes = newExpandedNotes;
       notifyListeners();
     }
   }
@@ -193,10 +211,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
   }
 
   List<String>? getConcentrationsAsString() {
-    return _concentrations
-        ?.map((conc) => conc.toString())
-        .toList();
-  
+    return _concentrations?.map((conc) => conc.toString()).toList();
   }
 
   String? get contraindication => _contraindication;
@@ -207,10 +222,7 @@ class Drug extends ChangeNotifier with EquatableMixin{
     }
   }
 
-  void updateDrug() {
-    notifyListeners();
-  }
-
+  String? get expandedContraindication => _expandedContraindication;
 
   List<Indication>? get indications => _indications ?? [];
   set indications(List<Indication>? newIndications) {
@@ -248,37 +260,40 @@ class Drug extends ChangeNotifier with EquatableMixin{
       'categories': _categories,
       'concentrations': concentrations?.map((c) => c.toJson()).toList(),
       'contraindication': _contraindication,
+      'expandedContraindication': _expandedContraindication,
       'indications': indications?.map((ind) => ind.toJson()).toList(),
       'notes': _notes,
+      'expandedNotes': _expandedNotes,
       'lastUpdated': _lastUpdated,
       'lastMessageTimestamp': _lastMessageTimestamp,
-
     };
   }
 
   factory Drug.fromFirestore(Map<String, dynamic> map) {
-  // Debugging print to log the document being parsed
+    // Debugging print to log the document being parsed
 
-
-  return Drug(
-    id: map['id'] as String?,
-    name: map['name'] as String?,
-    genericName: map.containsKey('genericName') ? map['genericName'] as String? : null,
-    changedByUser: map['changedByUser'] as bool?,
-    reviewedBy: map['reviewedBy'] as String?,
-    categories: (map['categories'] as List<dynamic>?),
-    concentrations: (map['concentrations'] as List<dynamic>?)
-        ?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
-        .toList(),
-    brandNames: (map['brandNames'] as List<dynamic>?),
-    contraindication: map['contraindication'] as String?,
-    indications: (map['indications'] as List?)
-        ?.map((item) => Indication.fromFirestore(item as Map<String, dynamic>))
-        .toList(),
-    notes: map['notes'] as String?,
-    lastUpdated: map['lastUpdated'] as Timestamp?,
-    lastMessageTimestamp: map['lastMessageTimestamp'],
-  );
-
+    return Drug(
+      id: map['id'] as String?,
+      name: map['name'] as String?,
+      genericName:
+          map.containsKey('genericName') ? map['genericName'] as String? : null,
+      changedByUser: map['changedByUser'] as bool?,
+      reviewedBy: map['reviewedBy'] as String?,
+      categories: (map['categories'] as List<dynamic>?),
+      concentrations: (map['concentrations'] as List<dynamic>?)
+          ?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
+          .toList(),
+      brandNames: (map['brandNames'] as List<dynamic>?),
+      contraindication: map['contraindication'] as String?,
+      expandedContraindication: map['expandedContraindication'] as String?,
+      indications: (map['indications'] as List?)
+          ?.map(
+              (item) => Indication.fromFirestore(item as Map<String, dynamic>))
+          .toList(),
+      notes: map['notes'] as String?,
+      expandedNotes: map['expandedNotes'] as String?,
+      lastUpdated: map['lastUpdated'] as Timestamp?,
+      lastMessageTimestamp: map['lastMessageTimestamp'],
+    );
   }
 }
