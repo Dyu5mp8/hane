@@ -12,7 +12,7 @@ class DrugListProvider with ChangeNotifier {
   UserMode? _userMode;
   Set<dynamic> categories = {};
   UserBehavior? userBehavior;
-  bool preferGeneric = false;
+  bool _preferGeneric = false;
 
   DrugListProvider({this.userBehavior});
 
@@ -37,6 +37,12 @@ class DrugListProvider with ChangeNotifier {
     this.userBehavior = userBehavior;
   }
 
+  bool get preferGeneric => _preferGeneric;
+  set preferGeneric(bool value) {
+    _preferGeneric = value;
+    notifyListeners();
+  }
+
   bool get isAdmin => userMode == UserMode.isAdmin;
 
   void clearProvider() {
@@ -56,7 +62,7 @@ class DrugListProvider with ChangeNotifier {
   Stream<List<Drug>> getDrugsStream() {
     categories = userBehavior!.categories;
 
-    return userBehavior!.getDrugsStream();
+    return userBehavior!.getDrugsStream(sortByGeneric: preferGeneric);
   }
 
   Future<void> addUserNotes(String id, String notes) async {

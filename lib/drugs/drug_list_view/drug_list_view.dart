@@ -124,12 +124,12 @@ class _DrugListViewState extends State<DrugListView> {
     // Filter drugs based on search query and selected category
     List<Drug> filteredDrugs = _filterDrugs(drugs);
 
-    List<dynamic> allCategories = drugs
-        .where((drug) => drug.categories != null)
-        .expand((drug) => drug.categories!)
-        .toSet()
-        .toList();
-
+ List<dynamic> allCategories = drugs
+    .where((drug) => drug.categories != null)
+    .expand((drug) => drug.categories!)
+    .toSet()
+    .toList()
+  ..sort((a, b) => a.compareTo(b)); // Sorts the list alphabeticallyr
     return Scaffold(
       appBar: _buildAppBar(context),
       drawer: buildDrawer(context, drugNames),

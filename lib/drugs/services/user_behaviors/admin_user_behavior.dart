@@ -9,7 +9,7 @@ class AdminUserBehavior extends UserBehavior {
 @override
 
 @override
-Stream<List<Drug>> getDrugsStream() {
+Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
   var db = FirebaseFirestore.instance;
   Query<Map<String, dynamic>> drugsCollection =
       db.collection('users').doc(masterUID).collection('drugs');
@@ -65,9 +65,10 @@ Stream<List<Drug>> getDrugsStream() {
         }
       }).whereType<Drug>().toList(); // Filter out null values
 
-      drugsList.sort(
-          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
 
+        drugsList.sort(
+            (a, b) => a.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase().compareTo(b.preferredDisplayName().toLowerCase()));
+      
       return drugsList;
     });
   });

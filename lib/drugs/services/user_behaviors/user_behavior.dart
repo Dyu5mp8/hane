@@ -16,5 +16,5 @@ abstract class UserBehavior {
 
   Future<void> addDrug(Drug drug);
   Future<void> deleteDrug(Drug drug);
-  Stream<List<Drug>> getDrugsStream();
+  Stream<List<Drug>> getDrugsStream({bool sortByGeneric = false});
 }

@@ -8,7 +8,7 @@ class CustomUserBehavior extends UserBehavior {
       : super(user: user, masterUID: masterUID);
   @override
    @override
-  Stream<List<Drug>> getDrugsStream() {
+  Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
     var db = FirebaseFirestore.instance;
     Query<Map<String, dynamic>> drugsCollection =
         db.collection('users').doc(user).collection('drugs');

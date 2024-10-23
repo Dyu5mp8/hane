@@ -39,8 +39,8 @@ class DrugListRow extends StatelessWidget {
           title: Text(
             _drug.preferredDisplayName(preferGeneric: provider.preferGeneric),
           ),
-          subtitle: Text(_drug.preferredSecondaryNames(
-              preferGeneric: provider.preferGeneric)?.join(', ') ?? ''),
+          subtitle: _buildSubtitle(context,
+              preferGeneric: provider.preferGeneric),
           trailing:
               _drug.hasUnreadMessages ? _buildNewMessageChip(context) : null,
           onTap: () {
@@ -85,29 +85,15 @@ class DrugListRow extends StatelessWidget {
   }
 Widget _buildSubtitle(BuildContext context, {preferGeneric = false}) {
   List<dynamic>? brandNames;
-
+  brandNames = _drug.preferredSecondaryNames(preferGeneric: preferGeneric);
   // Check if brandNames is null or empty
-  if (_drug.brandNames == null || _drug.brandNames!.isEmpty) {
+  if (brandNames == null || brandNames!.isEmpty) {
     return const SizedBox.shrink(); // No brand names, return empty widget
   }
-
-
-  if (preferGeneric == true) {
-    brandNames = _drug.preferredSecondaryNames(preferGeneric: preferGeneric);
-  } else {
-    // Use the original brandNames list
-    brandNames = _drug.brandNames!;
-  }
-
-  // Check again after fetching the brand names
-  if (brandNames == null || brandNames.isEmpty) {
-    return const SizedBox.shrink(); // No brand names after processing
-  }
-
   // Construct the rich text for brand names
   List<TextSpan> textSpans = [];
 
-  if (preferGeneric == true) {
+  if (preferGeneric == true ) {
     // Apply the specified TextStyle to all names
     for (var name in brandNames) {
       textSpans.add(TextSpan(
@@ -126,8 +112,8 @@ Widget _buildSubtitle(BuildContext context, {preferGeneric = false}) {
     }
   } else {
     // Use the existing logic when preferGeneric is false or null
-    String? genericName = _drug.genericName; // Assuming `genericName` is in Drug class
-
+    String? genericName = _drug.genericName; 
+    // Assuming `genericName` is in Drug class
     for (var name in brandNames) {
       textSpans.add(TextSpan(
         text: name,

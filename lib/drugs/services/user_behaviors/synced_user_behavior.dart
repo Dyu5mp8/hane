@@ -7,7 +7,7 @@ class SyncedUserBehavior extends UserBehavior {
       : super(user: user, masterUID: masterUID);
 
   @override
-  Stream<List<Drug>> getDrugsStream() {
+  Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
     var db = FirebaseFirestore.instance;
 
     Query<Map<String, dynamic>> drugsCollection =

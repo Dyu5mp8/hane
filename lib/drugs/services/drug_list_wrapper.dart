@@ -11,7 +11,7 @@ const DrugListWrapper({super.key});
   @override
   Widget build(BuildContext context) {
     return StreamProvider<List<Drug>?>.value(
-      value: Provider.of<DrugListProvider>(context, listen: false).getDrugsStream(),
+      value: Provider.of<DrugListProvider>(context, listen: true).getDrugsStream(),
       initialData: null,  // Change initial data to null to indicate loading
       catchError: (_, error) => [],
       child: DrugListView(),
