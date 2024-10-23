@@ -54,6 +54,7 @@ abstract class MenuDrawer extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: <Widget>[
               const CustomDrawerHeader(),
+              DrugNameChoiceTile(),
         
 
               ...buildUserSpecificTiles(context),
@@ -66,7 +67,6 @@ abstract class MenuDrawer extends StatelessWidget {
     );
   }
 
-  // Common logout tile for all users
   ListTile buildLogoutTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.logout),
@@ -76,6 +76,7 @@ abstract class MenuDrawer extends StatelessWidget {
       },
     );
   }
+
 
   ListTile buildTutorialTile(BuildContext context) {
     return ListTile(
@@ -89,6 +90,37 @@ abstract class MenuDrawer extends StatelessWidget {
     );
   }
 
+
   // Abstract method to be implemented in subclasses
   List<Widget> buildUserSpecificTiles(BuildContext context);
+}
+class DrugNameChoiceTile extends StatefulWidget {
+  @override
+  _DrugNameChoiceTileState createState() => _DrugNameChoiceTileState();
+}
+
+class _DrugNameChoiceTileState extends State<DrugNameChoiceTile> {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.text_fields),
+      title: const Text('Visa generika?'),
+      trailing: Switch(
+        value: Provider.of<DrugListProvider>(context).preferGeneric,
+        onChanged: (value) {
+          Provider.of<DrugListProvider>(context, listen: false)
+              .setPreferGeneric(value);
+          setState(() {
+
+         ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Ändrat!'),
+            ),
+          );
+          });
+        },
+      ),
+    );
+  }
 }

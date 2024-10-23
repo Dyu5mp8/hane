@@ -39,6 +39,8 @@ class AdminMenuDrawer extends MenuDrawer {
             children: <Widget>[
               const CustomDrawerHeader(),
               ...buildUserSpecificTiles(context),
+              DrugNameChoiceTile(),
+              
               buildLogoutTile(context),
             ],
           ),

@@ -12,6 +12,7 @@ class DrugListProvider with ChangeNotifier {
   UserMode? _userMode;
   Set<dynamic> categories = {};
   UserBehavior? userBehavior;
+  bool preferGeneric = false;
 
   DrugListProvider({this.userBehavior});
 
@@ -169,6 +170,47 @@ class DrugListProvider with ChangeNotifier {
       print("Failed to send message: $e");
       // Optionally, throw the error to handle it further up
       throw e;
+    }
+  }
+
+Future<void> getPreferGenericFromFirestore() async {
+  try {
+    var db = FirebaseFirestore.instance;
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
+
+    if (userDoc.exists) {
+      print("User document found");
+      // Cast data() to Map<String, dynamic> before using []
+      preferGeneric = (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
+    } else {
+      print("User document does not exist");
+      preferGeneric = true;
+    }
+  } catch (e) {
+    print("Failed to get preferGeneric: $e");
+    rethrow;
+  }
+}
+
+  void setPreferGeneric(bool value) async {
+    preferGeneric = value;
+    try {
+      await writePreferGeneric();
+    } catch (e) {
+      print("Failed to set preferGeneric: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> writePreferGeneric() async {
+    try  
+    {await FirebaseFirestore.instance.collection('users').doc(_user).set({
+      'preferGeneric': preferGeneric,
+    }, SetOptions(merge: true));
+    } catch (e) {
+      print("Failed to write preferGeneric: $e");
+      rethrow;
     }
   }
 
