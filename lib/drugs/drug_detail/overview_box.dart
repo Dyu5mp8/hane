@@ -72,39 +72,71 @@ class BasicInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var provider =context.read<DrugListProvider>();
     return Consumer<Drug>(
       builder: (context, drug, child) {
         // Use only the Drug object here
         final concentrations = drug.concentrations;
 
-        Text _buildBrandNamesText() {
-          if (drug.brandNames == null || drug.brandNames!.isEmpty) {
-            return const Text(''); // No brand names, return empty widget
-          }
+        Widget _buildSubtitle(BuildContext context, {preferGeneric = false}) {
+  List<dynamic>? brandNames;
+  brandNames = drug.preferredSecondaryNames(preferGeneric: preferGeneric);
+  // Check if brandNames is null or empty
+  if (brandNames == null || brandNames!.isEmpty) {
+    return const SizedBox.shrink(); // No brand names, return empty widget
+  }
+  // Construct the rich text for brand names
+  List<TextSpan> textSpans = [];
 
-          List<dynamic> brandNames = drug.brandNames!;
-          String? genericName = drug.genericName;
+  if (preferGeneric == true ) {
+    // Apply the specified TextStyle to all names
+    for (var name in brandNames) {
+      textSpans.add(TextSpan(
+        text: name,
+        style: const TextStyle(
+        
+          fontSize: 11,
+          fontStyle: FontStyle.italic,
+        ),
+      ));
 
-          List<TextSpan> textSpans = [];
+      // Add a comma separator if it's not the last item
+      if (name != brandNames.last) {
+        textSpans.add(const TextSpan(text: ', '));
+      }
+    }
+  } else {
+    // Use the existing logic when preferGeneric is false or null
+    String? genericName = drug.genericName; 
+    // Assuming `genericName` is in Drug class
+    for (var name in brandNames) {
+      textSpans.add(TextSpan(
+        text: name,
+        style: name == genericName
+            ? const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+                fontStyle: FontStyle.italic,
+              )
+            : const TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: 11,
+              ),
+      ));
 
-          for (var name in brandNames) {
-            textSpans.add(TextSpan(
-              text: name,
-              style: name == genericName
-                  ? const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                      fontStyle: FontStyle.italic)
-                  : const TextStyle(fontStyle: FontStyle.italic, fontSize: 11),
-            ));
+      // Add a comma separator if it's not the last item
+      if (name != brandNames.last) {
+        textSpans.add(const TextSpan(text: ', '));
+      }
+    }
+  }
 
-            if (name != brandNames.last) {
-              textSpans.add(const TextSpan(text: ', '));
-            }
-          }
-
-          return Text.rich(TextSpan(children: textSpans));
-        }
+  return Text.rich(
+    TextSpan(
+      children: textSpans,
+    ),
+  );
+}
 
         return Container(
           height: 100,
@@ -129,7 +161,8 @@ class BasicInfoRow extends StatelessWidget {
                     Consumer<EditModeProvider>(
                       builder: (context, editModeProvider, child) {
                         return EditableRow(
-                            text: drug.name!,
+                            text: drug.preferredDisplayName(
+                                preferGeneric: provider.preferGeneric),
                             editDialog: EditNameDialog(drug: drug),
                             isEditMode: editModeProvider.editMode,
                             textStyle:
@@ -138,7 +171,7 @@ class BasicInfoRow extends StatelessWidget {
                     ),
                     if (drug.brandNames != null)
                       Flexible(
-                        child: _buildBrandNamesText(),
+                        child: _buildSubtitle(context, preferGeneric : provider.preferGeneric),
                       ),
                   ],
                 ),

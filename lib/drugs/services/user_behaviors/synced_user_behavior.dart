@@ -78,8 +78,10 @@ Query<Map<String, dynamic>> userDrugsCollection = db.collection('users').doc(use
 
     // Combine the two lists and sort them
     var allDrugs = [...masterDrugs, ...userDrugs];
-    allDrugs.sort(
-        (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+   
+        allDrugs.sort(
+            (a, b) => a.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase().compareTo(b.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase()));
+      
 
     return allDrugs;
   }); 

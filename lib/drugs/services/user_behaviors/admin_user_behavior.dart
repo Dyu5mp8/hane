@@ -67,7 +67,7 @@ Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
 
 
         drugsList.sort(
-            (a, b) => a.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase().compareTo(b.preferredDisplayName().toLowerCase()));
+            (a, b) => a.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase().compareTo(b.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase()));
       
       return drugsList;
     });

@@ -93,6 +93,7 @@ class CustomUserMenuDrawer extends MenuDrawer {
               const CustomDrawerHeader(),
               ...buildUserSpecificTiles(context),
               buildTutorialTile(context),
+              DrugNameChoiceTile(),
               buildLogoutTile(context),
             ],
           ),
