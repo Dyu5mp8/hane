@@ -103,8 +103,8 @@ class _DrugNameChoiceTileState extends State<DrugNameChoiceTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.text_fields),
-      title: const Text('Visa generika?'),
+      leading: const Icon(Icons.text_format),
+      title: const Text('Visa alltid generika först'),
       trailing: Switch(
         value: Provider.of<DrugListProvider>(context).preferGeneric,
         onChanged: (value) {
@@ -115,7 +115,7 @@ class _DrugNameChoiceTileState extends State<DrugNameChoiceTile> {
          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'Ändrat!'),
+                  value ? 'Ändrat' : 'Ändrat, generika visas under i fetstil'),
             ),
           );
           });

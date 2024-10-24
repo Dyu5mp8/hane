@@ -30,8 +30,10 @@ class CustomUserBehavior extends UserBehavior {
         }
       }).whereType<Drug>().toList(); // Filter out null values
 
-      drugsList.sort(
-          (a, b) => a.name!.toLowerCase().compareTo(b.name!.toLowerCase()));
+      
+        drugsList.sort(
+            (a, b) => a.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase().compareTo(b.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase()));
+      
 
       return drugsList;
     });
