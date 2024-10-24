@@ -217,13 +217,14 @@ class DosageViewHandler {
         return Map.from(units)..remove('patientWeight');
       }
 
-      Dose? maxDose = dosage.maxDose;
+      Dose? maxDose = convertIfNeeded(dosage.maxDose);
 
       Dose? clampDoseIfExceedsMax(Dose? dose) {
         if (dose != null && maxDose != null) {
           var maxDoseUnits = unitsExcludingWeight(maxDose.units);
           // Use setEquals to compare the key sets
           if (setEquals(dose.units.keys.toSet(), maxDoseUnits.keys.toSet())) {
+            print("dose: $dose");
             if (dose.compareTo(maxDose) > 0) {
               // Return maxDose if dose exceeds maxDose
               return maxDose;
