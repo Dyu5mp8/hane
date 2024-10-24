@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
+import 'package:hane/drugs/drug_detail/expanded_info/expanded_dialog.dart';
 import 'package:hane/drugs/drug_detail/ui_components/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/drugs/drug_detail/ui_components/scroll_indicator.dart';
-
-
 
 class OverviewBox extends StatefulWidget {
   const OverviewBox({super.key});
@@ -199,7 +198,6 @@ class BasicInfoRow extends StatelessWidget {
                           ...drug
                               .getConcentrationsAsString()!
                               .map((conc) => Text(conc))
-                              
                         ],
                       ),
                     ),
@@ -233,6 +231,9 @@ class NoteRow extends StatelessWidget {
           Flexible(
             child: EditableRow(
               editDialog: EditNotesDialog(drug: drug, isUserNote: false),
+              expandedDialog: (drug.expandedNotes?.isNotEmpty ?? false)
+                  ? ExpandedDialog(text: drug.expandedNotes!, title: "Anteckningar")
+                  : null,
               isEditMode: editMode,
               text: drug.notes,
               textStyle: const TextStyle(fontSize: 14),
@@ -267,6 +268,9 @@ class ContraindicationRow extends StatelessWidget {
                     text: drug.contraindication!,
                     textStyle: const TextStyle(fontSize: 14),
                     editDialog: EditContraindicationsDialog(drug: drug),
+                    expandedDialog: (drug.expandedContraindication?.isNotEmpty ?? false)
+                  ? ExpandedDialog(text: drug.expandedContraindication!, title: "Varningar och försiktighet")
+                  : null,
                     isEditMode: editMode,
                   ),
                 )

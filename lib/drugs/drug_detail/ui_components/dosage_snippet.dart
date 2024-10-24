@@ -4,10 +4,12 @@ import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
 import 'package:hane/drugs/drug_detail/ui_components/concentration_picker.dart';
 import 'package:hane/drugs/drug_detail/dosageViewHandler.dart';
 import 'package:hane/drugs/drug_detail/ui_components/conversion_button.dart';
+import 'package:hane/drugs/drug_detail/ui_components/conversion_switch.dart';
 import 'package:hane/drugs/drug_detail/ui_components/route_text.dart';
 import 'package:hane/drugs/drug_detail/ui_components/time_picker.dart';
 import 'package:hane/drugs/drug_detail/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/drug.dart';
+
 
 class DosageSnippet extends StatefulWidget {
   Dosage dosage;
@@ -123,10 +125,10 @@ class DosageSnippetState extends State<DosageSnippet> {
         ListTile(
           
           contentPadding:
-              const EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
+              const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
          
           
-          minVerticalPadding: 20,
+          minVerticalPadding: 12,
           title: Row(
             children: [
               Expanded(
@@ -134,13 +136,23 @@ class DosageSnippetState extends State<DosageSnippet> {
                     widget.dosageViewHandler.showDosage(isOriginalText: true),
               ),
               const SizedBox(width: 8),
-              SizedBox(
-                width: 90,
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  runSpacing: -3,
-                  spacing: 4,
-                  children: [
+              Column(children: [
+                                   if (!widget.editMode &&
+                        widget.dosageViewHandler.ableToConvert.concentration)
+                    Transform.scale(
+                      scale: 0.9,
+                      child: ConversionSwitch(isActive: (widget.dosageViewHandler.conversionConcentration != null), onSwitched: (value) {
+                        HapticFeedback.mediumImpact();
+                        if (value) {
+                          _showConcentrationPicker(context);
+                        } else {
+                          _resetConcentrationConversion();
+                        }
+                      }, unit: widget.dosageViewHandler.getCommonUnitSymbol()),
+                    ),
+
+
+                Row(children:  [
                     if (!widget.editMode &&
                         widget.dosageViewHandler.ableToConvert.weight)
                       ConversionButton(
@@ -155,25 +167,8 @@ class DosageSnippetState extends State<DosageSnippet> {
                         },
                       ),
                                       
+                      SizedBox(width: 5),
                     
-                                      
-                    // Concentration Conversion Button
-                    if (!widget.editMode &&
-                        widget.dosageViewHandler.ableToConvert.concentration)
-                      ConversionButton(
-                        label: "ml",
-                        isActive:
-                            widget.dosageViewHandler.conversionConcentration !=
-                                null,
-                        onPressed: () {
-                          if (widget.dosageViewHandler.conversionConcentration ==
-                              null) {
-                            _showConcentrationPicker(context);
-                          } else {
-                            _resetConcentrationConversion();
-                          }
-                        },
-                      ),
                 
                 
                           
@@ -193,9 +188,11 @@ class DosageSnippetState extends State<DosageSnippet> {
                             }
                           },
                         )
-                  ],
-                ),
-              ),
+                  ],),
+
+       
+                
+              ]),
 
 
 
