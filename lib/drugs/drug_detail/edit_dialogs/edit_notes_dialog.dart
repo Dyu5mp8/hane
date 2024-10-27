@@ -89,6 +89,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                     textCapitalization: TextCapitalization.sentences,),
 
                  const SizedBox(height: 8),
+                 if (!widget.isUserNote)
                 TextFormField(
                     controller: _expandedNotesController,
                     autofocus: true,

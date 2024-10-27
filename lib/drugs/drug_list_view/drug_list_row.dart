@@ -38,6 +38,7 @@ class DrugListRow extends StatelessWidget {
           ),
           title: Text(
             _drug.preferredDisplayName(preferGeneric: provider.preferGeneric),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18),
           ),
           subtitle: _buildSubtitle(context,
               preferGeneric: provider.preferGeneric),

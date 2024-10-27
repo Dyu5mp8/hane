@@ -11,7 +11,6 @@ import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-
 class DrugListView extends StatefulWidget {
   @override
   _DrugListViewState createState() => _DrugListViewState();
@@ -44,19 +43,21 @@ class _DrugListViewState extends State<DrugListView> {
         .get()
         .then((value) => value.data()?['seenTutorial']);
 
-        
     if (seenTutorial == null || !seenTutorial) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => OnboardingScreen()),
       );
-      db.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).update({
+      db
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update({
         'seenTutorial': true,
       });
     }
   }
 
-// This is for clearing the search query and selected category when the details view is popped. Not used right now but might be requested. 
+// This is for clearing the search query and selected category when the details view is popped. Not used right now but might be requested.
 
 // void _onDetailsPopped() {
 //   if (!mounted) return; // Add this line to check if the widget is still mounted
@@ -124,12 +125,12 @@ class _DrugListViewState extends State<DrugListView> {
     // Filter drugs based on search query and selected category
     List<Drug> filteredDrugs = _filterDrugs(drugs);
 
- List<dynamic> allCategories = drugs
-    .where((drug) => drug.categories != null)
-    .expand((drug) => drug.categories!)
-    .toSet()
-    .toList()
-  ..sort((a, b) => a.compareTo(b)); // Sorts the list alphabeticallyr
+    List<dynamic> allCategories = drugs
+        .where((drug) => drug.categories != null)
+        .expand((drug) => drug.categories!)
+        .toSet()
+        .toList()
+      ..sort((a, b) => a.compareTo(b)); // Sorts the list alphabeticallyr
     return Scaffold(
       appBar: _buildAppBar(context),
       drawer: buildDrawer(context, drugNames),
@@ -140,7 +141,6 @@ class _DrugListViewState extends State<DrugListView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-      
                 if (Provider.of<DrugListProvider>(context)
                     .categories
                     .isNotEmpty)
@@ -181,15 +181,14 @@ class _DrugListViewState extends State<DrugListView> {
                             indications: <Indication>[],
                             changedByUser:
                                 true)), // sets the editable drug as the provider drug
-                    ChangeNotifierProvider<EditModeProvider>(create: (_) => EditModeProvider()),
+                    ChangeNotifierProvider<EditModeProvider>(
+                        create: (_) => EditModeProvider()),
                   ],
                   child: const DrugDetailView(
                     isNewDrug: true,
                   ))),
     ).then((_) {
-
       //  _onDetailsPopped();
-
     });
   }
 
@@ -202,12 +201,14 @@ class _DrugListViewState extends State<DrugListView> {
         placeholder: 'Sök efter läkemedel',
         onChanged: (value) {
           setState(() {
-            if (!mounted) return; // Add this line to check if the widget is still mounted
+            if (!mounted)
+              return; // Add this line to check if the widget is still mounted
             _searchQuery = value; // Update the search query as the user types
           });
         },
         onSubmitted: (value) {
-          if (!mounted) return; // Add this line to check if the widget is still mounted
+          if (!mounted)
+            return; // Add this line to check if the widget is still mounted
           setState(() {
             _searchQuery = value; // Final value after user submits search
           });
@@ -216,71 +217,71 @@ class _DrugListViewState extends State<DrugListView> {
     );
   }
 
-Widget _buildCategoryChips(List<dynamic> categories) {
-  final isWeb = kIsWeb;
+  Widget _buildCategoryChips(List<dynamic> categories) {
+    final isWeb = kIsWeb;
 
-
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 10),
-        Wrap(
-          spacing: isWeb ? 5.0 : 5.0, // Adjust spacing for web
-          runSpacing: isWeb ? 5.0 : -8, // Adjust vertical space between rows
-          alignment: WrapAlignment.start, // Center the chips for web
-          children: [
-            ChoiceChip(
-              visualDensity: VisualDensity.compact,
-              side: BorderSide.none,
-              showCheckmark: false,
-              label: Text("Alla",
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall
-                      ?.copyWith(fontSize: isWeb ? 14 : 11, fontWeight: FontWeight.w800)), // Larger font on web
-              selected: _selectedCategory == null,
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(isWeb ? 12 : 10), // Adjust rounding for web
-              ),
-              onSelected: (bool selected) {
-                setState(() {
-                  _selectedCategory = null;
-                });
-              },
-              padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
-            ),
-            ...categories.map((dynamic category) {
-              return ChoiceChip(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: isWeb ? 5.0 : 5.0, // Adjust spacing for web
+            runSpacing: isWeb ? 5.0 : -8, // Adjust vertical space between rows
+            alignment: WrapAlignment.start, // Center the chips for web
+            children: [
+              ChoiceChip(
                 visualDensity: VisualDensity.compact,
                 side: BorderSide.none,
                 showCheckmark: false,
-                labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-                label: Text(category,
-                    style: Theme.of(context)
-                        .textTheme
-                        .displaySmall
-                        ?.copyWith(fontSize: isWeb ? 14 : 11)), // Adjust font size for web
-                selected: _selectedCategory == category,
+                label: Text("Alla",
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        fontSize: isWeb ? 14 : 11,
+                        fontWeight: FontWeight.w800)), // Larger font on web
+                selected: _selectedCategory == null,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      isWeb ? 12 : 10), // Adjust rounding for web
+                ),
                 onSelected: (bool selected) {
                   setState(() {
-                    _selectedCategory = selected ? category : null;
+                    _selectedCategory = null;
                   });
                 },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(isWeb ? 12 : 10),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0), // Increased padding for web
-              );
-            }),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+              ),
+              ...categories.map((dynamic category) {
+                return ChoiceChip(
+                  visualDensity: VisualDensity.compact,
+                  side: BorderSide.none,
+                  showCheckmark: false,
+                  labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
+                  label: Text(category,
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                          fontSize:
+                              isWeb ? 14 : 11)), // Adjust font size for web
+                  selected: _selectedCategory == category,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      _selectedCategory = selected ? category : null;
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(isWeb ? 12 : 10),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 6.0,
+                      vertical: 4.0), // Increased padding for web
+                );
+              }),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   final Map<String, String> _drugSearchCache = {};
 
@@ -308,46 +309,48 @@ Widget _buildCategoryChips(List<dynamic> categories) {
   }
 
   AppBar _buildAppBar(BuildContext context) {
-  return AppBar(
-    forceMaterialTransparency: true,
-    title: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Text('Läkemedel'),
-        Consumer<DrugListProvider>(
-          builder: (context, drugListProvider, child) {
-            return drugListProvider.isAdmin
-                ? const Padding(
-                    padding: EdgeInsets.only(top: 4.0,), // Reduce padding
-                    child: Text(
-                      'Admin: ÄNDRINGAR SKER I STAMLISTAN',
-                      style: TextStyle(
-                        fontSize: 14, // Reduced font size
-                        color: Color.fromARGB(255, 255, 77, 0),
+    return AppBar(
+      forceMaterialTransparency: true,
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text('Läkemedel'),
+          Consumer<DrugListProvider>(
+            builder: (context, drugListProvider, child) {
+              return drugListProvider.isAdmin
+                  ? const Padding(
+                      padding: EdgeInsets.only(
+                        top: 4.0,
+                      ), // Reduce padding
+                      child: Text(
+                        'Admin: ÄNDRINGAR SKER I STAMLISTAN',
+                        style: TextStyle(
+                          fontSize: 14, // Reduced font size
+                          color: Color.fromARGB(255, 255, 77, 0),
+                        ),
                       ),
-                    ),
-                  )
-                : const SizedBox.shrink();
-          },
+                    )
+                  : const SizedBox.shrink();
+            },
+          ),
+        ],
+      ),
+      bottom: PreferredSize(
+        preferredSize:
+            const Size.fromHeight(50), // Adjusted height to fit content
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildSearchField(),
+            )),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: _onAddDrugPressed,
         ),
       ],
-    ),
-    bottom: PreferredSize(
-      preferredSize: const Size.fromHeight(50), // Adjusted height to fit content
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: _buildSearchField(),
-        )),
-    ),
-    actions: [
-      IconButton(
-        icon: const Icon(Icons.add),
-        onPressed: _onAddDrugPressed,
-      ),
-    ],
-  );
-}
+    );
   }
-
+}

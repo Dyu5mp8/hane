@@ -177,164 +177,161 @@ class _EditNameDialogState extends State<EditNameDialog> {
               child: const Icon(Icons.check),
             ),
           ]),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Name input
-
-              const SizedBox(height: 40),
-              TextFormField(
-                textCapitalization: TextCapitalization.sentences,
-                controller: _nameController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  labelText: 'Namn',
-                  border: OutlineInputBorder(),
-                ),
-                validator: val.validateName,
-              ),
-
-              const SizedBox(height: 50),
-
-              TextFormField(
-                controller: _brandNameController,
-                decoration: InputDecoration(
-                  labelText: 'Lägg till synonymer',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      {
-                        _addBrandName();
-                      }
-                    },
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Name input
+        
+                const SizedBox(height: 40),
+                TextFormField(
+                  textCapitalization: TextCapitalization.sentences,
+                  controller: _nameController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Namn',
+                    border: OutlineInputBorder(),
                   ),
+                  validator: val.validateName,
                 ),
-                textCapitalization: TextCapitalization.sentences,
-              ),
-
-              const SizedBox(height: 8),
-              // Display brand names as chips
-        // Display brand names with an option to select generic name
         
-
-Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    Row(
-      children: [
-        const Text(
-          'Om det finns ett generiskt namn, markera detta',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ],
-    ),
-    const SizedBox(height: 8),
-
-SizedBox(
-  height: 40,
-  child: Wrap(
-    spacing: 8,
-    runSpacing: 4,
-    children: _brandNames
-        .map((name) => CustomChipWithCheckbox(
-              label: name,
-              isSelected: _genericName == name,
-              onSelected: (selected) {
-                setState(() {
-                  _genericName = selected! ? name : null;
-
-                });
-              },
-              onDeleted: () => _removeBrandName(name),
-            ))
-        .toList(),
-  ),
-),
-  ]
-),
-              // Categories input
-              const SizedBox(height: 8),
-              TypeAheadField<String>(
-                decorationBuilder: (context, child) => Container(
-                  key: UniqueKey(),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: child,
-                ),
-                hideKeyboardOnDrag: true,
-                
-                hideOnUnfocus: true,
-                hideWithKeyboard: true,
-                hideOnEmpty: true,
-  
-                direction: VerticalDirection.up,
-             
+                const SizedBox(height: 50),
         
-                hideOnLoading: true,
-                hideOnError: true,
-                hideOnSelect: true,
-                
-                
-        
-                suggestionsCallback: (search) =>
-                    _findSuggestions(search, _suggestedCategories),
-                builder: (context, controller, focusNode) {
-                  return TextFormField(
-                    controller: controller,
-                    focusNode: focusNode,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Lägg till kategorier',
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          {
-                            _addCategory(suggestion: controller.text);
-                          }
-                        },
-                      ),
+                TextFormField(
+                  controller: _brandNameController,
+                  decoration: InputDecoration(
+                    labelText: 'Lägg till synonymer',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        {
+                          _addBrandName();
+                        }
+                      },
                     ),
-                    textCapitalization: TextCapitalization.sentences,
-                  );
-                },
-                
-                itemBuilder: (context, category) {
-                  return ListTile(
-                    dense: true,
-                    title: Text(category, style: const TextStyle(fontSize: 13)),
-                    tileColor: Colors.white,
-                    
-                  );
-                },
-                onSelected: (category) {
-                  _addCategory(suggestion: category);
-                },
-              ),
-
-              const SizedBox(height: 8),
-              // Display categories as chips
-
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: _categories
-                    .map((category) => CustomChip(
-                          label: category,
-                          onDeleted: () => _removeCategory(category),
-                        ))
-                    .toList(),
-              ),
-            ],
+                  ),
+                  textCapitalization: TextCapitalization.sentences,
+                ),
+        
+                const SizedBox(height: 8),
+                // Display brand names as chips
+          // Display brand names with an option to select generic name
+          
+        
+        Row(
+          children: [
+            const Text(
+        'Om det finns ett generiskt namn, markera detta',
+        style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        
+        SizedBox(
+        
+          child: Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        children: _brandNames
+            .map((name) => CustomChipWithCheckbox(
+            label: name,
+            isSelected: _genericName == name,
+            onSelected: (selected) {
+              setState(() {
+                _genericName = selected! ? name : null;
+        
+              });
+            },
+            onDeleted: () => _removeBrandName(name),
+          ))
+            .toList(),
+          ),
+        ),
+                // Categories input
+                const SizedBox(height: 19),
+                TypeAheadField<String>(
+                  decorationBuilder: (context, child) => Container(
+                    key: UniqueKey(),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: child,
+                  ),
+                  hideKeyboardOnDrag: true,
+                  
+                  hideOnUnfocus: true,
+                  hideWithKeyboard: true,
+                  hideOnEmpty: true,
+          
+                  direction: VerticalDirection.up,
+               
+          
+                  hideOnLoading: true,
+                  hideOnError: true,
+                  hideOnSelect: true,
+                  
+                  
+          
+                  suggestionsCallback: (search) =>
+                      _findSuggestions(search, _suggestedCategories),
+                  builder: (context, controller, focusNode) {
+                    return TextFormField(
+                      controller: controller,
+                      focusNode: focusNode,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Lägg till kategorier',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            {
+                              _addCategory(suggestion: controller.text);
+                            }
+                          },
+                        ),
+                      ),
+                      textCapitalization: TextCapitalization.sentences,
+                    );
+                  },
+                  
+                  itemBuilder: (context, category) {
+                    return ListTile(
+                      dense: true,
+                      title: Text(category, style: const TextStyle(fontSize: 13)),
+                      tileColor: Colors.white,
+                      
+                    );
+                  },
+                  onSelected: (category) {
+                    _addCategory(suggestion: category);
+                  },
+                ),
+        
+                const SizedBox(height: 8),
+                // Display categories as chips
+        
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: _categories
+                      .map((category) => CustomChip(
+                            label: category,
+                            onDeleted: () => _removeCategory(category),
+                          ))
+                      .toList(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
