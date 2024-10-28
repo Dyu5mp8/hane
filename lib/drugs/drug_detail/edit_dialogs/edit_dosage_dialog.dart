@@ -11,7 +11,8 @@ class EditDosageDialog extends StatefulWidget {
   final Dosage dosage;
   final Function(Dosage) onSave; // Callback to notify parent
 
-  const EditDosageDialog({super.key, required this.dosage, required this.onSave});
+  const EditDosageDialog(
+      {super.key, required this.dosage, required this.onSave});
 
   @override
   State<EditDosageDialog> createState() => _EditDosageDialogState();
@@ -223,10 +224,9 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
 
     Dose? maxDose;
 
-    if (isMaxDoseFilled){
-
+    if (isMaxDoseFilled) {
       Dose? tempDose = _createDose(maxDoseAmountController.text);
-      Map<String,String>? units = tempDose!.units;
+      Map<String, String>? units = tempDose!.units;
       units.removeWhere((key, value) => key == 'patientWeight');
       maxDose = Dose(amount: tempDose.amount, units: units);
     }
@@ -477,26 +477,30 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                 const SizedBox(height: 16),
                 const Text("Maxdos"),
                 const SizedBox(height: 8),
-                Row(children: [SizedBox(
-                  width: 100,
-                  child: AutoSizeTextField(
-                    controller: maxDoseAmountController,
-                    decoration: customInputDecoration(),
-                    style: const TextStyle(fontSize: 16),
-                    minFontSize: 12,
-                    maxLines: 1,
-                    maxLength: 5,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    buildCounter: (context,
-                            {required int currentLength,
-                            required bool isFocused,
-                            required int? maxLength}) =>
-                        null,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                    Text(getUnitString().replaceAll("/kg", ""), style: labelTextStyle),
-                ],
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      child: AutoSizeTextField(
+                        controller: maxDoseAmountController,
+                        decoration: customInputDecoration(),
+                        style: const TextStyle(fontSize: 16),
+                        minFontSize: 12,
+                        maxLines: 1,
+                        maxLength: 5,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        buildCounter: (context,
+                                {required int currentLength,
+                                required bool isFocused,
+                                required int? maxLength}) =>
+                            null,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(getUnitString().replaceAll("/kg", ""),
+                        style: labelTextStyle),
+                  ],
                 ),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 16),

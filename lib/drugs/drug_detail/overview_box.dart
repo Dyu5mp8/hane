@@ -296,11 +296,13 @@ class ContraindicationRow extends StatelessWidget {
               label: Icon(Icons.info,
                   size: 17, color: Theme.of(context).colorScheme.primary),
               backgroundColor: Colors.transparent,
+              offset: const Offset(4, -10),
               isLabelVisible:
                   ((drug.expandedContraindication?.isNotEmpty ?? false) &&
                       !editMode),
-              child: const Icon(FontAwesome.circle_exclamation_solid,
-                  color: Color.fromARGB(255, 122, 0, 0)),
+              child: const Icon(Bootstrap.exclamation_square_fill,
+                  color: Color.fromARGB(255, 101, 36, 36),
+                  size: 22,),
             ),
             const SizedBox(width: 15),
             drug.contraindication != null
