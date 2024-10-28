@@ -6,7 +6,7 @@ class EditContraindicationsDialog extends StatefulWidget {
   const EditContraindicationsDialog({super.key, required this.drug});
 
   @override
-  _EditContraindicationsDialogState createState() =>
+  State<EditContraindicationsDialog> createState() =>
       _EditContraindicationsDialogState();
 }
 

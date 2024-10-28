@@ -13,7 +13,7 @@ class OverviewBox extends StatefulWidget {
   const OverviewBox({super.key});
 
   @override
-  _OverviewBoxState createState() => _OverviewBoxState();
+  State<OverviewBox> createState() => _OverviewBoxState();
 }
 
 class _OverviewBoxState extends State<OverviewBox> {
@@ -44,13 +44,13 @@ class _OverviewBoxState extends State<OverviewBox> {
               controller: _scrollController,
               child: Column(
                 children: [
-                  BasicInfoRow(),
-                  NoteRow(),
+                  const BasicInfoRow(),
+                  const NoteRow(),
                   const Divider(indent: 10, endIndent: 10, thickness: 1),
-                  ContraindicationRow(),
+                  const ContraindicationRow(),
                   if (shouldShowUserNotes)
                     const Divider(indent: 10, endIndent: 10, thickness: 1),
-                  if (shouldShowUserNotes) UserNoteRow(),
+                  if (shouldShowUserNotes) const UserNoteRow(),
                   const SizedBox(height: 10),
                 ],
               ),
@@ -68,75 +68,76 @@ class _OverviewBoxState extends State<OverviewBox> {
 }
 
 class BasicInfoRow extends StatelessWidget {
-  const BasicInfoRow({Key? key}) : super(key: key);
+  const BasicInfoRow({super.key});
 
   @override
   Widget build(BuildContext context) {
-    var provider =context.read<DrugListProvider>();
+    var provider = context.read<DrugListProvider>();
     return Consumer<Drug>(
       builder: (context, drug, child) {
         // Use only the Drug object here
         final concentrations = drug.concentrations;
 
-        Widget _buildSubtitle(BuildContext context, {preferGeneric = false}) {
-  List<dynamic>? brandNames;
-  brandNames = drug.preferredSecondaryNames(preferGeneric: preferGeneric);
-  // Check if brandNames is null or empty
-  if (brandNames == null || brandNames!.isEmpty) {
-    return const SizedBox.shrink(); // No brand names, return empty widget
-  }
-  // Construct the rich text for brand names
-  List<TextSpan> textSpans = [];
+        Widget buildSubtitle(BuildContext context, {preferGeneric = false}) {
+          List<dynamic>? brandNames;
+          brandNames =
+              drug.preferredSecondaryNames(preferGeneric: preferGeneric);
+          // Check if brandNames is null or empty
+          if (brandNames == null || brandNames.isEmpty) {
+            return const SizedBox
+                .shrink(); // No brand names, return empty widget
+          }
+          // Construct the rich text for brand names
+          List<TextSpan> textSpans = [];
 
-  if (preferGeneric == true ) {
-    // Apply the specified TextStyle to all names
-    for (var name in brandNames) {
-      textSpans.add(TextSpan(
-        text: name,
-        style: const TextStyle(
-        
-          fontSize: 11,
-          fontStyle: FontStyle.italic,
-        ),
-      ));
+          if (preferGeneric == true) {
+            // Apply the specified TextStyle to all names
+            for (var name in brandNames) {
+              textSpans.add(TextSpan(
+                text: name,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                ),
+              ));
 
-      // Add a comma separator if it's not the last item
-      if (name != brandNames.last) {
-        textSpans.add(const TextSpan(text: ', '));
-      }
-    }
-  } else {
-    // Use the existing logic when preferGeneric is false or null
-    String? genericName = drug.genericName; 
-    // Assuming `genericName` is in Drug class
-    for (var name in brandNames) {
-      textSpans.add(TextSpan(
-        text: name,
-        style: name == genericName
-            ? const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 11,
-                fontStyle: FontStyle.italic,
-              )
-            : const TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 11,
-              ),
-      ));
+              // Add a comma separator if it's not the last item
+              if (name != brandNames.last) {
+                textSpans.add(const TextSpan(text: ', '));
+              }
+            }
+          } else {
+            // Use the existing logic when preferGeneric is false or null
+            String? genericName = drug.genericName;
+            // Assuming `genericName` is in Drug class
+            for (var name in brandNames) {
+              textSpans.add(TextSpan(
+                text: name,
+                style: name == genericName
+                    ? const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                        fontStyle: FontStyle.italic,
+                      )
+                    : const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 11,
+                      ),
+              ));
 
-      // Add a comma separator if it's not the last item
-      if (name != brandNames.last) {
-        textSpans.add(const TextSpan(text: ', '));
-      }
-    }
-  }
+              // Add a comma separator if it's not the last item
+              if (name != brandNames.last) {
+                textSpans.add(const TextSpan(text: ', '));
+              }
+            }
+          }
 
-  return Text.rich(
-    TextSpan(
-      children: textSpans,
-    ),
-  );
-}
+          return Text.rich(
+            TextSpan(
+              children: textSpans,
+            ),
+          );
+        }
 
         return Container(
           height: 100,
@@ -171,7 +172,8 @@ class BasicInfoRow extends StatelessWidget {
                     ),
                     if (drug.brandNames != null)
                       Flexible(
-                        child: _buildSubtitle(context, preferGeneric : provider.preferGeneric),
+                        child: buildSubtitle(context,
+                            preferGeneric: provider.preferGeneric),
                       ),
                   ],
                 ),
@@ -213,7 +215,7 @@ class BasicInfoRow extends StatelessWidget {
 }
 
 class NoteRow extends StatelessWidget {
-  const NoteRow({Key? key}) : super(key: key);
+  const NoteRow({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +225,6 @@ class NoteRow extends StatelessWidget {
         .editMode; // Access editMode from the Provider
 
     return Container(
-
       padding: const EdgeInsets.all(10),
       child: InkWell(
         onTap: () {
@@ -239,10 +240,13 @@ class NoteRow extends StatelessWidget {
         child: Row(
           children: [
             Badge(
-              label: Icon(Icons.info, size: 17, color: Theme.of(context).colorScheme.primary),
-              backgroundColor: Colors.transparent,
-              isLabelVisible: (drug.expandedNotes?.isNotEmpty ?? false),
-              child: const Icon(Icons.notes,)),
+                label: Icon(Icons.info,
+                    size: 17, color: Theme.of(context).colorScheme.primary),
+                backgroundColor: Colors.transparent,
+                isLabelVisible: (drug.expandedNotes?.isNotEmpty ?? false),
+                child: const Icon(
+                  Icons.notes,
+                )),
             const SizedBox(width: 15),
             Flexible(
               child: AbsorbPointer(
@@ -263,7 +267,7 @@ class NoteRow extends StatelessWidget {
 }
 
 class ContraindicationRow extends StatelessWidget {
-  const ContraindicationRow({Key? key}) : super(key: key);
+  const ContraindicationRow({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -277,25 +281,27 @@ class ContraindicationRow extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       child: InkWell(
         onTap: () {
-         if (drug.expandedContraindication?.isNotEmpty ?? false)
-          showDialog(
-            context: context,
-            builder: (context) => ExpandedDialog(
-              text: drug.expandedContraindication!,
-            ),
-          );
+          if (drug.expandedContraindication?.isNotEmpty ?? false) {
+            showDialog(
+              context: context,
+              builder: (context) => ExpandedDialog(
+                text: drug.expandedContraindication!,
+              ),
+            );
+          }
         },
         child: Row(
-          
           children: [
             Badge(
-              child: const Icon(FontAwesome.circle_exclamation_solid, color: Color.fromARGB(255, 122, 0, 0)),
-               label: Icon(Icons.info, size: 17, color: Theme.of(context).colorScheme.primary),
+              label: Icon(Icons.info,
+                  size: 17, color: Theme.of(context).colorScheme.primary),
               backgroundColor: Colors.transparent,
-           
-              isLabelVisible: ((drug.expandedContraindication?.isNotEmpty ?? false) && !editMode),
+              isLabelVisible:
+                  ((drug.expandedContraindication?.isNotEmpty ?? false) &&
+                      !editMode),
+              child: const Icon(FontAwesome.circle_exclamation_solid,
+                  color: Color.fromARGB(255, 122, 0, 0)),
             ),
-
             const SizedBox(width: 15),
             drug.contraindication != null
                 ? Flexible(
@@ -318,7 +324,7 @@ class ContraindicationRow extends StatelessWidget {
 }
 
 class UserNoteRow extends StatelessWidget {
-  const UserNoteRow({Key? key}) : super(key: key);
+  const UserNoteRow({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -332,7 +338,7 @@ class UserNoteRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             IconButton(
-              icon: Icon(Icons.edit, color: Colors.blue),
+              icon: const Icon(Icons.edit, color: Colors.blue),
               onPressed: () {
                 showDialog(
                   context: context,

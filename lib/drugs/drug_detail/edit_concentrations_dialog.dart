@@ -11,7 +11,7 @@ class EditConcentrationsDialog extends StatefulWidget {
   const EditConcentrationsDialog({super.key, required this.drug});
 
   @override
-  _EditConcentrationsDialogState createState() =>
+  State<EditConcentrationsDialog> createState() =>
       _EditConcentrationsDialogState();
 }
 
@@ -171,6 +171,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                       },
                       validator: (value) {
                        val.validateConcentrationUnit(value);
+                       return null;
                       },
                     ),
                   ),

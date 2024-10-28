@@ -9,7 +9,6 @@ import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
 
-
 class DrugDetailView extends StatefulWidget {
   final bool isNewDrug;
 
@@ -25,12 +24,11 @@ class _DrugDetailViewState extends State<DrugDetailView> {
   void initState() {
     super.initState();
     _editableDrug = Provider.of<Drug>(context, listen: false);
-  
-  
 
     //open dialog for new drug if that is the case
     Future.delayed(const Duration(milliseconds: 300), () {
-      if (widget.isNewDrug) {
+      if (widget.isNewDrug && context.mounted) {
+      
         Provider.of<EditModeProvider>(context, listen: false).toggleEditMode();
 
         showDialog(
@@ -54,10 +52,10 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         centerTitle: true,
         actions: [
           if (Provider.of<DrugListProvider>(context, listen: false).userMode ==
-              UserMode.isAdmin && !Provider.of<EditModeProvider>(context).editMode) 
-            ChatButton(),
-          if (!_editableDrug.changedByUser) 
-            InfoButton(),
+                  UserMode.isAdmin &&
+              !Provider.of<EditModeProvider>(context).editMode)
+            const ChatButton(),
+          if (!_editableDrug.changedByUser) const InfoButton(),
           if (_editableDrug.changedByUser ||
               Provider.of<DrugListProvider>(context, listen: false).userMode ==
                   UserMode.isAdmin)
@@ -71,9 +69,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
   }
 }
 
-
 //Appbar elements
-
 
 class BackButton extends StatelessWidget {
   const BackButton({super.key});
@@ -127,20 +123,17 @@ class ChatButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final drug = Provider.of<Drug>(context, listen: true);
     return IconButton(
-      icon: drug.hasUnreadMessages ? Badge(backgroundColor: Colors.red, smallSize: 10,
-           
-              
-              
+      icon: drug.hasUnreadMessages
+          ? const Badge(
+              backgroundColor: Colors.red,
+              smallSize: 10,
               child: Icon(Icons.forum),
-            ):
-      
-      const Icon(Icons.forum),
+            )
+          : const Icon(Icons.forum),
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => DrugChat(drug: drug)
-          ),
+          MaterialPageRoute(builder: (context) => DrugChat(drug: drug)),
         );
       },
     );
@@ -148,17 +141,22 @@ class ChatButton extends StatelessWidget {
 }
 
 class InfoButton extends StatelessWidget {
-  InfoButton({super.key});  
+  const InfoButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Drug drug = Provider.of<Drug>(context, listen: false); // Get the drug object
-    bool editMode = Provider.of<EditModeProvider>(context).editMode; // Get the editMode boolean
+    Drug drug =
+        Provider.of<Drug>(context, listen: false); // Get the drug object
+    bool editMode = Provider.of<EditModeProvider>(context)
+        .editMode; // Get the editMode boolean
     String? reviewedBy = drug.reviewedBy; // Get the reviewedBy string
-    bool isAdmin = Provider.of<DrugListProvider>(context, listen: false).userMode == UserMode.isAdmin;
+    bool isAdmin =
+        Provider.of<DrugListProvider>(context, listen: false).userMode ==
+            UserMode.isAdmin;
 
     // Initialize the TextEditingController with the current value of 'reviewedBy'
-    TextEditingController _reviewedByController = TextEditingController(text: reviewedBy ?? '');
+    TextEditingController reviewedByController =
+        TextEditingController(text: reviewedBy ?? '');
 
     return IconButton(
       icon: const Icon(Icons.info_outline),
@@ -174,14 +172,14 @@ class InfoButton extends StatelessWidget {
                       child: Column(
                         children: [
                           TextField(
-                            controller: _reviewedByController,
+                            controller: reviewedByController,
                             decoration: const InputDecoration(
                               labelText: 'Senast granskad av:',
                             ),
                           ),
                           TextButton(
                             onPressed: () {
-                              drug.reviewedBy = _reviewedByController.text;
+                              drug.reviewedBy = reviewedByController.text;
                               drug.updateDrug();
                               Navigator.pop(context);
                             },

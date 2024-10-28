@@ -88,7 +88,7 @@ Widget _buildSubtitle(BuildContext context, {preferGeneric = false}) {
   List<dynamic>? brandNames;
   brandNames = _drug.preferredSecondaryNames(preferGeneric: preferGeneric);
   // Check if brandNames is null or empty
-  if (brandNames == null || brandNames!.isEmpty) {
+  if (brandNames == null || brandNames.isEmpty) {
     return const SizedBox.shrink(); // No brand names, return empty widget
   }
   // Construct the rich text for brand names

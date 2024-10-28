@@ -11,7 +11,7 @@ class EditDosageDialog extends StatefulWidget {
   final Dosage dosage;
   final Function(Dosage) onSave; // Callback to notify parent
 
-  EditDosageDialog({super.key, required this.dosage, required this.onSave});
+  const EditDosageDialog({super.key, required this.dosage, required this.onSave});
 
   @override
   State<EditDosageDialog> createState() => _EditDosageDialogState();
@@ -227,9 +227,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
 
       Dose? tempDose = _createDose(maxDoseAmountController.text);
       Map<String,String>? units = tempDose!.units;
-      print(units);
       units.removeWhere((key, value) => key == 'patientWeight');
-      print (units);
       maxDose = Dose(amount: tempDose.amount, units: units);
     }
 
@@ -253,13 +251,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   Dose? _createDose(String amount) {
     String unit = getUnitString();
     if (amount.isEmpty || unit.isEmpty) return null;
-    double? normalizedAmount = UnitParser.normalizeDouble(amount);
-    if (normalizedAmount == null) {
-      setState(() {
-        errorMessage = 'Ange en giltig dosmängd.';
-      });
-      return null;
-    }
+    double normalizedAmount = UnitParser.normalizeDouble(amount);
 
     return Dose.fromString(amount: normalizedAmount, unit: unit);
   }

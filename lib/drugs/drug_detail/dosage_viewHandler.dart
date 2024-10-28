@@ -130,7 +130,7 @@ class DosageViewHandler {
             : '',
       );
       final TextSpan doseSpan = TextSpan(
-        text: dose != null ? "${dose.toString()}. " : '',
+        text: dose != null ? "$dose. " : '',
         style: const TextStyle(fontWeight: FontWeight.bold),
       );
 
@@ -139,13 +139,13 @@ class DosageViewHandler {
           if (dose != null) {
             return TextSpan(
               text:
-                  "(${lowerLimitDose.toString()} - ${higherLimitDose.toString()}). ",
+                  "($lowerLimitDose - $higherLimitDose). ",
               style: const TextStyle(fontWeight: FontWeight.bold),
             );
           } else {
             return TextSpan(
               text:
-                  "${lowerLimitDose.toString()} - ${higherLimitDose.toString()}. ",
+                  "$lowerLimitDose. - $higherLimitDose. ",
               style: const TextStyle(fontWeight: FontWeight.bold),
             );
           }
@@ -154,7 +154,7 @@ class DosageViewHandler {
       }
 
       final TextSpan maxDoseSpan = TextSpan(
-        text: maxDose != null ? "Maxdos: ${maxDose.toString()}." : '',
+        text: maxDose != null ? "Maxdos: $maxDose." : '',
         style: const TextStyle(fontWeight: FontWeight.bold),
       );
 

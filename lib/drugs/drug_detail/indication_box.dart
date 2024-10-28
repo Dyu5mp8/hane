@@ -19,7 +19,7 @@ class IndicationBox extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Column(
                 children: [
-                  IndicationTabs(),
+                  const IndicationTabs(),
                   Expanded(child: IndicationTabView()),
                 ],
               ),
