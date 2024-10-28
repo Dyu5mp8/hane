@@ -7,7 +7,6 @@ import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 class EditableRow extends StatefulWidget {
   final String? text;
   final Widget editDialog;
-  final Widget? expandedDialog;
   final bool isEditMode;
   final TextStyle? textStyle;
   final bool hideWhenNotEditing;
@@ -22,7 +21,6 @@ class EditableRow extends StatefulWidget {
     Key? key,
     required this.text,
     required this.editDialog,
-    this.expandedDialog,
     required this.isEditMode,
     this.textStyle,
     this.hideWhenNotEditing = false,
@@ -97,14 +95,7 @@ class _EditableRowState extends State<EditableRow>
                 builder: (context) => widget.editDialog,
               );
             }
-          : (){
-            if (widget.expandedDialog == null) return;
-
-            showDialog(
-              context: context,
-            builder: (context) => widget.expandedDialog!
-            );
-          },
+          : null,
       child: Container(
         padding: padding,
         decoration: BoxDecoration(

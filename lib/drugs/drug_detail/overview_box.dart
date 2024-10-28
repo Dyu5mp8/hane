@@ -7,6 +7,7 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/drugs/drug_detail/ui_components/scroll_indicator.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class OverviewBox extends StatefulWidget {
   const OverviewBox({super.key});
@@ -222,24 +223,40 @@ class NoteRow extends StatelessWidget {
         .editMode; // Access editMode from the Provider
 
     return Container(
-      width: MediaQuery.sizeOf(context).width,
+
       padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          const Icon(Icons.notes),
-          const SizedBox(width: 10),
-          Flexible(
-            child: EditableRow(
-              editDialog: EditNotesDialog(drug: drug, isUserNote: false),
-              expandedDialog: (drug.expandedNotes?.isNotEmpty ?? false)
-                  ? ExpandedDialog(text: drug.expandedNotes!, title: "Anteckningar")
-                  : null,
-              isEditMode: editMode,
-              text: drug.notes,
-              textStyle: const TextStyle(fontSize: 14),
-            ),
-          )
-        ],
+      child: InkWell(
+        onTap: () {
+          if ((drug.expandedNotes?.isNotEmpty ?? false) && !editMode) {
+            showDialog(
+              context: context,
+              builder: (context) => ExpandedDialog(
+                text: drug.expandedNotes!,
+              ),
+            );
+          }
+        },
+        child: Row(
+          children: [
+            Badge(
+              label: Icon(Icons.info, size: 17, color: Theme.of(context).colorScheme.primary),
+              backgroundColor: Colors.transparent,
+              isLabelVisible: (drug.expandedNotes?.isNotEmpty ?? false),
+              child: const Icon(Icons.notes,)),
+            const SizedBox(width: 15),
+            Flexible(
+              child: AbsorbPointer(
+                absorbing: !editMode,
+                child: EditableRow(
+                  editDialog: EditNotesDialog(drug: drug, isUserNote: false),
+                  isEditMode: editMode,
+                  text: drug.notes,
+                  textStyle: const TextStyle(fontSize: 14),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -258,24 +275,43 @@ class ContraindicationRow extends StatelessWidget {
     return Container(
       width: MediaQuery.sizeOf(context).width,
       padding: const EdgeInsets.all(10),
-      child: Row(
-        children: [
-          const Icon(Icons.warning, color: Color.fromARGB(255, 122, 0, 0)),
-          const SizedBox(width: 10),
-          drug.contraindication != null
-              ? Flexible(
-                  child: EditableRow(
-                    text: drug.contraindication!,
-                    textStyle: const TextStyle(fontSize: 14),
-                    editDialog: EditContraindicationsDialog(drug: drug),
-                    expandedDialog: (drug.expandedContraindication?.isNotEmpty ?? false)
-                  ? ExpandedDialog(text: drug.expandedContraindication!, title: "Varningar och försiktighet")
-                  : null,
-                    isEditMode: editMode,
-                  ),
-                )
-              : const Text('Ingen angedd kontraindikation'),
-        ],
+      child: InkWell(
+        onTap: () {
+         if (drug.expandedContraindication?.isNotEmpty ?? false)
+          showDialog(
+            context: context,
+            builder: (context) => ExpandedDialog(
+              text: drug.expandedContraindication!,
+            ),
+          );
+        },
+        child: Row(
+          
+          children: [
+            Badge(
+              child: const Icon(FontAwesome.circle_exclamation_solid, color: Color.fromARGB(255, 122, 0, 0)),
+               label: Icon(Icons.info, size: 17, color: Theme.of(context).colorScheme.primary),
+              backgroundColor: Colors.transparent,
+           
+              isLabelVisible: ((drug.expandedContraindication?.isNotEmpty ?? false) && !editMode),
+            ),
+
+            const SizedBox(width: 15),
+            drug.contraindication != null
+                ? Flexible(
+                    child: AbsorbPointer(
+                      absorbing: !editMode,
+                      child: EditableRow(
+                        text: drug.contraindication!,
+                        textStyle: const TextStyle(fontSize: 14),
+                        editDialog: EditContraindicationsDialog(drug: drug),
+                        isEditMode: editMode,
+                      ),
+                    ),
+                  )
+                : const Text('Ingen angedd kontraindikation'),
+          ],
+        ),
       ),
     );
   }
