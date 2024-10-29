@@ -6,7 +6,7 @@ import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 import 'package:hane/drugs/services/user_behaviors/user_behavior.dart';
 import 'package:flutter/services.dart';
 
-class DosageList extends StatelessWidget {
+class DosageList extends StatefulWidget {
   final List<Dosage> dosages;
   final bool editMode;
   final Drug drug;
@@ -18,6 +18,11 @@ class DosageList extends StatelessWidget {
   });
 
   @override
+  State<DosageList> createState() => _DosageListState();
+}
+
+class _DosageListState extends State<DosageList> {
+  @override
   Widget build(BuildContext context) {
     return ReorderableListView.builder(
       buildDefaultDragHandles: false,
@@ -26,19 +31,19 @@ class DosageList extends StatelessWidget {
         if (newIndex > oldIndex) {
           newIndex--;
         }
-        final movedDosage = dosages.removeAt(oldIndex);
-        dosages.insert(newIndex, movedDosage);
+        final movedDosage = widget.dosages.removeAt(oldIndex);
+        widget.dosages.insert(newIndex, movedDosage);
         HapticFeedback.mediumImpact();
 
         // Optionally update the parent Drug if needed, e.g.,
-        drug.updateDrug();
+        widget.drug.updateDrug();
       },
       padding: const EdgeInsets.all(1),
-      itemCount: dosages.length,
+      itemCount: widget.dosages.length,
       itemBuilder: (context, index) {
         return Container(
           key: ValueKey(
-              dosages[index].hashCode), // Unique key for the entire row
+              widget.dosages[index].hashCode), // Unique key for the entire row
           decoration: BoxDecoration(
             color: Colors.white, // Your background color
             borderRadius: BorderRadius.circular(12.0),
@@ -51,7 +56,7 @@ class DosageList extends StatelessWidget {
               vertical: 4), // Optional margin between items
           child: Row(
             children: [
-              if (editMode)
+              if (widget.editMode)
                 ReorderableDragStartListener(
                   index: index,
                   child: SizedBox(
@@ -61,17 +66,24 @@ class DosageList extends StatelessWidget {
               Expanded(
                 child: DosageSnippet(
                   key: ValueKey(
-                      dosages[index].hashCode), // Use DosageSnippet key
-                  editMode: editMode,
+                      widget.dosages[index].hashCode), // Use DosageSnippet key
+                  editMode: widget.editMode,
                   onDosageDeleted: () {
-                    dosages.removeAt(index);
-                    drug.updateDrug();
+                    setState(() {
+                      widget.dosages.removeAt(index);
+                      widget.drug.updateDrug();
+                    });
+               
                   },
-                  availableConcentrations: drug.concentrations,
-                  dosage: dosages[index],
+                  availableConcentrations: widget.drug.concentrations,
+                  dosage: widget.dosages[index],
                   onDosageUpdated: (updatedDosage) {
-                    dosages[index] = updatedDosage;
-                    drug.updateDrug();
+                    setState(() {
+                      widget.dosages[index] = updatedDosage;
+                      widget.drug.updateDrug();
+
+                    });
+                 
                   },
                 ),
               ),
