@@ -241,11 +241,15 @@ class NoteRow extends StatelessWidget {
           children: [
             Badge(
                 label: Icon(Icons.info,
-                    size: 17, color: Theme.of(context).colorScheme.primary),
+                    size: 17, color: Theme.of(context).colorScheme.tertiary),
+                offset: const Offset(5, -8),
                 backgroundColor: Colors.transparent,
                 isLabelVisible: (drug.expandedNotes?.isNotEmpty ?? false),
-                child: const Icon(
-                  Icons.notes,
+                child: Icon(
+                  Bootstrap.chat_square_text_fill,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 25,
+                  
                 )),
             const SizedBox(width: 15),
             Flexible(
@@ -294,7 +298,7 @@ class ContraindicationRow extends StatelessWidget {
           children: [
             Badge(
               label: Icon(Icons.info,
-                  size: 17, color: Theme.of(context).colorScheme.primary),
+                  size: 17, color: Theme.of(context).colorScheme.tertiary),
               backgroundColor: Colors.transparent,
               offset: const Offset(4, -10),
               isLabelVisible:
