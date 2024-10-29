@@ -186,11 +186,9 @@ Future<void> getPreferGenericFromFirestore() async {
     DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
     if (userDoc.exists) {
-      print("User document found");
       // Cast data() to Map<String, dynamic> before using []
       preferGeneric = (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
     } else {
-      print("User document does not exist");
       preferGeneric = true;
     }
   } catch (e) {

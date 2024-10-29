@@ -109,9 +109,9 @@ class InitializerWidget extends StatelessWidget {
     } else if (userBehavior is AdminUserBehavior) {
       drugListProvider.userMode = UserMode.isAdmin;
     }
-    print(drugListProvider.preferGeneric);  
+
     drugListProvider.getPreferGenericFromFirestore();
-       print(drugListProvider.preferGeneric);  
+
 
     return const DrugListWrapper();
   }

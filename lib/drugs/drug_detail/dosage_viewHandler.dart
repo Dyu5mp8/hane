@@ -224,7 +224,6 @@ class DosageViewHandler {
           var maxDoseUnits = unitsExcludingWeight(maxDose.units);
           // Use setEquals to compare the key sets
           if (setEquals(dose.units.keys.toSet(), maxDoseUnits.keys.toSet())) {
-            print("dose: $dose");
             if (dose.compareTo(maxDose) > 0) {
               // Return maxDose if dose exceeds maxDose
               return maxDose;
