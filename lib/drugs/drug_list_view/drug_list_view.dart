@@ -12,8 +12,10 @@ import 'package:hane/onboarding/onboarding_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DrugListView extends StatefulWidget {
+  const DrugListView({super.key});
+
   @override
-  _DrugListViewState createState() => _DrugListViewState();
+ State<DrugListView> createState() => _DrugListViewState();
 }
 
 class _DrugListViewState extends State<DrugListView> {
@@ -42,8 +44,9 @@ class _DrugListViewState extends State<DrugListView> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((value) => value.data()?['seenTutorial']);
+    
 
-    if (seenTutorial == null || !seenTutorial) {
+    if (mounted && (seenTutorial == null || !seenTutorial)) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => OnboardingScreen()),
@@ -196,20 +199,29 @@ class _DrugListViewState extends State<DrugListView> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: CupertinoSearchTextField(
-        style: Theme.of(context).textTheme.labelLarge,
-        itemSize: 30,
+        style: Theme.of(context).textTheme.bodyLarge,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: const Color.fromARGB(148, 76, 78, 95),
+          ),
+          borderRadius: BorderRadius.circular(10),
+          
+        ),  
+        itemSize: 25,
         controller: _searchController,
         placeholder: 'Sök efter läkemedel',
         onChanged: (value) {
           setState(() {
-            if (!mounted)
+            if (!mounted) {
               return; // Add this line to check if the widget is still mounted
+            }
             _searchQuery = value; // Update the search query as the user types
           });
         },
         onSubmitted: (value) {
-          if (!mounted)
+          if (!mounted) {
             return; // Add this line to check if the widget is still mounted
+          }
           setState(() {
             _searchQuery = value; // Final value after user submits search
           });
@@ -219,7 +231,7 @@ class _DrugListViewState extends State<DrugListView> {
   }
 
   Widget _buildCategoryChips(List<dynamic> categories) {
-    final isWeb = kIsWeb;
+    const isWeb = kIsWeb;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -322,6 +334,7 @@ class _DrugListViewState extends State<DrugListView> {
                   ? const Padding(
                       padding: EdgeInsets.only(
                         top: 4.0,
+                        bottom: 6.0,
                       ), // Reduce padding
                       child: Text(
                         'Admin: ÄNDRINGAR SKER I STAMLISTAN',
