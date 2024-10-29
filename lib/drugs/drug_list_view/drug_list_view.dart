@@ -197,6 +197,7 @@ class _DrugListViewState extends State<DrugListView> {
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
       child: CupertinoSearchTextField(
         style: Theme.of(context).textTheme.labelLarge,
+        itemSize: 30,
         controller: _searchController,
         placeholder: 'Sök efter läkemedel',
         onChanged: (value) {

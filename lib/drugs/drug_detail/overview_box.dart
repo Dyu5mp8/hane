@@ -301,7 +301,7 @@ class ContraindicationRow extends StatelessWidget {
                   ((drug.expandedContraindication?.isNotEmpty ?? false) &&
                       !editMode),
               child: const Icon(Bootstrap.exclamation_square_fill,
-                  color: Color.fromARGB(255, 101, 36, 36),
+                  color: Color.fromARGB(255, 194, 87, 45),
                   size: 22,),
             ),
             const SizedBox(width: 15),
