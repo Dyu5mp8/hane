@@ -371,10 +371,18 @@ class _UserNoteRowState extends State<UserNoteRow> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: TextField(
         controller: _controller,
+        textCapitalization: TextCapitalization.sentences,
         maxLines: null, // Allows multiple lines
+        textInputAction: TextInputAction.done,
+         onTapOutside: (event) {
+        FocusScope.of(context).unfocus();
+      },
         decoration: const InputDecoration(
           border: InputBorder.none, // Remove borders
           labelText: "Egna anteckningar",
+        
+          
+          
           isDense: true, // Reduce height
           contentPadding: EdgeInsets.zero, // Remove padding
         ),
