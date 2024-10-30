@@ -125,7 +125,7 @@ class DosageSnippetState extends State<DosageSnippet> {
         ListTile(
           
           contentPadding:
-              const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
+              const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 0),
          
           
           minVerticalPadding: 12,

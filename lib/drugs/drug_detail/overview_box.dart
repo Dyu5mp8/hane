@@ -329,41 +329,62 @@ class ContraindicationRow extends StatelessWidget {
   }
 }
 
-class UserNoteRow extends StatelessWidget {
+class UserNoteRow extends StatefulWidget {
   const UserNoteRow({super.key});
 
   @override
+  _UserNoteRowState createState() => _UserNoteRowState();
+}
+
+class _UserNoteRowState extends State<UserNoteRow> {
+  late TextEditingController _controller;
+  Drug? drug;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newDrug = Provider.of<Drug>(context, listen: true);
+    if (drug != newDrug) {
+      drug = newDrug;
+      _controller.text = drug?.userNotes ?? "";
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final drug =
-        Provider.of<Drug>(context); // Access the drug from the Provider
+    // Ensure drug is not null before proceeding
+    if (drug == null) return SizedBox.shrink();
+
     return Container(
-      width: MediaQuery.sizeOf(context).width,
-      padding: const EdgeInsets.all(5),
-      child: Row(children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blue),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => EditNotesDialog(
-                      drug: drug,
-                      isUserNote: true,
-                      onUserNotesSaved: () {
-                        // Update the user notes in the database
-                        Provider.of<DrugListProvider>(context, listen: false)
-                            .addUserNotes(drug.id!, drug.userNotes ?? "");
-                      }),
-                );
-              },
-            ),
-          ],
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      child: TextField(
+        controller: _controller,
+        maxLines: null, // Allows multiple lines
+        decoration: const InputDecoration(
+          border: InputBorder.none, // Remove borders
+          labelText: "Egna anteckningar",
+          isDense: true, // Reduce height
+          contentPadding: EdgeInsets.zero, // Remove padding
         ),
-        const SizedBox(width: 10),
-        Flexible(fit: FlexFit.loose, child: Text(drug.userNotes ?? "")),
-      ]),
+        style: const TextStyle(fontSize: 14),
+        onChanged: (value) {
+          // Update the user notes in the database
+          Provider.of<DrugListProvider>(context, listen: false)
+              .addUserNotes(drug!.id!, value);
+        },
+      ),
     );
   }
 }
