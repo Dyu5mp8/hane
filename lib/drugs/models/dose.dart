@@ -43,7 +43,8 @@ String substanceUnitString() {
 
   @override
   String toString() {
-    return "${smartRound(amount)} ${unitString()}";
+    Dose scaledDose = _scaledDose(this);
+    return "${smartRound(scaledDose.amount)} ${scaledDose.unitString()}";
   }
 
   // Get the dose units as a map
@@ -124,9 +125,8 @@ String substanceUnitString() {
     }
 
     if (adjustScale) {
-      var result = _scaledDose(value, fromUnits);
-      value = result.$1;
-      fromUnits = result.$2 as Map<String, String>;
+      var result = _scaledDose(Dose(amount: value, units: fromUnits));
+    return result;
 
     }
 
@@ -181,12 +181,12 @@ String substanceUnitString() {
 
     return (newValue, newUnits);
   }
-(double, Map) _scaledDose(double value, Map fromUnits) {
-  String? substanceUnit = fromUnits["substance"];
+Dose _scaledDose(Dose fromDose) {
+  String? substanceUnit = fromDose.units["substance"];
 
   // Check if the substance unit is valid
   if (substanceUnit == null || !UnitValidator.isValidUnit(substanceUnit)) {
-    return (value, fromUnits);
+    return fromDose;
   }
 
   // Get the unit type
@@ -201,15 +201,15 @@ String substanceUnitString() {
     units = ["E", "mE"];
   } else {
     // For other unit types, no scaling
-    return (value, fromUnits);
+    return fromDose;
   }
 
   if (!units.contains(substanceUnit)) {
-    return (value, fromUnits);
+    return fromDose;
   }
 
   int currentIndex = units.indexOf(substanceUnit);
-  int newIndex = currentIndex + _conversionStep(value, minimum: 0.5, maximum: 1000);
+  int newIndex = currentIndex + _conversionStep(fromDose.amount, minimum: 0.5, maximum: 1000);
 
   // Ensure the new index is within bounds
   if (newIndex < 0) {
@@ -219,7 +219,7 @@ String substanceUnitString() {
   }
 
   // Adjust the dose value according to the units changing
-  double newValue = value;
+  double newValue = fromDose.amount;
   if (newIndex > currentIndex) {
     for (int i = currentIndex; i < newIndex; i++) {
       newValue *= 1000; // Scaling down
@@ -230,10 +230,10 @@ String substanceUnitString() {
     }
   }
 
-  Map<String, String> newUnits = Map.from(fromUnits);
+  Map<String, String> newUnits = Map.from(fromDose.units);
   newUnits["substance"] = units[newIndex];
 
-  return (newValue, newUnits);
+  return Dose(amount: newValue, units: newUnits);
 }
 
   // Calculate the conversion step for scaling the dose
