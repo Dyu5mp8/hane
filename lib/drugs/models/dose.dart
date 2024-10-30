@@ -43,8 +43,7 @@ String substanceUnitString() {
 
   @override
   String toString() {
-    Dose scaledDose = _scaledDose(this);
-    return "${smartRound(scaledDose.amount)} ${scaledDose.unitString()}";
+    return "${smartRound(amount)} ${unitString()}";
   }
 
   // Get the dose units as a map
