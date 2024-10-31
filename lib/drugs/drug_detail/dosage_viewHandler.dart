@@ -154,7 +154,7 @@ class DosageViewHandler {
       }
 
       final TextSpan maxDoseSpan = TextSpan(
-        text: maxDose != null ? "Maxdos: $maxDose." : '',
+        text: maxDose != null ? "Maxdos: ${maxDose.scaleDose()}." : '',
         style: const TextStyle(fontWeight: FontWeight.bold),
       );
 

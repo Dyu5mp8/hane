@@ -180,6 +180,11 @@ String substanceUnitString() {
 
     return (newValue, newUnits);
   }
+
+Dose scaleDose() {
+  return _scaledDose(this);
+}
+
 Dose _scaledDose(Dose fromDose) {
   String? substanceUnit = fromDose.units["substance"];
 
