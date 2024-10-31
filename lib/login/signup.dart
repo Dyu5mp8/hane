@@ -17,6 +17,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String? errorMessage;
+  bool _isLoading = false; // To manage loading state
 
   Widget _backButton() {
     return IconButton(
@@ -26,16 +27,18 @@ class _SignUpPageState extends State<SignUpPage> {
       },
     );
   }
-void showErrorMessage(String message) async {
-  setState(() {
-    errorMessage = message;
-  });
-  await Future.delayed(const Duration(seconds: 3));
-  if (!mounted) return; // Check if the widget is still mounted
-  setState(() {
-    errorMessage = null;
-  });
-}
+
+  void showErrorMessage(String message) async {
+    setState(() {
+      errorMessage = message;
+      _isLoading = false; // Stop loading if there's an error
+    });
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return; // Check if the widget is still mounted
+    setState(() {
+      errorMessage = null;
+    });
+  }
 
   Widget _entryField(String title, TextEditingController controller,
       {bool isPassword = false}) {
@@ -89,9 +92,108 @@ void showErrorMessage(String message) async {
       message = 'Registreringen misslyckades: ${e.message}';
     }
     showErrorMessage(message);
+  }
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+  Future<void> _validateAndProceed() async {
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    // Basic validation
+    if (email.isEmpty) {
+      showErrorMessage('E-postadressen får inte vara tom.');
+      return;
+    }
+
+    if (password.isEmpty) {
+      showErrorMessage('Lösenordet får inte vara tomt.');
+      return;
+    }
+
+    if (password.length < 6) {
+      showErrorMessage('Lösenordet måste vara minst 6 tecken långt.');
+      return;
+    }
+
+    // Check if email is valid
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(email)) {
+      showErrorMessage('E-postadressen är ogiltig.');
+      return;
+    }
+
+    try {
+      // Check if email is already in use
+      List<String> signInMethods =
+          await _auth.fetchSignInMethodsForEmail(email);
+      if (signInMethods.isNotEmpty) {
+        showErrorMessage('E-postadressen är redan registrerad.');
+        return;
+      }
+
+      setState(() {
+        _isLoading = false; // Stop loading before showing disclaimer
+      });
+
+      // Show the disclaimer dialog
+      _showDisclaimerDialog();
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _isLoading = false; // Stop loading on error
+      });
+      // Handle specific errors if needed
+      if (e.code == 'invalid-email') {
+        showErrorMessage('E-postadressen är ogiltig.');
+      } else {
+        showErrorMessage('Ett fel uppstod: ${e.message}');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false; // Stop loading on error
+      });
+      showErrorMessage('Ett oväntat fel uppstod.');
+    }
+  }
+
+  void _showDisclaimerDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissal by tapping outside
+      builder: (BuildContext context) {
+        return MedicalDisclaimerDialog(
+          onAccepted: () {
+            Navigator.of(context).pop(); // Close the disclaimer dialog
+            _registerUser(); // Proceed with registration
+          },
+        );
+      },
+    );
+  }
+
+  void _registerUser() async {
+    setState(() {
+      _isLoading = true; // Start loading during registration
+    });
+
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      await _auth.currentUser!.sendEmailVerification();
+      setState(() {
+        _isLoading = false; // Stop loading after registration
+      });
+      _onSuccessfulRegistration();
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _isLoading = false; // Stop loading on error
+      });
+      _onFailedRegistration(e);
+    }
   }
 
   Widget _submitButton() {
@@ -102,24 +204,20 @@ void showErrorMessage(String message) async {
           borderRadius: BorderRadius.circular(10),
         ),
         padding: const EdgeInsets.symmetric(vertical: 15),
-        minimumSize: Size(double.infinity, 45), // Full width button
+        minimumSize: const Size(double.infinity, 45), // Full width button
       ),
-      onPressed: () async {
-        try {
-          await _auth.createUserWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
-          await _auth.currentUser!.sendEmailVerification();
-          _onSuccessfulRegistration();
-        } on FirebaseAuthException catch (e) {
-          _onFailedRegistration(e);
-        }
+      onPressed: () {
+        // Validate inputs and proceed
+        _validateAndProceed();
       },
-      child: const Text(
-        'Registrera dig nu',
-        style: TextStyle(fontSize: 18, color: Colors.white),
-      ),
+      child: _isLoading
+          ? const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            )
+          : const Text(
+              'Registrera dig nu',
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
     );
   }
 
@@ -127,13 +225,13 @@ void showErrorMessage(String message) async {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+            context, MaterialPageRoute(builder: (context) => const LoginPage()));
       },
-      child: Padding(
-        padding: const EdgeInsets.all(10),
+      child: const Padding(
+        padding: EdgeInsets.all(10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             Text(
               'Har du redan ett konto?',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
@@ -210,5 +308,69 @@ void showErrorMessage(String message) async {
     _passwordController.dispose();
     super.dispose();
   }
+}
 
+// MedicalDisclaimerDialog Widget
+class MedicalDisclaimerDialog extends StatelessWidget {
+  const MedicalDisclaimerDialog({Key? key, required this.onAccepted})
+      : super(key: key);
+
+  final VoidCallback onAccepted;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Viktig information', style: TextStyle(fontSize: 20)),
+      content: const SingleChildScrollView(
+        child: ListBody(
+          children: [
+            Text(
+            
+              'Denna app är avsedd för medicinska yrkesverksamma. Informationen som '
+              'presenteras är endast för utbildningsändamål och bör inte användas som '
+              'ersättning för en klinisk bedömning. '
+              'Skaparen av denna plattform tar inget ' 
+              'ansvar för användningen av informationen i denna app.'
+              ,
+              style: TextStyle(fontSize: 15),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Genom att skapa ett konto bekräftar du att du är en legitimerad '
+              'hälso- och sjukvårdspersonal och att du förstår och accepterar '
+              'detta ansvar.',
+              style: TextStyle(fontSize: 15),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          child: const Text('Avböj'),
+        ),
+       ElevatedButton(
+  style: ElevatedButton.styleFrom(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10), // Consistent border radius
+    ),
+    backgroundColor: const Color.fromARGB(255, 51, 77, 97)
+   // Padding to match your app's buttons
+  ),
+  onPressed: () {
+    onAccepted(); // Proceed with registration
+  },
+  child: const Text(
+    'Jag accepterar',
+    style: TextStyle(
+      fontSize: 15, // Font size to match other buttons
+      color: Colors.white, // Text color consistent with your app's theme
+    ),
+  ),
+),
+      ],
+    );
+  }
 }

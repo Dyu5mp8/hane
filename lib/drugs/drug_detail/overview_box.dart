@@ -380,6 +380,9 @@ class _UserNoteRowState extends State<UserNoteRow> {
         decoration: const InputDecoration(
           border: InputBorder.none, // Remove borders
           labelText: "Egna anteckningar",
+          labelStyle: TextStyle(
+            fontSize: 15,
+          ),
         
           
           
