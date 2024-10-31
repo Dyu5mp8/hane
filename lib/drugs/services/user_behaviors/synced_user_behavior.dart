@@ -31,31 +31,17 @@ Query<Map<String, dynamic>> userDrugsCollection = db.collection('users').doc(use
         userNotesDocRef.snapshots();
 
     // Combine both streams
-   return Rx.combineLatest3(
-  userDrugsStream,
+   return Rx.combineLatest2(
+
   drugsStream,
   userNotesStream,
-  (userDrugsSnapshot, drugsSnapshot, userNotesSnapshot) {
+  (drugsSnapshot, userNotesSnapshot) {
     Map<String, dynamic> userNotesIndex = {};
 
     // Initialize user notes index if it exists
     if (userNotesSnapshot.exists) {
       userNotesIndex = userNotesSnapshot.data() ?? {};
     }
-
-    // Parse userDrugs with error handling
-    var userDrugs = userDrugsSnapshot.docs.map((doc) {
-      try {
-        var drug = Drug.fromFirestore(doc.data());
-        drug.id = doc.id;
-        return drug;
-      } catch (e) {
-        // Log and skip the problematic document
-        print("Error mapping user drug with ID ${doc.id}: $e");
-        return null;
-      }
-    }).whereType<Drug>().toList(); // Filter out null values
-
     // Parse master drugs with error handling
     var masterDrugs = drugsSnapshot.docs.map((doc) {
       try {
@@ -77,60 +63,17 @@ Query<Map<String, dynamic>> userDrugsCollection = db.collection('users').doc(use
     }).whereType<Drug>().toList(); // Filter out null values
 
     // Combine the two lists and sort them
-    var allDrugs = [...masterDrugs, ...userDrugs];
+  ;
    
-        allDrugs.sort(
+        masterDrugs.sort(
             (a, b) => a.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase().compareTo(b.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase()));
       
 
-    return allDrugs;
+    return masterDrugs;
   }); 
   }
-  @override
-  Future<void> addDrug(Drug drug) async {
-    var db = FirebaseFirestore.instance;
-    CollectionReference drugsCollection =
-        db.collection('users').doc(user).collection('drugs');
+  
 
-    try {
-      // Mark the drug as changed by the user if not an admin and update the timestamp
-      drug.changedByUser = true;
-      drug.lastUpdated = Timestamp.now();
-
-      // Check if the drug is new (i.e., it has no ID)
-      if (drug.id == null) {
-        // Generate a new document reference with an auto-generated ID
-        DocumentReference newDocRef = drugsCollection.doc();
-
-        // Save the new drug document to Firestore
-        await newDocRef.set(drug.toJson());
-        drug.id = newDocRef.id;
-        return; // Exit early as we are done adding the new drug
-      }
-      // If the existing drug is different, update it by merging the changes
-      await drugsCollection
-          .doc(drug.id)
-          .set(drug.toJson(), SetOptions(merge: true));
-    } catch (e) {
-      print("Failed to add drug: $e");
-      rethrow; // Rethrow the error to handle it further up the call stack
-    }
-  }
-
-  @override
-  Future<void> deleteDrug(Drug drug) async {
-    try {
-      var db = FirebaseFirestore.instance;
-      CollectionReference drugsCollection =
-          db.collection('users').doc(user).collection('drugs');
-      if (drug.id != null) {
-        await drugsCollection.doc(drug.id).delete();
-      }
-    } catch (e) {
-      print("Failed to delete drug: $e");
-      rethrow;
-    }
-  }
 
   Future<void> addUserNotes(String id, String notes) async {
     var db = FirebaseFirestore.instance;

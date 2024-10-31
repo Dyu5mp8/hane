@@ -14,7 +14,12 @@ abstract class UserBehavior {
   Set categories = {};
   UserBehavior({required this.masterUID, this.user});
 
-  Future<void> addDrug(Drug drug);
-  Future<void> deleteDrug(Drug drug);
+  Future<void> addDrug(Drug drug){
+    throw UnimplementedError('addDrug not implemented');
+  }
+  Future<void> deleteDrug(Drug drug)
+  {
+    throw UnimplementedError('deleteDrug not implemented');
+  }
   Stream<List<Drug>> getDrugsStream({bool sortByGeneric = false});
 }

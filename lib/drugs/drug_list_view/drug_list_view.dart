@@ -22,12 +22,16 @@ class _DrugListViewState extends State<DrugListView> {
   String _searchQuery = '';
   String? _selectedCategory;
   final TextEditingController _searchController = TextEditingController();
+  UserMode? userMode;
+  bool canEdit = false;
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
     showTutorialScreenIfNew();
+    userMode = context.read<DrugListProvider>().userMode ?? UserMode.syncedMode; //fall back to synced mode
+    canEdit = userMode == UserMode.isAdmin || userMode == UserMode.customMode;
   }
 
   @override
@@ -77,7 +81,6 @@ class _DrugListViewState extends State<DrugListView> {
   }
 
   MenuDrawer buildDrawer(BuildContext context, Set<String>? userDrugNames) {
-    var userMode = Provider.of<DrugListProvider>(context).userMode;
     switch (userMode) {
       case UserMode.isAdmin:
         return const AdminMenuDrawer();
@@ -102,14 +105,14 @@ class _DrugListViewState extends State<DrugListView> {
     if (drugs == null) {
       // Show a loading indicator while the drugs are loading
       return Scaffold(
-        appBar: _buildAppBar(context),
+        appBar: _buildAppBar(context, canEdit),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (drugs.isEmpty) {
       return Scaffold(
-        appBar: _buildAppBar(context),
+        appBar: _buildAppBar(context, canEdit),
         drawer: buildDrawer(context, drugNames),
         body: Center(
             child: Column(
@@ -135,7 +138,7 @@ class _DrugListViewState extends State<DrugListView> {
         .toList()
       ..sort((a, b) => a.compareTo(b)); // Sorts the list alphabeticallyr
     return Scaffold(
-      appBar: _buildAppBar(context),
+      appBar: _buildAppBar(context, canEdit),
       drawer: buildDrawer(context, drugNames),
       body: CustomScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -321,32 +324,28 @@ class _DrugListViewState extends State<DrugListView> {
     }).toList();
   }
 
-  AppBar _buildAppBar(BuildContext context) {
+  AppBar _buildAppBar(BuildContext context, canEdit) {
     return AppBar(
       forceMaterialTransparency: true,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text('Läkemedel'),
-          Consumer<DrugListProvider>(
-            builder: (context, drugListProvider, child) {
-              return drugListProvider.isAdmin
-                  ? const Padding(
-                      padding: EdgeInsets.only(
-                        top: 4.0,
-                        bottom: 6.0,
-                      ), // Reduce padding
-                      child: Text(
-                        'Admin: ÄNDRINGAR SKER I STAMLISTAN',
-                        style: TextStyle(
-                          fontSize: 14, // Reduced font size
-                          color: Color.fromARGB(255, 255, 77, 0),
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink();
-            },
-          ),
+          canEdit
+              ? const Padding(
+                  padding: EdgeInsets.only(
+                    top: 4.0,
+                    bottom: 6.0,
+                  ), // Reduce padding
+                  child: Text(
+                    'Admin: ÄNDRINGAR SKER I STAMLISTAN',
+                    style: TextStyle(
+                      fontSize: 14, // Reduced font size
+                      color: Color.fromARGB(255, 255, 77, 0),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
         ],
       ),
       bottom: PreferredSize(
@@ -360,10 +359,13 @@ class _DrugListViewState extends State<DrugListView> {
             )),
       ),
       actions: [
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: _onAddDrugPressed,
-        ),
+        canEdit
+            ? IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: _onAddDrugPressed,
+              )
+            : const SizedBox.shrink(),
+      
       ],
     );
   }
