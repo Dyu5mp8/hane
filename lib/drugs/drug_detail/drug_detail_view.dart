@@ -28,7 +28,6 @@ class _DrugDetailViewState extends State<DrugDetailView> {
     //open dialog for new drug if that is the case
     Future.delayed(const Duration(milliseconds: 300), () {
       if (widget.isNewDrug && context.mounted) {
-      
         Provider.of<EditModeProvider>(context, listen: false).toggleEditMode();
 
         showDialog(
@@ -63,7 +62,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         ],
       ),
       body: const Column(
-        children: <Widget>[OverviewBox(), IndicationBox()],
+        children: [OverviewBox(), IndicationBox()],
       ),
     );
   }

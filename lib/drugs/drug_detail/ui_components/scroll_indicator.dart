@@ -100,10 +100,19 @@ class _ScrollIndicatorState extends State<ScrollIndicator> with SingleTickerProv
           end: const Offset(0, 0.4),
         ),
       ),
-      child: Icon(
+      child: IconButton(
+        icon: Icon(
         Icons.arrow_circle_down_rounded,
         size: 24,
         color: Theme.of(context).colorScheme.primary,
+        ),
+        onPressed: () {
+          widget.scrollController.animateTo(
+            widget.scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastLinearToSlowEaseIn
+          );
+        },
       ),
     );
   }
