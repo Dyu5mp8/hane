@@ -10,6 +10,7 @@
 .svn/
 
 # Ignore Firebase local configuration directory
+/.firebase/
 .firebase/
 
 migrate_working_dir/
