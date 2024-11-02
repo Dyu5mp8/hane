@@ -8,6 +8,10 @@
 .buildlog/
 .history
 .svn/
+
+# Ignore Firebase local configuration directory
+.firebase/
+
 migrate_working_dir/
 
 # IntelliJ related
