@@ -5,7 +5,6 @@ import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hane/login/user_status.dart';
-
 class DrugListProvider with ChangeNotifier {
   String _masterUID = "master";
   String? _user;
@@ -13,14 +12,25 @@ class DrugListProvider with ChangeNotifier {
   Set<dynamic> categories = {};
   UserBehavior? userBehavior;
   bool _preferGeneric = false;
+  bool _isSyncedMode = false;
 
-  DrugListProvider({this.userBehavior});
+  DrugListProvider({this.userBehavior}) {
+    _initializeProvider();
+  }
+
+  void _initializeProvider() async {
+    await getIsSyncedModeFromFirestore();
+    await getPreferGenericFromFirestore();
+    updateUserBehavior();
+  }
 
   String get masterUID => _masterUID;
 
   set masterUID(String value) {
     _masterUID = value;
-    userBehavior!.masterUID = value;
+    if (userBehavior != null) {
+      userBehavior!.masterUID = value;
+    }
   }
 
   String? get user => _user;
@@ -33,20 +43,38 @@ class DrugListProvider with ChangeNotifier {
     _userMode = value;
   }
 
-  void setUserBehavior(UserBehavior userBehavior) {
-    this.userBehavior = userBehavior;
-  }
-
   bool get preferGeneric => _preferGeneric;
   set preferGeneric(bool value) {
     _preferGeneric = value;
     notifyListeners();
+    writePreferGeneric();
+  }
+
+  bool get isSyncedMode => _isSyncedMode;
+  set isSyncedMode(bool value) {
+    _isSyncedMode = value;
+    writeIsSyncedMode();
+    updateUserBehavior();
   }
 
   bool get isAdmin => userMode == UserMode.isAdmin;
 
+  void setUserBehavior(UserBehavior userBehavior) {
+    this.userBehavior = userBehavior;
+  }
+
+  void updateUserBehavior() {
+    if (_isSyncedMode) {
+
+      setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
+      notifyListeners();
+    } else {
+      setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
+      notifyListeners();
+    }
+  }
+
   void clearProvider() {
-    // Clear any user-specific data and resources
     categories.clear();
     user = null;
     userMode = null;
@@ -58,7 +86,6 @@ class DrugListProvider with ChangeNotifier {
     clearProvider();
     super.dispose();
   }
-
   Stream<List<Drug>> getDrugsStream() {
     categories = userBehavior!.categories;
 
@@ -179,23 +206,62 @@ class DrugListProvider with ChangeNotifier {
     }
   }
 
-Future<void> getPreferGenericFromFirestore() async {
-  try {
-    var db = FirebaseFirestore.instance;
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
+  Future<void> getIsSyncedModeFromFirestore() async {
+    try {
+      var db = FirebaseFirestore.instance;
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
-    if (userDoc.exists) {
-      // Cast data() to Map<String, dynamic> before using []
-      preferGeneric = (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
-    } else {
-      preferGeneric = true;
+      if (userDoc.exists) {
+        isSyncedMode = (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ?? false;
+      } else {
+        isSyncedMode = false;
+      }
+    } catch (e) {
+      print("Failed to get preferSyncedMode: $e");
+      rethrow;
     }
-  } catch (e) {
-    print("Failed to get preferGeneric: $e");
-    rethrow;
   }
-}
+
+  Future<void> writeIsSyncedMode() async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(_user).set({
+        'preferSyncedMode': _isSyncedMode,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print("Failed to write preferSyncedMode: $e");
+      rethrow;
+    }
+  }
+
+  // Existing methods for preferGeneric
+  Future<void> getPreferGenericFromFirestore() async {
+    try {
+      var db = FirebaseFirestore.instance;
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
+
+      if (userDoc.exists) {
+        preferGeneric = (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
+      } else {
+        preferGeneric = true;
+      }
+    } catch (e) {
+      print("Failed to get preferGeneric: $e");
+      rethrow;
+    }
+  }
+
+  Future<void> writePreferGeneric() async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(_user).set({
+        'preferGeneric': preferGeneric,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print("Failed to write preferGeneric: $e");
+      rethrow;
+    }
+  }
 
   void setPreferGeneric(bool value) async {
     preferGeneric = value;
@@ -207,16 +273,6 @@ Future<void> getPreferGenericFromFirestore() async {
     }
   }
 
-  Future<void> writePreferGeneric() async {
-    try  
-    {await FirebaseFirestore.instance.collection('users').doc(_user).set({
-      'preferGeneric': preferGeneric,
-    }, SetOptions(merge: true));
-    } catch (e) {
-      print("Failed to write preferGeneric: $e");
-      rethrow;
-    }
-  }
 
 
   Future<void> updateLastReadTimestamp(String drugId) async {

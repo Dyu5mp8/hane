@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hane/drugs/ui_components/custom_drawer_header.dart';
+import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
+import 'package:hane/login/initializer_widget.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
@@ -56,7 +58,7 @@ abstract class MenuDrawer extends StatelessWidget {
             children: <Widget>[
               const CustomDrawerHeader(),
               const DrugNameChoiceTile(),
-              ...buildUserSpecificTiles(context),
+  
               buildTutorialTile(context), // Added tutorial tile
               buildAboutTile(context), // Added about tile
               buildLogoutTile(context), // Common logout tile
@@ -136,8 +138,7 @@ abstract class MenuDrawer extends StatelessWidget {
     );
   }
 
-  // Abstract method to be implemented in subclasses
-  List<Widget> buildUserSpecificTiles(BuildContext context);
+
 }
 class DrugNameChoiceTile extends StatefulWidget {
   const DrugNameChoiceTile({super.key});
@@ -166,6 +167,41 @@ class _DrugNameChoiceTileState extends State<DrugNameChoiceTile> {
               ),
             );
           });
+        },
+      ),
+    );
+  }
+}
+class SyncedModeTile extends StatefulWidget {
+  const SyncedModeTile({super.key});
+
+  @override
+  _SyncedModeTileState createState() => _SyncedModeTileState();
+}
+
+class _SyncedModeTileState extends State<SyncedModeTile> {
+  @override
+  Widget build(BuildContext context) {
+    final drugListProvider = Provider.of<DrugListProvider>(context);
+
+    return ListTile(
+      leading: const Icon(Bootstrap.arrow_repeat),
+      title: const Text('Synkat läge'),
+      trailing: Switch(
+        value: drugListProvider.isSyncedMode,
+        onChanged: (value) {
+          drugListProvider.isSyncedMode = value;
+
+          // Show a SnackBar for feedback
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(value
+                  ? 'Ändrat: Synkat läge aktiverat'
+                  : 'Ändrat: Eget läge aktiverat'),
+            ),
+          );
+
+    
         },
       ),
     );
