@@ -23,7 +23,6 @@ class _DrugListViewState extends State<DrugListView> {
   String? _selectedCategory;
   final TextEditingController _searchController = TextEditingController();
   UserMode? userMode;
-  bool canEdit = false;
 
   @override
   void initState() {
@@ -31,7 +30,6 @@ class _DrugListViewState extends State<DrugListView> {
     _searchController.addListener(_onSearchChanged);
     showTutorialScreenIfNew();
     userMode = context.read<DrugListProvider>().userMode ?? UserMode.syncedMode; //fall back to synced mode
-    canEdit = userMode == UserMode.isAdmin || userMode == UserMode.customMode;
   }
 
   @override
@@ -105,14 +103,14 @@ class _DrugListViewState extends State<DrugListView> {
     if (drugs == null) {
       // Show a loading indicator while the drugs are loading
       return Scaffold(
-        appBar: _buildAppBar(context, canEdit),
+        appBar: _buildAppBar(context),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (drugs.isEmpty) {
       return Scaffold(
-        appBar: _buildAppBar(context, canEdit),
+        appBar: _buildAppBar(context),
         drawer: buildDrawer(context, drugNames),
         body: Center(
             child: Column(
@@ -138,7 +136,7 @@ class _DrugListViewState extends State<DrugListView> {
         .toList()
       ..sort((a, b) => a.compareTo(b)); // Sorts the list alphabeticallyr
     return Scaffold(
-      appBar: _buildAppBar(context, canEdit),
+      appBar: _buildAppBar(context),
       drawer: buildDrawer(context, drugNames),
       body: CustomScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -325,14 +323,16 @@ class _DrugListViewState extends State<DrugListView> {
     }).toList();
   }
 
-  AppBar _buildAppBar(BuildContext context, canEdit) {
+  AppBar _buildAppBar(BuildContext context) {
+    bool canEdit = !Provider.of<DrugListProvider>(context, listen: true).isSyncedMode;
+    bool isAdmin = Provider.of<DrugListProvider>(context, listen: true).isAdmin;
     return AppBar(
       forceMaterialTransparency: true,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text('Läkemedel'),
-          canEdit
+          isAdmin
               ? const Padding(
                   padding: EdgeInsets.only(
                     top: 4.0,
