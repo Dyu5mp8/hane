@@ -137,22 +137,7 @@ class DosageSnippetState extends State<DosageSnippet> {
               ),
               const SizedBox(width: 8),
               Column(children: [
-                                   if (!widget.editMode &&
-                        widget.dosageViewHandler.ableToConvert.concentration)
-                    Transform.scale(
-                      scale: 0.9,
-                      child: ConversionSwitch(isActive: (widget.dosageViewHandler.conversionConcentration != null), onSwitched: (value) {
-                        HapticFeedback.mediumImpact();
-                        if (value) {
-                          _showConcentrationPicker(context);
-                        } else {
-                          _resetConcentrationConversion();
-                        }
-                      }, unit: widget.dosageViewHandler.getCommonUnitSymbol()),
-                    ),
-
-
-                Row(children:  [
+                                   Row(children:  [
                     if (!widget.editMode &&
                         widget.dosageViewHandler.ableToConvert.weight)
                       ConversionButton(
@@ -175,7 +160,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                       if (!widget.editMode &&
                           widget.dosageViewHandler.ableToConvert.time)
                         ConversionButton(
-                          label: "h",
+                          label: "t",
                           isActive:
                               widget.dosageViewHandler.conversionTime !=
                                   null,
@@ -189,6 +174,21 @@ class DosageSnippetState extends State<DosageSnippet> {
                           },
                         )
                   ],),
+
+
+                if (!widget.editMode &&
+                        widget.dosageViewHandler.ableToConvert.concentration)
+                    Transform.scale(
+                      scale: 0.9,
+                      child: ConversionSwitch(isActive: (widget.dosageViewHandler.conversionConcentration != null), onSwitched: (value) {
+                        HapticFeedback.mediumImpact();
+                        if (value) {
+                          _showConcentrationPicker(context);
+                        } else {
+                          _resetConcentrationConversion();
+                        }
+                      }, unit: widget.dosageViewHandler.getCommonUnitSymbol()),
+                    ),
 
        
                 

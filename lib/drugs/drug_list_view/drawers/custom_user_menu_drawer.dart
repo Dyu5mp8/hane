@@ -92,8 +92,9 @@ class CustomUserMenuDrawer extends MenuDrawer {
             children: <Widget>[
               const CustomDrawerHeader(),
               ...buildUserSpecificTiles(context),
-              buildTutorialTile(context),
+              
               DrugNameChoiceTile(),
+              buildTutorialTile(context),
               buildAboutTile(context),
               buildLogoutTile(context),
             ],
