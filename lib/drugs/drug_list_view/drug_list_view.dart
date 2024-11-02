@@ -262,6 +262,7 @@ class _DrugListViewState extends State<DrugListView> {
                 ),
                 onSelected: (bool selected) {
                   setState(() {
+                    _searchController.clear();
                     _selectedCategory = null;
                   });
                 },
