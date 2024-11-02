@@ -94,6 +94,7 @@ class CustomUserMenuDrawer extends MenuDrawer {
               ...buildUserSpecificTiles(context),
               buildTutorialTile(context),
               DrugNameChoiceTile(),
+              buildAboutTile(context),
               buildLogoutTile(context),
             ],
           ),

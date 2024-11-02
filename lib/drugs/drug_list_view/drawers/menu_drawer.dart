@@ -1,6 +1,7 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/ui_components/custom_drawer_header.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/loginPage.dart';
@@ -54,12 +55,11 @@ abstract class MenuDrawer extends StatelessWidget {
             padding: EdgeInsets.zero,
             children: <Widget>[
               const CustomDrawerHeader(),
-              DrugNameChoiceTile(),
-        
-
+              const DrugNameChoiceTile(),
               ...buildUserSpecificTiles(context),
-              buildLogoutTile(
-                  context), // Common logout tile// User-specific tiles in subclasses
+              buildTutorialTile(context), // Added tutorial tile
+              buildAboutTile(context), // Added about tile
+              buildLogoutTile(context), // Common logout tile
             ],
           ),
         );
@@ -77,7 +77,6 @@ abstract class MenuDrawer extends StatelessWidget {
     );
   }
 
-
   ListTile buildTutorialTile(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.help),
@@ -90,13 +89,61 @@ abstract class MenuDrawer extends StatelessWidget {
     );
   }
 
+  // Updated return type to Widget
+  Widget buildAboutTile(BuildContext context) {
+    return FutureBuilder<PackageInfo>(
+      future: PackageInfo.fromPlatform(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final packageInfo = snapshot.data!;
+          return AboutListTile(
+            child: const Text('Om applikationen'),  
+
+            icon: const Icon(Icons.info),
+            applicationName: packageInfo.appName,
+            applicationVersion:
+                '${packageInfo.version}+${packageInfo.buildNumber}',
+            applicationLegalese: '${DateTime.now().year}',
+            
+            aboutBoxChildren: const [
+              SizedBox(height: 5),
+              Text(
+                   'Denna app är avsedd för medicinska yrkesverksamma. Informationen som '
+              'presenteras är endast för utbildningsändamål och bör inte användas som '
+              'ersättning för en klinisk bedömning. '
+              'Skaparen av denna plattform tar inget ' 
+              'ansvar för användningen av informationen i denna app.'
+
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Om du har några frågor eller upptäcker något fel med appen, maila vichy576@gmail.com',
+            
+              ),
+            ],
+          );
+        } else {
+          // While the package info is loading, show a placeholder
+          return ListTile(
+            leading: const Icon(Icons.info),
+            title: const Text('Om applikationen'),
+            onTap: () {
+              // Do nothing or show a message
+            },
+          );
+        }
+      },
+    );
+  }
 
   // Abstract method to be implemented in subclasses
   List<Widget> buildUserSpecificTiles(BuildContext context);
 }
 class DrugNameChoiceTile extends StatefulWidget {
+  const DrugNameChoiceTile({super.key});
+
   @override
-  _DrugNameChoiceTileState createState() => _DrugNameChoiceTileState();
+  State<DrugNameChoiceTile> createState() => _DrugNameChoiceTileState();
 }
 
 class _DrugNameChoiceTileState extends State<DrugNameChoiceTile> {
@@ -111,13 +158,13 @@ class _DrugNameChoiceTileState extends State<DrugNameChoiceTile> {
           Provider.of<DrugListProvider>(context, listen: false)
               .setPreferGeneric(value);
           setState(() {
-
-         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                  value ? 'Ändrat' : 'Ändrat, generika visas under i fetstil'),
-            ),
-          );
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(value
+                    ? 'Ändrat: Generiska namn visas först'
+                    : 'Ändrat: Generiska namn visas under i fetstil'),
+              ),
+            );
           });
         },
       ),
