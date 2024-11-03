@@ -24,7 +24,6 @@ class DrugListRow extends StatelessWidget {
         ),
       );
     } else {
-
       return Consumer<DrugListProvider>(builder: (context, provider, child) {
         return ListTile(
           dense: true,
@@ -38,10 +37,11 @@ class DrugListRow extends StatelessWidget {
           ),
           title: Text(
             _drug.preferredDisplayName(preferGeneric: provider.preferGeneric),
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18),
+            style:
+                Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 18),
           ),
-          subtitle: _buildSubtitle(context,
-              preferGeneric: provider.preferGeneric),
+          subtitle:
+              _buildSubtitle(context, preferGeneric: provider.preferGeneric),
           trailing:
               _drug.hasUnreadMessages ? _buildNewMessageChip(context) : null,
           onTap: () {
@@ -84,63 +84,63 @@ class DrugListRow extends StatelessWidget {
       ),
     );
   }
-Widget _buildSubtitle(BuildContext context, {preferGeneric = false}) {
-  List<dynamic>? brandNames;
-  brandNames = _drug.preferredSecondaryNames(preferGeneric: preferGeneric);
-  // Check if brandNames is null or empty
-  if (brandNames == null || brandNames.isEmpty) {
-    return const SizedBox.shrink(); // No brand names, return empty widget
-  }
-  // Construct the rich text for brand names
-  List<TextSpan> textSpans = [];
 
-  if (preferGeneric == true ) {
-    // Apply the specified TextStyle to all names
-    for (var name in brandNames) {
-      textSpans.add(TextSpan(
-        text: name,
-        style: const TextStyle(
-        
-          fontSize: 11,
-          fontStyle: FontStyle.italic,
-        ),
-      ));
+  Widget _buildSubtitle(BuildContext context, {preferGeneric = false}) {
+    List<dynamic>? brandNames;
+    brandNames = _drug.preferredSecondaryNames(preferGeneric: preferGeneric);
+    // Check if brandNames is null or empty
+    if (brandNames == null || brandNames.isEmpty) {
+      return const SizedBox.shrink(); // No brand names, return empty widget
+    }
+    // Construct the rich text for brand names
+    List<TextSpan> textSpans = [];
 
-      // Add a comma separator if it's not the last item
-      if (name != brandNames.last) {
-        textSpans.add(const TextSpan(text: ', '));
+    if (preferGeneric == true) {
+      // Apply the specified TextStyle to all names
+      for (var name in brandNames) {
+        textSpans.add(TextSpan(
+          text: name,
+          style: const TextStyle(
+            fontSize: 11,
+            fontStyle: FontStyle.italic,
+          ),
+        ));
+
+        // Add a comma separator if it's not the last item
+        if (name != brandNames.last) {
+          textSpans.add(const TextSpan(text: ', '));
+        }
+      }
+    } else {
+      // Use the existing logic when preferGeneric is false or null
+      String? genericName = _drug.genericName;
+      // Assuming `genericName` is in Drug class
+      for (var name in brandNames) {
+        textSpans.add(TextSpan(
+          text: name,
+          style: name == genericName
+              ? const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                )
+              : const TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 11,
+                ),
+        ));
+
+        // Add a comma separator if it's not the last item
+        if (name != brandNames.last) {
+          textSpans.add(const TextSpan(text: ', '));
+        }
       }
     }
-  } else {
-    // Use the existing logic when preferGeneric is false or null
-    String? genericName = _drug.genericName; 
-    // Assuming `genericName` is in Drug class
-    for (var name in brandNames) {
-      textSpans.add(TextSpan(
-        text: name,
-        style: name == genericName
-            ? const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 11,
-                fontStyle: FontStyle.italic,
-              )
-            : const TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 11,
-              ),
-      ));
 
-      // Add a comma separator if it's not the last item
-      if (name != brandNames.last) {
-        textSpans.add(const TextSpan(text: ', '));
-      }
-    }
+    return Text.rich(
+      TextSpan(
+        children: textSpans,
+      ),
+    );
   }
-
-  return Text.rich(
-    TextSpan(
-      children: textSpans,
-    ),
-  );
-}
 }

@@ -1,11 +1,8 @@
 import "package:flutter/material.dart";
 import 'package:hane/drugs/drug_list_view/drawers/menu_drawer.dart';
 import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
-import 'package:hane/drugs/drug_list_view/drawers/sync_drugs_dialog.dart';
-import 'package:hane/login/initializer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomUserMenuDrawer extends MenuDrawer {
   final Set<String> userDrugNames;
@@ -18,7 +15,6 @@ class CustomUserMenuDrawer extends MenuDrawer {
       Set<String> masterList, Set<String> userList) {
     return masterList.difference(userList);
   }
-
 
   @override
   Widget build(BuildContext context) {

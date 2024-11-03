@@ -9,7 +9,7 @@ class EditNotesDialog extends StatefulWidget {
       {Key? key,
       required this.drug,
       required this.isUserNote,
-     this.onUserNotesSaved})
+      this.onUserNotesSaved})
       : super(key: key);
 
   @override
@@ -33,7 +33,6 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +53,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                     widget.drug.userNotes = _notesController.text;
                     widget.onUserNotesSaved?.call();
                   } else {
-                  widget.drug.notes = _notesController.text;
+                    widget.drug.notes = _notesController.text;
                   }
                   Navigator.pop(context);
                 },
@@ -72,15 +71,16 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
 
                 const SizedBox(height: 8),
                 TextFormField(
-                    controller: _notesController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Anteckningar',
-                      border: OutlineInputBorder(),
-                    ),
-                    minLines: 4,
-                    maxLines: 10,
-                    textCapitalization: TextCapitalization.sentences,),
+                  controller: _notesController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Anteckningar',
+                    border: OutlineInputBorder(),
+                  ),
+                  minLines: 4,
+                  maxLines: 10,
+                  textCapitalization: TextCapitalization.sentences,
+                ),
               ],
             ),
           ),

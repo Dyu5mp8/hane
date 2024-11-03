@@ -4,7 +4,6 @@ class CustomChip extends StatelessWidget {
   final String label;
   final VoidCallback? onDeleted;
 
-
   const CustomChip({
     Key? key,
     required this.label,
@@ -25,19 +24,21 @@ class CustomChip extends StatelessWidget {
       ),
       visualDensity: VisualDensity.compact,
       backgroundColor: chipTheme.backgroundColor, // Use theme color
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // Smaller padding
+      padding: const EdgeInsets.symmetric(
+          horizontal: 8, vertical: 4), // Smaller padding
       deleteIcon: Icon(
         Icons.cancel,
         size: 16, // Smaller delete icon
         color: chipTheme.labelStyle?.color, // Use theme color
       ),
-      deleteIconColor: chipTheme.labelStyle?.color,  // Consistent delete icon color
+      deleteIconColor:
+          chipTheme.labelStyle?.color, // Consistent delete icon color
       onDeleted: onDeleted,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10), // Slightly rounded edges
-      
       ),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Make the chip smaller
+      materialTapTargetSize:
+          MaterialTapTargetSize.shrinkWrap, // Make the chip smaller
     );
   }
 }

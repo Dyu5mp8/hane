@@ -14,14 +14,11 @@ class IndicationTabView extends StatelessWidget {
     if ((drug.indications == null || drug.indications!.isEmpty) &&
         drug.changedByUser) {
       return Column(
-        mainAxisSize: MainAxisSize.min, // Shrinks the column to fit its children
+        mainAxisSize:
+            MainAxisSize.min, // Shrinks the column to fit its children
         children: [
-          Image.asset(
-            'assets/images/confused.png',
-            height: 200,
-            fit: BoxFit.fill
-          ),
-         
+          Image.asset('assets/images/confused.png',
+              height: 200, fit: BoxFit.fill),
           Text(
             "Inga indikationer ännu!",
             style: Theme.of(context)
@@ -30,8 +27,7 @@ class IndicationTabView extends StatelessWidget {
                 .copyWith(color: Colors.grey[800]),
             textAlign: TextAlign.center,
           ),
-        const Expanded(child: SizedBox(height: 10)),
-
+          const Expanded(child: SizedBox(height: 10)),
           const AddIndicationButton(),
           const Expanded(child: SizedBox(height: 20)),
         ],

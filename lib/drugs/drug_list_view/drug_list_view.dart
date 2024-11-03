@@ -15,7 +15,7 @@ class DrugListView extends StatefulWidget {
   const DrugListView({super.key});
 
   @override
- State<DrugListView> createState() => _DrugListViewState();
+  State<DrugListView> createState() => _DrugListViewState();
 }
 
 class _DrugListViewState extends State<DrugListView> {
@@ -29,7 +29,8 @@ class _DrugListViewState extends State<DrugListView> {
     super.initState();
     _searchController.addListener(_onSearchChanged);
     showTutorialScreenIfNew();
-    userMode = context.read<DrugListProvider>().userMode ?? UserMode.syncedMode; //fall back to synced mode
+    userMode = context.read<DrugListProvider>().userMode ??
+        UserMode.syncedMode; //fall back to synced mode
   }
 
   @override
@@ -46,7 +47,6 @@ class _DrugListViewState extends State<DrugListView> {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((value) => value.data()?['seenTutorial']);
-    
 
     if (mounted && (seenTutorial == null || !seenTutorial)) {
       Navigator.push(
@@ -206,8 +206,7 @@ class _DrugListViewState extends State<DrugListView> {
             color: const Color.fromARGB(148, 76, 78, 95),
           ),
           borderRadius: BorderRadius.circular(10),
-          
-        ),  
+        ),
         itemSize: 25,
         controller: _searchController,
         placeholder: 'Sök efter läkemedel',
@@ -324,7 +323,8 @@ class _DrugListViewState extends State<DrugListView> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
-    bool canEdit = !Provider.of<DrugListProvider>(context, listen: true).isSyncedMode;
+    bool canEdit =
+        !Provider.of<DrugListProvider>(context, listen: true).isSyncedMode;
     bool isAdmin = Provider.of<DrugListProvider>(context, listen: true).isAdmin;
     return AppBar(
       forceMaterialTransparency: true,
@@ -366,7 +366,6 @@ class _DrugListViewState extends State<DrugListView> {
                 onPressed: _onAddDrugPressed,
               )
             : const SizedBox.shrink(),
-      
       ],
     );
   }

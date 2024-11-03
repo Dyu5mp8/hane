@@ -249,7 +249,6 @@ class NoteRow extends StatelessWidget {
                   Bootstrap.chat_square_text_fill,
                   color: Theme.of(context).colorScheme.primary,
                   size: 25,
-                  
                 )),
             const SizedBox(width: 15),
             Flexible(
@@ -304,9 +303,11 @@ class ContraindicationRow extends StatelessWidget {
               isLabelVisible:
                   ((drug.expandedContraindication?.isNotEmpty ?? false) &&
                       !editMode),
-              child: const Icon(Bootstrap.exclamation_square_fill,
-                  color: Color.fromARGB(255, 194, 87, 45),
-                  size: 22,),
+              child: const Icon(
+                Bootstrap.exclamation_square_fill,
+                color: Color.fromARGB(255, 194, 87, 45),
+                size: 22,
+              ),
             ),
             const SizedBox(width: 15),
             drug.contraindication != null
@@ -374,18 +375,17 @@ class _UserNoteRowState extends State<UserNoteRow> {
         textCapitalization: TextCapitalization.sentences,
         maxLines: null, // Allows multiple lines
         textInputAction: TextInputAction.done,
-         onTapOutside: (event) {
-        FocusScope.of(context).unfocus();
-      },
+        onTapOutside: (event) {
+          FocusScope.of(context).previousFocus();
+        },
+
         decoration: const InputDecoration(
           border: InputBorder.none, // Remove borders
           labelText: "Egna anteckningar",
           labelStyle: TextStyle(
             fontSize: 15,
           ),
-        
-          
-          
+
           isDense: true, // Reduce height
           contentPadding: EdgeInsets.zero, // Remove padding
         ),

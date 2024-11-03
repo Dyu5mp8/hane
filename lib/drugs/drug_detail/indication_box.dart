@@ -11,7 +11,6 @@ class IndicationBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Drug>(
       builder: (context, drug, child) {
-    
         return Expanded(
           child: DefaultTabController(
             length: drug.indications!.length,
@@ -30,4 +29,3 @@ class IndicationBox extends StatelessWidget {
     );
   }
 }
-

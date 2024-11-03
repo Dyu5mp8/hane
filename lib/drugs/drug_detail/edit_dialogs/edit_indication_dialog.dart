@@ -12,7 +12,12 @@ class EditIndicationDialog extends StatefulWidget {
   final Function()? onSave;
 
   const EditIndicationDialog(
-      {super.key, required this.indication, required this.drug, this.withDosages = false, this.isNewIndication = false, this.onSave});
+      {super.key,
+      required this.indication,
+      required this.drug,
+      this.withDosages = false,
+      this.isNewIndication = false,
+      this.onSave});
 
   @override
   _EditIndicationDialogState createState() => _EditIndicationDialogState();
@@ -27,7 +32,10 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
   @override
   void initState() {
     super.initState();
-    _tempDosages = widget.indication.dosages?.map((dosage) => Dosage.from(dosage)).toList() ?? [];
+    _tempDosages = widget.indication.dosages
+            ?.map((dosage) => Dosage.from(dosage))
+            .toList() ??
+        [];
     setData();
   }
 
@@ -93,7 +101,8 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },
-                        child: const Text('Ta bort', style: TextStyle(color: Colors.red)),
+                        child: const Text('Ta bort',
+                            style: TextStyle(color: Colors.red)),
                       ),
                     ],
                   ),
@@ -152,7 +161,8 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          const Text('Doseringar', style: TextStyle(fontSize: 18)),
+                          const Text('Doseringar',
+                              style: TextStyle(fontSize: 18)),
                           const Spacer(),
                           IconButton(
                             onPressed: () {

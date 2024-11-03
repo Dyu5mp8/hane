@@ -10,7 +10,6 @@ class AdminMenuDrawer extends MenuDrawer {
     super.key,
   });
 
-  @override
   List<Widget> buildUserSpecificTiles(BuildContext context) {
     return [
       ListTile(
@@ -40,7 +39,6 @@ class AdminMenuDrawer extends MenuDrawer {
               const CustomDrawerHeader(),
               ...buildUserSpecificTiles(context),
               DrugNameChoiceTile(),
-              
               buildLogoutTile(context),
             ],
           ),

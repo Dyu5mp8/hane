@@ -253,7 +253,6 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     if (amount.isEmpty || unit.isEmpty) return null;
     double normalizedAmount = UnitParser.normalizeDouble(amount);
 
-
     return Dose.fromString(amount: normalizedAmount, unit: unit);
   }
 

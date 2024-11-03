@@ -5,41 +5,36 @@ import 'package:hane/utils/unit_service.dart';
 import 'package:hane/utils/smart_rounder.dart';
 import 'package:hane/utils/validation_exception.dart';
 
-class Dose with EquatableMixin{
+class Dose with EquatableMixin {
   final double amount;
   Map<String, String> units;
-  
 
   Dose({required this.amount, required this.units});
 
   // Constructor to create a Dose from a string representation
   Dose.fromString({required double amount, required String unit})
       : this.amount = amount,
-      
-        
         this.units = getDoseUnitsAsMap(unit.replaceAll("μg", "mikrog"));
-
 
   // Get the unit string representation
   String unitString() {
     var joinedUnits = units.values.join('/');
     var visuallyModifiedUnits = joinedUnits.replaceAll("mikrog", "μg");
-  
+
     return visuallyModifiedUnits;
   }
 
-String substanceUnitString() {
-  if (units.containsKey("substance")) {
-    var unit = units["substance"]!.replaceAll("mikrog", "μg");
-    return unit;
-  }
+  String substanceUnitString() {
+    if (units.containsKey("substance")) {
+      var unit = units["substance"]!.replaceAll("mikrog", "μg");
+      return unit;
+    }
 
     return "";
   }
 
   @override
   List<Object?> get props => [amount, units];
-
 
   @override
   String toString() {
@@ -48,7 +43,6 @@ String substanceUnitString() {
 
   // Get the dose units as a map
   static Map<String, String> getDoseUnitsAsMap(String unitInput) {
-
     Map validUnits = UnitValidator.validUnits;
 
     Map<String, String> unitMap = {};
@@ -58,7 +52,8 @@ String substanceUnitString() {
       throw ValidationException("Måste vara max 3 enheter (t.ex. mg/kg/h)");
     }
     if (!UnitValidator.isSubstanceUnit(parts[0])) {
-      throw ValidationException(" [${parts[0]}], bör vara ${UnitValidator.validSubstanceUnits().keys.join(", ")}");
+      throw ValidationException(
+          " [${parts[0]}], bör vara ${UnitValidator.validSubstanceUnits().keys.join(", ")}");
     } else {
       unitMap["substance"] = parts[0];
     }
@@ -84,10 +79,7 @@ String substanceUnitString() {
 
   // Convert a Dose instance to a Map
   Map<String, dynamic> toJson() {
-    return {
-      'amount': amount,
-      'unit': units.values.join('/')
-    };
+    return {'amount': amount, 'unit': units.values.join('/')};
   }
 
   // Convert the dose by weight, time, concentration, and adjust scale
@@ -103,14 +95,12 @@ String substanceUnitString() {
       var result = _convertedByWeight(value, fromUnits, convertWeight);
       value = result.$1;
       fromUnits = result.$2;
-   
     }
 
     if (convertTime != null && fromUnits.containsKey("time")) {
       var result = _convertedByTime(value, fromUnits, convertTime);
       value = result.$1;
       fromUnits = result.$2;
-     
     }
 
     if (convertConcentration != null) {
@@ -119,14 +109,12 @@ String substanceUnitString() {
       value = result.$1;
       fromUnits = result.$2 as Map<String, String>;
 
-
       return Dose(amount: value, units: fromUnits);
     }
 
     if (adjustScale) {
       var result = _scaledDose(Dose(amount: value, units: fromUnits));
-    return result;
-
+      return result;
     }
 
     return Dose(amount: value, units: fromUnits);
@@ -181,64 +169,65 @@ String substanceUnitString() {
     return (newValue, newUnits);
   }
 
-Dose scaleDose() {
-  return _scaledDose(this);
-}
-
-Dose _scaledDose(Dose fromDose) {
-  String? substanceUnit = fromDose.units["substance"];
-
-  // Check if the substance unit is valid
-  if (substanceUnit == null || !UnitValidator.isValidUnit(substanceUnit)) {
-    return fromDose;
+  Dose scaleDose() {
+    return _scaledDose(this);
   }
 
-  // Get the unit type
-  String unitType = UnitValidator.getUnitType(substanceUnit);
+  Dose _scaledDose(Dose fromDose) {
+    String? substanceUnit = fromDose.units["substance"];
 
-  // Define units list based on unit type
-  List<String> units;
-
-  if (unitType == "mass") {
-    units = ["g", "mg", "mikrog", "ng"];
-  } else if (unitType == "unitunit") {
-    units = ["E", "mE"];
-  } else {
-    // For other unit types, no scaling
-    return fromDose;
-  }
-
-  if (!units.contains(substanceUnit)) {
-    return fromDose;
-  }
-
-  int currentIndex = units.indexOf(substanceUnit);
-  int newIndex = currentIndex + _conversionStep(fromDose.amount, minimum: 0.5, maximum: 1000);
-
-  // Ensure the new index is within bounds
-  if (newIndex < 0) {
-    newIndex = 0; // Can't scale below the smallest unit
-  } else if (newIndex >= units.length) {
-    newIndex = units.length - 1; // Can't scale above the largest unit
-  }
-
-  // Adjust the dose value according to the units changing
-  double newValue = fromDose.amount;
-  if (newIndex > currentIndex) {
-    for (int i = currentIndex; i < newIndex; i++) {
-      newValue *= 1000; // Scaling down
+    // Check if the substance unit is valid
+    if (substanceUnit == null || !UnitValidator.isValidUnit(substanceUnit)) {
+      return fromDose;
     }
-  } else if (newIndex < currentIndex) {
-    for (int i = currentIndex; i > newIndex; i--) {
-      newValue /= 1000; // Scaling up
+
+    // Get the unit type
+    String unitType = UnitValidator.getUnitType(substanceUnit);
+
+    // Define units list based on unit type
+    List<String> units;
+
+    if (unitType == "mass") {
+      units = ["g", "mg", "mikrog", "ng"];
+    } else if (unitType == "unitunit") {
+      units = ["E", "mE"];
+    } else {
+      // For other unit types, no scaling
+      return fromDose;
     }
+
+    if (!units.contains(substanceUnit)) {
+      return fromDose;
+    }
+
+    int currentIndex = units.indexOf(substanceUnit);
+    int newIndex = currentIndex +
+        _conversionStep(fromDose.amount, minimum: 0.5, maximum: 1000);
+
+    // Ensure the new index is within bounds
+    if (newIndex < 0) {
+      newIndex = 0; // Can't scale below the smallest unit
+    } else if (newIndex >= units.length) {
+      newIndex = units.length - 1; // Can't scale above the largest unit
+    }
+
+    // Adjust the dose value according to the units changing
+    double newValue = fromDose.amount;
+    if (newIndex > currentIndex) {
+      for (int i = currentIndex; i < newIndex; i++) {
+        newValue *= 1000; // Scaling down
+      }
+    } else if (newIndex < currentIndex) {
+      for (int i = currentIndex; i > newIndex; i--) {
+        newValue /= 1000; // Scaling up
+      }
+    }
+
+    Map<String, String> newUnits = Map.from(fromDose.units);
+    newUnits["substance"] = units[newIndex];
+
+    return Dose(amount: newValue, units: newUnits);
   }
-
-  Map<String, String> newUnits = Map.from(fromDose.units);
-  newUnits["substance"] = units[newIndex];
-
-  return Dose(amount: newValue, units: newUnits);
-}
 
   // Calculate the conversion step for scaling the dose
   int _conversionStep(double amount,
@@ -259,15 +248,12 @@ Dose _scaledDose(Dose fromDose) {
     return count;
   }
 
-   int compareTo(Dose other) {
-
+  int compareTo(Dose other) {
     dynamic conversionFactor = UnitParser.getUnitConversionFactor(
       fromUnit: units["substance"]!,
       toUnit: other.units["substance"]!,
     );
     double convertedAmount = amount / conversionFactor;
     return convertedAmount.compareTo(other.amount);
-
-
-}
+  }
 }

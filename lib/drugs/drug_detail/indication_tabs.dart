@@ -82,12 +82,12 @@ class _IndicationTabsState extends State<IndicationTabs> {
                               Padding(
                                 padding: const EdgeInsets.all(0),
                                 child: Transform.scale(
-                                  scaleX: 0.6,
-                                  origin: const Offset(-10, 0),
+                                    scaleX: 0.6,
+                                    origin: const Offset(-10, 0),
                                     child: const Icon(
-                                  Icons.drag_handle,
-                                  size: 30,
-                                )),
+                                      Icons.drag_handle,
+                                      size: 30,
+                                    )),
                               ),
                               Text(indication.name)
                             ])))

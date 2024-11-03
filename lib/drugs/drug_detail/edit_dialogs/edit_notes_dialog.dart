@@ -18,16 +18,18 @@ class EditNotesDialog extends StatefulWidget {
 
 class _EditNotesDialogState extends State<EditNotesDialog> {
   final TextEditingController _notesController = TextEditingController();
-  final TextEditingController _expandedNotesController = TextEditingController();
+  final TextEditingController _expandedNotesController =
+      TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     // Initialize the controllers with the existing data
-    _notesController.text = widget.isUserNote ? widget.drug.userNotes ?? '' : widget.drug.notes ?? '';
+    _notesController.text = widget.isUserNote
+        ? widget.drug.userNotes ?? ''
+        : widget.drug.notes ?? '';
     _expandedNotesController.text = widget.drug.expandedNotes ?? '';
-
   }
 
   @override
@@ -35,8 +37,6 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
     _notesController.dispose();
     super.dispose();
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +58,8 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                     widget.drug.userNotes = _notesController.text;
                     widget.onUserNotesSaved?.call();
                   } else {
-                  widget.drug.notes = _notesController.text;
-                  widget.drug.expandedNotes = _expandedNotesController.text;
-  
+                    widget.drug.notes = _notesController.text;
+                    widget.drug.expandedNotes = _expandedNotesController.text;
                   }
                   Navigator.pop(context);
                 },
@@ -78,19 +77,20 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
 
                 const SizedBox(height: 8),
                 TextFormField(
-                    controller: _notesController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Anteckningar',
-                      border: OutlineInputBorder(),
-                    ),
-                    minLines: 4,
-                    maxLines: 10,
-                    textCapitalization: TextCapitalization.sentences,),
+                  controller: _notesController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Anteckningar',
+                    border: OutlineInputBorder(),
+                  ),
+                  minLines: 4,
+                  maxLines: 10,
+                  textCapitalization: TextCapitalization.sentences,
+                ),
 
-                 const SizedBox(height: 8),
-                 if (!widget.isUserNote)
-                TextFormField(
+                const SizedBox(height: 8),
+                if (!widget.isUserNote)
+                  TextFormField(
                     controller: _expandedNotesController,
                     autofocus: true,
                     decoration: const InputDecoration(
@@ -99,8 +99,8 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                     ),
                     minLines: 4,
                     maxLines: 10,
-                    textCapitalization: TextCapitalization.sentences,),
-                  
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
               ],
             ),
           ),

@@ -1,6 +1,6 @@
-
 import 'package:hane/drugs/models/dose.dart';
 import 'package:equatable/equatable.dart';
+
 class Dosage with EquatableMixin {
   String? _instruction;
   String? _administrationRoute;
@@ -23,7 +23,6 @@ class Dosage with EquatableMixin {
         _higherLimitDose = higherLimitDose,
         _maxDose = maxDose;
 
-
   Dosage.from(Dosage dosage)
       : _instruction = dosage.instruction,
         _administrationRoute = dosage.administrationRoute,
@@ -32,7 +31,7 @@ class Dosage with EquatableMixin {
         _higherLimitDose = dosage.higherLimitDose,
         _maxDose = dosage.maxDose;
 
-@override
+  @override
   List<Object?> get props => [
         _instruction,
         _administrationRoute,
@@ -50,38 +49,29 @@ class Dosage with EquatableMixin {
   Dose? get higherLimitDose => _higherLimitDose;
   Dose? get maxDose => _maxDose;
 
-
-
-
   // Setters with notification
   set instruction(String? newInstruction) {
     _instruction = newInstruction;
-    
   }
 
   set administrationRoute(String? newRoute) {
     _administrationRoute = newRoute;
-    
   }
 
   set dose(Dose? newDose) {
     _dose = newDose;
-    
   }
 
   set lowerLimitDose(Dose? newLowerLimitDose) {
     _lowerLimitDose = newLowerLimitDose;
-    
   }
 
   set higherLimitDose(Dose? newHigherLimitDose) {
     _higherLimitDose = newHigherLimitDose;
-    
   }
 
   set maxDose(Dose? newMaxDose) {
     _maxDose = newMaxDose;
-    
   }
 
   // Convert Dosage to JSON

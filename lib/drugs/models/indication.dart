@@ -1,7 +1,6 @@
 import 'package:hane/drugs/models/dosage.dart';
 import 'package:equatable/equatable.dart';
 
-
 class Indication with EquatableMixin {
   // Private fields
   String _name;
@@ -19,7 +18,8 @@ class Indication with EquatableMixin {
 
   Indication.from(Indication indication)
       : _name = indication.name,
-        dosages = indication.dosages?.map((dosage) => Dosage.from(dosage)).toList(),
+        dosages =
+            indication.dosages?.map((dosage) => Dosage.from(dosage)).toList(),
         _notes = indication.notes,
         isPediatric = indication.isPediatric;
 
@@ -45,7 +45,6 @@ class Indication with EquatableMixin {
     }
   }
 
-
   // Convert an Indication instance to a Map
   Map<String, dynamic> toJson() {
     return {
@@ -59,14 +58,15 @@ class Indication with EquatableMixin {
   factory Indication.fromFirestore(Map<String, dynamic> map) {
     return Indication(
       name: map['name'] as String,
-      dosages: map['dosages'] != null ? (map['dosages'] as List).map((item) => Dosage.fromFirestore(item as Map<String, dynamic>)).toList() : null,
+      dosages: map['dosages'] != null
+          ? (map['dosages'] as List)
+              .map((item) => Dosage.fromFirestore(item as Map<String, dynamic>))
+              .toList()
+          : null,
       notes: map['notes'] as String?,
       isPediatric: map['isPediatric'] ?? false,
     );
   }
 
-
-
-int get totalDosageInstructions => (dosages?.length ?? 0);
-
+  int get totalDosageInstructions => (dosages?.length ?? 0);
 }

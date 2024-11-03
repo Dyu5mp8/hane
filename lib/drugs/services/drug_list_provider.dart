@@ -5,6 +5,7 @@ import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hane/login/user_status.dart';
+
 class DrugListProvider with ChangeNotifier {
   String _masterUID = "master";
   String? _user;
@@ -65,7 +66,6 @@ class DrugListProvider with ChangeNotifier {
 
   void updateUserBehavior() {
     if (_isSyncedMode) {
-
       setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
       notifyListeners();
     } else {
@@ -86,6 +86,7 @@ class DrugListProvider with ChangeNotifier {
     clearProvider();
     super.dispose();
   }
+
   Stream<List<Drug>> getDrugsStream() {
     categories = userBehavior!.categories;
 
@@ -144,7 +145,7 @@ class DrugListProvider with ChangeNotifier {
     }
   }
 
-   Stream<QuerySnapshot<Map<String, dynamic>>> getChatStream(String drugId) {
+  Stream<QuerySnapshot<Map<String, dynamic>>> getChatStream(String drugId) {
     var db = FirebaseFirestore.instance;
 
     return db
@@ -157,19 +158,16 @@ class DrugListProvider with ChangeNotifier {
         .snapshots();
   }
 
-
-   Future<void> sendChatMessage(String drugId, String message) async {
-    String? currentUserEmail = FirebaseAuth.instance.currentUser?.email ?? 'Anonym';
+  Future<void> sendChatMessage(String drugId, String message) async {
+    String? currentUserEmail =
+        FirebaseAuth.instance.currentUser?.email ?? 'Anonym';
 
     try {
       var db = FirebaseFirestore.instance;
 
       // Reference to the drug document in 'users/{masterUID}/drugs/{drugId}'
-      DocumentReference drugDocRef = db
-          .collection('users')
-          .doc(masterUID)
-          .collection('drugs')
-          .doc(drugId);
+      DocumentReference drugDocRef =
+          db.collection('users').doc(masterUID).collection('drugs').doc(drugId);
 
       // Create a batch write to perform atomic operations
       WriteBatch batch = db.batch();
@@ -193,7 +191,9 @@ class DrugListProvider with ChangeNotifier {
         {
           'lastMessageTimestamp': Timestamp.now(),
         },
-        SetOptions(merge: true), // This will merge with existing data or create the document if it doesn't exist
+        SetOptions(
+            merge:
+                true), // This will merge with existing data or create the document if it doesn't exist
       );
 
       // Commit the batch
@@ -213,7 +213,9 @@ class DrugListProvider with ChangeNotifier {
       DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
       if (userDoc.exists) {
-        isSyncedMode = (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ?? false;
+        isSyncedMode =
+            (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ??
+                false;
       } else {
         isSyncedMode = false;
       }
@@ -242,7 +244,8 @@ class DrugListProvider with ChangeNotifier {
       DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
       if (userDoc.exists) {
-        preferGeneric = (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
+        preferGeneric =
+            (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
       } else {
         preferGeneric = true;
       }
@@ -273,16 +276,13 @@ class DrugListProvider with ChangeNotifier {
     }
   }
 
-
-
   Future<void> updateLastReadTimestamp(String drugId) async {
-  await FirebaseFirestore.instance.collection('users').doc(_user).set({
-    'lastReadTimestamps': {
-      drugId: Timestamp.now(),
-    },
-  }, SetOptions(merge: true));
-}
-
+    await FirebaseFirestore.instance.collection('users').doc(_user).set({
+      'lastReadTimestamps': {
+        drugId: Timestamp.now(),
+      },
+    }, SetOptions(merge: true));
+  }
 
   Future<void> markEveryMessageAsRead(List<Drug> drugs) async {
     try {
@@ -308,11 +308,9 @@ class DrugListProvider with ChangeNotifier {
       await userDocRef.set({
         'lastReadTimestampsInitialized': true,
       }, SetOptions(merge: true));
-
     } catch (e) {
       print("Failed to mark every message as read: $e");
       rethrow;
     }
   }
 }
-

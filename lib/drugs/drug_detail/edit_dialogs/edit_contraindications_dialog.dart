@@ -52,9 +52,8 @@ class _EditContraindicationsDialogState
                   // Update the drug name with the new value
                   widget.drug.contraindication =
                       _contraindicationController.text;
-                  widget.drug.expandedContraindication = _expandedContraindicationController.text;
-                      
-
+                  widget.drug.expandedContraindication =
+                      _expandedContraindicationController.text;
 
                   Navigator.pop(context);
                 },

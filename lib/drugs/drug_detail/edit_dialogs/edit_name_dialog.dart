@@ -31,8 +31,6 @@ class _EditNameDialogState extends State<EditNameDialog> {
     "Andning",
     "Antidot"
   ];
-  
-
 
   @override
   void initState() {
@@ -187,7 +185,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Name input
-        
+
                 const SizedBox(height: 40),
                 TextFormField(
                   textCapitalization: TextCapitalization.sentences,
@@ -199,9 +197,9 @@ class _EditNameDialogState extends State<EditNameDialog> {
                   ),
                   validator: val.validateName,
                 ),
-        
+
                 const SizedBox(height: 50),
-        
+
                 TextFormField(
                   controller: _brandNameController,
                   decoration: InputDecoration(
@@ -218,42 +216,39 @@ class _EditNameDialogState extends State<EditNameDialog> {
                   ),
                   textCapitalization: TextCapitalization.sentences,
                 ),
-        
+
                 const SizedBox(height: 8),
                 // Display brand names as chips
-          // Display brand names with an option to select generic name
-          
-        
-        Row(
-          children: [
-            const Text(
-        'Om det finns ett generiskt namn, markera detta',
-        style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        
-        SizedBox(
-        
-          child: Wrap(
-        spacing: 8,
-        runSpacing: 4,
-        children: _brandNames
-            .map((name) => CustomChipWithCheckbox(
-            label: name,
-            isSelected: _genericName == name,
-            onSelected: (selected) {
-              setState(() {
-                _genericName = selected! ? name : null;
-        
-              });
-            },
-            onDeleted: () => _removeBrandName(name),
-          ))
-            .toList(),
-          ),
-        ),
+                // Display brand names with an option to select generic name
+
+                Row(
+                  children: [
+                    const Text(
+                      'Om det finns ett generiskt namn, markera detta',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+
+                SizedBox(
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: _brandNames
+                        .map((name) => CustomChipWithCheckbox(
+                              label: name,
+                              isSelected: _genericName == name,
+                              onSelected: (selected) {
+                                setState(() {
+                                  _genericName = selected! ? name : null;
+                                });
+                              },
+                              onDeleted: () => _removeBrandName(name),
+                            ))
+                        .toList(),
+                  ),
+                ),
                 // Categories input
                 const SizedBox(height: 19),
                 TypeAheadField<String>(
@@ -267,20 +262,13 @@ class _EditNameDialogState extends State<EditNameDialog> {
                     child: child,
                   ),
                   hideKeyboardOnDrag: true,
-                  
                   hideOnUnfocus: true,
                   hideWithKeyboard: true,
                   hideOnEmpty: true,
-          
                   direction: VerticalDirection.up,
-               
-          
                   hideOnLoading: true,
                   hideOnError: true,
                   hideOnSelect: true,
-                  
-                  
-          
                   suggestionsCallback: (search) =>
                       _findSuggestions(search, _suggestedCategories),
                   builder: (context, controller, focusNode) {
@@ -303,23 +291,22 @@ class _EditNameDialogState extends State<EditNameDialog> {
                       textCapitalization: TextCapitalization.sentences,
                     );
                   },
-                  
                   itemBuilder: (context, category) {
                     return ListTile(
                       dense: true,
-                      title: Text(category, style: const TextStyle(fontSize: 13)),
+                      title:
+                          Text(category, style: const TextStyle(fontSize: 13)),
                       tileColor: Colors.white,
-                      
                     );
                   },
                   onSelected: (category) {
                     _addCategory(suggestion: category);
                   },
                 ),
-        
+
                 const SizedBox(height: 8),
                 // Display categories as chips
-        
+
                 Wrap(
                   spacing: 8,
                   runSpacing: 4,

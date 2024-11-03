@@ -45,8 +45,6 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
     }).toList();
   }
 
-
-
   void addConcentration() {
     if (_formKey.currentState!.validate()) {
       setState(() {
@@ -54,9 +52,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
           amount:
               UnitParser.normalizeDouble(concentrationAmountController.text),
           unit: '$selectedUnit/ml',
-        
         ));
-    
+
         concentrationAmountController.clear();
         selectedUnit = null;
       });
@@ -170,8 +167,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                         });
                       },
                       validator: (value) {
-                       val.validateConcentrationUnit(value);
-                       return null;
+                        val.validateConcentrationUnit(value);
+                        return null;
                       },
                     ),
                   ),

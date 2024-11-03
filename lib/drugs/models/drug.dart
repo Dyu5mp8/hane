@@ -129,38 +129,39 @@ class Drug extends ChangeNotifier with EquatableMixin {
   }
 
   String preferredDisplayName({bool preferGeneric = false}) {
-
     if (preferGeneric) {
       return _genericName ?? _name!;
     } else {
       return _name!;
     }
   }
-List<dynamic>? preferredSecondaryNames({bool preferGeneric = false}) {
-  if (preferGeneric) {
-    // Initialize a Set with _brandNames or an empty Set if null
-    Set<dynamic> tempNames = _brandNames?.toSet() ?? {};
 
-    // Add _name to the set if it's not null
-    if (_name != null) {
-      tempNames.add(_name!);
+  List<dynamic>? preferredSecondaryNames({bool preferGeneric = false}) {
+    if (preferGeneric) {
+      // Initialize a Set with _brandNames or an empty Set if null
+      Set<dynamic> tempNames = _brandNames?.toSet() ?? {};
+
+      // Add _name to the set if it's not null
+      if (_name != null) {
+        tempNames.add(_name!);
+      }
+
+      // Determine the name to remove
+      String? nameToRemove = _genericName ?? _name;
+
+      // Remove the name to exclude from the set
+      if (nameToRemove != null) {
+        tempNames.remove(nameToRemove);
+      }
+
+      // Return the list if it's not empty, else return null
+      return tempNames.isNotEmpty ? tempNames.toList() : null;
+    } else {
+      // When preferGeneric is false, return the brand names as they are
+      return _brandNames;
     }
-
-    // Determine the name to remove
-    String? nameToRemove = _genericName ?? _name;
-
-    // Remove the name to exclude from the set
-    if (nameToRemove != null) {
-      tempNames.remove(nameToRemove);
-    }
-
-    // Return the list if it's not empty, else return null
-    return tempNames.isNotEmpty ? tempNames.toList() : null;
-  } else {
-    // When preferGeneric is false, return the brand names as they are
-    return _brandNames;
   }
-}
+
   String? get userNotes => _userNotes;
   set userNotes(String? newUserNotes) {
     if (_userNotes != newUserNotes) {

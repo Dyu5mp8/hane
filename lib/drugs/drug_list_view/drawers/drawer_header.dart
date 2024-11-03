@@ -18,7 +18,8 @@ class CustomDrawerHeader extends StatelessWidget {
           user != null
               ? CircleAvatar(
                   radius: 28,
-                  backgroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.onSecondaryContainer,
                   child: Text(
                     user.email![0].toUpperCase(),
                     style: TextStyle(
@@ -29,7 +30,8 @@ class CustomDrawerHeader extends StatelessWidget {
                 )
               : CircleAvatar(
                   radius: 28,
-                  backgroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.onPrimaryContainer,
                   child: Icon(
                     Icons.person,
                     size: 28,
@@ -41,7 +43,6 @@ class CustomDrawerHeader extends StatelessWidget {
             'AnestesiH',
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
-                 
                 ),
           ),
           const SizedBox(height: 4),

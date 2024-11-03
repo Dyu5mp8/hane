@@ -138,14 +138,12 @@ class DosageViewHandler {
         if (lowerLimitDose != null && higherLimitDose != null) {
           if (dose != null) {
             return TextSpan(
-              text:
-                  "($lowerLimitDose - $higherLimitDose). ",
+              text: "($lowerLimitDose - $higherLimitDose). ",
               style: const TextStyle(fontWeight: FontWeight.bold),
             );
           } else {
             return TextSpan(
-              text:
-                  "$lowerLimitDose. - $higherLimitDose. ",
+              text: "$lowerLimitDose. - $higherLimitDose. ",
               style: const TextStyle(fontWeight: FontWeight.bold),
             );
           }
@@ -164,10 +162,9 @@ class DosageViewHandler {
             TextSpan(
               text: conversionInfo,
               style: const TextStyle(
-                fontSize: 14,
-                color: Color.fromARGB(255, 0, 0, 0),
-                fontStyle: FontStyle.italic
-              ),
+                  fontSize: 14,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                  fontStyle: FontStyle.italic),
             ),
           instructionSpan,
           doseSpan,
@@ -289,11 +286,9 @@ class DosageViewHandler {
   String? getCommonUnitSymbol() {
     if (dosage.dose != null) {
       return dosage.dose!.substanceUnitString();
-    }
-    else if (dosage.lowerLimitDose != null) {
+    } else if (dosage.lowerLimitDose != null) {
       return dosage.lowerLimitDose!.substanceUnitString();
-    }
-    else if (dosage.higherLimitDose != null) {
+    } else if (dosage.higherLimitDose != null) {
       return dosage.higherLimitDose!.substanceUnitString();
     }
     return null;

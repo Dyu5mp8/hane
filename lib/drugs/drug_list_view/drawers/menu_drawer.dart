@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
-import 'package:hane/login/initializer_widget.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +57,7 @@ abstract class MenuDrawer extends StatelessWidget {
             children: <Widget>[
               const CustomDrawerHeader(),
               const DrugNameChoiceTile(),
-  
+
               buildTutorialTile(context), // Added tutorial tile
               buildAboutTile(context), // Added about tile
               buildLogoutTile(context), // Common logout tile
@@ -99,47 +98,53 @@ abstract class MenuDrawer extends StatelessWidget {
         if (snapshot.hasData) {
           final packageInfo = snapshot.data!;
           return AboutListTile(
-            child: const Text('Om applikationen'),  
-
+            child: const Text('Om applikationen'),
             icon: const Icon(Icons.info),
             applicationName: packageInfo.appName,
             applicationVersion:
                 '${packageInfo.version}+${packageInfo.buildNumber}',
             applicationLegalese: '${DateTime.now().year}',
-            
             aboutBoxChildren: const [
               SizedBox(height: 5),
               Text(
-                   'Denna app är avsedd för medicinska yrkesverksamma. Informationen som '
-              'presenteras är endast för utbildningsändamål och bör inte användas som '
-              'ersättning för en klinisk bedömning. '
-              'Skaparen av denna plattform tar inget ' 
-              'ansvar för användningen av informationen i denna app.'
-
-              ),
+                  'Denna app är avsedd för medicinska yrkesverksamma. Informationen som '
+                  'presenteras är endast för utbildningsändamål och bör inte användas som '
+                  'ersättning för en klinisk bedömning. '
+                  'Skaparen av denna plattform tar inget '
+                  'ansvar för användningen av informationen i denna app.'),
               SizedBox(height: 10),
               Text(
                 'Om du har några frågor eller upptäcker något fel med appen, maila vichy576@gmail.com',
-            
               ),
             ],
           );
         } else {
           // While the package info is loading, show a placeholder
-          return ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('Om applikationen'),
-            onTap: () {
-              // Do nothing or show a message
-            },
+          return AboutListTile(
+            icon: const Icon(Icons.info),
+            applicationName: 'AnestesiH',
+            applicationLegalese: '${DateTime.now().year}',
+            aboutBoxChildren: const [
+              SizedBox(height: 5),
+              Text(
+                  'Denna app är avsedd för medicinska yrkesverksamma. Informationen som '
+                  'presenteras är endast för utbildningsändamål och bör inte användas som '
+                  'ersättning för en klinisk bedömning. '
+                  'Skaparen av denna plattform tar inget '
+                  'ansvar för användningen av informationen i denna app.'),
+              SizedBox(height: 10),
+              Text(
+                'Om du har några frågor eller upptäcker något fel med appen, maila vichy576@gmail.com',
+              ),
+            ],
+            child: const Text('Om applikationen'),
           );
         }
       },
     );
   }
-
-
 }
+
 class DrugNameChoiceTile extends StatefulWidget {
   const DrugNameChoiceTile({super.key});
 
@@ -172,6 +177,7 @@ class _DrugNameChoiceTileState extends State<DrugNameChoiceTile> {
     );
   }
 }
+
 class SyncedModeTile extends StatefulWidget {
   const SyncedModeTile({super.key});
 
@@ -200,8 +206,6 @@ class _SyncedModeTileState extends State<SyncedModeTile> {
                   : 'Ändrat: Eget läge aktiverat'),
             ),
           );
-
-    
         },
       ),
     );
