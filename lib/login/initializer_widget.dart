@@ -110,7 +110,7 @@ class InitializerWidget extends StatelessWidget {
       drugListProvider.userMode = UserMode.isAdmin;
     }
 
-    drugListProvider.getPreferGenericFromFirestore();
+    drugListProvider.initializeProvider();
 
 
     return const DrugListWrapper();

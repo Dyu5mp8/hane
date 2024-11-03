@@ -16,12 +16,13 @@ class DrugListProvider with ChangeNotifier {
   bool _isSyncedMode = false;
 
   DrugListProvider({this.userBehavior}) {
-    _initializeProvider();
+    initializeProvider();
   }
 
-  void _initializeProvider() async {
+  void initializeProvider() async {
     await getIsSyncedModeFromFirestore();
     await getPreferGenericFromFirestore();
+
     updateUserBehavior();
   }
 
@@ -62,15 +63,20 @@ class DrugListProvider with ChangeNotifier {
 
   void setUserBehavior(UserBehavior userBehavior) {
     this.userBehavior = userBehavior;
+    notifyListeners();
   }
 
   void updateUserBehavior() {
-    if (_isSyncedMode) {
+    if (_user == null) {
+      return;
+    }
+
+    if (isAdmin) {
+      setUserBehavior(AdminUserBehavior(masterUID: _masterUID));
+    } else if (_isSyncedMode) {
       setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
-      notifyListeners();
     } else {
       setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
-      notifyListeners();
     }
   }
 
