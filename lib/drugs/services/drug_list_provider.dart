@@ -15,9 +15,6 @@ class DrugListProvider with ChangeNotifier {
   bool _preferGeneric = false;
   bool _isSyncedMode = false;
 
-  DrugListProvider({this.userBehavior}) {
-    initializeProvider();
-  }
 
   void initializeProvider() async {
     await getIsSyncedModeFromFirestore();
