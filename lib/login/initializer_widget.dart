@@ -11,8 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class InitializerWidget extends StatelessWidget {
   final bool firstLogin;
 
-  const InitializerWidget({Key? key, this.firstLogin = false})
-      : super(key: key);
+  const InitializerWidget({super.key, this.firstLogin = false});
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Widget>(
