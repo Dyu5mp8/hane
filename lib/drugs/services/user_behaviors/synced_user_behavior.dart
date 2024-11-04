@@ -3,8 +3,7 @@ import "package:rxdart/rxdart.dart";
 
 class SyncedUserBehavior extends UserBehavior {
 
-  SyncedUserBehavior({required String user, required String masterUID})
-      : super(user: user, masterUID: masterUID);
+  SyncedUserBehavior({required String super.user, required super.masterUID});
 
   @override
   Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
@@ -18,8 +17,6 @@ Query<Map<String, dynamic>> userDrugsCollection = db.collection('users').doc(use
     Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
         drugsCollection.snapshots();
 
-    Stream<QuerySnapshot<Map<String, dynamic>>> userDrugsStream =
-        userDrugsCollection.snapshots();
 
     DocumentReference<Map<String, dynamic>> userNotesDocRef = db
         .collection('users')

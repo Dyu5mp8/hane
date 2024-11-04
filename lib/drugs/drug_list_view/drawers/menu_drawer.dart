@@ -102,7 +102,7 @@ abstract class MenuDrawer extends StatelessWidget {
             icon: const Icon(Icons.info),
             applicationName: packageInfo.appName,
             applicationVersion:
-                '${packageInfo.version}+${packageInfo.buildNumber}',
+                packageInfo.version, 
             applicationLegalese: '${DateTime.now().year}',
             aboutBoxChildren: const [
               SizedBox(height: 5),

@@ -23,7 +23,7 @@ class GenericErrorWidget extends StatelessWidget {
               Icon(Icons.error_outline, color: Colors.red, size: 60),
               SizedBox(height: 16),
               Text(
-                'An error occurred',
+                'Ett fel har inträffat',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -33,7 +33,7 @@ class GenericErrorWidget extends StatelessWidget {
               SizedBox(height: 16),
               
               Text(
-                errorMessage,
+                "felmeddelande: $errorMessage",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),

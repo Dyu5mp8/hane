@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final Color accentColor = Color.fromARGB(255, 41, 51, 81);
+  final Color accentColor = const Color.fromARGB(255, 41, 51, 81);
 
   bool _isLoading = false;
   bool _rememberMe = false; // Add "Remember Me" variable
@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: _isLoading
-            ? CircularProgressIndicator(color: Colors.white)
+            ? const CircularProgressIndicator(color: Colors.white)
             : const Text(
                 'Logga in',
                 style: TextStyle(fontSize: 20, color: Colors.white),
@@ -153,11 +153,11 @@ class _LoginPageState extends State<LoginPage> {
             controller: controller,
             obscureText: isPassword,
             autofillHints: autofillHint != null ? [autofillHint] : null,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-              fillColor: const Color.fromARGB(255, 232, 232, 255),
+              fillColor: Color.fromARGB(255, 232, 232, 255),
               filled: true,
             ),
           ),
@@ -229,7 +229,7 @@ Widget _createAccountLabel() {
     onTap: () {
       Navigator.push(
         context, 
-        MaterialPageRoute(builder: (context) => SignUpPage()),
+        MaterialPageRoute(builder: (context) => const SignUpPage()),
       );
     },
     child: Container(
@@ -266,9 +266,9 @@ Widget _createAccountLabel() {
     return Scaffold(
       body: Container(
         height: height,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: const AssetImage(
+            image: AssetImage(
                 "assets/images/concrete.jpg"), // Set your image path here
             fit: BoxFit.cover,
           ),

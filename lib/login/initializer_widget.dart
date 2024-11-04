@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/services/drug_list_wrapper.dart';
 import 'package:hane/drugs/services/user_behaviors/user_behavior.dart';
-import 'package:hane/login/drug_init_screen.dart';
 import 'package:hane/login/loginPage.dart';
-import 'package:hane/login/preference_selection_screen.dart';
-import 'package:hane/login/user_status.dart';
+import 'package:hane/startup_errors.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 
 class InitializerWidget extends StatelessWidget {
   final bool firstLogin;
@@ -46,25 +45,25 @@ class InitializerWidget extends StatelessWidget {
     String userId = user.uid;
     _logUserLogin(userId);
 
-   return _getHomeScreen(context, userId);
+    return _getHomeScreen(context, userId);
   }
 
-  Future<Widget> _getHomeScreen(
-      BuildContext context, String userId) async {
+  Future<Widget> _getHomeScreen(BuildContext context, String userId) async {
     final drugListProvider =
         Provider.of<DrugListProvider>(context, listen: false);
     drugListProvider.user = userId;
     try {
-  await drugListProvider.initializeProvider();
-  return const DrugListWrapper();
-} on Exception catch (e) {
-  return ErrorWidget(e);
-}
-
-
-    
+      await drugListProvider.initializeProvider();
+      return const DrugListWrapper();
+    } catch (e) {
+      return GenericErrorWidget(errorMessage: e.toString(), onRetry: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      }
+      );
+    }
   }
-
 
   Future<void> _logUserLogin(String userId) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
