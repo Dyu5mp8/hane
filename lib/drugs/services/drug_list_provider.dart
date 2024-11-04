@@ -16,9 +16,11 @@ class DrugListProvider with ChangeNotifier {
   bool _isSyncedMode = false;
 
 
-  void initializeProvider() async {
+
+  Future<void> initializeProvider() async {
     await getIsSyncedModeFromFirestore();
     await getPreferGenericFromFirestore();
+    await _checkIfUserIsAdmin(FirebaseAuth.instance.currentUser!);
 
     updateUserBehavior();
   }
@@ -41,19 +43,32 @@ class DrugListProvider with ChangeNotifier {
   set userMode(UserMode? value) {
     _userMode = value;
   }
-
-  bool get preferGeneric => _preferGeneric;
+    Future<void> _checkIfUserIsAdmin(User user) async {
+    try {
+      final idTokenResult = await user.getIdTokenResult();
+      if (idTokenResult.claims?['admin'] == true) {
+        userMode = UserMode.isAdmin;
+        
+      }
+      return;
+    } catch (e) {
+      print("Failed to check if user is admin: $e");
+      // Assume not admin when offline
+      return;
+    }
+    }
+ bool get preferGeneric => _preferGeneric;
   set preferGeneric(bool value) {
     _preferGeneric = value;
-    notifyListeners();
+    updateUserBehavior(); 
     writePreferGeneric();
   }
 
   bool get isSyncedMode => _isSyncedMode;
   set isSyncedMode(bool value) {
     _isSyncedMode = value;
-    writeIsSyncedMode();
     updateUserBehavior();
+    writeIsSyncedMode();
   }
 
   bool get isAdmin => userMode == UserMode.isAdmin;
@@ -71,9 +86,11 @@ class DrugListProvider with ChangeNotifier {
     if (isAdmin) {
       setUserBehavior(AdminUserBehavior(masterUID: _masterUID));
     } else if (_isSyncedMode) {
-      setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
+      setUserBehavior(
+          SyncedUserBehavior(user: _user!, masterUID: _masterUID));
     } else {
-      setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
+      setUserBehavior(
+          CustomUserBehavior(user: _user!, masterUID: _masterUID));
     }
   }
 
@@ -216,11 +233,10 @@ class DrugListProvider with ChangeNotifier {
       DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
       if (userDoc.exists) {
-        isSyncedMode =
-            (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ??
-                false;
+        // Set private variable directly to avoid calling setter
+        _isSyncedMode = (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ?? false;
       } else {
-        isSyncedMode = false;
+        _isSyncedMode = false;
       }
     } catch (e) {
       print("Failed to get preferSyncedMode: $e");
@@ -239,7 +255,6 @@ class DrugListProvider with ChangeNotifier {
     }
   }
 
-  // Existing methods for preferGeneric
   Future<void> getPreferGenericFromFirestore() async {
     try {
       var db = FirebaseFirestore.instance;
@@ -247,10 +262,10 @@ class DrugListProvider with ChangeNotifier {
       DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
       if (userDoc.exists) {
-        preferGeneric =
-            (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
+        // Set private variable directly to avoid calling setter
+        _preferGeneric = (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
       } else {
-        preferGeneric = true;
+        _preferGeneric = true;
       }
     } catch (e) {
       print("Failed to get preferGeneric: $e");
@@ -261,7 +276,7 @@ class DrugListProvider with ChangeNotifier {
   Future<void> writePreferGeneric() async {
     try {
       await FirebaseFirestore.instance.collection('users').doc(_user).set({
-        'preferGeneric': preferGeneric,
+        'preferGeneric': _preferGeneric,
       }, SetOptions(merge: true));
     } catch (e) {
       print("Failed to write preferGeneric: $e");

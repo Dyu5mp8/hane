@@ -44,94 +44,27 @@ class InitializerWidget extends StatelessWidget {
     }
 
     String userId = user.uid;
-    UserBehavior? behavior;
     _logUserLogin(userId);
 
-    // 1. Check if user is admin
-    final isAdmin = await _checkIfUserIsAdmin(user);
-    if (isAdmin) {
-      behavior = AdminUserBehavior(masterUID: 'master');
-      return _getHomeScreen(context, behavior, userId);
-    } else {
-      // 2. Check user's preference for synced mode
-      final preferSynced = await _preferSyncedMode(userId);
-
-      switch (preferSynced) {
-        case null: // No preference set yet
-          return PreferenceSelectionScreen(user: userId);
-
-        case true: // User prefers synced mode
-          behavior = SyncedUserBehavior(masterUID: 'master', user: userId);
-          return _getHomeScreen(context, behavior, userId);
-
-        case false: // User prefers custom mode
-          // 3. Set behavior for custom user
-          behavior = CustomUserBehavior(masterUID: 'master', user: userId);
-          return _getCustomUserHomeScreen(context, behavior, userId);
-      }
-    }
+   return _getHomeScreen(context, userId);
   }
 
-  Future<bool> _checkIfUserIsAdmin(User user) async {
+  Future<Widget> _getHomeScreen(
+      BuildContext context, String userId) async {
+    final drugListProvider =
+        Provider.of<DrugListProvider>(context, listen: false);
+    drugListProvider.user = userId;
     try {
-      final idTokenResult = await user.getIdTokenResult();
-      return idTokenResult.claims?['admin'] == true;
-    } catch (e) {
-      print("Failed to check if user is admin: $e");
-      // Assume not admin when offline
-      return false;
-    }
+  await drugListProvider.initializeProvider();
+  return const DrugListWrapper();
+} on Exception catch (e) {
+  return ErrorWidget(e);
+}
+
+
+    
   }
 
-  Future<bool?> _preferSyncedMode(String userId) async {
-    final prefs = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('preferences')
-        .doc("preferSyncedMode");
-    final snapshot = await prefs.get();
-
-    if (snapshot.exists) {
-      return snapshot.data()?['preferSyncedMode'];
-    } else {
-      return null;
-    }
-  }
-
-  Widget _getHomeScreen(
-      BuildContext context, UserBehavior userBehavior, String userId) {
-    final drugListProvider =
-        Provider.of<DrugListProvider>(context, listen: false);
-    drugListProvider.user = userId;
-    drugListProvider.setUserBehavior(userBehavior);
-    if (userBehavior is SyncedUserBehavior) {
-      drugListProvider.userMode = UserMode.syncedMode;
-    } else if (userBehavior is AdminUserBehavior) {
-      drugListProvider.userMode = UserMode.isAdmin;
-    }
-
-    drugListProvider.initializeProvider();
-
-
-    return const DrugListWrapper();
-  }
-
-  Future<Widget> _getCustomUserHomeScreen(
-      BuildContext context, UserBehavior behavior, String userId) async {
-    final drugListProvider =
-        Provider.of<DrugListProvider>(context, listen: false);
-    drugListProvider.user = userId;
-    drugListProvider.setUserBehavior(behavior);
-    drugListProvider.userMode = UserMode.customMode;
-
-    var dataStatus = await drugListProvider.getDataStatus();
-
-    if (dataStatus) {
-      return const DrugListWrapper();
-    } else {
-      return DrugInitScreen(user: userId);
-    }
-  }
 
   Future<void> _logUserLogin(String userId) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
