@@ -5,7 +5,6 @@ import 'package:hane/drugs/drug_detail/expanded_info/expanded_dialog.dart';
 import 'package:hane/drugs/drug_detail/ui_components/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/login/user_status.dart';
 import 'package:hane/drugs/drug_detail/ui_components/scroll_indicator.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -18,6 +17,8 @@ class OverviewBox extends StatefulWidget {
 
 class _OverviewBoxState extends State<OverviewBox> {
   final ScrollController _scrollController = ScrollController();
+  late DrugListProvider provider;
+  late Drug drug;
 
   @override
   void dispose() {
@@ -27,11 +28,18 @@ class _OverviewBoxState extends State<OverviewBox> {
   }
 
   @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    provider = Provider.of<DrugListProvider>(context, listen: false);
+    drug = Provider.of<Drug>(context, listen: false);
+
+  }
+
+  @override
   Widget build(BuildContext context) {
-    DrugListProvider provider =
-        Provider.of<DrugListProvider>(context, listen: false);
-    Drug drug = Provider.of<Drug>(context, listen: false);
-    bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode &&
+  
+    bool shouldShowUserNotes = (provider.isSyncedMode &&
         drug.changedByUser == false);
 
     return Container(
