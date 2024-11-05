@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hane/drugs/drug_detail/drug_chat/drug_chat.dart';
 import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:hane/login/user_status.dart';
+
 
 class DrugListProvider with ChangeNotifier {
   String _masterUID = "master";
@@ -177,54 +179,15 @@ class DrugListProvider with ChangeNotifier {
         .orderBy('timestamp', descending: true) // Fetch newest messages first
         .snapshots();
   }
-
-  Future<void> sendChatMessage(String drugId, String message) async {
-    String? currentUserEmail =
-        FirebaseAuth.instance.currentUser?.email ?? 'Anonym';
-
-    try {
-      var db = FirebaseFirestore.instance;
-
-      // Reference to the drug document in 'users/{masterUID}/drugs/{drugId}'
-      DocumentReference drugDocRef =
-          db.collection('users').doc(masterUID).collection('drugs').doc(drugId);
-
-      // Create a batch write to perform atomic operations
-      WriteBatch batch = db.batch();
-
-      // Create a new document reference for the message
-      DocumentReference messageRef = drugDocRef.collection('chat').doc();
-
-      // Prepare the message data
-      Map<String, dynamic> messageData = {
-        'user': currentUserEmail,
-        'message': message,
-        'timestamp': Timestamp.now(), // Add a timestamp to the message
-      };
-
-      // Add the message to the 'chat' subcollection using the batch
-      batch.set(messageRef, messageData);
-
-      // Use batch.set with merge:true to create or update the drug document
-      batch.set(
-        drugDocRef,
-        {
-          'lastMessageTimestamp': Timestamp.now(),
-        },
-        SetOptions(
-            merge:
-                true), // This will merge with existing data or create the document if it doesn't exist
-      );
-
-      // Commit the batch
-      await batch.commit();
-    } catch (e) {
-      // Handle any errors that occur during the batch write
-      print("Failed to send message: $e");
-      // Optionally, throw the error to handle it further up
-      throw e;
-    }
-  }
+// Inside DrugListProvider
+Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
+  await FirebaseFirestore.instance.collection('users')
+        .doc(masterUID)
+      .collection('drugs')
+      .doc(drugId)
+      .collection('chat')
+      .add(chatMessage.toMap());
+}
 
   Future<void> getIsSyncedModeFromFirestore() async {
     try {
@@ -331,4 +294,5 @@ class DrugListProvider with ChangeNotifier {
       rethrow;
     }
   }
+  
 }

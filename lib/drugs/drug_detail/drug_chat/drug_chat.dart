@@ -6,6 +6,39 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:intl/intl.dart';
 
+class ChatMessage {
+  final String message;
+  final String user;
+  final Timestamp timestamp;
+  final bool isSolved;
+
+
+  ChatMessage({
+    required this.message,
+    required this.user,
+    required this.timestamp,
+    this.isSolved = false,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'message': message,
+      'user': user,
+      'timestamp': timestamp,
+      'isSolved': isSolved,
+    };
+  }
+
+factory ChatMessage.fromFirestore(Map<String, dynamic> data) {
+  return ChatMessage(
+    message: data['message'],
+    user: data['user'],
+    timestamp: data['timestamp'],
+    isSolved: data['isSolved'] ?? false, // Provide a default value if null
+  );
+}
+}
+
 class DrugChat extends StatefulWidget {
   final Drug drug; // ID of the drug for which the chat is displayed
 
@@ -57,52 +90,45 @@ class _DrugChatState extends State<DrugChat> {
         children: [
           Expanded(
             child: StreamBuilder(
-              stream: Provider.of<DrugListProvider>(context)
-                  .getChatStream(widget.drug.id!),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                      child: CircularProgressIndicator()); // Loading indicator
-                }
-                if (snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text(
-                        "Ingen diskussion ännu"), // Displayed when there are no messages
-                  );
-                }
-                var chatDocs = snapshot.data!.docs;
+  stream: Provider.of<DrugListProvider>(context).getChatStream(widget.drug.id!),
+  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+    if (!snapshot.hasData) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (snapshot.data!.docs.isEmpty) {
+      return const Center(child: Text("Ingen diskussion ännu"));
+    }
 
-                // Scroll to the bottom when a new message arrives
-                WidgetsBinding.instance
-                    .addPostFrameCallback((_) => _scrollToBottom());
+    // Map documents to ChatMessage instances
+    List<ChatMessage> chatMessages = snapshot.data!.docs
+        .map((doc) => ChatMessage.fromFirestore(doc.data() as Map<String, dynamic>))
+        .toList();
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  shrinkWrap: true, // Take only the space needed
-                  physics:
-                      const AlwaysScrollableScrollPhysics(), // Allow scrolling when content is less
-                  itemCount: chatDocs.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  reverse: true, // Reverse the list and scroll direction
-                  itemBuilder: (context, index) {
-                    var chat = chatDocs[index];
-                    var isCurrentUser = chat['user'] ==
-                        FirebaseAuth.instance.currentUser?.email;
-                    Timestamp timestamp = chat['timestamp'] as Timestamp;
+    // Scroll to the bottom when a new message arrives
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: MessageBubble(
-                        message: chat['message'],
-                        user: chat['user'],
-                        isCurrentUser: isCurrentUser,
-                        timestamp: timestamp,
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
+    return ListView.builder(
+      controller: _scrollController,
+      shrinkWrap: true,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: chatMessages.length,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      reverse: true,
+      itemBuilder: (context, index) {
+        var chatMessage = chatMessages[index];
+        var isCurrentUser = chatMessage.user == FirebaseAuth.instance.currentUser?.email;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: MessageBubble(
+            chatMessage: chatMessage,
+            isCurrentUser: isCurrentUser,
+          ),
+        );
+      },
+    );
+  },
+),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -116,31 +142,31 @@ class _DrugChatState extends State<DrugChat> {
     );
   }
 }
-
 class MessageBubble extends StatelessWidget {
-  final String message;
-  final String user;
+  final ChatMessage chatMessage;
   final bool isCurrentUser;
-  final Timestamp timestamp;
 
   const MessageBubble({
-    super.key,
-    required this.message,
-    required this.user,
+    Key? key,
+    required this.chatMessage,
     required this.isCurrentUser,
-    required this.timestamp,
-  });
+  }) : super(key: key);
+
+  Color bubbleColor() {
+    double opacity = chatMessage.isSolved ? 0.5 : 1.0;
+    return isCurrentUser
+        ? Colors.blueAccent.withOpacity(opacity)
+        : Colors.grey[200]!.withOpacity(opacity);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Format the timestamp to a readable time (HH:mm)
-    String formattedTime = DateFormat('d MMM HH:mm').format(timestamp.toDate());
+    String formattedTime = DateFormat('d MMM HH:mm').format(chatMessage.timestamp.toDate());
 
     return Align(
       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Column(
-        crossAxisAlignment:
-            isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           // Message bubble
           Row(
@@ -148,28 +174,23 @@ class MessageBubble extends StatelessWidget {
             children: [
               if (!isCurrentUser)
                 CircleAvatar(
-                  child: Text(user[0].toUpperCase()),
+                  child: Text(chatMessage.user[0].toUpperCase()),
                 ),
               if (!isCurrentUser) const SizedBox(width: 10),
               Flexible(
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   decoration: BoxDecoration(
-                    color: isCurrentUser ? Colors.blueAccent : Colors.grey[200],
+                    color: bubbleColor(),
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(12),
                       topRight: const Radius.circular(12),
-                      bottomLeft: isCurrentUser
-                          ? const Radius.circular(12)
-                          : const Radius.circular(0),
-                      bottomRight: isCurrentUser
-                          ? const Radius.circular(0)
-                          : const Radius.circular(12),
+                      bottomLeft: isCurrentUser ? const Radius.circular(12) : Radius.zero,
+                      bottomRight: isCurrentUser ? Radius.zero : const Radius.circular(12),
                     ),
                   ),
                   child: Text(
-                    message,
+                    chatMessage.message,
                     style: TextStyle(
                       color: isCurrentUser ? Colors.white : Colors.black87,
                       fontSize: 16,
@@ -180,24 +201,22 @@ class MessageBubble extends StatelessWidget {
               if (isCurrentUser) const SizedBox(width: 10),
               if (isCurrentUser)
                 CircleAvatar(
-                  child: Text(user[0].toUpperCase()),
+                  child: Text(chatMessage.user[0].toUpperCase()),
                 ),
             ],
           ),
-          // Spacing between bubble and metadata
           const SizedBox(height: 5),
           // User and timestamp below the bubble
           Row(
-            mainAxisAlignment:
-                isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
               Text(
-                user,
+                chatMessage.user,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
               const SizedBox(width: 5),
               Text(
-                formattedTime, // Display the formatted timestamp
+                formattedTime,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
@@ -223,31 +242,33 @@ class ChatInputField extends StatefulWidget {
 class _ChatInputFieldState extends State<ChatInputField> {
   final TextEditingController _controller = TextEditingController();
   void _sendMessage() async {
-    var provider = Provider.of<DrugListProvider>(context, listen: false);
-    if (_controller.text.isEmpty) return;
+  var provider = Provider.of<DrugListProvider>(context, listen: false);
+  if (_controller.text.isEmpty) return;
 
-    String message = _controller.text;
-    _controller.clear();
+  String messageText = _controller.text;
+  _controller.clear();
 
-    try {
-      await provider.sendChatMessage(widget.drugId, message);
-      widget.onNewMessage(); // Notify that a new message has been sent
-    } catch (e) {
-      if (context.mounted) {
-        // Handle any errors that occur during sending the message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kunde inte skicka meddelandet')),
-        );
-        // Optionally, show an error message to the user
-      }
-    } finally {
-      if (context.mounted) {
-        FocusScope.of(context)
-            .unfocus(); // Hide the keyboard after sending the message
-      }
+  ChatMessage chatMessage = ChatMessage(
+    message: messageText,
+    user: FirebaseAuth.instance.currentUser?.email ?? 'Anonymous',
+    timestamp: Timestamp.now(),
+  );
+
+  try {
+    await provider.sendChatMessage(widget.drugId, chatMessage);
+    widget.onNewMessage();
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Kunde inte skicka meddelandet ${e.toString()}')),
+      );
+    }
+  } finally {
+    if (context.mounted) {
+      FocusScope.of(context).unfocus();
     }
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return Padding(
