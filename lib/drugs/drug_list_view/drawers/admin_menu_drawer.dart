@@ -22,6 +22,16 @@ class AdminMenuDrawer extends MenuDrawer {
                   Provider.of<List<Drug>>(context, listen: false));
         },
       ),
+       ListTile(
+        leading: const Icon(Icons.check_box_outline_blank_rounded),
+        title: const Text('Markera alla läkemedel som granskade'),
+        onTap: () {
+          Navigator.pop(context);
+          Provider.of<DrugListProvider>(context, listen: false)
+              .markEveryDrugAsReviewed(
+                  Provider.of<List<Drug>>(context, listen: false));
+        },
+      ),
     ];
   }
 

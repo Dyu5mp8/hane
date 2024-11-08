@@ -6,7 +6,9 @@ import 'package:hane/drugs/drug_detail/ui_components/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_detail/ui_components/scroll_indicator.dart';
+import 'package:hane/login/user_status.dart';
 import 'package:icons_plus/icons_plus.dart';
+
 
 class OverviewBox extends StatefulWidget {
   const OverviewBox({super.key});
@@ -39,8 +41,7 @@ class _OverviewBoxState extends State<OverviewBox> {
   @override
   Widget build(BuildContext context) {
   
-    bool shouldShowUserNotes = (provider.isSyncedMode &&
-        drug.changedByUser == false);
+    bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode);
 
     return Container(
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),

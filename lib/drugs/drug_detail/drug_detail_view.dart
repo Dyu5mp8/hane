@@ -10,7 +10,9 @@ import 'package:hane/drugs/drug_detail/indication_box.dart';
 import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+
 
 
 class DrugDetailView extends StatefulWidget {
@@ -203,31 +205,17 @@ class ReviewButton extends StatelessWidget {
     final availableReviewers = drugListProvider.reviewerUIDs.keys.toList();
 
     // Determine if all reviewers have accepted
-    bool allReviewersAccepted = true;
-    for (var reviewerUID in availableReviewers) {
-      if (!acceptedReviewers.contains(reviewerUID)) {
+    var allReviewersAccepted = true;
+    for (final reviewer in availableReviewers) {
+      if (!acceptedReviewers.contains(reviewer)) {
         allReviewersAccepted = false;
         break;
       }
     }
-
-    // Set badge color based on acceptance status
-    final badgeColor = allReviewersAccepted ? Colors.green : Colors.yellow;
+    final icon = !allReviewersAccepted ? Icon(Bootstrap.shield_fill_exclamation, color: const Color.fromARGB(255, 183, 125, 49), size: 20,) : Icon(Bootstrap.shield_fill_check, color: Colors.green, size:20);
 
     return IconButton(
-      icon: Stack(
-        children: [
-          const Icon(Icons.rate_review),
-          Positioned(
-            right: 0,
-            top: 0,
-            child: CircleAvatar(
-              radius: 6,
-              backgroundColor: badgeColor,
-            ),
-          ),
-        ],
-      ),
+      icon: icon,
       onPressed: () {
         showReviewersModal(context);
       },
@@ -248,7 +236,7 @@ class ChatButton extends StatelessWidget {
               smallSize: 10,
               child: Icon(Icons.forum),
             )
-          : const Icon(Icons.forum),
+          : Icon(Icons.forum),
       onPressed: () {
         Navigator.push(
           context,

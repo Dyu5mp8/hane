@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/drug_detail/drug_chat/drug_chat.dart';
-import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 
 import 'package:flutter/material.dart';
@@ -59,9 +58,11 @@ Map<String, String> get reviewerUIDs => _reviewerUIDs;
     try {
       final idTokenResult = await user.getIdTokenResult();
       if (idTokenResult.claims?['admin'] == true) {
+        
         userMode = UserMode.isAdmin;
         
       }
+    
       return;
     } catch (e) {
       print("Failed to check if user is admin: $e");
@@ -110,6 +111,8 @@ Map<String, String> get reviewerUIDs => _reviewerUIDs;
       return;
     }
 
+  
+
     if (isAdmin) {
       setUserBehavior(AdminUserBehavior(masterUID: _masterUID));
     } else if (_isSyncedMode) {
@@ -119,6 +122,8 @@ Map<String, String> get reviewerUIDs => _reviewerUIDs;
       setUserBehavior(
           CustomUserBehavior(user: _user!, masterUID: _masterUID));
     }
+
+
   }
 
   void clearProvider() {
@@ -332,6 +337,29 @@ Future<void> _getReviewerUIDs() async {
       },
     }, SetOptions(merge: true));
   }
+
+  Future<void> markEveryDrugAsReviewed(List<Drug> drugs) async {
+  try {
+    var db = FirebaseFirestore.instance;
+    WriteBatch batch = db.batch();
+    DocumentReference masterDocRef = db.collection('users').doc(masterUID);
+
+    for (var drug in drugs) {
+      if (drug.id != null) {
+        DocumentReference drugDocRef = masterDocRef.collection('drugs').doc(drug.id);
+        batch.set(drugDocRef, {
+          'reviewerUIDs': reviewerUIDs.keys.toList(),
+        }, SetOptions(merge: true));
+      }
+    }
+
+    await batch.commit();
+    print("Successfully marked every drug as reviewed.");
+  } catch (e) {
+    print("Failed to mark every drug as reviewed: $e");
+    rethrow;
+  }
+}
 
   Future<void> markEveryMessageAsRead(List<Drug> drugs) async {
     try {

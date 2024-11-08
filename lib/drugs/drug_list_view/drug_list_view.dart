@@ -23,6 +23,8 @@ class _DrugListViewState extends State<DrugListView> {
   String? _selectedCategory;
   final TextEditingController _searchController = TextEditingController();
   UserMode? userMode;
+  int _selectedIndex = 0;
+  final PageController _pageController = PageController();
 
   @override
   void initState() {
@@ -37,6 +39,7 @@ class _DrugListViewState extends State<DrugListView> {
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -62,15 +65,6 @@ class _DrugListViewState extends State<DrugListView> {
     }
   }
 
-// This is for clearing the search query and selected category when the details view is popped. Not used right now but might be requested.
-
-// void _onDetailsPopped() {
-//   if (!mounted) return; // Add this line to check if the widget is still mounted
-//   setState(() {
-//     _searchController.clear();
-//     _selectedCategory = null;
-//   });
-// }
   void _onSearchChanged() {
     if (!mounted) return;
     setState(() {
@@ -129,48 +123,105 @@ class _DrugListViewState extends State<DrugListView> {
     // Filter drugs based on search query and selected category
     List<Drug> filteredDrugs = _filterDrugs(drugs);
 
+    // Filter drugs with pending reviews for the current user
+    final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
+    final availableReviewers = Provider.of<DrugListProvider>(context, listen: false).reviewerUIDs.keys.toList();
+    List<Drug> pendingReviewDrugs = drugs.where((drug) {
+      final acceptedReviewers = drug.reviewerUIDs ?? [];
+      return availableReviewers.contains(currentUserUID) && !acceptedReviewers.contains(currentUserUID);
+    }).toList();
+
     List<dynamic> allCategories = drugs
         .where((drug) => drug.categories != null)
         .expand((drug) => drug.categories!)
         .toSet()
         .toList()
-      ..sort((a, b) => a.compareTo(b)); // Sorts the list alphabeticallyr
+      ..sort((a, b) => a.compareTo(b)); // Sorts the list alphabetically
+
     return Scaffold(
       appBar: _buildAppBar(context),
       drawer: buildDrawer(context, drugNames),
-      body: CustomScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        slivers: [
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (Provider.of<DrugListProvider>(context)
-                    .categories
-                    .isNotEmpty)
-                  _buildCategoryChips(allCategories),
-                const SizedBox(height: 30),
-              ],
-            ),
-          ),
-          filteredDrugs.isEmpty
-              ? const SliverFillRemaining(
-                  child: Center(
-                      child: Text('Inga läkemedel som matchar sökningen')),
-                )
-              : SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return DrugListRow(
-                        filteredDrugs[index],
-                        // onDetailPopped: _onDetailsPopped,
-                      );
-                    },
-                    childCount: filteredDrugs.length,
-                  ),
-                ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: [
+          _buildDrugListView(filteredDrugs, allCategories),
+          _buildPendingReviewListView(pendingReviewDrugs),
         ],
       ),
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildDrugListView(List<Drug> filteredDrugs, List<dynamic> allCategories) {
+    return CustomScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (Provider.of<DrugListProvider>(context)
+                  .categories
+                  .isNotEmpty)
+                _buildCategoryChips(allCategories),
+              const SizedBox(height: 30),
+            ],
+          ),
+        ),
+        filteredDrugs.isEmpty
+            ? const SliverFillRemaining(
+                child: Center(
+                    child: Text('Inga läkemedel som matchar sökningen')),
+              )
+            : SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return DrugListRow(
+                      filteredDrugs[index],
+                      // onDetailPopped: _onDetailsPopped,
+                    );
+                  },
+                  childCount: filteredDrugs.length,
+                ),
+              ),
+      ],
+    );
+  }
+
+  Widget _buildPendingReviewListView(List<Drug> pendingReviewDrugs) {
+    return CustomScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 30),
+            ],
+          ),
+        ),
+        pendingReviewDrugs.isEmpty
+            ? const SliverFillRemaining(
+                child: Center(
+                    child: Text('Inga läkemedel med väntande granskningar')),
+              )
+            : SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return DrugListRow(
+                      pendingReviewDrugs[index],
+                      // onDetailPopped: _onDetailsPopped,
+                    );
+                  },
+                  childCount: pendingReviewDrugs.length,
+                ),
+              ),
+      ],
     );
   }
 
@@ -324,7 +375,7 @@ class _DrugListViewState extends State<DrugListView> {
 
   AppBar _buildAppBar(BuildContext context) {
     bool canEdit =
-        !Provider.of<DrugListProvider>(context, listen: true).isSyncedMode;
+        !(Provider.of<DrugListProvider>(context, listen: true).userMode == UserMode.syncedMode);
     bool isAdmin = Provider.of<DrugListProvider>(context, listen: true).isAdmin;
     return AppBar(
       forceMaterialTransparency: true,
@@ -349,16 +400,18 @@ class _DrugListViewState extends State<DrugListView> {
               : const SizedBox.shrink(),
         ],
       ),
-      bottom: PreferredSize(
-        preferredSize:
-            const Size.fromHeight(50), // Adjusted height to fit content
-        child: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _buildSearchField(),
-            )),
-      ),
+      bottom: _selectedIndex == 0
+          ? PreferredSize(
+              preferredSize:
+                  const Size.fromHeight(50), // Adjusted height to fit content
+              child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _buildSearchField(),
+                  )),
+            )
+          : null,
       actions: [
         canEdit
             ? IconButton(
@@ -366,6 +419,28 @@ class _DrugListViewState extends State<DrugListView> {
                 onPressed: _onAddDrugPressed,
               )
             : const SizedBox.shrink(),
+      ],
+    );
+  }
+
+  BottomNavigationBar _buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      currentIndex: _selectedIndex,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+          _pageController.jumpToPage(index);
+        });
+      },
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.list),
+          label: 'Alla läkemedel',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.pending),
+          label: 'Väntande granskningar',
+        ),
       ],
     );
   }

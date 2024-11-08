@@ -4,6 +4,7 @@ import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class DrugListRow extends StatelessWidget {
   final Drug _drug;
@@ -42,8 +43,14 @@ class DrugListRow extends StatelessWidget {
           ),
           subtitle:
               _buildSubtitle(context, preferGeneric: provider.preferGeneric),
-          trailing:
-              _drug.hasUnreadMessages ? _buildNewMessageChip(context) : null,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (provider.isAdmin)
+                _buildReviewStatusIcon(context, provider.reviewerUIDs),
+              if (_drug.hasUnreadMessages) _buildNewMessageChip(context),
+            ],
+          ),
           onTap: () {
             Navigator.push(
               context,
@@ -67,6 +74,26 @@ class DrugListRow extends StatelessWidget {
         );
       });
     }
+  }
+
+  Icon _buildReviewStatusIcon(
+      BuildContext context, Map<String, String> availableReviewerUIDs) {
+    bool allReviewersAccepted() {
+      final drugReviewerUIDs = _drug.reviewerUIDs ?? [];
+      for (final reviewerUID in availableReviewerUIDs.keys) {
+        if (!drugReviewerUIDs.contains(reviewerUID)) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    final icon = !allReviewersAccepted()
+        ? Icon(Bootstrap.shield_fill_exclamation,
+            color: const Color.fromARGB(255, 183, 125, 49))
+        : Icon(Bootstrap.shield_fill_check, color: Colors.green);
+    return icon;
   }
 
   Chip _buildNewMessageChip(BuildContext context) {
