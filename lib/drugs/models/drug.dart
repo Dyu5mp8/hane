@@ -28,6 +28,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
   bool hasUnreadMessages = false;
   int unreadMessageCount = 0;
   Timestamp? _lastMessageTimestamp;
+  Set<String>? _reviewerUIDs = {};  
 
   Drug(
       {String? id,
@@ -45,7 +46,9 @@ class Drug extends ChangeNotifier with EquatableMixin {
       String? expandedNotes = '',
       String? userNotes,
       Timestamp? lastUpdated,
-      Timestamp? lastMessageTimestamp})
+      Timestamp? lastMessageTimestamp,
+      Set<String>? reviewerUIDs = const {}})
+      
       : _name = name ?? '',
         _changedByUser = changedByUser,
         _reviewedBy = reviewedBy,
@@ -61,7 +64,8 @@ class Drug extends ChangeNotifier with EquatableMixin {
         _genericName = genericName,
         _id = id,
         _userNotes = userNotes,
-        _lastMessageTimestamp = lastMessageTimestamp;
+        _lastMessageTimestamp = lastMessageTimestamp,
+        _reviewerUIDs = reviewerUIDs;
 
   Drug.from(Drug drug)
       : _id = drug.id,
@@ -83,6 +87,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
         _userNotes = drug.userNotes,
         _brandNames = drug.brandNames,
         _lastMessageTimestamp = drug._lastMessageTimestamp,
+        _reviewerUIDs = drug.reviewerUIDs,
         hasUnreadMessages = drug.hasUnreadMessages;
 
   @override
@@ -186,6 +191,33 @@ class Drug extends ChangeNotifier with EquatableMixin {
     }
   }
 
+  void addReviewerUID(String reviewerUID) {
+    _reviewerUIDs?.add(reviewerUID);
+    notifyListeners();
+  }
+
+  void removeReviewerUID(String reviewerUID) {
+    _reviewerUIDs?.remove(reviewerUID);
+    notifyListeners();
+  }
+
+//Called when drug is updated and needs to be reviewed again
+  void clearReviewerUIDs() {
+    _reviewerUIDs = {};
+    notifyListeners();
+  }
+
+  Set<String>? get reviewerUIDs => _reviewerUIDs;
+  set reviewerUIDs(Set<String>? newReviewerUIDs) {
+    if (_reviewerUIDs != newReviewerUIDs) {
+      _reviewerUIDs = newReviewerUIDs;
+      notifyListeners();
+    }
+  }
+
+
+  
+
   Timestamp? get lastUpdated => _lastUpdated;
   set lastUpdated(Timestamp? newLastUpdated) {
     if (_lastUpdated != newLastUpdated) {
@@ -193,6 +225,8 @@ class Drug extends ChangeNotifier with EquatableMixin {
       notifyListeners();
     }
   }
+
+  
 
   List<dynamic>? getOnlyBrandNames() {
     var tempNames = _brandNames?.toList();
@@ -312,6 +346,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
       'expandedNotes': _expandedNotes,
       'lastUpdated': _lastUpdated,
       'lastMessageTimestamp': _lastMessageTimestamp,
+      'reviewerUIDs': _reviewerUIDs,
     };
   }
 
@@ -340,6 +375,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
       expandedNotes: map['expandedNotes'] as String?,
       lastUpdated: map['lastUpdated'] as Timestamp?,
       lastMessageTimestamp: map['lastMessageTimestamp'],
+      reviewerUIDs: (map['reviewerUIDs'] as List<String>?)?.toSet(),
     );
   }
 }

@@ -3,77 +3,78 @@ import "package:hane/drugs/services/user_behaviors/user_behavior.dart";
 import 'package:rxdart/rxdart.dart';
 
 class AdminUserBehavior extends UserBehavior {
-
   AdminUserBehavior({required String masterUID}) : super(masterUID: masterUID);
+
   @override
-@override
+  Stream<List<Drug>> getDrugsStream({bool sortByGeneric = false}) {
+    var db = FirebaseFirestore.instance;
+    Query<Map<String, dynamic>> drugsCollection =
+        db.collection('users').doc(masterUID).collection('drugs');
 
-@override
-Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
-  var db = FirebaseFirestore.instance;
-  Query<Map<String, dynamic>> drugsCollection =
-      db.collection('users').doc(masterUID).collection('drugs');
+    // Get current user ID
+    String userId = FirebaseAuth.instance.currentUser!.uid;
 
-  // Get current user ID
-  String userId = FirebaseAuth.instance.currentUser!.uid;
+    // Stream of user's last read timestamps
+    Stream<DocumentSnapshot<Map<String, dynamic>>> userStream =
+        db.collection('users').doc(userId).snapshots();
 
-  // Stream of user's last read timestamps
-  Stream<DocumentSnapshot<Map<String, dynamic>>> userStream =
-      db.collection('users').doc(userId).snapshots();
+    // Stream of drugs
+    Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
+        drugsCollection.snapshots();
 
-  // Stream of drugs
-  Stream<QuerySnapshot<Map<String, dynamic>>> drugsStream =
-      drugsCollection.snapshots();
+    // Combine the streams using switchMap
+    return userStream.switchMap((userSnapshot) {
+      Map<String, dynamic> lastReadTimestamps =
+          userSnapshot.data()?['lastReadTimestamps'] ?? {};
 
-  // Combine the streams using switchMap
-  return userStream.switchMap((userSnapshot) {
-    Map<String, dynamic> lastReadTimestamps =
-        userSnapshot.data()?['lastReadTimestamps'] ?? {};
+      return drugsStream.map((drugsSnapshot) {
+        var drugsList = drugsSnapshot.docs
+            .map((doc) {
+              try {
+                var drugData = doc.data();
 
-    return drugsStream.map((drugsSnapshot) {
+                var drug = Drug.fromFirestore(drugData);
+                categories.addAll(drug.categories ?? []);
+                drug.id = doc.id;
 
+                // Get the last message timestamp from the drug data
+                Timestamp? lastMessageTimestamp =
+                    drugData['lastMessageTimestamp'];
 
-      var drugsList = drugsSnapshot.docs.map((doc) {
-        try {
-          var drugData = doc.data();
+                // Get the user's last read timestamp for this drug
+                Timestamp? userLastReadTimestamp = lastReadTimestamps[drug.id];
 
-          var drug = Drug.fromFirestore(drugData);
-          categories.addAll(drug.categories ?? []);
-          drug.id = doc.id;
+                // Determine if there are unread messages
+                if (lastMessageTimestamp != null &&
+                    (userLastReadTimestamp == null ||
+                        lastMessageTimestamp.compareTo(userLastReadTimestamp) >
+                            0)) {
+                  drug.hasUnreadMessages = true;
+                } else {
+                  drug.hasUnreadMessages = false;
+                }
 
-          // Get the last message timestamp from the drug data
-          Timestamp? lastMessageTimestamp = drugData['lastMessageTimestamp'];
+                return drug;
+              } catch (e) {
+                // Log the error and skip the problematic document
+                print("Error mapping document with ID ${doc.id}: $e");
+                return null;
+              }
+            })
+            .whereType<Drug>()
+            .toList(); // Filter out null values
 
+        drugsList.sort((a, b) => a
+            .preferredDisplayName(preferGeneric: sortByGeneric)
+            .toLowerCase()
+            .compareTo(b
+                .preferredDisplayName(preferGeneric: sortByGeneric)
+                .toLowerCase()));
 
-          // Get the user's last read timestamp for this drug
-          Timestamp? userLastReadTimestamp = lastReadTimestamps[drug.id];
-
-          // Determine if there are unread messages
-          if (lastMessageTimestamp != null &&
-              (userLastReadTimestamp == null ||
-                  lastMessageTimestamp.compareTo(userLastReadTimestamp) > 0)) {
-            drug.hasUnreadMessages = true;
-          } else {
-            drug.hasUnreadMessages = false;
-          }
-
-          return drug;
-        } catch (e) {
-          // Log the error and skip the problematic document
-          print("Error mapping document with ID ${doc.id}: $e");
-          return null;
-        }
-      }).whereType<Drug>().toList(); // Filter out null values
-
-
-        drugsList.sort(
-            (a, b) => a.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase().compareTo(b.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase()));
-      
-      return drugsList;
+        return drugsList;
+      });
     });
-  });
-}
-  
+  }
 
   @override
   Future<void> addDrug(Drug drug) async {
@@ -94,7 +95,8 @@ Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
         // Save the new drug document to Firestore
         await newDocRef.set(drug.toJson());
         await addDrugToIndex(newDocRef.id, drug.lastUpdated!);
-        drug.id = newDocRef.id; //intended side effect of updating passed drugs id.
+        drug.id =
+            newDocRef.id; //intended side effect of updating passed drugs id.
 
         return; // Exit early as we are done adding the new drug
       }
@@ -153,9 +155,7 @@ Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
         await indexDocRef.update({id: timestamp});
       } else {
         // Document does not exist, create it with the first key-value pair
-        await indexDocRef.set({
-          id: timestamp
-        });
+        await indexDocRef.set({id: timestamp});
       }
     } catch (e) {
       print("Failed to add drug ID and timestamp to index: $e");
@@ -164,7 +164,6 @@ Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
   }
 
   Future<void> removeDrugFromIndex(String id) async {
-
     try {
       var db = FirebaseFirestore.instance;
       DocumentReference indexDocRef = db
@@ -176,16 +175,11 @@ Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
       // Check if the document exists
       DocumentSnapshot snapshot = await indexDocRef.get();
 
-
-
       if (snapshot.exists) {
         // Document exists, update it by removing the key-value pair for the drug ID
         await indexDocRef.update({
           id: FieldValue
               .delete() // Remove the key-value pair where the key is the drug ID
-
-            
-
         });
       } else {
         print("Index document does not exist. No need to remove.");
@@ -195,6 +189,4 @@ Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
       rethrow;
     }
   }
-
-
 }

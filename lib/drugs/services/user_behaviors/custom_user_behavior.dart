@@ -183,6 +183,7 @@ Future<Set<String>> getDrugNamesFromMaster({String masterUser = 'master'}) async
       return {};
     }
   } catch (e) {
+    print("Failed to reawd");
     print("Failed to retrieve drug names: $e");
     rethrow;
   }
