@@ -28,7 +28,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
   bool hasUnreadMessages = false;
   int unreadMessageCount = 0;
   Timestamp? _lastMessageTimestamp;
-  Set<String>? _reviewerUIDs = {};  
+  List<dynamic>? _reviewerUIDs = [];  
 
   Drug(
       {String? id,
@@ -47,7 +47,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
       String? userNotes,
       Timestamp? lastUpdated,
       Timestamp? lastMessageTimestamp,
-      Set<String>? reviewerUIDs = const {}})
+      List<dynamic>? reviewerUIDs = const []})
       
       : _name = name ?? '',
         _changedByUser = changedByUser,
@@ -203,12 +203,12 @@ class Drug extends ChangeNotifier with EquatableMixin {
 
 //Called when drug is updated and needs to be reviewed again
   void clearReviewerUIDs() {
-    _reviewerUIDs = {};
+    _reviewerUIDs = [];
     notifyListeners();
   }
 
-  Set<String>? get reviewerUIDs => _reviewerUIDs;
-  set reviewerUIDs(Set<String>? newReviewerUIDs) {
+  List<dynamic>? get reviewerUIDs => _reviewerUIDs;
+  set reviewerUIDs(List<dynamic>? newReviewerUIDs) {
     if (_reviewerUIDs != newReviewerUIDs) {
       _reviewerUIDs = newReviewerUIDs;
       notifyListeners();
@@ -375,7 +375,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
       expandedNotes: map['expandedNotes'] as String?,
       lastUpdated: map['lastUpdated'] as Timestamp?,
       lastMessageTimestamp: map['lastMessageTimestamp'],
-      reviewerUIDs: (map['reviewerUIDs'] as List<String>?)?.toSet(),
+      reviewerUIDs: (map['reviewerUIDs'] as List<dynamic>?)?.toList(),
     );
   }
 }

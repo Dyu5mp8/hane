@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/drug_chat/drug_chat.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
@@ -8,6 +10,8 @@ import 'package:hane/drugs/drug_detail/indication_box.dart';
 import 'package:hane/drugs/drug_detail/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
+import 'package:provider/provider.dart';
+
 
 class DrugDetailView extends StatefulWidget {
   final bool isNewDrug;
@@ -44,30 +48,31 @@ class _DrugDetailViewState extends State<DrugDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const BackButton(),
-        title: Text(_editableDrug.name ?? 'Drug Details'),
-        centerTitle: true,
-        actions: [
-          if (Provider.of<DrugListProvider>(context, listen: false).userMode ==
-                  UserMode.isAdmin &&
-              !Provider.of<EditModeProvider>(context).editMode)
-            const ChatButton(),
-          if (!_editableDrug.changedByUser) const InfoButton(),
-          if (_editableDrug.changedByUser ||
-              Provider.of<DrugListProvider>(context, listen: false).userMode ==
-                  UserMode.isAdmin)
-            const EditModeButton(),
-        ],
-      ),
-      body: const Column(
-        children: [OverviewBox(), IndicationBox()],
-      ),
-    );
+    final drugListProvider = Provider.of<DrugListProvider>(context);
+        return Scaffold(
+          appBar: AppBar(
+            leading: const BackButton(),
+            title: Text(_editableDrug.name ?? 'Drug Details'),
+            centerTitle: true,
+            actions: [
+              const ReviewButton(),
+              if (drugListProvider.userMode == UserMode.isAdmin &&
+                  !Provider.of<EditModeProvider>(context).editMode)
+                const ChatButton(),
+              if (!_editableDrug.changedByUser)
+                const InfoButton(),
+              if (_editableDrug.changedByUser ||
+                  drugListProvider.userMode == UserMode.isAdmin)
+                const EditModeButton(),
+            ],
+          ),
+          body: const Column(
+            children: [OverviewBox(), IndicationBox()],
+          ),
+        );
+    
   }
 }
-
 //Appbar elements
 
 class BackButton extends StatelessWidget {
@@ -110,6 +115,121 @@ class BackButton extends StatelessWidget {
         } else {
           Navigator.pop(context); // Go back to the previous screen
         }
+      },
+    );
+  }
+}
+
+class ReviewButton extends StatelessWidget {
+  const ReviewButton({Key? key}) : super(key: key);
+
+  void showReviewersModal(BuildContext context) {
+    final drug = Provider.of<Drug>(context, listen: false);
+    final acceptedReviewers = List<String>.from(drug.reviewerUIDs ?? []);
+    final drugListProvider =
+        Provider.of<DrugListProvider>(context, listen: false);
+    final availableReviewers = drugListProvider.reviewerUIDs;
+    final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Välj granskare'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SizedBox(
+                width: double.maxFinite,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: availableReviewers.entries.map((entry) {
+                    final reviewerUID = entry.key;
+                    final reviewerEmail = entry.value;
+                    final isSelected = acceptedReviewers.contains(reviewerUID);
+                    final isCurrentUser = reviewerUID == currentUserUID;
+
+                    return CheckboxListTile(
+                      value: isSelected,
+                      title: Text(reviewerEmail),
+                      onChanged: isCurrentUser
+                          ? (bool? value) {
+                              setState(() {
+                                if (value == true) {
+                                  acceptedReviewers.add(reviewerUID);
+                                } else {
+                                  acceptedReviewers.remove(reviewerUID);
+                                }
+                              });
+                            }
+                          : null, // Disable checkbox for other users
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: isCurrentUser ? null : Colors.grey,
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Update the drug's reviewerUIDs
+                drug.reviewerUIDs = acceptedReviewers;
+                // Save changes using the DrugListProvider or appropriate method
+                Provider.of<DrugListProvider>(context, listen: false)
+                    .addDrug(drug);
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Spara'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Avbryt'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final drug = Provider.of<Drug>(context, listen: true);
+    final acceptedReviewers = drug.reviewerUIDs ?? [];
+    final drugListProvider =
+        Provider.of<DrugListProvider>(context, listen: false);
+    final availableReviewers = drugListProvider.reviewerUIDs.keys.toList();
+
+    // Determine if all reviewers have accepted
+    bool allReviewersAccepted = true;
+    for (var reviewerUID in availableReviewers) {
+      if (!acceptedReviewers.contains(reviewerUID)) {
+        allReviewersAccepted = false;
+        break;
+      }
+    }
+
+    // Set badge color based on acceptance status
+    final badgeColor = allReviewersAccepted ? Colors.green : Colors.yellow;
+
+    return IconButton(
+      icon: Stack(
+        children: [
+          const Icon(Icons.rate_review),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: CircleAvatar(
+              radius: 6,
+              backgroundColor: badgeColor,
+            ),
+          ),
+        ],
+      ),
+      onPressed: () {
+        showReviewersModal(context);
       },
     );
   }

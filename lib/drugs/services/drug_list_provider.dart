@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/drug_detail/drug_chat/drug_chat.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:hane/login/user_status.dart';
+
 
 
 class DrugListProvider with ChangeNotifier {
@@ -16,6 +18,8 @@ class DrugListProvider with ChangeNotifier {
   UserBehavior? userBehavior;
   bool _preferGeneric = false;
   bool _isSyncedMode = false;
+  Map<String, String> _reviewerUIDs = {};
+  bool _isReviewer = false;
 
 
 
@@ -23,11 +27,15 @@ class DrugListProvider with ChangeNotifier {
     await getIsSyncedModeFromFirestore();
     await getPreferGenericFromFirestore();
     await _checkIfUserIsAdmin(FirebaseAuth.instance.currentUser!);
-
+    await _checkIfUserIsReviewer(FirebaseAuth.instance.currentUser!);
+    await _getReviewerUIDs();
     updateUserBehavior();
   }
 
   String get masterUID => _masterUID;
+
+Map<String, String> get reviewerUIDs => _reviewerUIDs;
+
 
   set masterUID(String value) {
     _masterUID = value;
@@ -45,6 +53,8 @@ class DrugListProvider with ChangeNotifier {
   set userMode(UserMode? value) {
     _userMode = value;
   }
+
+
     Future<void> _checkIfUserIsAdmin(User user) async {
     try {
       final idTokenResult = await user.getIdTokenResult();
@@ -56,6 +66,21 @@ class DrugListProvider with ChangeNotifier {
     } catch (e) {
       print("Failed to check if user is admin: $e");
       // Assume not admin when offline
+      return;
+    }
+    }
+
+    Future<void> _checkIfUserIsReviewer(User user) async {
+
+    try {
+      final idTokenResult = await user.getIdTokenResult();
+      if (idTokenResult.claims?['reviewer'] == true) {
+        _isReviewer = true;
+      }
+      return;
+    } catch (e) {
+      print("Failed to check if user is reviewer: $e");
+      // Assume not reviewer when offline
       return;
     }
     }
@@ -124,6 +149,15 @@ class DrugListProvider with ChangeNotifier {
   }
 
   Future<void> addDrug(Drug drug) async {
+    var db = FirebaseFirestore.instance;
+    var drugDoc = await db.collection('users').doc(masterUID).collection('drugs').doc(drug.id).get();
+    if (!drugDoc.exists) {
+      throw Exception("Drug does not exist in master list.");
+    }
+    Drug drugToUpdate = Drug.fromFirestore(drugDoc.data()!);
+    if(drug != drugToUpdate) {
+      drug.clearReviewerUIDs();
+    }
     await userBehavior!.addDrug(drug);
   }
 
@@ -206,6 +240,40 @@ Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
       rethrow;
     }
   }
+
+  Future<void> addReviewUID(String drugId) async {
+    if (!_isReviewer) {
+      throw Exception("User is not a reviewer.");
+    }
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(masterUID).collection('drugs').doc(drugId).set({
+        'reviewerUIDs': FieldValue.arrayUnion([_user]),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print("Failed to add reviewUID: $e");
+      rethrow;
+    }
+  }
+  
+Future<void> _getReviewerUIDs() async {
+  try {
+    var db = FirebaseFirestore.instance;
+    DocumentSnapshot masterDoc = await db.collection('users').doc(masterUID).get();
+    if (masterDoc.exists) {
+      Map<String, dynamic>? data = masterDoc.data() as Map<String, dynamic>?;
+      if (data != null && data.containsKey('reviewers')) {
+        _reviewerUIDs = Map<String, String>.from(data['reviewers'] as Map);
+      } else {
+        _reviewerUIDs = {};
+      }
+    } else {
+      _reviewerUIDs = {};
+    }
+  } catch (e) {
+    print("Failed to get reviewerUIDs: $e");
+    rethrow;
+  }
+}
 
   Future<void> writeIsSyncedMode() async {
     try {
@@ -292,7 +360,8 @@ Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
     } catch (e) {
       print("Failed to mark every message as read: $e");
       rethrow;
-    }
-  }
   
+
+  }
+}
 }

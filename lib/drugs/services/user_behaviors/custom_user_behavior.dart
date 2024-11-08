@@ -1,14 +1,12 @@
 import "package:hane/drugs/services/user_behaviors/user_behavior.dart";
 
-
-
 class CustomUserBehavior extends UserBehavior {
-
   CustomUserBehavior({required String user, required String masterUID})
       : super(user: user, masterUID: masterUID);
+
+
   @override
-   @override
-  Stream<List<Drug>> getDrugsStream( {bool sortByGeneric = false}) {
+  Stream<List<Drug>> getDrugsStream({bool sortByGeneric = false}) {
     var db = FirebaseFirestore.instance;
     Query<Map<String, dynamic>> drugsCollection =
         db.collection('users').doc(user).collection('drugs');
@@ -17,23 +15,28 @@ class CustomUserBehavior extends UserBehavior {
         drugsCollection.snapshots();
 
     return drugsStream.map((drugsSnapshot) {
-      var drugsList = drugsSnapshot.docs.map((doc) {
-        try {
-          var drug = Drug.fromFirestore(doc.data());
-          categories.addAll(drug.categories ?? []);
-          drug.id = doc.id;
-          return drug;
-        } catch (e) {
-          // Log the error and skip the problematic document
-          print("Error mapping drug with ID ${doc.id}: $e");
-          return null;
-        }
-      }).whereType<Drug>().toList(); // Filter out null values
+      var drugsList = drugsSnapshot.docs
+          .map((doc) {
+            try {
+              var drug = Drug.fromFirestore(doc.data());
+              categories.addAll(drug.categories ?? []);
+              drug.id = doc.id;
+              return drug;
+            } catch (e) {
+              // Log the error and skip the problematic document
+              print("Error mapping drug with ID ${doc.id}: $e");
+              return null;
+            }
+          })
+          .whereType<Drug>()
+          .toList(); // Filter out null values
 
-      
-        drugsList.sort(
-            (a, b) => a.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase().compareTo(b.preferredDisplayName(preferGeneric: sortByGeneric).toLowerCase()));
-      
+      drugsList.sort((a, b) => a
+          .preferredDisplayName(preferGeneric: sortByGeneric)
+          .toLowerCase()
+          .compareTo(b
+              .preferredDisplayName(preferGeneric: sortByGeneric)
+              .toLowerCase()));
 
       return drugsList;
     });
@@ -59,9 +62,8 @@ class CustomUserBehavior extends UserBehavior {
 
         // Save the new drug document to Firestore
         await newDocRef.set(drug.toJson());
-        indexDocRef.set({
-          newDocRef.id : drug.lastUpdated
-        }, SetOptions(merge: true));
+        indexDocRef
+            .set({newDocRef.id: drug.lastUpdated}, SetOptions(merge: true));
         drug.id = newDocRef.id; //intended side effect
         return; // Exit early as we are done adding the new drug
       }
@@ -69,9 +71,7 @@ class CustomUserBehavior extends UserBehavior {
       await drugsCollection
           .doc(drug.id)
           .set(drug.toJson(), SetOptions(merge: true));
-       indexDocRef.set({
-          drug.id! : drug.lastUpdated
-        }, SetOptions(merge: true));
+      indexDocRef.set({drug.id!: drug.lastUpdated}, SetOptions(merge: true));
     } catch (e) {
       print("Failed to add drug: $e");
       rethrow; // Rethrow the error to handle it further up the call stack
@@ -92,102 +92,108 @@ class CustomUserBehavior extends UserBehavior {
       rethrow;
     }
   }
-Future<void> copyMasterToUser() async {
-  FirebaseFirestore db = FirebaseFirestore.instance;
 
-  CollectionReference<Map<String, dynamic>> masterDrugsCollection =
-      db.collection("users").doc(masterUID).collection("drugs");
+  Future<void> copyMasterToUser() async {
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
-  CollectionReference<Map<String, dynamic>> userDrugsCollection =
-      db.collection("users").doc(user).collection("drugs");
+    CollectionReference<Map<String, dynamic>> masterDrugsCollection =
+        db.collection("users").doc(masterUID).collection("drugs");
 
-  try {
-    var userSnapshot = await userDrugsCollection.limit(1).get();
-    if (userSnapshot.docs.isNotEmpty) {
-      throw Exception("User already has drugs. Cannot copy master drugs.");
+    CollectionReference<Map<String, dynamic>> userDrugsCollection =
+        db.collection("users").doc(user).collection("drugs");
+
+    try {
+      var userSnapshot = await userDrugsCollection.limit(1).get();
+      if (userSnapshot.docs.isNotEmpty) {
+        throw Exception("User already has drugs. Cannot copy master drugs.");
+      }
+
+      WriteBatch batch = db.batch();
+      QuerySnapshot<Map<String, dynamic>> masterSnapshot =
+          await masterDrugsCollection.get();
+
+      for (var doc in masterSnapshot.docs) {
+        DocumentReference userDocRef = userDrugsCollection.doc(doc.id);
+
+        // Copy the data and modify the `changedByUser` field
+        Map<String, dynamic> drugData = doc.data();
+        drugData['changedByUser'] = true;
+
+        batch.set(userDocRef, drugData);
+      }
+
+      await batch.commit();
+    } catch (e) {
+      print("Failed to copy master drugs to user: $e");
+      rethrow;
     }
-
-    WriteBatch batch = db.batch();
-    QuerySnapshot<Map<String, dynamic>> masterSnapshot =
-        await masterDrugsCollection.get();
-
-    for (var doc in masterSnapshot.docs) {
-      DocumentReference userDocRef = userDrugsCollection.doc(doc.id);
-
-      // Copy the data and modify the `changedByUser` field
-      Map<String, dynamic> drugData = doc.data();
-      drugData['changedByUser'] = true;
-
-      batch.set(userDocRef, drugData);
-    }
-
-    await batch.commit();
-  } catch (e) {
-    print("Failed to copy master drugs to user: $e");
-    rethrow;
   }
-}
-Future<Set<String>> getDrugNamesFromMaster({String masterUser = 'master'}) async {
-  try {
-    var db = FirebaseFirestore.instance;
-    
-    // Fetch the master drug index
-    DocumentSnapshot indexSnapshot = await db
-        .collection('users')
-        .doc(masterUser)
-        .collection('indexes')
-        .doc('drugIndex')
-        .get();
 
-    // Fetch the user drug index
-    DocumentSnapshot userIndexSnapshot = await db
-        .collection('users')
-        .doc(user)
-        .collection('indexes')
-        .doc('drugIndex')
-        .get();
+  Future<Set<String>> getDrugNamesFromMaster(
+      {String masterUser = 'master'}) async {
+    try {
+      var db = FirebaseFirestore.instance;
 
-    if (indexSnapshot.exists) {
-      // Retrieve the master and user drug maps (key: drug name, value: timestamp)
-      Map<String, dynamic> masterDrugIndex = indexSnapshot.get('drugs') as Map<String, dynamic>;
-      Map<String, dynamic> userDrugIndex = userIndexSnapshot.exists
-          ? userIndexSnapshot.data() as Map<String, dynamic>
-          : {};
+      // Fetch the master drug index
+      DocumentSnapshot indexSnapshot = await db
+          .collection('users')
+          .doc(masterUser)
+          .collection('indexes')
+          .doc('drugIndex')
+          .get();
 
-      // Convert master and user drug indexes to Map<String, Timestamp>
-      Map<String, Timestamp> masterDrugTimestamps = masterDrugIndex.map(
-        (key, value) => MapEntry(key, value as Timestamp),
-      );
-      Map<String, Timestamp> userDrugTimestamps = userDrugIndex.map(
-        (key, value) => MapEntry(key, value as Timestamp),
-      );
+      // Fetch the user drug index
+      DocumentSnapshot userIndexSnapshot = await db
+          .collection('users')
+          .doc(user)
+          .collection('indexes')
+          .doc('drugIndex')
+          .get();
 
-      // Create a set of keys where the master drug is updated later than the user drug
-      Set<String> updatedDrugs = masterDrugTimestamps.keys.where((key) {
-        // Get the master and user timestamps
-        Timestamp? masterTimestamp = masterDrugTimestamps[key];
-        Timestamp? userTimestamp = userDrugTimestamps[key];
+      if (indexSnapshot.exists) {
+        // Retrieve the master and user drug maps (key: drug name, value: timestamp)
+        Map<String, dynamic> masterDrugIndex =
+            indexSnapshot.get('drugs') as Map<String, dynamic>;
+        Map<String, dynamic> userDrugIndex = userIndexSnapshot.exists
+            ? userIndexSnapshot.data() as Map<String, dynamic>
+            : {};
 
-        // Check if masterTimestamp is null, if so ignore this entry
-        if (masterTimestamp == null) {
-          return false; // Skip this entry if master timestamp is null
-        }
+        // Convert master and user drug indexes to Map<String, Timestamp>
+        Map<String, Timestamp> masterDrugTimestamps = masterDrugIndex.map(
+          (key, value) => MapEntry(key, value as Timestamp),
+        );
+        Map<String, Timestamp> userDrugTimestamps = userDrugIndex.map(
+          (key, value) => MapEntry(key, value as Timestamp),
+        );
 
-        // Include the drug if the user timestamp is missing or if the master drug is updated later
-        return userTimestamp == null || masterTimestamp.compareTo(userTimestamp) > 0;
-      }).toSet();
+        // Create a set of keys where the master drug is updated later than the user drug
+        Set<String> updatedDrugs = masterDrugTimestamps.keys.where((key) {
+          // Get the master and user timestamps
+          Timestamp? masterTimestamp = masterDrugTimestamps[key];
+          Timestamp? userTimestamp = userDrugTimestamps[key];
 
-      return updatedDrugs;
-    } else {
-      // Master drug index does not exist, return an empty set
-      return {};
+          // Check if masterTimestamp is null, if so ignore this entry
+          if (masterTimestamp == null) {
+            return false; // Skip this entry if master timestamp is null
+          }
+
+          // Include the drug if the user timestamp is missing or if the master drug is updated later
+          return userTimestamp == null ||
+              masterTimestamp.compareTo(userTimestamp) > 0;
+        }).toSet();
+
+        return updatedDrugs;
+      } else {
+        // Master drug index does not exist, return an empty set
+        return {};
+      }
+    } catch (e) {
+      print("Failed to reawd");
+      print("Failed to retrieve drug names: $e");
+      rethrow;
     }
-  } catch (e) {
-    print("Failed to reawd");
-    print("Failed to retrieve drug names: $e");
-    rethrow;
   }
-}
+
   Future<void> addDrugsFromMaster(List<String> drugNames) async {
     CollectionReference masterDrugsCollection = FirebaseFirestore.instance
         .collection('users')
