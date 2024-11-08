@@ -12,18 +12,55 @@ service cloud.firestore {
       allow read: if request.auth != null && userId == 'master';
 
       // Allow write access to the master user's document only for the master user
-      allow write: if request.auth != null && request.auth.token.admin == true;
-    }
-
-    match /users/{userId}/{document=**} {
-      // Allow read and write access to the user's own documents if authenticated
+      allow write: if request.auth != null && request.auth.token.admin == true && userId == 'master';
+      
+      
+      match /preferences/{preference} {
+      // Allow read and write access to the user's own document if authenticated
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
 
-      // Allow read access to the master user's documents for everyone
-      allow read: if request.auth != null && userId == 'master';
+      match /drugs/{drugId} {
 
-      // Allow write access to the master user's documents only for the master user
-      allow write: if request.auth != null && request.auth.token.admin == true;
+        // Allow authenticated users to read their own or the 'master' user's drug documents
+        allow read: if request.auth != null && (request.auth.uid == userId || userId == 'master');
+
+        // Allow authenticated users to write their own drug documents
+        allow write: if request.auth != null && request.auth.uid == userId;
+
+        // Allow admins to write to any drug document
+        allow write: if request.auth != null && request.auth.token.admin == true;
+      
+      		match /chats/{chatId}{
+          		
+                  	// Allow read and write access to the user's own document if authenticated
+      		allow read, write: if request.auth != null && (request.auth.token.admin == true || request.auth.token.reviewer == true);
+      
+
+          
+          
+          }
+          match /reviews/{reviewId}{
+          allow read, write: if request.auth != null && (request.auth.token.admin == true || request.auth.token.reviewer == true);
+      }
+      
+        	
+      
+      
+      
     }
+    
+    	match /indexes/{index}{
+          		
+                  	// Allow read and write access to the user's own document if authenticated
+      		allow read, write;
+      
+
+          
+          
+          }
+      
+
   }
+}
 }
