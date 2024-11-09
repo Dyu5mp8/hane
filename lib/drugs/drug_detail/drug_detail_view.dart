@@ -150,7 +150,7 @@ class ReviewButton extends StatelessWidget {
                       child: ListView(
                         shrinkWrap: true,
                         children: [
-                          Li
+                          const Text('Välj granskare för detta läkemedel:'),
                         ],
                       ), 
                     ),
@@ -340,27 +340,20 @@ class InfoButton extends StatelessWidget {
 class EditModeButton extends StatelessWidget {
   const EditModeButton({super.key});
 
-  void saveDrug(Drug drug, Map<String, dynamic>? comment, BuildContext context) {
-    var provider = Provider.of<DrugListProvider>(context, listen: false);
-    if (provider.userMode == UserMode.isAdmin) {
-      if (drug.changeNotes == null) {
-      drug.changeNotes = {};  
+void saveDrug(Drug drug, Map<String, dynamic>? changeMap, BuildContext context) {
+  final provider = Provider.of<DrugListProvider>(context, listen: false);
 
-    }
-    if (comment != null && comment.isNotEmpty) {
-      drug.changeNotes!.addAll(comment);
-    } else {
-      drug.changeNotes = comment;
-    }
-      drug.reviewedBy = FirebaseAuth.instance.currentUser!.email;
-    }
-    if (drug.changeNotes == null) {
-      drug.changeNotes = {};  
+  if (provider.userMode == UserMode.isAdmin) {
+    drug.reviewedBy = FirebaseAuth.instance.currentUser!.email;
 
+    if (changeMap != null && changeMap.isNotEmpty) {
+      drug.changeNotes ??= []; // Initialize if null
+      drug.changeNotes!.add(changeMap); // Append the new comment
     }
-  
-    Provider.of<DrugListProvider>(context, listen: false).addDrug(drug);
   }
+
+  provider.addDrug(drug);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -435,7 +428,9 @@ class EditModeButton extends StatelessWidget {
                             final timestamp = DateTime.now().toIso8601String();
                       
                             final changeMap = {
-                              comment: timestamp
+                              'comment': comment,
+                              'timestamp': timestamp,
+                              'user': FirebaseAuth.instance.currentUser!.email,
                             };
 
                           
