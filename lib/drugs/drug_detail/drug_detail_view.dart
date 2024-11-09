@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:hane/drugs/drug_detail/commit_dialog.dart';
 import 'package:hane/drugs/drug_detail/drug_chat/drug_chat.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
@@ -12,6 +13,7 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
+
 
 
 
@@ -142,32 +144,44 @@ class ReviewButton extends StatelessWidget {
             builder: (BuildContext context, StateSetter setState) {
               return SizedBox(
                 width: double.maxFinite,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: availableReviewers.entries.map((entry) {
-                    final reviewerUID = entry.key;
-                    final reviewerEmail = entry.value;
-                    final isSelected = acceptedReviewers.contains(reviewerUID);
-                    final isCurrentUser = reviewerUID == currentUserUID;
-
-                    return CheckboxListTile(
-                      value: isSelected,
-                      title: Text(reviewerEmail),
-                      onChanged: isCurrentUser
-                          ? (bool? value) {
-                              setState(() {
-                                if (value == true) {
-                                  acceptedReviewers.add(reviewerUID);
-                                } else {
-                                  acceptedReviewers.remove(reviewerUID);
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          Li
+                        ],
+                      ), 
+                    ),
+                    ListView(
+                      shrinkWrap: true,
+                      children: availableReviewers.entries.map((entry) {
+                        final reviewerUID = entry.key;
+                        final reviewerEmail = entry.value;
+                        final isSelected = acceptedReviewers.contains(reviewerUID);
+                        final isCurrentUser = reviewerUID == currentUserUID;
+                    
+                        return CheckboxListTile(
+                          value: isSelected,
+                          title: Text(reviewerEmail),
+                          onChanged: isCurrentUser
+                              ? (bool? value) {
+                                  setState(() {
+                                    if (value == true) {
+                                      acceptedReviewers.add(reviewerUID);
+                                    } else {
+                                      acceptedReviewers.remove(reviewerUID);
+                                    }
+                                  });
                                 }
-                              });
-                            }
-                          : null, // Disable checkbox for other users
-                      controlAffinity: ListTileControlAffinity.leading,
-                      activeColor: isCurrentUser ? null : Colors.grey,
-                    );
-                  }).toList(),
+                              : null, // Disable checkbox for other users
+                          controlAffinity: ListTileControlAffinity.leading,
+                          activeColor: isCurrentUser ? null : Colors.grey,
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
               );
             },
@@ -326,6 +340,28 @@ class InfoButton extends StatelessWidget {
 class EditModeButton extends StatelessWidget {
   const EditModeButton({super.key});
 
+  void saveDrug(Drug drug, Map<String, dynamic>? comment, BuildContext context) {
+    var provider = Provider.of<DrugListProvider>(context, listen: false);
+    if (provider.userMode == UserMode.isAdmin) {
+      if (drug.changeNotes == null) {
+      drug.changeNotes = {};  
+
+    }
+    if (comment != null && comment.isNotEmpty) {
+      drug.changeNotes!.addAll(comment);
+    } else {
+      drug.changeNotes = comment;
+    }
+      drug.reviewedBy = FirebaseAuth.instance.currentUser!.email;
+    }
+    if (drug.changeNotes == null) {
+      drug.changeNotes = {};  
+
+    }
+  
+    Provider.of<DrugListProvider>(context, listen: false).addDrug(drug);
+  }
+
   @override
   Widget build(BuildContext context) {
     Drug drug = Provider.of<Drug>(context, listen: false);
@@ -378,27 +414,49 @@ class EditModeButton extends StatelessWidget {
               ),
 
             // Edit/Save button
+            Consumer<Drug>(builder: (context, drug, child) {
+              return IconButton(
+                icon: editMode
+                    ? Text(
+                        "Spara",
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor, fontSize: 16),
+                      )
+                    : const Icon(Icons.edit_note_sharp, size: 30),
+                onPressed: () async {
+                  HapticFeedback.lightImpact();
+                  if (editMode) {
+                    if (await provider.checkIfDrugChanged(drug)) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return CommitDialog(
+                          onCommit: (comment) {
+                            final timestamp = DateTime.now().toIso8601String();
+                      
+                            final changeMap = {
+                              comment: timestamp
+                            };
 
-            IconButton(
-              icon: editMode
-                  ? Text(
-                      "Spara",
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor, fontSize: 16),
-                    )
-                  : const Icon(Icons.edit_note_sharp, size: 30),
-              onPressed: () {
-                HapticFeedback.lightImpact();
-                if (editMode) {
-                  provider.addDrug(Provider.of<Drug>(context, listen: false));
-                }
-
-                editModeProvider.toggleEditMode();
+                          
+            
+                            saveDrug(drug, changeMap, context);
+                          },
+                        );
+                      },
+                    );
+                  }
+                  editModeProvider.toggleEditMode();
+                  } else {
+                    editModeProvider.toggleEditMode();
+                  }
               },
-            ),
+              );
+            }),
           ],
         );
       },
     );
   }
+
 }

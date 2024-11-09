@@ -25,6 +25,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
   String? _notes;
   String? _expandedNotes;
   String? _reviewedBy;
+  Map<String, dynamic>? _changeNotes;
   bool hasUnreadMessages = false;
   int unreadMessageCount = 0;
   Timestamp? _lastMessageTimestamp;
@@ -35,6 +36,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
       String? name,
       bool? changedByUser,
       String? reviewedBy,
+      Map<String, dynamic>? changeNotes,
       List<dynamic>? brandNames,
       String? genericName,
       List<dynamic>? categories,
@@ -62,6 +64,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
         _expandedNotes = expandedNotes,
         _brandNames = brandNames,
         _genericName = genericName,
+        _changeNotes = changeNotes,
         _id = id,
         _userNotes = userNotes,
         _lastMessageTimestamp = lastMessageTimestamp,
@@ -84,6 +87,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
             : null,
         _notes = drug.notes,
         _expandedNotes = drug._expandedNotes,
+        _changeNotes = drug._changeNotes,
         _userNotes = drug.userNotes,
         _brandNames = drug.brandNames,
         _lastMessageTimestamp = drug._lastMessageTimestamp,
@@ -129,6 +133,14 @@ class Drug extends ChangeNotifier with EquatableMixin {
   set name(String? newName) {
     if (_name != newName) {
       _name = newName;
+      notifyListeners();
+    }
+  }
+
+  Map<String, dynamic>? get changeNotes => _changeNotes;
+  set changeNotes(Map<String, dynamic>? newChangeNotes) {
+    if (_changeNotes != newChangeNotes) {
+      _changeNotes = newChangeNotes;
       notifyListeners();
     }
   }
@@ -346,6 +358,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
       'expandedNotes': _expandedNotes,
       'lastUpdated': _lastUpdated,
       'lastMessageTimestamp': _lastMessageTimestamp,
+      'changeNotes': _changeNotes,  
       'reviewerUIDs': _reviewerUIDs,
     };
   }
@@ -366,6 +379,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
           .toList(),
       brandNames: (map['brandNames'] as List<dynamic>?),
       contraindication: map['contraindication'] as String?,
+      changeNotes: map['changeNotes'] as Map<String, dynamic>?,
       expandedContraindication: map['expandedContraindication'] as String?,
       indications: (map['indications'] as List?)
           ?.map(

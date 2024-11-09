@@ -76,6 +76,8 @@ class AdminUserBehavior extends UserBehavior {
     });
   }
 
+  
+
   @override
   Future<void> addDrug(Drug drug) async {
     var db = FirebaseFirestore.instance;
@@ -102,10 +104,16 @@ class AdminUserBehavior extends UserBehavior {
       }
 
       // If the drug already has an ID, check if the document exists in Firestore
-      DocumentSnapshot existingDrugSnapshot =
-          await drugsCollection.doc(drug.id).get();
+      DocumentSnapshot<Map<String,dynamic>> existingDrugSnapshot =
+          await drugsCollection.doc(drug.id).get() as DocumentSnapshot<Map<String,dynamic>>;
 
       if (existingDrugSnapshot.exists) {
+        Drug existingDrug = Drug.fromFirestore(existingDrugSnapshot.data()!); 
+
+          if(drug != existingDrug) {
+            drug.clearReviewerUIDs();
+          }
+      
         // If the existing drug is different, update it by merging the changes
         await drugsCollection
             .doc(drug.id)

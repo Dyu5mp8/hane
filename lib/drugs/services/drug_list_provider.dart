@@ -153,6 +153,17 @@ Map<String, String> get reviewerUIDs => _reviewerUIDs;
     }
   }
 
+  Future <bool> checkIfDrugChanged(Drug drug) async {
+    var db = FirebaseFirestore.instance;
+    var drugDoc = await db.collection('users').doc(masterUID).collection('drugs').doc(drug.id).get();
+    if (!drugDoc.exists) {
+      return true;
+    }
+    Drug drugToUpdate = Drug.fromFirestore(drugDoc.data()!);
+
+    return drug != drugToUpdate;
+  }
+
   Future<void> addDrug(Drug drug) async {
     var db = FirebaseFirestore.instance;
     var drugDoc = await db.collection('users').doc(masterUID).collection('drugs').doc(drug.id).get();
@@ -169,6 +180,7 @@ Map<String, String> get reviewerUIDs => _reviewerUIDs;
   Future<void> deleteDrug(Drug drug) async {
     await userBehavior!.deleteDrug(drug);
   }
+
 
   Future<void> copyMasterToUser() async {
     if (userBehavior is CustomUserBehavior) {
