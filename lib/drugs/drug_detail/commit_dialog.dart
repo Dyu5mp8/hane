@@ -32,7 +32,6 @@ class _CommitDialogState extends State<CommitDialog> {
         TextButton(
           onPressed: () {
             final comment = _commentController.text;
-            print(comment);
             if (comment.isNotEmpty) {
               widget.onCommit(comment);
             }

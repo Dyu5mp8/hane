@@ -31,6 +31,8 @@ class DrugListProvider with ChangeNotifier {
     updateUserBehavior();
   }
 
+  bool get isReviewer => _isReviewer;
+
   String get masterUID => _masterUID;
 
 Map<String, String> get reviewerUIDs => _reviewerUIDs;
@@ -131,6 +133,11 @@ Map<String, String> get reviewerUIDs => _reviewerUIDs;
     user = null;
     userMode = null;
     userBehavior = null;
+    _preferGeneric = false;
+    _isSyncedMode = false;
+    _reviewerUIDs.clear();
+    _isReviewer = false;
+
   }
 
   @override
@@ -153,27 +160,38 @@ Map<String, String> get reviewerUIDs => _reviewerUIDs;
     }
   }
 
-  Future <bool> checkIfDrugChanged(Drug drug) async {
-    var db = FirebaseFirestore.instance;
-    var drugDoc = await db.collection('users').doc(masterUID).collection('drugs').doc(drug.id).get();
-    if (!drugDoc.exists) {
-      return true;
-    }
-    Drug drugToUpdate = Drug.fromFirestore(drugDoc.data()!);
+ Future<bool> checkIfDrugChanged(Drug drug) async {
+  var db = FirebaseFirestore.instance;
 
-    return drug != drugToUpdate;
+  // Try to get the document from the cache first
+  DocumentSnapshot<Map<String, dynamic>> drugDoc;
+  try {
+    drugDoc = await db
+        .collection('users')
+        .doc(masterUID)
+        .collection('drugs')
+        .doc(drug.id)
+        .get(GetOptions(source: Source.cache));
+  } catch (e) {
+    // If the document is not in the cache, fetch it from the server
+    drugDoc = await db
+        .collection('users')
+        .doc(masterUID)
+        .collection('drugs')
+        .doc(drug.id)
+        .get(GetOptions(source: Source.server));
   }
 
+  if (!drugDoc.exists) {
+    return true;
+  }
+
+  Drug drugToUpdate = Drug.fromFirestore(drugDoc.data()!);
+  return drug != drugToUpdate;
+}
+
   Future<void> addDrug(Drug drug) async {
-    var db = FirebaseFirestore.instance;
-    var drugDoc = await db.collection('users').doc(masterUID).collection('drugs').doc(drug.id).get();
-    if (!drugDoc.exists) {
-      throw Exception("Drug does not exist in master list.");
-    }
-    Drug drugToUpdate = Drug.fromFirestore(drugDoc.data()!);
-    if(drug != drugToUpdate) {
-      drug.clearReviewerUIDs();
-    }
+
     await userBehavior!.addDrug(drug);
   }
 

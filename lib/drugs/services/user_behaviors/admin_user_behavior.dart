@@ -108,12 +108,6 @@ class AdminUserBehavior extends UserBehavior {
           await drugsCollection.doc(drug.id).get() as DocumentSnapshot<Map<String,dynamic>>;
 
       if (existingDrugSnapshot.exists) {
-        Drug existingDrug = Drug.fromFirestore(existingDrugSnapshot.data()!); 
-
-          if(drug != existingDrug) {
-            drug.clearReviewerUIDs();
-          }
-      
         // If the existing drug is different, update it by merging the changes
         await drugsCollection
             .doc(drug.id)

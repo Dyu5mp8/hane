@@ -23,7 +23,7 @@ class AdminMenuDrawer extends MenuDrawer {
         },
       ),
        ListTile(
-        leading: const Icon(Icons.check_box_outline_blank_rounded),
+        leading: const Icon(Icons.check_circle_outline_sharp),
         title: const Text('Markera alla läkemedel som granskade'),
         onTap: () {
           Navigator.pop(context);
@@ -47,8 +47,9 @@ class AdminMenuDrawer extends MenuDrawer {
             padding: EdgeInsets.zero,
             children: <Widget>[
               const CustomDrawerHeader(),
-              ...buildUserSpecificTiles(context),
               DrugNameChoiceTile(),
+              ...buildUserSpecificTiles(context),
+              
               buildLogoutTile(context),
             ],
           ),

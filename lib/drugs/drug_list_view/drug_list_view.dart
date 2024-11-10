@@ -25,14 +25,17 @@ class _DrugListViewState extends State<DrugListView> {
   UserMode? userMode;
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
+  late final DrugListProvider provider;
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
     showTutorialScreenIfNew();
-    userMode = context.read<DrugListProvider>().userMode ??
+    provider = context.read<DrugListProvider>();
+    userMode = provider.userMode ??
         UserMode.syncedMode; //fall back to synced mode
+    
   }
 
   @override
@@ -125,11 +128,14 @@ class _DrugListViewState extends State<DrugListView> {
 
     // Filter drugs with pending reviews for the current user
     final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
-    final availableReviewers = Provider.of<DrugListProvider>(context, listen: false).reviewerUIDs.keys.toList();
-    List<Drug> pendingReviewDrugs = drugs.where((drug) {
-      final acceptedReviewers = drug.reviewerUIDs ?? [];
-      return availableReviewers.contains(currentUserUID) && !acceptedReviewers.contains(currentUserUID);
-    }).toList();
+    final availableReviewers = provider.reviewerUIDs.keys.toList();
+    List<Drug> pendingReviewDrugs = [];
+    if (provider.isReviewer) {
+      pendingReviewDrugs = drugs.where((drug) {
+        final acceptedReviewers = drug.reviewerUIDs ?? [];
+        return availableReviewers.contains(currentUserUID) && !acceptedReviewers.contains(currentUserUID);
+      }).toList();
+    }
 
     List<dynamic> allCategories = drugs
         .where((drug) => drug.categories != null)
@@ -150,10 +156,13 @@ class _DrugListViewState extends State<DrugListView> {
         },
         children: [
           _buildDrugListView(filteredDrugs, allCategories),
-          _buildPendingReviewListView(pendingReviewDrugs),
+          if (provider.isReviewer)
+            _buildPendingReviewListView(pendingReviewDrugs),
         ],
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: provider.isReviewer
+          ? _buildBottomNavigationBar()
+          : null,
     );
   }
 
@@ -165,7 +174,7 @@ class _DrugListViewState extends State<DrugListView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (Provider.of<DrugListProvider>(context)
+              if (provider
                   .categories
                   .isNotEmpty)
                 _buildCategoryChips(allCategories),
@@ -375,7 +384,7 @@ class _DrugListViewState extends State<DrugListView> {
 
   AppBar _buildAppBar(BuildContext context) {
     bool canEdit =
-        !(Provider.of<DrugListProvider>(context, listen: true).userMode == UserMode.syncedMode);
+        !(provider.userMode == UserMode.syncedMode);
     bool isAdmin = Provider.of<DrugListProvider>(context, listen: true).isAdmin;
     return AppBar(
       forceMaterialTransparency: true,
@@ -424,6 +433,7 @@ class _DrugListViewState extends State<DrugListView> {
   }
 
   BottomNavigationBar _buildBottomNavigationBar() {
+
     return BottomNavigationBar(
       currentIndex: _selectedIndex,
       onTap: (index) {

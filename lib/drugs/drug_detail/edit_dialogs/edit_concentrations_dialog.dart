@@ -133,6 +133,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                 children: <Widget>[
                   // Concentration Amount Input
                   Expanded(
+                    flex: 2,
                     child: TextFormField(
                         controller: concentrationAmountController,
                         decoration: const InputDecoration(
@@ -148,9 +149,11 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                   const SizedBox(width: 16),
                   // Concentration Unit Dropdown
                   Expanded(
+                    flex: 1,
                     child: DropdownButtonFormField<String>(
                       decoration: const InputDecoration(
                         labelText: 'Enhet',
+                        suffixText: '  /ml',
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         errorMaxLines: 2,
                       ),
@@ -172,6 +175,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                       },
                     ),
                   ),
+          
                   IconButton(
                     icon: const Icon(
                       Icons.add_circle_sharp,
