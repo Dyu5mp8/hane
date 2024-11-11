@@ -128,12 +128,11 @@ class _DrugListViewState extends State<DrugListView> {
 
     // Filter drugs with pending reviews for the current user
     final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
-    final availableReviewers = provider.reviewerUIDs.keys.toList();
     List<Drug> pendingReviewDrugs = [];
     if (provider.isReviewer) {
       pendingReviewDrugs = drugs.where((drug) {
-        final acceptedReviewers = drug.reviewerUIDs ?? [];
-        return availableReviewers.contains(currentUserUID) && !acceptedReviewers.contains(currentUserUID);
+   
+        return drug.isPendingUserReview(currentUserUID!);
       }).toList();
     }
 
@@ -161,7 +160,7 @@ class _DrugListViewState extends State<DrugListView> {
         ],
       ),
       bottomNavigationBar: provider.isReviewer
-          ? _buildBottomNavigationBar()
+          ? _buildBottomNavigationBar(pendingReviewDrugs.length)
           : null,
     );
   }
@@ -432,7 +431,7 @@ class _DrugListViewState extends State<DrugListView> {
     );
   }
 
-  BottomNavigationBar _buildBottomNavigationBar() {
+  BottomNavigationBar _buildBottomNavigationBar(int pendingCount) {
 
     return BottomNavigationBar(
       currentIndex: _selectedIndex,
@@ -442,13 +441,19 @@ class _DrugListViewState extends State<DrugListView> {
           _pageController.jumpToPage(index);
         });
       },
-      items: const [
+      items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.list),
           label: 'Alla läkemedel',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.pending),
+          
+          icon: pendingCount > 0?Badge(
+            label: Text(
+              pendingCount.toString(),
+              style: const TextStyle(color: Colors.white),
+            ),
+            child: Icon(Icons.pending)) : Icon(Icons.pending),
           label: 'Väntande granskningar',
         ),
       ],

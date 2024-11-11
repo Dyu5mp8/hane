@@ -47,7 +47,8 @@ class DrugListRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (provider.isAdmin)
-                _buildReviewStatusIcon(context, provider.reviewerUIDs),
+                if (_drug.shouldReviewUIDs != null && _drug.shouldReviewUIDs!.isNotEmpty)
+                  _buildReviewStatusIcon(context),
               if (_drug.hasUnreadMessages) _buildNewMessageChip(context),
             ],
           ),
@@ -77,19 +78,10 @@ class DrugListRow extends StatelessWidget {
   }
 
   Icon _buildReviewStatusIcon(
-      BuildContext context, Map<String, String> availableReviewerUIDs) {
-    bool allReviewersAccepted() {
-      final drugReviewerUIDs = _drug.reviewerUIDs ?? [];
-      for (final reviewerUID in availableReviewerUIDs.keys) {
-        if (!drugReviewerUIDs.contains(reviewerUID)) {
-          return false;
-        }
-      }
+      BuildContext context) {
 
-      return true;
-    }
 
-    final icon = !allReviewersAccepted()
+    final icon = !_drug.hasCompletedReview()
         ? Icon(Bootstrap.shield_fill_exclamation,
             color: const Color.fromARGB(255, 183, 125, 49))
         : Icon(Bootstrap.shield_fill_check, color: Colors.green);

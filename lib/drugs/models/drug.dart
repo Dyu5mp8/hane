@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/concentration.dart';
 import 'package:hane/drugs/models/indication.dart';
@@ -29,7 +30,8 @@ class Drug extends ChangeNotifier with EquatableMixin {
   bool hasUnreadMessages = false;
   int unreadMessageCount = 0;
   Timestamp? _lastMessageTimestamp;
-  List<dynamic>? _reviewerUIDs = [];  
+ Map<String, String>? _hasReviewedUIDs = {};
+  Map<String, String>? _shouldReviewUIDs = {};
 
   Drug(
       {String? id,
@@ -49,7 +51,8 @@ class Drug extends ChangeNotifier with EquatableMixin {
       String? userNotes,
       Timestamp? lastUpdated,
       Timestamp? lastMessageTimestamp,
-      List<dynamic>? reviewerUIDs = const []})
+      Map<String, String>? hasReviewedUIDs,
+      Map<String, String>? shouldReviewUIDs})
       
       : _name = name ?? '',
         _changedByUser = changedByUser,
@@ -68,7 +71,8 @@ class Drug extends ChangeNotifier with EquatableMixin {
         _id = id,
         _userNotes = userNotes,
         _lastMessageTimestamp = lastMessageTimestamp,
-        _reviewerUIDs = reviewerUIDs;
+        _hasReviewedUIDs = hasReviewedUIDs,
+        _shouldReviewUIDs = shouldReviewUIDs;
 
   Drug.from(Drug drug)
       : _id = drug.id,
@@ -91,8 +95,9 @@ class Drug extends ChangeNotifier with EquatableMixin {
         _userNotes = drug.userNotes,
         _brandNames = drug.brandNames,
         _lastMessageTimestamp = drug._lastMessageTimestamp,
-        _reviewerUIDs = drug.reviewerUIDs,
-        hasUnreadMessages = drug.hasUnreadMessages;
+        _hasReviewedUIDs = drug.hasReviewedUIDs,
+        hasUnreadMessages = drug.hasUnreadMessages,
+        _shouldReviewUIDs = drug.shouldReviewUIDs;
 
   @override
   List<Object?> get props => [
@@ -203,31 +208,52 @@ class Drug extends ChangeNotifier with EquatableMixin {
     }
   }
 
-  void addReviewerUID(String reviewerUID) {
-    _reviewerUIDs?.add(reviewerUID);
+  void addReviewerUID(String reviewerUID, String reviewerEmail) {
+  _hasReviewedUIDs ??= {};
+  _hasReviewedUIDs![reviewerUID] = reviewerEmail;
+  notifyListeners();
+}
+
+  void removeReviewerUID(String reviewerUID) {
+    _hasReviewedUIDs?.remove(reviewerUID);
     notifyListeners();
   }
 
-  void removeReviewerUID(String reviewerUID) {
-    _reviewerUIDs?.remove(reviewerUID);
-    notifyListeners();
+
+
+bool isPendingUserReview(String reviewerUID) {
+  final shouldReviewKeys = _shouldReviewUIDs?.keys.toSet() ?? {};
+  final hasReviewedKeys = _hasReviewedUIDs?.keys.toSet() ?? {};
+  final remainingReviewers = shouldReviewKeys.difference(hasReviewedKeys);
+  return remainingReviewers.contains(reviewerUID);
+}
+
+  bool hasCompletedReview() {
+    return setEquals(_hasReviewedUIDs?.keys.toSet(), _shouldReviewUIDs?.keys.toSet());
   }
 
 //Called when drug is updated and needs to be reviewed again
-  void clearReviewerUIDs() {
-    _reviewerUIDs = [];
+  void clearhasReviewedUIDs() {
+    _hasReviewedUIDs = {};
     notifyListeners();
   }
 
-  List<dynamic>? get reviewerUIDs => _reviewerUIDs;
-  set reviewerUIDs(List<dynamic>? newReviewerUIDs) {
-    if (_reviewerUIDs != newReviewerUIDs) {
-      _reviewerUIDs = newReviewerUIDs;
+
+  Map<String, String>? get hasReviewedUIDs => _hasReviewedUIDs;
+  set hasReviewedUIDs(Map<String, String>? newHasReviewedUIDs) {
+    if (_hasReviewedUIDs != newHasReviewedUIDs) {
+      _hasReviewedUIDs = newHasReviewedUIDs;
       notifyListeners();
     }
   }
 
-
+  Map<String, String>? get shouldReviewUIDs => _shouldReviewUIDs;
+  set shouldReviewUIDs(Map<String, String>? newShouldReviewUIDs) {
+    if (_shouldReviewUIDs != newShouldReviewUIDs) {
+      _shouldReviewUIDs = newShouldReviewUIDs;
+      notifyListeners();
+    }
+  }
   
 
   Timestamp? get lastUpdated => _lastUpdated;
@@ -359,7 +385,8 @@ class Drug extends ChangeNotifier with EquatableMixin {
       'lastUpdated': _lastUpdated,
       'lastMessageTimestamp': _lastMessageTimestamp,
       'changeNotes': _changeNotes,  
-      'reviewerUIDs': _reviewerUIDs,
+      'hasReviewedUIDs': _hasReviewedUIDs,
+      'shouldReviewUIDs': _shouldReviewUIDs,
     };
   }
 
@@ -391,7 +418,8 @@ class Drug extends ChangeNotifier with EquatableMixin {
       expandedNotes: map['expandedNotes'] as String?,
       lastUpdated: map['lastUpdated'] as Timestamp?,
       lastMessageTimestamp: map['lastMessageTimestamp'],
-      reviewerUIDs: (map['reviewerUIDs'] as List<dynamic>?)?.toList(),
+       hasReviewedUIDs: Map<String, String>.from(map['hasReviewedUIDs'] ?? {}),
+    shouldReviewUIDs: Map<String, String>.from(map['shouldReviewUIDs'] ?? {}),
     );
   }
 }

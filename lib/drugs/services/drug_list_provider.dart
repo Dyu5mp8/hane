@@ -17,7 +17,7 @@ class DrugListProvider with ChangeNotifier {
   UserBehavior? userBehavior;
   bool _preferGeneric = false;
   bool _isSyncedMode = false;
-  Map<String, String> _reviewerUIDs = {};
+  Map<String, String> _possibleReviewerUIDs = {};
   bool _isReviewer = false;
 
 
@@ -27,7 +27,7 @@ class DrugListProvider with ChangeNotifier {
     await getPreferGenericFromFirestore();
     await _checkIfUserIsAdmin(FirebaseAuth.instance.currentUser!);
     await _checkIfUserIsReviewer(FirebaseAuth.instance.currentUser!);
-    await _getReviewerUIDs();
+    await _getPossibleReviewerUIDs();
     updateUserBehavior();
   }
 
@@ -35,7 +35,7 @@ class DrugListProvider with ChangeNotifier {
 
   String get masterUID => _masterUID;
 
-Map<String, String> get reviewerUIDs => _reviewerUIDs;
+Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
 
 
   set masterUID(String value) {
@@ -135,7 +135,7 @@ Map<String, String> get reviewerUIDs => _reviewerUIDs;
     userBehavior = null;
     _preferGeneric = false;
     _isSyncedMode = false;
-    _reviewerUIDs.clear();
+    _possibleReviewerUIDs.clear();
     _isReviewer = false;
 
   }
@@ -290,19 +290,19 @@ Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
     }
   }
   
-Future<void> _getReviewerUIDs() async {
+Future<void> _getPossibleReviewerUIDs() async {
   try {
     var db = FirebaseFirestore.instance;
     DocumentSnapshot masterDoc = await db.collection('users').doc(masterUID).get();
     if (masterDoc.exists) {
       Map<String, dynamic>? data = masterDoc.data() as Map<String, dynamic>?;
       if (data != null && data.containsKey('reviewers')) {
-        _reviewerUIDs = Map<String, String>.from(data['reviewers'] as Map);
+        _possibleReviewerUIDs = Map<String, String>.from(data['reviewers'] as Map);
       } else {
-        _reviewerUIDs = {};
+        _possibleReviewerUIDs = {};
       }
     } else {
-      _reviewerUIDs = {};
+      _possibleReviewerUIDs = {};
     }
   } catch (e) {
     print("Failed to get reviewerUIDs: $e");
@@ -378,7 +378,7 @@ Future<void> _getReviewerUIDs() async {
       if (drug.id != null) {
         DocumentReference drugDocRef = masterDocRef.collection('drugs').doc(drug.id);
         batch.set(drugDocRef, {
-          'reviewerUIDs': reviewerUIDs.keys.toList(),
+          'hasReviewedUIDs': drug.shouldReviewUIDs,
         }, SetOptions(merge: true));
       }
     }

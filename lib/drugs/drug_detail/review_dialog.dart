@@ -7,13 +7,11 @@ import 'package:intl/intl.dart';
 
 class ReviewDialog extends StatefulWidget {
   final Drug drug;
-  final Map<String, String> availableReviewers;
   final String? currentUserUID;
 
   const ReviewDialog({
     Key? key,
     required this.drug,
-    required this.availableReviewers,
     required this.currentUserUID,
   }) : super(key: key);
 
@@ -22,12 +20,14 @@ class ReviewDialog extends StatefulWidget {
 }
 
 class _ReviewDialogState extends State<ReviewDialog> {
-  List<String> acceptedReviewers = [];
+  Map<String, String> acceptedReviewers = {};
+  Map<String, String> availableReviewers = {};
 
   @override
   void initState() {
     super.initState();
-    acceptedReviewers = List<String>.from(widget.drug.reviewerUIDs ?? []);
+    acceptedReviewers = Map.from(widget.drug.hasReviewedUIDs ?? {});
+    availableReviewers = Map.from(widget.drug.shouldReviewUIDs ?? {});
   }
 
   String formatTimestamp(String timestamp) {
@@ -55,6 +55,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
 
   @override
   Widget build(BuildContext context) {
+
     final latestChangeNote = widget.drug.changeNotes?.isNotEmpty == true
         ? widget.drug.changeNotes!.last
         : null;
@@ -100,10 +101,10 @@ class _ReviewDialogState extends State<ReviewDialog> {
             Expanded(
               child: ListView(
                 shrinkWrap: true,
-                children: widget.availableReviewers.entries.map((entry) {
+                children: availableReviewers.entries.map((entry) {
                   final reviewerUID = entry.key;
                   final reviewerEmail = entry.value;
-                  final isSelected = acceptedReviewers.contains(reviewerUID);
+                  final isSelected = acceptedReviewers.keys.contains(reviewerUID);
                   final isCurrentUser = reviewerUID == widget.currentUserUID;
                   return CheckboxListTile(
                     value: isSelected,
@@ -112,7 +113,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
                         ? (bool? value) {
                             setState(() {
                               if (value == true) {
-                                acceptedReviewers.add(reviewerUID);
+                                acceptedReviewers[reviewerUID] = reviewerEmail;
                               } else {
                                 acceptedReviewers.remove(reviewerUID);
                               }
@@ -132,7 +133,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
         TextButton(
           onPressed: () {
             // Update the drug's reviewerUIDs
-            widget.drug.reviewerUIDs = acceptedReviewers;
+            widget.drug.hasReviewedUIDs = acceptedReviewers;
             // Save changes using the DrugListProvider or appropriate method
             final drugListProvider =
                 Provider.of<DrugListProvider>(context, listen: false);

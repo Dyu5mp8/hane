@@ -130,20 +130,12 @@ class ReviewButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final drug = Provider.of<Drug>(context, listen: true);
-    final acceptedReviewers = drug.reviewerUIDs ?? [];
     final drugListProvider =
         Provider.of<DrugListProvider>(context, listen: false);
-    final availableReviewers = drugListProvider.reviewerUIDs;
+ 
 
-    // Determine if all reviewers have accepted
-    var allReviewersAccepted = true;
-    for (final reviewer in availableReviewers.keys.toList()) {
-      if (!acceptedReviewers.contains(reviewer)) {
-        allReviewersAccepted = false;
-        break;
-      }
-    }
-    final icon = !allReviewersAccepted
+
+    final icon = !drug.hasCompletedReview()
         ? Icon(
             Bootstrap.shield_fill_exclamation,
             color: const Color.fromARGB(255, 183, 125, 49),
@@ -158,7 +150,7 @@ class ReviewButton extends StatelessWidget {
       context: context,
       builder: (context) {
         final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
-        return ReviewDialog(availableReviewers: availableReviewers, drug: drug, currentUserUID: currentUserUID,);
+        return ReviewDialog(drug: drug, currentUserUID: currentUserUID,);
       },
     );
       },
@@ -282,33 +274,36 @@ class EditModeButton extends StatelessWidget {
                   HapticFeedback.lightImpact();
                   if (editMode) {
                     if (await provider.checkIfDrugChanged(drug)) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CommitDialog(
-                            onCommit: (comment) {
-                              final timestamp =
-                                  DateTime.now().toIso8601String();
+                    showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return CommitDialog(
+                        reviewers: provider.possibleReviewerUIDs,
+                        onCommit: (comment, selectedReviewerUIDs) {
+                          final timestamp = DateTime.now().toIso8601String();
 
-                              final changeMap = {
-                                'comment': comment,
-                                'timestamp': timestamp,
-                                'user':
-                                    FirebaseAuth.instance.currentUser!.email,
-                              };
+                          final changeMap = {
+                            'comment': comment,
+                            'timestamp': timestamp,
+                            'user': FirebaseAuth.instance.currentUser!.email,
+                          };
 
-                              if (changeMap.isNotEmpty) {
-                                drug.changeNotes ??= []; // Initialize if null
-                                drug.changeNotes!.add(changeMap);
-                                drug.clearReviewerUIDs(); // Append the new comment
-                              }
+                          if (changeMap.isNotEmpty) {
+                            drug.changeNotes ??= []; // Initialize if null
+                            drug.changeNotes!.add(changeMap);
+                          }
 
-                              provider.addDrug(drug);
-                              editModeProvider.toggleEditMode();
-                            },
-                          );
+                          // Update the drug's reviewerUIDs
+                          drug.shouldReviewUIDs = selectedReviewerUIDs;
+                          drug.hasReviewedUIDs = {};
+
+                          // Save the drug
+                          provider.addDrug(drug);
+                          editModeProvider.toggleEditMode();
                         },
                       );
+                    },
+                  );
                     } else {
                       editModeProvider.toggleEditMode();
                     }

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CommitDialog extends StatefulWidget {
-  final Function(String) onCommit;
+  final Function(String, Map<String, String>) onCommit;
+  final Map<String, String> reviewers;
 
-  const CommitDialog({super.key, required this.onCommit});
+  const CommitDialog({
+    Key? key,
+    required this.onCommit,
+    required this.reviewers,
+  }) : super(key: key);
 
   @override
   State<CommitDialog> createState() => _CommitDialogState();
@@ -11,15 +16,56 @@ class CommitDialog extends StatefulWidget {
 
 class _CommitDialogState extends State<CommitDialog> {
   final TextEditingController _commentController = TextEditingController();
+  final Map<String, String> _selectedReviewerUIDs = {};
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Save Changes'),
-      content: TextField(
-        controller: _commentController,
-        decoration: const InputDecoration(
-          labelText: 'Enter your comment',
+      title: const Text('Spara ändringar'),
+      content: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 400), // Set max width
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _commentController,
+                minLines: 1,
+                maxLines: 3,
+                maxLength: 200,
+                decoration: InputDecoration(
+                  labelText: 'Ändringskommentar',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Välj granskare',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Column(
+                children: widget.reviewers.entries.map((entry) {
+                  return CheckboxListTile(
+                    title: Text(entry.value),
+                    value: _selectedReviewerUIDs.containsKey(entry.key),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        if (value == true) {
+                          _selectedReviewerUIDs[entry.key] = entry.value;
+                        } else {
+                          _selectedReviewerUIDs.remove(entry.key);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -27,20 +73,14 @@ class _CommitDialogState extends State<CommitDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('Cancel'),
+          child: const Text('Avbryt'),
         ),
-        TextButton(
+        ElevatedButton(
           onPressed: () {
-            final comment = _commentController.text;
-            if (comment.isNotEmpty) {
-              widget.onCommit(comment);
-            }
-            else {
-              widget.onCommit('Ingen ändringskommentar');
-            }
+            widget.onCommit(_commentController.text, _selectedReviewerUIDs);
             Navigator.of(context).pop();
           },
-          child: const Text('Save'),
+          child: const Text('Spara'),
         ),
       ],
     );
