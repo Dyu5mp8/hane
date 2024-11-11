@@ -56,9 +56,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
   @override
   Widget build(BuildContext context) {
 
-    final latestChangeNote = widget.drug.changeNotes?.isNotEmpty == true
-        ? widget.drug.changeNotes!.last
-        : null;
+    final latestChangeNote = widget.drug.latestReviewChangeNotes();
 
     return AlertDialog(
       title: Row(children: [
@@ -83,7 +81,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Senaste ändring:',
+                    Text('Senaste ändring att granska:',
                         style: Theme.of(context).textTheme.headlineLarge),
                     const SizedBox(height: 8),
                     Text(

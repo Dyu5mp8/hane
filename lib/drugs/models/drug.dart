@@ -234,6 +234,18 @@ class Drug extends ChangeNotifier with EquatableMixin {
     notifyListeners();
   }
 
+  Map<String, dynamic>? latestReviewChangeNotes() {
+    if (_changeNotes == null || _changeNotes!.isEmpty) {
+      return null;
+    }
+    for (var changeNote in _changeNotes!.reversed) {
+    if (changeNote['reviewers'] != null && changeNote['reviewers'].isNotEmpty) {
+      return changeNote;
+    }
+  }
+  return null;
+  }
+
   Map<String, String>? get hasReviewedUIDs => _hasReviewedUIDs;
   set hasReviewedUIDs(Map<String, String>? newHasReviewedUIDs) {
     if (_hasReviewedUIDs != newHasReviewedUIDs) {

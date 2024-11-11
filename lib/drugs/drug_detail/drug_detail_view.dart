@@ -135,7 +135,8 @@ class ReviewButton extends StatelessWidget {
             color: Color.fromARGB(255, 183, 125, 49),
             size: 20,
           )
-        : const Icon(Bootstrap.shield_fill_check, color: Colors.green, size: 20);
+        : const Icon(Bootstrap.shield_fill_check,
+            color: Colors.green, size: 20);
 
     return IconButton(
       icon: icon,
@@ -270,9 +271,8 @@ class EditModeButton extends StatelessWidget {
                 onPressed: () async {
                   HapticFeedback.lightImpact();
                   if (editMode) {
-                    if (await provider.checkIfDrugChanged(drug) && context.mounted) {
-                    
-                      
+                    if (await provider.checkIfDrugChanged(drug) &&
+                        context.mounted) {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -287,16 +287,17 @@ class EditModeButton extends StatelessWidget {
                                 'timestamp': timestamp,
                                 'user':
                                     FirebaseAuth.instance.currentUser!.email,
+                                'reviewers': selectedReviewerUIDs,
                               };
 
                               if (changeMap.isNotEmpty) {
                                 drug.changeNotes ??= []; // Initialize if null
                                 drug.changeNotes!.add(changeMap);
                               }
-
-                              // Update the drug's reviewerUIDs
-                              drug.shouldReviewUIDs = selectedReviewerUIDs;
-                              drug.hasReviewedUIDs = {};
+                              if (selectedReviewerUIDs.isNotEmpty) {
+                                drug.shouldReviewUIDs = selectedReviewerUIDs;
+                                drug.hasReviewedUIDs = {};
+                              }
 
                               // Save the drug
                               provider.addDrug(drug);
