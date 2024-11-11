@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:intl/intl.dart';
 
+
 class ChatMessage {
   final String message;
   final String user;
   final Timestamp timestamp;
-  final bool isSolved;
+  bool isSolved;
+  String? id;
 
 
   ChatMessage({
@@ -18,10 +21,12 @@ class ChatMessage {
     required this.user,
     required this.timestamp,
     this.isSolved = false,
+    this.id,
   });
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'message': message,
       'user': user,
       'timestamp': timestamp,
@@ -29,13 +34,16 @@ class ChatMessage {
     };
   }
 
-factory ChatMessage.fromFirestore(Map<String, dynamic> data) {
+factory ChatMessage.fromFirestore(Map<String, dynamic> data, String id) {
+ 
   return ChatMessage(
+    id: id,
     message: data['message'],
     user: data['user'],
     timestamp: data['timestamp'],
     isSolved: data['isSolved'] ?? false, // Provide a default value if null
   );
+  
 }
 }
 
@@ -101,7 +109,7 @@ class _DrugChatState extends State<DrugChat> {
 
     // Map documents to ChatMessage instances
     List<ChatMessage> chatMessages = snapshot.data!.docs
-        .map((doc) => ChatMessage.fromFirestore(doc.data() as Map<String, dynamic>))
+        .map((doc) => ChatMessage.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
         .toList();
 
     // Scroll to the bottom when a new message arrives
@@ -119,12 +127,27 @@ class _DrugChatState extends State<DrugChat> {
         var isCurrentUser = chatMessage.user == FirebaseAuth.instance.currentUser?.email;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: MessageBubble(
-            chatMessage: chatMessage,
-            isCurrentUser: isCurrentUser,
-          ),
-        );
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: GestureDetector(
+                onLongPress: () async {
+                 var provider = Provider.of<DrugListProvider>(context, listen: false);
+                    if (!chatMessage.isSolved) {
+                      chatMessage.isSolved = true;
+                      await provider
+                          .markMessageSolvedStatus(widget.drug.id!, chatMessage);
+                    }
+                    else{
+                      chatMessage.isSolved = false;
+                      await provider
+                          .markMessageSolvedStatus(widget.drug.id!, chatMessage);
+                    }
+                },
+                child: MessageBubble(
+                  chatMessage: chatMessage,
+                  isCurrentUser: isCurrentUser,
+                ),
+              ),
+            );
       },
     );
   },
@@ -178,22 +201,31 @@ class MessageBubble extends StatelessWidget {
                 ),
               if (!isCurrentUser) const SizedBox(width: 10),
               Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: bubbleColor(),
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(12),
-                      topRight: const Radius.circular(12),
-                      bottomLeft: isCurrentUser ? const Radius.circular(12) : Radius.zero,
-                      bottomRight: isCurrentUser ? Radius.zero : const Radius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    chatMessage.message,
-                    style: TextStyle(
-                      color: isCurrentUser ? Colors.white : Colors.black87,
-                      fontSize: 16,
+                child: Badge(
+                  backgroundColor: Colors.green,
+                  label: Icon(Icons.check, size: 8, color: Colors.white),
+                  isLabelVisible: chatMessage.isSolved,
+                  child: Opacity(
+                    opacity: chatMessage.isSolved ? 0.5 : 1.0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: bubbleColor(),
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(12),
+                          topRight: const Radius.circular(12),
+                          bottomLeft: isCurrentUser ? const Radius.circular(12) : Radius.zero,
+                          bottomRight: isCurrentUser ? Radius.zero : const Radius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        chatMessage.message,
+                        style: TextStyle(
+                          color: isCurrentUser ? Colors.white : Colors.black87,
+                          fontSize: 16,
+                          
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -219,6 +251,7 @@ class MessageBubble extends StatelessWidget {
                 formattedTime,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
+              
             ],
           ),
         ],

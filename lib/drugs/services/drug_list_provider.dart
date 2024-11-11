@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 
 import 'package:hane/login/user_status.dart';
 
-
-
 class DrugListProvider with ChangeNotifier {
   String _masterUID = "master";
   String? _user;
@@ -19,8 +17,6 @@ class DrugListProvider with ChangeNotifier {
   bool _isSyncedMode = false;
   Map<String, String> _possibleReviewerUIDs = {};
   bool _isReviewer = false;
-
-
 
   Future<void> initializeProvider() async {
     await getIsSyncedModeFromFirestore();
@@ -35,8 +31,7 @@ class DrugListProvider with ChangeNotifier {
 
   String get masterUID => _masterUID;
 
-Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
-
+  Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
 
   set masterUID(String value) {
     _masterUID = value;
@@ -55,26 +50,22 @@ Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
     _userMode = value;
   }
 
-
-    Future<void> _checkIfUserIsAdmin(User user) async {
+  Future<void> _checkIfUserIsAdmin(User user) async {
     try {
       final idTokenResult = await user.getIdTokenResult();
       if (idTokenResult.claims?['admin'] == true) {
-        
         userMode = UserMode.isAdmin;
-        
       }
-    
+
       return;
     } catch (e) {
       print("Failed to check if user is admin: $e");
       // Assume not admin when offline
       return;
     }
-    }
+  }
 
-    Future<void> _checkIfUserIsReviewer(User user) async {
-
+  Future<void> _checkIfUserIsReviewer(User user) async {
     try {
       final idTokenResult = await user.getIdTokenResult();
       if (idTokenResult.claims?['reviewer'] == true) {
@@ -86,11 +77,12 @@ Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
       // Assume not reviewer when offline
       return;
     }
-    }
- bool get preferGeneric => _preferGeneric;
+  }
+
+  bool get preferGeneric => _preferGeneric;
   set preferGeneric(bool value) {
     _preferGeneric = value;
-    updateUserBehavior(); 
+    updateUserBehavior();
     writePreferGeneric();
   }
 
@@ -113,19 +105,13 @@ Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
       return;
     }
 
-  
-
     if (isAdmin) {
       setUserBehavior(AdminUserBehavior(masterUID: _masterUID));
     } else if (_isSyncedMode) {
-      setUserBehavior(
-          SyncedUserBehavior(user: _user!, masterUID: _masterUID));
+      setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
     } else {
-      setUserBehavior(
-          CustomUserBehavior(user: _user!, masterUID: _masterUID));
+      setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
     }
-
-
   }
 
   void clearProvider() {
@@ -137,7 +123,6 @@ Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
     _isSyncedMode = false;
     _possibleReviewerUIDs.clear();
     _isReviewer = false;
-
   }
 
   @override
@@ -160,45 +145,43 @@ Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
     }
   }
 
- Future<bool> checkIfDrugChanged(Drug drug) async {
-  var db = FirebaseFirestore.instance;
+  Future<bool> checkIfDrugChanged(Drug drug) async {
+    var db = FirebaseFirestore.instance;
 
-  // Try to get the document from the cache first
-  DocumentSnapshot<Map<String, dynamic>> drugDoc;
-  try {
-    drugDoc = await db
-        .collection('users')
-        .doc(masterUID)
-        .collection('drugs')
-        .doc(drug.id)
-        .get(GetOptions(source: Source.cache));
-  } catch (e) {
-    // If the document is not in the cache, fetch it from the server
-    drugDoc = await db
-        .collection('users')
-        .doc(masterUID)
-        .collection('drugs')
-        .doc(drug.id)
-        .get(GetOptions(source: Source.server));
+    // Try to get the document from the cache first
+    DocumentSnapshot<Map<String, dynamic>> drugDoc;
+    try {
+      drugDoc = await db
+          .collection('users')
+          .doc(masterUID)
+          .collection('drugs')
+          .doc(drug.id)
+          .get(GetOptions(source: Source.cache));
+    } catch (e) {
+      // If the document is not in the cache, fetch it from the server
+      drugDoc = await db
+          .collection('users')
+          .doc(masterUID)
+          .collection('drugs')
+          .doc(drug.id)
+          .get(GetOptions(source: Source.server));
+    }
+
+    if (!drugDoc.exists) {
+      return true;
+    }
+
+    Drug drugToUpdate = Drug.fromFirestore(drugDoc.data()!);
+    return drug != drugToUpdate;
   }
-
-  if (!drugDoc.exists) {
-    return true;
-  }
-
-  Drug drugToUpdate = Drug.fromFirestore(drugDoc.data()!);
-  return drug != drugToUpdate;
-}
 
   Future<void> addDrug(Drug drug) async {
-
     await userBehavior!.addDrug(drug);
   }
 
   Future<void> deleteDrug(Drug drug) async {
     await userBehavior!.deleteDrug(drug);
   }
-
 
   Future<void> copyMasterToUser() async {
     if (userBehavior is CustomUserBehavior) {
@@ -248,15 +231,54 @@ Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
         .orderBy('timestamp', descending: true) // Fetch newest messages first
         .snapshots();
   }
-// Inside DrugListProvider
-Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
-  await FirebaseFirestore.instance.collection('users')
+
+  Future<void> sendChatMessage(String drugId , ChatMessage chatMessage) async {
+    print("Sending chat message: ${chatMessage.message}, ${chatMessage.id}");
+    final db = FirebaseFirestore.instance;
+
+    CollectionReference chatCollection = db
+        .collection('users')
         .doc(masterUID)
-      .collection('drugs')
-      .doc(drugId)
-      .collection('chat')
-      .add(chatMessage.toMap());
-}
+        .collection('drugs')
+        .doc(drugId)
+        .collection('chat');
+
+    
+      // The chatMessage doesn't have an id, create a new document
+      DocumentReference docRef = await chatCollection.add(chatMessage.toMap());
+      // Set the generated id back to the chatMessage object
+      chatMessage.id = docRef.id;
+    
+  }
+
+  Future<void> markMessageSolvedStatus(String drugId, ChatMessage chatMessage) async {
+    final db = FirebaseFirestore.instance;
+      CollectionReference chatCollection = db
+        .collection('users')
+        .doc(masterUID)
+        .collection('drugs')
+        .doc(drugId)
+        .collection('chat');
+
+     if (chatMessage.id != null && chatMessage.id!.isNotEmpty) {
+      // The chatMessage has an id
+      DocumentReference docRef = chatCollection.doc(chatMessage.id);
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+          await docRef.get() as DocumentSnapshot<Map<String, dynamic>>;
+
+      if (snapshot.exists) {
+        // Document exists, update it
+        await docRef.update(chatMessage.toMap());
+  
+    } else {
+     return ;
+    }
+
+     }
+     else {
+      return ;
+  }
+  }
 
   Future<void> getIsSyncedModeFromFirestore() async {
     try {
@@ -266,7 +288,9 @@ Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
 
       if (userDoc.exists) {
         // Set private variable directly to avoid calling setter
-        _isSyncedMode = (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ?? false;
+        _isSyncedMode =
+            (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ??
+                false;
       } else {
         _isSyncedMode = false;
       }
@@ -281,7 +305,12 @@ Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
       throw Exception("User is not a reviewer.");
     }
     try {
-      await FirebaseFirestore.instance.collection('users').doc(masterUID).collection('drugs').doc(drugId).set({
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(masterUID)
+          .collection('drugs')
+          .doc(drugId)
+          .set({
         'reviewerUIDs': FieldValue.arrayUnion([_user]),
       }, SetOptions(merge: true));
     } catch (e) {
@@ -289,26 +318,28 @@ Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
       rethrow;
     }
   }
-  
-Future<void> _getPossibleReviewerUIDs() async {
-  try {
-    var db = FirebaseFirestore.instance;
-    DocumentSnapshot masterDoc = await db.collection('users').doc(masterUID).get();
-    if (masterDoc.exists) {
-      Map<String, dynamic>? data = masterDoc.data() as Map<String, dynamic>?;
-      if (data != null && data.containsKey('reviewers')) {
-        _possibleReviewerUIDs = Map<String, String>.from(data['reviewers'] as Map);
+
+  Future<void> _getPossibleReviewerUIDs() async {
+    try {
+      var db = FirebaseFirestore.instance;
+      DocumentSnapshot masterDoc =
+          await db.collection('users').doc(masterUID).get();
+      if (masterDoc.exists) {
+        Map<String, dynamic>? data = masterDoc.data() as Map<String, dynamic>?;
+        if (data != null && data.containsKey('reviewers')) {
+          _possibleReviewerUIDs =
+              Map<String, String>.from(data['reviewers'] as Map);
+        } else {
+          _possibleReviewerUIDs = {};
+        }
       } else {
         _possibleReviewerUIDs = {};
       }
-    } else {
-      _possibleReviewerUIDs = {};
+    } catch (e) {
+      print("Failed to get reviewerUIDs: $e");
+      rethrow;
     }
-  } catch (e) {
-    print("Failed to get reviewerUIDs: $e");
-    rethrow;
   }
-}
 
   Future<void> writeIsSyncedMode() async {
     try {
@@ -329,7 +360,8 @@ Future<void> _getPossibleReviewerUIDs() async {
 
       if (userDoc.exists) {
         // Set private variable directly to avoid calling setter
-        _preferGeneric = (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
+        _preferGeneric =
+            (userDoc.data() as Map<String, dynamic>?)?['preferGeneric'] ?? true;
       } else {
         _preferGeneric = true;
       }
@@ -369,27 +401,31 @@ Future<void> _getPossibleReviewerUIDs() async {
   }
 
   Future<void> markEveryDrugAsReviewed(List<Drug> drugs) async {
-  try {
-    var db = FirebaseFirestore.instance;
-    WriteBatch batch = db.batch();
-    DocumentReference masterDocRef = db.collection('users').doc(masterUID);
+    try {
+      var db = FirebaseFirestore.instance;
+      WriteBatch batch = db.batch();
+      DocumentReference masterDocRef = db.collection('users').doc(masterUID);
 
-    for (var drug in drugs) {
-      if (drug.id != null) {
-        DocumentReference drugDocRef = masterDocRef.collection('drugs').doc(drug.id);
-        batch.set(drugDocRef, {
-          'hasReviewedUIDs': drug.shouldReviewUIDs,
-        }, SetOptions(merge: true));
+      for (var drug in drugs) {
+        if (drug.id != null) {
+          DocumentReference drugDocRef =
+              masterDocRef.collection('drugs').doc(drug.id);
+          batch.set(
+              drugDocRef,
+              {
+                'hasReviewedUIDs': drug.shouldReviewUIDs,
+              },
+              SetOptions(merge: true));
+        }
       }
-    }
 
-    await batch.commit();
-    print("Successfully marked every drug as reviewed.");
-  } catch (e) {
-    print("Failed to mark every drug as reviewed: $e");
-    rethrow;
+      await batch.commit();
+      print("Successfully marked every drug as reviewed.");
+    } catch (e) {
+      print("Failed to mark every drug as reviewed: $e");
+      rethrow;
+    }
   }
-}
 
   Future<void> markEveryMessageAsRead(List<Drug> drugs) async {
     try {
@@ -418,8 +454,6 @@ Future<void> _getPossibleReviewerUIDs() async {
     } catch (e) {
       print("Failed to mark every message as read: $e");
       rethrow;
-  
-
+    }
   }
-}
 }

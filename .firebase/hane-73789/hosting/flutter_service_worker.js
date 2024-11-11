@@ -3,12 +3,12 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
-const RESOURCES = {"flutter_bootstrap.js": "12cd99ec3f556fc4c7e82781ef873ef0",
+const RESOURCES = {"flutter_bootstrap.js": "a77ccdaff5eacf7f0c0cbf5c25860d64",
 "version.json": "e85a8d0eed05d0b93ea2ac679f893525",
 "favicon.ico": "96bd65603b7125c1a68a2d2f93bf74d3",
 "index.html": "0295270810369f4aa874ce92870eb58f",
 "/": "0295270810369f4aa874ce92870eb58f",
-"main.dart.js": "db28d6b9dea5dfeab7a4238cfdbdffe0",
+"main.dart.js": "ddbab7bdc9ece2227dde8b9211f2dabf",
 "flutter.js": "f393d3c16b631f36852323de8e583132",
 "icons/Icon-192.png": "e5fe2eeac9c2fd90d80c1f48d5714db0",
 "icons/Icon-maskable-192.png": "8c654a02027b2ce7b8bd8ba255981414",
@@ -2133,7 +2133,7 @@ const RESOURCES = {"flutter_bootstrap.js": "12cd99ec3f556fc4c7e82781ef873ef0",
 "assets/packages/hugeicons/lib/fonts/hgi-stroke-rounded.ttf": "e229171793d302e94bf35bb33b312b3a",
 "assets/shaders/ink_sparkle.frag": "ecc85a2e95f5e9f53123dcaf8cb9b6ce",
 "assets/AssetManifest.bin": "85ffa199e12cc89d440395943cfb3a18",
-"assets/fonts/MaterialIcons-Regular.otf": "270ec674b00be32adcc406df81cb36bd",
+"assets/fonts/MaterialIcons-Regular.otf": "6509c286d77b7dfde88a2ccb3cbcb1b1",
 "assets/assets/images/milrinone.png": "c1a21085faea0b03bf41ac355ff6a426",
 "assets/assets/images/milrinone_dosage_snippet_converted.png": "709c6e7f4514bde63221a670b22ace3c",
 "assets/assets/images/milrinone_select_weight.png": "75e44033658da1ec3a93965048057405",
