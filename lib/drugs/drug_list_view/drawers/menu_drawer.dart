@@ -5,7 +5,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/login/loginPage.dart';
+import 'package:hane/login/login_page.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
 
 abstract class MenuDrawer extends StatelessWidget {
@@ -30,10 +30,12 @@ abstract class MenuDrawer extends StatelessWidget {
                     .clearProvider();
                 await FirebaseAuth.instance.signOut();
                 // Clear the navigation stack
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                  (Route<dynamic> route) => false,
-                );
+                if (context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    (Route<dynamic> route) => false,
+                  );
+                }
               },
               child: const Text('Logga ut'),
             ),
@@ -98,11 +100,9 @@ abstract class MenuDrawer extends StatelessWidget {
         if (snapshot.hasData) {
           final packageInfo = snapshot.data!;
           return AboutListTile(
-            child: const Text('Om applikationen'),
             icon: const Icon(Icons.info),
             applicationName: packageInfo.appName,
-            applicationVersion:
-                packageInfo.version, 
+            applicationVersion: packageInfo.version,
             applicationLegalese: '${DateTime.now().year}',
             aboutBoxChildren: const [
               SizedBox(height: 5),
@@ -117,6 +117,7 @@ abstract class MenuDrawer extends StatelessWidget {
                 'Om du har några frågor eller upptäcker något fel med appen, maila vichy576@gmail.com',
               ),
             ],
+            child: const Text('Om applikationen'),
           );
         } else {
           // While the package info is loading, show a placeholder
@@ -182,7 +183,7 @@ class SyncedModeTile extends StatefulWidget {
   const SyncedModeTile({super.key});
 
   @override
-  _SyncedModeTileState createState() => _SyncedModeTileState();
+  State<SyncedModeTile> createState() => _SyncedModeTileState();
 }
 
 class _SyncedModeTileState extends State<SyncedModeTile> {

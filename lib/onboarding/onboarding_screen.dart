@@ -3,8 +3,10 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
+
   @override
-  _OnboardingScreenState createState() => _OnboardingScreenState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
@@ -47,7 +49,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(216, 214, 202, 1),
+      backgroundColor: const Color.fromRGBO(216, 214, 202, 1),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 16, bottom: 6),
@@ -99,7 +101,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          backgroundColor: Color.fromARGB(255, 236, 159, 117),
+                          backgroundColor: const Color.fromARGB(255, 236, 159, 117),
                           foregroundColor: Colors.black,
                         ),
                         child: const Text('Vi kör!', style: TextStyle(fontSize: 18)),
@@ -111,7 +113,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           children: [
                             const SizedBox(), // Placeholder for alignment
                             IconButton(
-                              icon: Icon(Icons.arrow_forward_rounded),
+                              icon: const Icon(Icons.arrow_forward_rounded),
                               onPressed: () {
                                 _pageController.nextPage(
                                   duration: const Duration(milliseconds: 300),
@@ -159,7 +161,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 16),
             Text(
               description,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Color.fromARGB(255, 36, 36, 36),
               ),

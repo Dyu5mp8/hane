@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/services/drug_list_wrapper.dart';
 import 'package:hane/drugs/services/user_behaviors/user_behavior.dart';
-import 'package:hane/login/loginPage.dart';
+import 'package:hane/login/login_page.dart';
 import 'package:hane/startup_errors.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
@@ -38,7 +38,7 @@ class InitializerWidget extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       // Handle the case where the user is not logged in
-      return LoginPage(); // Or appropriate action
+      return const LoginPage(); // Or appropriate action
     }
 
     String userId = user.uid;
@@ -57,7 +57,7 @@ class InitializerWidget extends StatelessWidget {
     } catch (e) {
       return GenericErrorWidget(errorMessage: e.toString(), onRetry: () {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => LoginPage()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       }
       );

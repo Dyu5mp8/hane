@@ -12,7 +12,7 @@ class DosageList extends StatefulWidget {
   final bool editMode;
   final Drug drug;
 
-  DosageList({
+  const DosageList({super.key, 
     required this.dosages,
     required this.editMode,
     required this.drug,
@@ -52,7 +52,7 @@ class _DosageListState extends State<DosageList> {
               color: Colors.white, // Your background color
               borderRadius: BorderRadius.circular(12.0),
               border: Border.all(
-                color: Color.fromARGB(255, 220, 220, 220),
+                color: const Color.fromARGB(255, 220, 220, 220),
                 width: 0.5,
               ),
             ),
@@ -63,9 +63,9 @@ class _DosageListState extends State<DosageList> {
                 if (widget.editMode)
                   ReorderableDragStartListener(
                     index: index,
-                    child: SizedBox(
+                    child: const SizedBox(
                         width: 40,
-                        child: const Icon(Icons.drag_handle, color: Colors.grey)),
+                        child: Icon(Icons.drag_handle, color: Colors.grey)),
                   ),
                 Expanded(
                   child: DosageSnippet(

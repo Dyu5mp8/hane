@@ -7,13 +7,13 @@ class ConcentrationPicker extends StatefulWidget {
   final Function(Concentration) onConcentrationSet;
 
   const ConcentrationPicker({
-    Key? key,
+    super.key,
     required this.concentrations,
     required this.onConcentrationSet,
-  }) : super(key: key);
+  });
 
   @override
-  _ConcentrationPickerState createState() => _ConcentrationPickerState();
+  State<ConcentrationPicker> createState() => _ConcentrationPickerState();
 }
 
 class _ConcentrationPickerState extends State<ConcentrationPicker> {

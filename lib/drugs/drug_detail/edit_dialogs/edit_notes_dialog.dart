@@ -6,14 +6,13 @@ class EditNotesDialog extends StatefulWidget {
   final bool isUserNote;
   final Function()? onUserNotesSaved;
   const EditNotesDialog(
-      {Key? key,
+      {super.key,
       required this.drug,
       required this.isUserNote,
-      this.onUserNotesSaved})
-      : super(key: key);
+      this.onUserNotesSaved});
 
   @override
-  _EditNotesDialogState createState() => _EditNotesDialogState();
+ State<EditNotesDialog> createState() => _EditNotesDialogState();
 }
 
 class _EditNotesDialogState extends State<EditNotesDialog> {

@@ -6,10 +6,10 @@ class GenericErrorWidget extends StatelessWidget {
   final VoidCallback? onRetry;
 
   const GenericErrorWidget({
-    Key? key,
+    super.key,
     required this.errorMessage,
     this.onRetry,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +20,9 @@ class GenericErrorWidget extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline, color: Colors.red, size: 60),
-              SizedBox(height: 16),
-              Text(
+              const Icon(Icons.error_outline, color: Colors.red, size: 60),
+              const SizedBox(height: 16),
+              const Text(
                 'Ett fel har inträffat',
                 style: TextStyle(
                   fontSize: 22,
@@ -30,19 +30,18 @@ class GenericErrorWidget extends StatelessWidget {
                   color: Colors.redAccent,
                 ),
               ),
-              SizedBox(height: 16),
-              
+              const SizedBox(height: 16),
               Text(
                 "felmeddelande: $errorMessage",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               if (onRetry != null)
                 ElevatedButton.icon(
                   onPressed: onRetry,
-                  icon: Icon(Icons.refresh),
-                  label: Text('Retry'),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
                 ),
             ],
           ),
@@ -58,15 +57,16 @@ class FirestoreErrorWidget extends StatelessWidget {
   final VoidCallback? onRetry;
 
   const FirestoreErrorWidget({
-    Key? key,
+    super.key,
     required this.errorDetails,
     this.onRetry,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return GenericErrorWidget(
-      errorMessage: 'Firestore is currently unavailable. Please try again later.\n$errorDetails',
+      errorMessage:
+          'Firestore is currently unavailable. Please try again later.\n$errorDetails',
       onRetry: onRetry,
     );
   }
@@ -78,15 +78,16 @@ class AuthErrorWidget extends StatelessWidget {
   final VoidCallback? onRetry;
 
   const AuthErrorWidget({
-    Key? key,
+    super.key,
     required this.errorDetails,
     this.onRetry,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return GenericErrorWidget(
-      errorMessage: 'Authentication failed. Please check your login credentials or network connection.\n$errorDetails',
+      errorMessage:
+          'Authentication failed. Please check your login credentials or network connection.\n$errorDetails',
       onRetry: onRetry,
     );
   }
@@ -97,14 +98,15 @@ class NetworkErrorWidget extends StatelessWidget {
   final VoidCallback? onRetry;
 
   const NetworkErrorWidget({
-    Key? key,
+    super.key,
     this.onRetry,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return GenericErrorWidget(
-      errorMessage: 'Network error. Please check your internet connection and try again.',
+      errorMessage:
+          'Network error. Please check your internet connection and try again.',
       onRetry: onRetry,
     );
   }

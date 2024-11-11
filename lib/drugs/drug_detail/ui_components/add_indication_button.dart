@@ -12,7 +12,7 @@ class AddIndicationButton extends StatelessWidget {
 
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color.fromRGBO(194, 221, 248, 1),
+        backgroundColor: const Color.fromRGBO(194, 221, 248, 1),
       
    
         shape: RoundedRectangleBorder(

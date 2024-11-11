@@ -13,7 +13,7 @@ class EditNameDialog extends StatefulWidget {
   const EditNameDialog({super.key, required this.drug, this.isNewDrug = false});
 
   @override
-  _EditNameDialogState createState() => _EditNameDialogState();
+  State<EditNameDialog> createState() => _EditNameDialogState();
 }
 
 class _EditNameDialogState extends State<EditNameDialog> {
@@ -221,9 +221,9 @@ class _EditNameDialogState extends State<EditNameDialog> {
                 // Display brand names as chips
                 // Display brand names with an option to select generic name
 
-                Row(
+                const Row(
                   children: [
-                    const Text(
+                    Text(
                       'Om det finns ett generiskt namn, markera detta',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -277,7 +277,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
                       focusNode: focusNode,
                       autofocus: true,
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(),
+                        border: const OutlineInputBorder(),
                         labelText: 'Lägg till kategorier',
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.add),

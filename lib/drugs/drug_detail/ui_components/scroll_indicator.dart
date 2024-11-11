@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 class ScrollIndicator extends StatefulWidget {
   final ScrollController scrollController;
 
-  const ScrollIndicator({Key? key, required this.scrollController}) : super(key: key);
+  const ScrollIndicator({super.key, required this.scrollController});
 
   @override
-  _ScrollIndicatorState createState() => _ScrollIndicatorState();
+  State<ScrollIndicator> createState() => _ScrollIndicatorState();
 }
 
-class _ScrollIndicatorState extends State<ScrollIndicator> with SingleTickerProviderStateMixin {
+class _ScrollIndicatorState extends State<ScrollIndicator>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   bool _isVisible = false; // Start with false to prevent flickering
 
@@ -38,7 +39,8 @@ class _ScrollIndicatorState extends State<ScrollIndicator> with SingleTickerProv
   void _initialVisibilityCheck() {
     if (!widget.scrollController.hasClients) {
       // The scrollController is not attached yet, schedule another frame
-      WidgetsBinding.instance.addPostFrameCallback((_) => _initialVisibilityCheck());
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => _initialVisibilityCheck());
       return;
     }
 
@@ -102,16 +104,15 @@ class _ScrollIndicatorState extends State<ScrollIndicator> with SingleTickerProv
       ),
       child: IconButton(
         icon: Icon(
-        Icons.arrow_circle_down_rounded,
-        size: 24,
-        color: Theme.of(context).colorScheme.primary,
+          Icons.arrow_circle_down_rounded,
+          size: 24,
+          color: Theme.of(context).colorScheme.primary,
         ),
         onPressed: () {
           widget.scrollController.animateTo(
-            widget.scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.fastLinearToSlowEaseIn
-          );
+              widget.scrollController.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.fastLinearToSlowEaseIn);
         },
       ),
     );

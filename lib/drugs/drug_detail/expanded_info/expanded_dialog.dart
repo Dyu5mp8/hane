@@ -5,15 +5,14 @@ class ExpandedDialog extends StatelessWidget {
   final String text;
 
   const ExpandedDialog(
-      {Key? key, required String this.text, String? this.title})
-      : super(key: key);
+      {super.key, required this.text, this.title});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: (title != null)
           ? Text("$title (utökat)")
-          : Text("Utökad information"),
+          : const Text("Utökad information"),
       titleTextStyle: Theme.of(context).textTheme.headlineLarge,
       content: SizedBox(
         height: MediaQuery.sizeOf(context).height * 0.7,

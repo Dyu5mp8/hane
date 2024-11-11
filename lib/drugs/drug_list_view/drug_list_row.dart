@@ -47,7 +47,8 @@ class DrugListRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (provider.isAdmin)
-                if (_drug.shouldReviewUIDs != null && _drug.shouldReviewUIDs!.isNotEmpty)
+                if (_drug.shouldReviewUIDs != null &&
+                    _drug.shouldReviewUIDs!.isNotEmpty)
                   _buildReviewStatusIcon(context),
               if (_drug.hasUnreadMessages) _buildNewMessageChip(context),
             ],
@@ -77,14 +78,11 @@ class DrugListRow extends StatelessWidget {
     }
   }
 
-  Icon _buildReviewStatusIcon(
-      BuildContext context) {
-
-
+  Icon _buildReviewStatusIcon(BuildContext context) {
     final icon = !_drug.hasCompletedReview()
-        ? Icon(Bootstrap.shield_fill_exclamation,
-            color: const Color.fromARGB(255, 183, 125, 49))
-        : Icon(Bootstrap.shield_fill_check, color: Colors.green);
+        ? const Icon(Bootstrap.shield_fill_exclamation,
+            color: Color.fromARGB(255, 183, 125, 49))
+        : const Icon(Bootstrap.shield_fill_check, color: Colors.green);
     return icon;
   }
 

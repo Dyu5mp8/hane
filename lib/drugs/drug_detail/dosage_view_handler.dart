@@ -264,12 +264,13 @@ class DosageViewHandler {
           ? "Beräknat på ${conversionParts.join(', ')}:\n"
           : "";
 
+
       return Text.rich(
         TextSpan(
           children: [
             buildDosageTextSpan(
               conversionInfo: conversionInfo,
-              instruction: dosage.instruction,
+              instruction: "",
               dose: dose,
               lowerLimitDose: lowerLimitDose,
               higherLimitDose: higherLimitDose,

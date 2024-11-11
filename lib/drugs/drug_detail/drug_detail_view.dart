@@ -14,8 +14,6 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-
-
 class DrugDetailView extends StatefulWidget {
   final bool isNewDrug;
 
@@ -35,7 +33,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
 
     // Open dialog for new drug if that is the case
     Future.delayed(const Duration(milliseconds: 300), () {
-      if (widget.isNewDrug && context.mounted) {
+      if (widget.isNewDrug && mounted) {
         Provider.of<EditModeProvider>(context, listen: false).toggleEditMode();
 
         showDialog(
@@ -63,7 +61,8 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         centerTitle: true,
         actions: [
           if (!editMode && drugListProvider.isReviewer) const ReviewButton(),
-          if (drugListProvider.userMode == UserMode.isAdmin && !editMode) const ChatButton(),
+          if (drugListProvider.userMode == UserMode.isAdmin && !editMode)
+            const ChatButton(),
           if (!_editableDrug.changedByUser && !editMode) const InfoButton(),
           if (_editableDrug.changedByUser ||
               drugListProvider.userMode == UserMode.isAdmin)
@@ -125,34 +124,32 @@ class BackButton extends StatelessWidget {
 }
 
 class ReviewButton extends StatelessWidget {
-  const ReviewButton({Key? key}) : super(key: key);
+  const ReviewButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     final drug = Provider.of<Drug>(context, listen: true);
-    final drugListProvider =
-        Provider.of<DrugListProvider>(context, listen: false);
- 
-
-
     final icon = !drug.hasCompletedReview()
-        ? Icon(
+        ? const Icon(
             Bootstrap.shield_fill_exclamation,
-            color: const Color.fromARGB(255, 183, 125, 49),
+            color: Color.fromARGB(255, 183, 125, 49),
             size: 20,
           )
-        : Icon(Bootstrap.shield_fill_check, color: Colors.green, size: 20);
+        : const Icon(Bootstrap.shield_fill_check, color: Colors.green, size: 20);
 
     return IconButton(
       icon: icon,
       onPressed: () {
-           showDialog(
-      context: context,
-      builder: (context) {
-        final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
-        return ReviewDialog(drug: drug, currentUserUID: currentUserUID,);
-      },
-    );
+        showDialog(
+          context: context,
+          builder: (context) {
+            final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
+            return ReviewDialog(
+              drug: drug,
+              currentUserUID: currentUserUID,
+            );
+          },
+        );
       },
     );
   }
@@ -171,7 +168,7 @@ class ChatButton extends StatelessWidget {
               smallSize: 10,
               child: Icon(Bootstrap.wechat),
             )
-          : Icon(Bootstrap.wechat),
+          : const Icon(Bootstrap.wechat),
       onPressed: () {
         Navigator.push(
           context,
@@ -273,37 +270,41 @@ class EditModeButton extends StatelessWidget {
                 onPressed: () async {
                   HapticFeedback.lightImpact();
                   if (editMode) {
-                    if (await provider.checkIfDrugChanged(drug)) {
-                    showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return CommitDialog(
-                        reviewers: provider.possibleReviewerUIDs,
-                        onCommit: (comment, selectedReviewerUIDs) {
-                          final timestamp = DateTime.now().toIso8601String();
+                    if (await provider.checkIfDrugChanged(drug) && context.mounted) {
+                    
+                      
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return CommitDialog(
+                            reviewers: provider.possibleReviewerUIDs,
+                            onCommit: (comment, selectedReviewerUIDs) {
+                              final timestamp =
+                                  DateTime.now().toIso8601String();
 
-                          final changeMap = {
-                            'comment': comment,
-                            'timestamp': timestamp,
-                            'user': FirebaseAuth.instance.currentUser!.email,
-                          };
+                              final changeMap = {
+                                'comment': comment,
+                                'timestamp': timestamp,
+                                'user':
+                                    FirebaseAuth.instance.currentUser!.email,
+                              };
 
-                          if (changeMap.isNotEmpty) {
-                            drug.changeNotes ??= []; // Initialize if null
-                            drug.changeNotes!.add(changeMap);
-                          }
+                              if (changeMap.isNotEmpty) {
+                                drug.changeNotes ??= []; // Initialize if null
+                                drug.changeNotes!.add(changeMap);
+                              }
 
-                          // Update the drug's reviewerUIDs
-                          drug.shouldReviewUIDs = selectedReviewerUIDs;
-                          drug.hasReviewedUIDs = {};
+                              // Update the drug's reviewerUIDs
+                              drug.shouldReviewUIDs = selectedReviewerUIDs;
+                              drug.hasReviewedUIDs = {};
 
-                          // Save the drug
-                          provider.addDrug(drug);
-                          editModeProvider.toggleEditMode();
+                              // Save the drug
+                              provider.addDrug(drug);
+                              editModeProvider.toggleEditMode();
+                            },
+                          );
                         },
                       );
-                    },
-                  );
                     } else {
                       editModeProvider.toggleEditMode();
                     }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
 import 'package:hane/drugs/drug_detail/ui_components/concentration_picker.dart';
-import 'package:hane/drugs/drug_detail/dosage_viewHandler.dart';
+import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
 import 'package:hane/drugs/drug_detail/ui_components/conversion_button.dart';
 import 'package:hane/drugs/drug_detail/ui_components/conversion_switch.dart';
 import 'package:hane/drugs/drug_detail/ui_components/route_text.dart';
@@ -152,7 +152,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                         },
                       ),
                                       
-                      SizedBox(width: 5),
+                      const SizedBox(width: 5),
                     
                 
                 

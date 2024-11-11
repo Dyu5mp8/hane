@@ -47,7 +47,7 @@ class AdminMenuDrawer extends MenuDrawer {
             padding: EdgeInsets.zero,
             children: <Widget>[
               const CustomDrawerHeader(),
-              DrugNameChoiceTile(),
+              const DrugNameChoiceTile(),
               ...buildUserSpecificTiles(context),
               
               buildLogoutTile(context),

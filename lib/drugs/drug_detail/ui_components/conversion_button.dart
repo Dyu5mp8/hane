@@ -10,13 +10,13 @@ class ConversionButton extends StatelessWidget {
   final Color inactiveColor;
 
   const ConversionButton({
-    Key? key,
+    super.key,
     required this.label,
     required this.isActive,
     required this.onPressed,
     this.activeColor = const Color.fromARGB(255, 254, 112, 56),
     this.inactiveColor = const Color.fromARGB(255, 195, 225, 240),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

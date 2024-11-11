@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 
 class MedicalDisclaimerDialog extends StatelessWidget {
-  const MedicalDisclaimerDialog({Key? key, required this.onAccepted})
-      : super(key: key);
+  const MedicalDisclaimerDialog({super.key, required this.onAccepted});
 
   final VoidCallback onAccepted;
 

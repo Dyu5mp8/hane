@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 
 class EditableRow extends StatefulWidget {
@@ -15,10 +12,9 @@ class EditableRow extends StatefulWidget {
   final Color? nonEditingBackgroundColor;
   final Duration animationDuration;
   final double iconSize;
-  
 
   const EditableRow({
-    Key? key,
+    super.key,
     required this.text,
     required this.editDialog,
     required this.isEditMode,
@@ -29,10 +25,10 @@ class EditableRow extends StatefulWidget {
     this.nonEditingBackgroundColor = Colors.transparent,
     this.animationDuration = const Duration(milliseconds: 500),
     this.iconSize = 20.0,
-  }) : super(key: key);
+  });
 
   @override
-  _EditableRowState createState() => _EditableRowState();
+  State<EditableRow> createState() => _EditableRowState();
 }
 
 class _EditableRowState extends State<EditableRow>
@@ -89,7 +85,6 @@ class _EditableRowState extends State<EditableRow>
     return InkWell(
       onTap: isEditMode
           ? () {
-          
               showDialog(
                 context: context,
                 builder: (context) => widget.editDialog,
@@ -100,7 +95,8 @@ class _EditableRowState extends State<EditableRow>
         padding: padding,
         decoration: BoxDecoration(
           color: isEditMode
-              ? (widget.editingBackgroundColor ?? Theme.of(context).primaryColorLight)
+              ? (widget.editingBackgroundColor ??
+                  Theme.of(context).primaryColorLight)
               : widget.nonEditingBackgroundColor,
           borderRadius: BorderRadius.circular(4),
         ),
@@ -112,14 +108,19 @@ class _EditableRowState extends State<EditableRow>
               child: Text(
                 widget.text?.isNotEmpty == true ? widget.text! : "",
                 style: widget.textStyle?.copyWith(
-                      color: widget.isEditMode ? Colors.blue[800] : Colors.black,
+                      color:
+                          widget.isEditMode ? Colors.blue[800] : Colors.black,
                       fontWeight: widget.isEditMode
                           ? FontWeight.bold
                           : FontWeight.normal,
                     ) ??
                     Theme.of(context).textTheme.headlineMedium!.copyWith(
-                          color: widget.isEditMode ? Colors.blue[800] : Colors.black,
-                          fontWeight: widget.isEditMode ? FontWeight.bold : FontWeight.normal,
+                          color: widget.isEditMode
+                              ? Colors.blue[800]
+                              : Colors.black,
+                          fontWeight: widget.isEditMode
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
               ),
             ),

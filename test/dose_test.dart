@@ -18,7 +18,6 @@ void main() {
       amount: 5.0,
       unit: "mg/ml"
     );
-    Dose convertedDose = dose.convertedBy(convertTime: "min", convertConcentration: concentration);
 
     
       // 

@@ -5,10 +5,10 @@ class CommitDialog extends StatefulWidget {
   final Map<String, String> reviewers;
 
   const CommitDialog({
-    Key? key,
+    super.key,
     required this.onCommit,
     required this.reviewers,
-  }) : super(key: key);
+  });
 
   @override
   State<CommitDialog> createState() => _CommitDialogState();
@@ -24,7 +24,7 @@ class _CommitDialogState extends State<CommitDialog> {
       title: const Text('Spara ändringar'),
       content: SingleChildScrollView(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 400), // Set max width
+          constraints: const BoxConstraints(maxWidth: 400), // Set max width
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

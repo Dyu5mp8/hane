@@ -5,14 +5,13 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/signup.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key, this.title, this.emailNotVerified})
-      : super(key: key);
+  const LoginPage({super.key, this.title, this.emailNotVerified});
 
   final String? title;
   final bool? emailNotVerified;
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -76,18 +75,22 @@ class _LoginPageState extends State<LoginPage> {
             password: _passwordController.text.trim(),
           );
           await _saveUserEmail();
-          Navigator.pushReplacement(
+          if(mounted) {
+            Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const InitializerWidget()),
           );
+          }
         } on FirebaseAuthException catch (e) {
           _onFailedLogin(e);
         } catch (e) {
           // Handle other exceptions
           print('An unexpected error occurred: $e');
+          if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Ett oväntat fel inträffade.")),
           );
+          }
         } finally {
           setState(() {
             _isLoading = false;

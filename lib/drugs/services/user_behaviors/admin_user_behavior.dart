@@ -3,7 +3,7 @@ import "package:hane/drugs/services/user_behaviors/user_behavior.dart";
 import 'package:rxdart/rxdart.dart';
 
 class AdminUserBehavior extends UserBehavior {
-  AdminUserBehavior({required String masterUID}) : super(masterUID: masterUID);
+  AdminUserBehavior({required super.masterUID});
 
   @override
   Stream<List<Drug>> getDrugsStream({bool sortByGeneric = false}) {

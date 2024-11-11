@@ -8,7 +8,7 @@ class ChangeLog extends StatefulWidget {
   final Drug drug;
   final VoidCallback onChanged;
 
-  const ChangeLog({Key? key, required this.drug, required this.onChanged}) : super(key: key);
+  const ChangeLog({super.key, required this.drug, required this.onChanged});
 
   @override
   State<ChangeLog> createState() => _ChangeLogState();

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
@@ -170,10 +169,10 @@ class MessageBubble extends StatelessWidget {
   final bool isCurrentUser;
 
   const MessageBubble({
-    Key? key,
+    super.key,
     required this.chatMessage,
     required this.isCurrentUser,
-  }) : super(key: key);
+  });
 
   Color bubbleColor() {
     double opacity = chatMessage.isSolved ? 0.5 : 1.0;
@@ -203,7 +202,7 @@ class MessageBubble extends StatelessWidget {
               Flexible(
                 child: Badge(
                   backgroundColor: Colors.green,
-                  label: Icon(Icons.check, size: 8, color: Colors.white),
+                  label: const Icon(Icons.check, size: 8, color: Colors.white),
                   isLabelVisible: chatMessage.isSolved,
                   child: Opacity(
                     opacity: chatMessage.isSolved ? 0.5 : 1.0,
@@ -291,13 +290,13 @@ class _ChatInputFieldState extends State<ChatInputField> {
     await provider.sendChatMessage(widget.drugId, chatMessage);
     widget.onNewMessage();
   } catch (e) {
-    if (context.mounted) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Kunde inte skicka meddelandet ${e.toString()}')),
       );
     }
   } finally {
-    if (context.mounted) {
+    if (mounted) {
       FocusScope.of(context).unfocus();
     }
   }

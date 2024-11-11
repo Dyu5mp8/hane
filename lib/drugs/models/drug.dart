@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/concentration.dart';
 import 'package:hane/drugs/models/indication.dart';
-
 export 'package:hane/drugs/models/dosage.dart';
 export 'package:hane/drugs/models/indication.dart';
 export 'package:hane/drugs/models/concentration.dart';
@@ -30,7 +28,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
   bool hasUnreadMessages = false;
   int unreadMessageCount = 0;
   Timestamp? _lastMessageTimestamp;
- Map<String, String>? _hasReviewedUIDs = {};
+  Map<String, String>? _hasReviewedUIDs = {};
   Map<String, String>? _shouldReviewUIDs = {};
 
   Drug(
@@ -53,7 +51,6 @@ class Drug extends ChangeNotifier with EquatableMixin {
       Timestamp? lastMessageTimestamp,
       Map<String, String>? hasReviewedUIDs,
       Map<String, String>? shouldReviewUIDs})
-      
       : _name = name ?? '',
         _changedByUser = changedByUser,
         _reviewedBy = reviewedBy,
@@ -209,27 +206,26 @@ class Drug extends ChangeNotifier with EquatableMixin {
   }
 
   void addReviewerUID(String reviewerUID, String reviewerEmail) {
-  _hasReviewedUIDs ??= {};
-  _hasReviewedUIDs![reviewerUID] = reviewerEmail;
-  notifyListeners();
-}
+    _hasReviewedUIDs ??= {};
+    _hasReviewedUIDs![reviewerUID] = reviewerEmail;
+    notifyListeners();
+  }
 
   void removeReviewerUID(String reviewerUID) {
     _hasReviewedUIDs?.remove(reviewerUID);
     notifyListeners();
   }
 
-
-
-bool isPendingUserReview(String reviewerUID) {
-  final shouldReviewKeys = _shouldReviewUIDs?.keys.toSet() ?? {};
-  final hasReviewedKeys = _hasReviewedUIDs?.keys.toSet() ?? {};
-  final remainingReviewers = shouldReviewKeys.difference(hasReviewedKeys);
-  return remainingReviewers.contains(reviewerUID);
-}
+  bool isPendingUserReview(String reviewerUID) {
+    final shouldReviewKeys = _shouldReviewUIDs?.keys.toSet() ?? {};
+    final hasReviewedKeys = _hasReviewedUIDs?.keys.toSet() ?? {};
+    final remainingReviewers = shouldReviewKeys.difference(hasReviewedKeys);
+    return remainingReviewers.contains(reviewerUID);
+  }
 
   bool hasCompletedReview() {
-    return setEquals(_hasReviewedUIDs?.keys.toSet(), _shouldReviewUIDs?.keys.toSet());
+    return setEquals(
+        _hasReviewedUIDs?.keys.toSet(), _shouldReviewUIDs?.keys.toSet());
   }
 
 //Called when drug is updated and needs to be reviewed again
@@ -237,7 +233,6 @@ bool isPendingUserReview(String reviewerUID) {
     _hasReviewedUIDs = {};
     notifyListeners();
   }
-
 
   Map<String, String>? get hasReviewedUIDs => _hasReviewedUIDs;
   set hasReviewedUIDs(Map<String, String>? newHasReviewedUIDs) {
@@ -254,7 +249,6 @@ bool isPendingUserReview(String reviewerUID) {
       notifyListeners();
     }
   }
-  
 
   Timestamp? get lastUpdated => _lastUpdated;
   set lastUpdated(Timestamp? newLastUpdated) {
@@ -263,8 +257,6 @@ bool isPendingUserReview(String reviewerUID) {
       notifyListeners();
     }
   }
-
-  
 
   List<dynamic>? getOnlyBrandNames() {
     var tempNames = _brandNames?.toList();
@@ -384,7 +376,7 @@ bool isPendingUserReview(String reviewerUID) {
       'expandedNotes': _expandedNotes,
       'lastUpdated': _lastUpdated,
       'lastMessageTimestamp': _lastMessageTimestamp,
-      'changeNotes': _changeNotes,  
+      'changeNotes': _changeNotes,
       'hasReviewedUIDs': _hasReviewedUIDs,
       'shouldReviewUIDs': _shouldReviewUIDs,
     };
@@ -406,9 +398,9 @@ bool isPendingUserReview(String reviewerUID) {
           .toList(),
       brandNames: (map['brandNames'] as List<dynamic>?),
       contraindication: map['contraindication'] as String?,
-       changeNotes: (map['changeNotes'] as List<dynamic>?)
-        ?.map((item) => Map<String, dynamic>.from(item as Map))
-        .toList(),
+      changeNotes: (map['changeNotes'] as List<dynamic>?)
+          ?.map((item) => Map<String, dynamic>.from(item as Map))
+          .toList(),
       expandedContraindication: map['expandedContraindication'] as String?,
       indications: (map['indications'] as List?)
           ?.map(
@@ -418,8 +410,8 @@ bool isPendingUserReview(String reviewerUID) {
       expandedNotes: map['expandedNotes'] as String?,
       lastUpdated: map['lastUpdated'] as Timestamp?,
       lastMessageTimestamp: map['lastMessageTimestamp'],
-       hasReviewedUIDs: Map<String, String>.from(map['hasReviewedUIDs'] ?? {}),
-    shouldReviewUIDs: Map<String, String>.from(map['shouldReviewUIDs'] ?? {}),
+      hasReviewedUIDs: Map<String, String>.from(map['hasReviewedUIDs'] ?? {}),
+      shouldReviewUIDs: Map<String, String>.from(map['shouldReviewUIDs'] ?? {}),
     );
   }
 }

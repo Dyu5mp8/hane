@@ -205,11 +205,11 @@ class _DrugListViewState extends State<DrugListView> {
     return CustomScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
             ],
           ),
         ),
@@ -442,7 +442,7 @@ class _DrugListViewState extends State<DrugListView> {
         });
       },
       items: [
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
           icon: Icon(Icons.list),
           label: 'Alla läkemedel',
         ),
@@ -453,7 +453,7 @@ class _DrugListViewState extends State<DrugListView> {
               pendingCount.toString(),
               style: const TextStyle(color: Colors.white),
             ),
-            child: Icon(Icons.pending)) : Icon(Icons.pending),
+            child: const Icon(Icons.pending)) : const Icon(Icons.pending),
           label: 'Väntande granskningar',
         ),
       ],

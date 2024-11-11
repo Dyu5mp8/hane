@@ -10,7 +10,7 @@ final ThemeData appTheme = ThemeData(
 
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
-    seedColor: Color.fromARGB(255, 0, 79, 104),
+    seedColor: const Color.fromARGB(255, 0, 79, 104),
 
     // ···
     brightness: Brightness.light,
@@ -61,7 +61,7 @@ final ThemeData appTheme = ThemeData(
 
   ),
   chipTheme: ChipThemeData(
-    backgroundColor: Color.fromRGBO(255, 230, 218, 1),
+    backgroundColor: const Color.fromRGBO(255, 230, 218, 1),
     labelStyle: GoogleFonts.rubik(
       fontSize: 12,
       color: Colors.black,
@@ -72,9 +72,9 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 
-  cardColor:  Color.fromARGB(255, 0, 79, 104),
+  cardColor:  const Color.fromARGB(255, 0, 79, 104),
   cardTheme: CardTheme(
-    color: Color.fromARGB(255, 106, 136, 207),
+    color: const Color.fromARGB(255, 106, 136, 207),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12.0),
       side: const BorderSide(

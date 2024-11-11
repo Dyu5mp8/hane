@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "package:hane/drugs/ui_components/custom_chip.dart";
 
 class CustomChipWithCheckbox extends StatelessWidget {
   final String label;
@@ -8,12 +7,12 @@ class CustomChipWithCheckbox extends StatelessWidget {
   final ValueChanged<bool?> onSelected;
 
   const CustomChipWithCheckbox({
-    Key? key,
+    super.key,
     required this.label,
     required this.isSelected,
     required this.onSelected,
     this.onDeleted,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

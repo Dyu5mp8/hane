@@ -7,6 +7,7 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 class SyncedUserMenuDrawer extends MenuDrawer {
   const SyncedUserMenuDrawer({super.key});
 
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: Provider.of<DrugListProvider>(context)

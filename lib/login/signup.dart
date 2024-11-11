@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/medical_disclaimer_dialog.dart';
-import 'loginPage.dart';
+import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, this.title});
@@ -275,7 +275,7 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: height * .05),
+            const SizedBox(height: height * .05),
             _title(),
             const SizedBox(height: 50),
             _emailPasswordWidget(),

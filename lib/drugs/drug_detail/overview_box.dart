@@ -31,7 +31,6 @@ class _OverviewBoxState extends State<OverviewBox> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     provider = Provider.of<DrugListProvider>(context, listen: false);
     drug = Provider.of<Drug>(context, listen: false);
@@ -343,7 +342,7 @@ class UserNoteRow extends StatefulWidget {
   const UserNoteRow({super.key});
 
   @override
-  _UserNoteRowState createState() => _UserNoteRowState();
+  State<UserNoteRow> createState() => _UserNoteRowState();
 }
 
 class _UserNoteRowState extends State<UserNoteRow> {
@@ -375,7 +374,7 @@ class _UserNoteRowState extends State<UserNoteRow> {
   @override
   Widget build(BuildContext context) {
     // Ensure drug is not null before proceeding
-    if (drug == null) return SizedBox.shrink();
+    if (drug == null) return const SizedBox.shrink();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

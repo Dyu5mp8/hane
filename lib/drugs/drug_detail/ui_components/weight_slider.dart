@@ -6,6 +6,7 @@ class WeightSlider extends StatefulWidget {
   final double initialWeight;
   final Function(double) onWeightSet;
 
+  // ignore: use_super_parameters
   const WeightSlider({
     Key? key,
     required this.initialWeight,
@@ -13,7 +14,7 @@ class WeightSlider extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _WeightSliderState createState() => _WeightSliderState();
+  State<WeightSlider> createState() => _WeightSliderState();
 }
 
 class _WeightSliderState extends State<WeightSlider> {
@@ -28,14 +29,14 @@ class _WeightSliderState extends State<WeightSlider> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       height: 240,
       child: Column(
         children: [
-           Text("Ange vikt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          SizedBox(height: 20),
-          Text("${_currentWeight.toStringAsFixed(0)} kg", style: TextStyle(fontSize: 18)),
-          SizedBox(height: 10),
+           const Text("Ange vikt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
+          Text("${_currentWeight.toStringAsFixed(0)} kg", style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 10),
          
           Slider(
             value: _currentWeight,
@@ -54,7 +55,7 @@ class _WeightSliderState extends State<WeightSlider> {
               widget.onWeightSet(_currentWeight);
               Navigator.pop(context);
             },
-            child: Text("Bekräfta"),
+            child: const Text("Bekräfta"),
           ),
         ],
       ),

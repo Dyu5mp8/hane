@@ -14,7 +14,7 @@ class DrugListWrapper extends StatelessWidget {
           Provider.of<DrugListProvider>(context, listen: true).getDrugsStream(),
       initialData: null, // Change initial data to null to indicate loading
       catchError: (_, error) => [],
-      child: DrugListView(),
+      child: const DrugListView(),
     );
   }
 }

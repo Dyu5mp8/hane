@@ -156,7 +156,7 @@ class DrugListProvider with ChangeNotifier {
           .doc(masterUID)
           .collection('drugs')
           .doc(drug.id)
-          .get(GetOptions(source: Source.cache));
+          .get(const GetOptions(source: Source.cache));
     } catch (e) {
       // If the document is not in the cache, fetch it from the server
       drugDoc = await db
@@ -164,7 +164,7 @@ class DrugListProvider with ChangeNotifier {
           .doc(masterUID)
           .collection('drugs')
           .doc(drug.id)
-          .get(GetOptions(source: Source.server));
+          .get(const GetOptions(source: Source.server));
     }
 
     if (!drugDoc.exists) {

@@ -12,12 +12,12 @@ num smartRound(double value) {
     var intPart = double.parse(intString);
 
     var dec = str.substring(decimalIndex, str.length);
-    var dec_double = double.parse(dec);
-    var dec_modified = intPart < 1
-        ? dec_double.toStringAsPrecision(3)
-        : dec_double.toStringAsPrecision(3 - intString.length);
+    var decDouble = double.parse(dec);
+    var decModified = intPart < 1
+        ? decDouble.toStringAsPrecision(3)
+        : decDouble.toStringAsPrecision(3 - intString.length);
 
-    var doublePart = double.parse(dec_modified);
+    var doublePart = double.parse(decModified);
 
     var finalDouble = intPart + doublePart;
     // Format finalDouble to 2 decimal places

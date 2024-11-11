@@ -6,6 +6,8 @@ import 'package:hane/drugs/models/drug.dart';
 import 'ui_components/dosage_list.dart';
 
 class IndicationTabView extends StatelessWidget {
+  const IndicationTabView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final drug = context.watch<Drug>();

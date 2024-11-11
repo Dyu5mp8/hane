@@ -28,8 +28,8 @@ class CustomUserMenuDrawer extends MenuDrawer {
             padding: EdgeInsets.zero,
             children: <Widget>[
               const CustomDrawerHeader(),
-              DrugNameChoiceTile(),
-              SyncedModeTile(),
+              const DrugNameChoiceTile(),
+              const SyncedModeTile(),
               buildTutorialTile(context),
               buildAboutTile(context),
               buildLogoutTile(context),

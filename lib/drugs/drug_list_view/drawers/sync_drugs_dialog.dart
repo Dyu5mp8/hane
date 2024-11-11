@@ -11,7 +11,7 @@ class SyncDrugsDialog extends StatefulWidget {
   });
 
   @override
-  _SyncDrugsDialogState createState() => _SyncDrugsDialogState();
+  State<SyncDrugsDialog> createState() => _SyncDrugsDialogState();
 }
 
 class _SyncDrugsDialogState extends State<SyncDrugsDialog> {

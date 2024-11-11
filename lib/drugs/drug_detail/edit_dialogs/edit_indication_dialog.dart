@@ -20,7 +20,7 @@ class EditIndicationDialog extends StatefulWidget {
       this.onSave});
 
   @override
-  _EditIndicationDialogState createState() => _EditIndicationDialogState();
+  State<EditIndicationDialog> createState() => _EditIndicationDialogState();
 }
 
 class _EditIndicationDialogState extends State<EditIndicationDialog> {

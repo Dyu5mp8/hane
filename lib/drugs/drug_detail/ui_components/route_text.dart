@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:hane/drugs/drug_detail/dosage_viewHandler.dart";
+import "package:hane/drugs/drug_detail/dosage_view_handler.dart";
 import "package:icons_plus/icons_plus.dart";
 
 class RouteText extends StatelessWidget {
@@ -49,7 +49,7 @@ class RouteText extends StatelessWidget {
       children: [
         if (routeIcon(iconSize: 12) != null) routeIcon(iconSize: 14)!,
         const SizedBox(width: 5),
-        Text(routeText(), style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(routeText(), style: const TextStyle(fontWeight: FontWeight.bold)),
       ],
     );
   }

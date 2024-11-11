@@ -10,13 +10,13 @@ class ReviewDialog extends StatefulWidget {
   final String? currentUserUID;
 
   const ReviewDialog({
-    Key? key,
+    super.key,
     required this.drug,
     required this.currentUserUID,
-  }) : super(key: key);
+  });
 
   @override
-  _ReviewDialogState createState() => _ReviewDialogState();
+  State<ReviewDialog> createState() => _ReviewDialogState();
 }
 
 class _ReviewDialogState extends State<ReviewDialog> {
@@ -63,7 +63,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
     return AlertDialog(
       title: Row(children: [
         const Text('Granskning'),
-        const Expanded(child: const SizedBox()),
+        const Expanded(child: SizedBox()),
         TextButton(
           onPressed: () {
             _navigateToChangeLog(context);

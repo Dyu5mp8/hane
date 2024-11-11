@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class TimePicker extends StatefulWidget {
   final Function(String) onTimeUnitSet;
 
-  const TimePicker({Key? key, required this.onTimeUnitSet}) : super(key: key);
+  const TimePicker({super.key, required this.onTimeUnitSet});
 
   @override
-  _TimePickerState createState() => _TimePickerState();
+  State<TimePicker> createState() => _TimePickerState();
 }
 
 class _TimePickerState extends State<TimePicker> {

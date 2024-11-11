@@ -25,10 +25,12 @@ class PreferenceSelectionScreen extends StatelessWidget {
     }, SetOptions(merge: true));
 
     // Re-initialize the app after setting preference
-    Navigator.pushReplacement(
+    if(context.mounted) {
+      Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const InitializerWidget()),
     );
+    }
   }
 
   @override
@@ -49,7 +51,7 @@ class PreferenceSelectionScreen extends StatelessWidget {
               onPressed: () => _setPreference(context, true),
               icon: Icons.sync, // Adding an icon
               cardColor: Colors.blue[50]!,
-              buttonColor: Color.fromARGB(255, 184, 217, 244),
+              buttonColor: const Color.fromARGB(255, 184, 217, 244),
             ),
             const SizedBox(height: 20),
             _buildModeCard(
@@ -113,7 +115,6 @@ class PreferenceSelectionScreen extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: onPressed,
-                child: Text(buttonText, style: Theme.of(context).textTheme.headlineMedium),
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -123,6 +124,7 @@ class PreferenceSelectionScreen extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   textStyle: const TextStyle(fontSize: 16),
                 ),
+                child: Text(buttonText, style: Theme.of(context).textTheme.headlineMedium),
               ),
             ),
           ],

@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hane/onboarding/onboarding_screen.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hane/login/loginPage.dart';
+import 'package:hane/login/login_page.dart';
 import 'package:hane/startup_errors.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -56,7 +57,7 @@ class _MyAppState extends State<MyApp> {
         Widget homeWidget;
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          homeWidget = Scaffold(
+          homeWidget = const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
@@ -69,7 +70,7 @@ class _MyAppState extends State<MyApp> {
             },
           );
         } else {
-          homeWidget = AuthGate(); // test OnboardingScreen();
+          homeWidget = const AuthGate(); // test OnboardingScreen();
         }
 
         return MultiProvider(
@@ -110,16 +111,18 @@ class _MyAppState extends State<MyApp> {
 }
 
 class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
       // User is logged in
-      return InitializerWidget();
+      return const InitializerWidget();
     } else {
       // User is not logged in
-      return LoginPage();
+      return const LoginPage();
     }
   }
 }
