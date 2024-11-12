@@ -5,10 +5,11 @@ import "package:hane/utils/validation_exception.dart";
 class Concentration with EquatableMixin {
   final double amount;
   final String unit;
+  final String? mixingInstructions;
 
-  Concentration({required this.amount, required this.unit});
+  Concentration({required this.amount, required this.unit, this.mixingInstructions});
 
-  Concentration.fromString({required this.amount, required String unit})
+  Concentration.fromString({required this.amount, required String unit, this.mixingInstructions})
       : unit = unit.replaceAll("μg", "mikrog");
 
   factory Concentration.fromMap(Map<String, dynamic> map) {
@@ -16,6 +17,7 @@ class Concentration with EquatableMixin {
     return Concentration(
       amount: amount.toDouble(),
       unit: map['unit'] as String,
+      mixingInstructions: map['mixingInstructions'] as String?,
     );
   }
 
@@ -23,6 +25,7 @@ class Concentration with EquatableMixin {
     return {
       'amount': amount,
       'unit': unit,
+      'mixingInstructions': mixingInstructions,
     };
   }
 
@@ -34,6 +37,8 @@ class Concentration with EquatableMixin {
       amount = newAmount;
     }
   }
+
+
 
   set unit(String newUnit) {
     if (unit != newUnit) {
