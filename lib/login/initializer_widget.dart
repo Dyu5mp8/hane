@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/services/drug_list_wrapper.dart';
 import 'package:hane/drugs/services/user_behaviors/user_behavior.dart';
+import 'package:hane/login/drug_init_screen.dart';
 import 'package:hane/login/login_page.dart';
+import 'package:hane/login/preference_selection_screen.dart';
+import 'package:hane/login/user_status.dart';
 import 'package:hane/startup_errors.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+
+
 
 
 class InitializerWidget extends StatelessWidget {
@@ -51,9 +57,24 @@ class InitializerWidget extends StatelessWidget {
     final drugListProvider =
         Provider.of<DrugListProvider>(context, listen: false);
     drugListProvider.user = userId;
+
+ 
     try {
       await drugListProvider.initializeProvider();
-      return const DrugListWrapper();
+
+      if (drugListProvider.userMode == null) {
+        return PreferenceSelectionScreen(user: userId);
+      }
+
+  
+  
+      else if (drugListProvider.userMode == UserMode.customMode && await drugListProvider.getDataStatus() == false)        {
+
+          return DrugInitScreen(user: userId);
+        }
+        else { return const DrugListWrapper();}
+       
+
     } catch (e) {
       return GenericErrorWidget(errorMessage: e.toString(), onRetry: () {
         Navigator.of(context).pushReplacement(
