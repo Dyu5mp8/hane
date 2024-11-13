@@ -16,9 +16,7 @@ class PreferenceSelectionScreen extends StatelessWidget {
     // Store preference in Firestore
     final prefs = FirebaseFirestore.instance
         .collection('users')
-        .doc(user)
-        .collection('preferences')
-        .doc("preferSyncedMode");
+        .doc(user);
 
     await prefs.set({
       'preferSyncedMode': preferSynced,
