@@ -161,6 +161,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                               decoration: const InputDecoration(
                                 labelText: 'Värde',
                                 hintText: 't.ex. 10',
+                                hintStyle: const TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
                                 errorMaxLines: 2,
@@ -180,6 +181,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                             labelText: 'Enhet',
                             floatingLabelBehavior: FloatingLabelBehavior.always,
                             errorMaxLines: 2,
+                            suffixText: ' / ml',
                           ),
                           value: selectedUnit,
                           items: unitsToSymbols(units).map((String unit) {
@@ -220,10 +222,15 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                       const SizedBox(height: 16),
                       // Add or Save Button
                       Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.centerRight,
                         child: ElevatedButton.icon(
                           icon: Icon(
                             editingIndex != null ? Icons.save : Icons.add,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
                           ),
                           label: Text(
                             editingIndex != null ? 'Spara ändringar' : 'Lägg till',
