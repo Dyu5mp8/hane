@@ -19,13 +19,28 @@ class DrugListProvider with ChangeNotifier {
   bool _isReviewer = false;
 
   Future<void> initializeProvider() async {
-    await getIsSyncedModeFromFirestore();
-    await getPreferGenericFromFirestore();
-    await _checkIfUserIsAdmin(FirebaseAuth.instance.currentUser!);
+    _userMode = await determineUserMode(FirebaseAuth.instance.currentUser!);
     await _checkIfUserIsReviewer(FirebaseAuth.instance.currentUser!);
+    await getPreferGenericFromFirestore();
     await _getPossibleReviewerUIDs();
     updateUserBehavior();
   }
+
+  Future<UserMode> determineUserMode(User user) async {
+          final idTokenResult = await user.getIdTokenResult();
+      if (idTokenResult.claims?['admin'] == true) {
+        return UserMode.isAdmin;
+      }
+      else if (await getIsSyncedModeFromFirestore()) {
+        return UserMode.syncedMode;
+      } else {
+        return UserMode.customMode;
+      }
+
+  }
+
+
+
 
   bool get isReviewer => _isReviewer;
 
@@ -86,7 +101,7 @@ class DrugListProvider with ChangeNotifier {
     writePreferGeneric();
   }
 
-  bool get isSyncedMode => _isSyncedMode;
+  bool get isSyncedMode => _userMode == UserMode.syncedMode;
   set isSyncedMode(bool value) {
     _isSyncedMode = value;
     updateUserBehavior();
@@ -280,24 +295,22 @@ class DrugListProvider with ChangeNotifier {
   }
   }
 
-  Future<void> getIsSyncedModeFromFirestore() async {
-    try {
+  Future<bool> getIsSyncedModeFromFirestore() async {
+    
       var db = FirebaseFirestore.instance;
       String userId = FirebaseAuth.instance.currentUser!.uid;
       DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
       if (userDoc.exists) {
         // Set private variable directly to avoid calling setter
-        _isSyncedMode =
+        return
             (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ??
                 false;
-      } else {
-        _isSyncedMode = false;
+      } 
+      else {
+        return false;
       }
-    } catch (e) {
-      print("Failed to get preferSyncedMode: $e");
-      rethrow;
-    }
+    
   }
 
   Future<void> addReviewUID(String drugId) async {

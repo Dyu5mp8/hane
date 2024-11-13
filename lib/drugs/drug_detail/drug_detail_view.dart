@@ -269,8 +269,17 @@ class EditModeButton extends StatelessWidget {
                       )
                     : const Icon(Icons.edit_note_sharp, size: 30),
                 onPressed: () async {
+                  
+
                   HapticFeedback.lightImpact();
                   if (editMode) {
+                    if (provider.userMode == UserMode.customMode) {
+                      provider.addDrug(drug);
+                    }
+
+                    if (provider.isAdmin){
+                  
+           
                     if (await provider.checkIfDrugChanged(drug) &&
                         context.mounted) {
                       showDialog(
@@ -301,15 +310,17 @@ class EditModeButton extends StatelessWidget {
 
                               // Save the drug
                               provider.addDrug(drug);
-                              editModeProvider.toggleEditMode();
+                           
                             },
                           );
                         },
                       );
-                    } else {
-                      editModeProvider.toggleEditMode();
+                    } 
                     }
-                  } else {
+            editModeProvider.toggleEditMode();
+                  } 
+                  
+                  else {
                     editModeProvider.toggleEditMode();
                   }
                 },
