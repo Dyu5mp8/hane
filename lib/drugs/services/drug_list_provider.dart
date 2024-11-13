@@ -63,6 +63,8 @@ class DrugListProvider with ChangeNotifier {
   UserMode? get userMode => _userMode;
   set userMode(UserMode? value) {
     _userMode = value;
+    updateUserBehavior();
+
   }
 
   Future<void> _checkIfUserIsAdmin(User user) async {
@@ -97,8 +99,8 @@ class DrugListProvider with ChangeNotifier {
   bool get preferGeneric => _preferGeneric;
   set preferGeneric(bool value) {
     _preferGeneric = value;
-    updateUserBehavior();
     writePreferGeneric();
+    notifyListeners();
   }
 
   bool get isSyncedMode => _userMode == UserMode.syncedMode;
@@ -120,13 +122,18 @@ class DrugListProvider with ChangeNotifier {
       return;
     }
 
-    if (isAdmin) {
+    if (_userMode == UserMode.isAdmin) {
       setUserBehavior(AdminUserBehavior(masterUID: _masterUID));
-    } else if (_isSyncedMode) {
+    } else if (_userMode == UserMode.syncedMode) {
       setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
-    } else {
+    } else if (_userMode == UserMode.customMode) {
       setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
     }
+    else {
+      throw Exception("User mode not supported.");
+    }
+
+    print("User behavior updated: $userBehavior");
   }
 
   void clearProvider() {
