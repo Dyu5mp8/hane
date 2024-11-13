@@ -38,7 +38,9 @@ class Concentration with EquatableMixin {
     }
   }
 
-
+  String normalizeFirstdUnit(){
+    return unit.replaceAll("mikrog", "μg").split('/')[0];
+    }
 
   set unit(String newUnit) {
     if (unit != newUnit) {

@@ -269,8 +269,14 @@ class EditModeButton extends StatelessWidget {
                       )
                     : const Icon(Icons.edit_note_sharp, size: 30),
                 onPressed: () async {
-                  HapticFeedback.lightImpact();
-                  if (editMode) {
+                  if (editMode){
+                    if(provider.isSyncedMode){
+                     provider.addDrug(drug);
+                    }
+
+                 
+           
+                  else if (provider.isAdmin) {
                     if (await provider.checkIfDrugChanged(drug) &&
                         context.mounted) {
                       showDialog(
@@ -306,12 +312,17 @@ class EditModeButton extends StatelessWidget {
                           );
                         },
                       );
-                    } else {
-                      editModeProvider.toggleEditMode();
-                    }
-                  } else {
+                    } 
+                  } 
+                  HapticFeedback.heavyImpact();
+                  editModeProvider.toggleEditMode();
+                  }
+
+                  
+                  else {
                     editModeProvider.toggleEditMode();
                   }
+
                 },
               );
             }),
