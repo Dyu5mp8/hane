@@ -23,7 +23,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
   List<Concentration> concentrations = [];
 
   // List of units for the dropdown
-  List<String> units = UnitValidator.validSubstanceUnits().keys.toList();
+  List<String> units = UnitValidator.validConcentrationDenominatorUnits().keys.toList();
   String? selectedUnit;
   int? editingIndex;
 
@@ -102,8 +102,6 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    // Convert units to symbols for display
-    List<String> unitSymbols = unitsToSymbols(units);
 
     return Scaffold(
       appBar: AppBar(
@@ -136,14 +134,10 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                 style: Theme.of(context).textTheme.headlineLarge),
             const SizedBox(height: 12),
             Card(
-              color: Colors.grey[200],
-              elevation: 1,
+              color: Theme.of(context).colorScheme.surface,
+           elevation: 1,
               margin: const EdgeInsets.symmetric(vertical: 6),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
-                side: BorderSide(
-                    color: Theme.of(context).colorScheme.onSurface, width: 0.4),
-              ),
+           
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Form(
@@ -151,71 +145,71 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                   child: Column(
                     children: <Widget>[
                       // Concentration Amount and Unit Inputs
-                      Row(
-                        children: [
-                          // Concentration Amount Input
-                          Expanded(
-                            flex: 2,
-                            child: TextFormField(
-                              controller: concentrationAmountController,
-                              decoration: const InputDecoration(
-                                labelText: 'Värde',
-                                hintText: 't.ex. 10',
-                                hintStyle: const TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                errorMaxLines: 2,
-                              ),
-                              validator: val.validateConcentrationAmount,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          // Concentration Unit Dropdown
-                          Expanded(
-                            flex: 1,
-                             child: DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
-                            labelText: 'Enhet',
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            errorMaxLines: 2,
-                            suffixText: ' / ml',
-                          ),
-                          value: selectedUnit,
-                          items: unitsToSymbols(units).map((String unit) {
-                            return DropdownMenuItem<String>(
-                              value: unit,
-                              child: Text(unit),
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedUnit = newValue;
-                            });
-                          },
-                          validator: (value) {
-                            val.validateConcentrationUnit(value);
-                            return null;
-                          },
-                        ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
+                     Row(
+  children: [
+    // Concentration Amount Input
+    Expanded(
+      flex: 3,
+      child: TextFormField(
+        controller: concentrationAmountController,
+      style: const TextStyle(fontSize: 17),
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          labelText: 'Värde',
+        
+          hintText: 't.ex. 10',
+          hintStyle: TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          errorMaxLines: 2,
+        ),
+        validator: val.validateConcentrationAmount,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      ),
+    ),
+    const SizedBox(width: 12),
+    // Concentration Unit Dropdown
+    Expanded(
+      flex: 2,
+      child: DropdownButtonFormField<String>(
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12), // Adjusted padding to fit content
+          labelText: 'Enhet',
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          errorMaxLines: 2,
+        ),
+        value: selectedUnit,
+        items: unitsToSymbols(units).map((String unit) {
+          return DropdownMenuItem<String>(
+            value: unit,
+            child: Text("$unit/ml", style: const TextStyle(fontSize: 16)),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            selectedUnit = newValue;
+          });
+        },
+        validator: (value) {
+          return val.validateConcentrationUnit(value);
+        },
+      ),
+    ),
+  ],
+),
+const SizedBox(height: 12),
                       // Mixing Instructions Input
                       TextFormField(
                         controller: mixingInstructionsController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Blandningsinstruktioner',
-                          hintStyle: const TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
+                          hintStyle: TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
                           hintText: '(valfritt) T.ex.  "Nipruss 60 mg + Glukos 50 mg/ml 60 ml i ljusskyddad spruta ger 1mg/ml."',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           errorMaxLines: 2,
                           border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.grey[100],
+                        
                         ),
                         maxLines: 3,
                       ),
@@ -255,8 +249,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
               itemBuilder: (context, index) {
                 final concentration = concentrations[index];
                 return Card(
-                  color: Colors.grey[200],
-                  elevation: 1,
+                  color: Theme.of(context).colorScheme.surface,
+                  elevation: 5,
                   margin: const EdgeInsets.symmetric(vertical: 6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),

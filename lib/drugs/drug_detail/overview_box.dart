@@ -173,7 +173,9 @@ class BasicInfoRow extends StatelessWidget {
                             editDialog: EditNameDialog(drug: drug),
                             isEditMode: editModeProvider.editMode,
                             textStyle:
-                                Theme.of(context).textTheme.headlineLarge);
+                                Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                      fontSize: 22
+                                    ));
                       },
                     ),
                     if (drug.brandNames != null)
@@ -236,7 +238,8 @@ class ConcentrationColumn extends StatelessWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 100),
         child: FittedBox(
-          child: !isEditMode
+          child: (!isEditMode && concentrations.any((conc) =>
+                  conc.mixingInstructions != null))
               ? GestureDetector(
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) =>

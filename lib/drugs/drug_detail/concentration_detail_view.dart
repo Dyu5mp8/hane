@@ -18,6 +18,8 @@ class ConcentrationDetailView extends StatelessWidget {
   paddingBetweenOpenSections: 8.0,
   paddingBetweenClosedSections: 4.0,
   maxOpenSections: 10,
+  scaleWhenAnimating: true,
+  initialOpeningSequenceDelay: 0,
 
   contentBackgroundColor: Theme.of(context).colorScheme.primaryFixed,
   children: concentrations

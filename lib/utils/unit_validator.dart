@@ -31,6 +31,12 @@ static validSubstanceUnits() {
   );
 }
 
+static validConcentrationDenominatorUnits() {
+  return Map.fromEntries(
+    _validUnits.entries.where((entry) =>(entry.value == "unitunit"|| entry.value == "molar")|| entry.value == "mass" )
+  );
+}
+
 static String getUnitType(String str) {
   return _validUnits[str]!;
 }

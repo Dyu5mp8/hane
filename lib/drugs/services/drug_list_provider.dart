@@ -19,14 +19,14 @@ class DrugListProvider with ChangeNotifier {
   bool _isReviewer = false;
 
   Future<void> initializeProvider() async {
-    _userMode = await determineUserMode(FirebaseAuth.instance.currentUser!);
+    _userMode = await _determineUserMode(FirebaseAuth.instance.currentUser!);
     await _checkIfUserIsReviewer(FirebaseAuth.instance.currentUser!);
     await getPreferGenericFromFirestore();
     await _getPossibleReviewerUIDs();
     updateUserBehavior();
   }
 
-  Future<UserMode?> determineUserMode(User user) async {
+  Future<UserMode?> _determineUserMode(User user) async {
           final idTokenResult = await user.getIdTokenResult();
       if (idTokenResult.claims?['admin'] == true) {
         return UserMode.isAdmin;
@@ -78,20 +78,7 @@ class DrugListProvider with ChangeNotifier {
 
   }
 
-  Future<void> _checkIfUserIsAdmin(User user) async {
-    try {
-      final idTokenResult = await user.getIdTokenResult();
-      if (idTokenResult.claims?['admin'] == true) {
-        userMode = UserMode.isAdmin;
-      }
-
-      return;
-    } catch (e) {
-      print("Failed to check if user is admin: $e");
-      // Assume not admin when offline
-      return;
-    }
-  }
+ 
 
   Future<void> _checkIfUserIsReviewer(User user) async {
     try {

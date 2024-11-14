@@ -313,6 +313,8 @@ class EditModeButton extends StatelessWidget {
 
                               // Save the drug
                               provider.addDrug(drug);
+                              editModeProvider.toggleEditMode();
+
                            
                             },
                           );
