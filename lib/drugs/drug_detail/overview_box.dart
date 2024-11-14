@@ -10,7 +10,6 @@ import 'package:hane/drugs/drug_detail/ui_components/scroll_indicator.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-
 class OverviewBox extends StatefulWidget {
   const OverviewBox({super.key});
 
@@ -35,12 +34,10 @@ class _OverviewBoxState extends State<OverviewBox> {
     super.didChangeDependencies();
     provider = Provider.of<DrugListProvider>(context, listen: false);
     drug = Provider.of<Drug>(context, listen: false);
-
   }
 
   @override
   Widget build(BuildContext context) {
-  
     bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode);
 
     return Container(
@@ -188,37 +185,14 @@ class BasicInfoRow extends StatelessWidget {
                 ),
               ),
               if (concentrations != null)
-                Align(
-                  alignment: AlignmentDirectional.topEnd,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 100),
-                    child: FittedBox(
-                      child: GestureDetector(
-                        onTap:() => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ConcentrationDetailView(concentrations),
-                        )),
-                        child: Column(
-                          children: [
-                            Consumer<EditModeProvider>(
-                              builder: (context, editModeProvider, child) {
-                                return EditableRow(
-                                  text: "Styrkor",
-                                  textStyle:
-                                      Theme.of(context).textTheme.bodySmall,
-                                  editDialog:
-                                      EditConcentrationsDialog(drug: drug),
-                                  isEditMode: editModeProvider.editMode,
-                                );
-                              },
-                            ),
-                            ...drug
-                                .getConcentrationsAsString()!
-                                .map((conc) => Text(conc))
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                Consumer<EditModeProvider>(
+                  builder: (context, editModeProvider, child) {
+                    return ConcentrationColumn(
+                      concentrations: concentrations,
+                      drug: drug,
+                      isEditMode: editModeProvider.editMode,
+                    );
+                  },
                 ),
             ],
           ),
@@ -228,12 +202,12 @@ class BasicInfoRow extends StatelessWidget {
   }
 }
 
-class ConcentrationWidget extends StatelessWidget {
+class ConcentrationColumn extends StatelessWidget {
   final List<Concentration> concentrations;
   final Drug drug;
   final bool isEditMode;
 
-  const ConcentrationWidget({
+  const ConcentrationColumn({
     required this.concentrations,
     required this.drug,
     required this.isEditMode,
@@ -249,32 +223,31 @@ class ConcentrationWidget extends StatelessWidget {
           editDialog: EditConcentrationsDialog(drug: drug),
           isEditMode: isEditMode,
         ),
-        ...drug.getConcentrationsAsString()!.map((conc) => Text(conc)),
+        ...concentrations.map((conc) => Text(conc.toString(),
+            style: TextStyle(
+                color: conc.mixingInstructions == null
+                    ? Colors.black
+                    : Colors.blue))),
       ],
     );
 
-    if (isEditMode) {
-      return GestureDetector(
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ConcentrationDetailView(concentrations),
-        )),
-        child: Align(
-          alignment: AlignmentDirectional.topEnd,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 100),
-            child: FittedBox(child: content),
-          ),
+    return Align(
+      alignment: AlignmentDirectional.topEnd,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 100),
+        child: FittedBox(
+          child: !isEditMode
+              ? GestureDetector(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        ConcentrationDetailView(concentrations),
+                  )),
+                  child: content,
+                )
+              : content,
         ),
-      );
-    } else {
-      return Align(
-        alignment: AlignmentDirectional.topEnd,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 100),
-          child: FittedBox(child: content),
-        ),
-      );
-    }
+      ),
+    );
   }
 }
 

@@ -9,48 +9,61 @@ class ConcentrationDetailView extends StatelessWidget {
 
 @override
   build(context) => Scaffold(
-        backgroundColor: Colors.blueGrey[100],
+       
         appBar: AppBar(
-          title: const Text('Accordion'),
+          title: const Text('Spädningar'),
         ),
-    body: Accordion(
+  body: Accordion(
+  headerPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+  paddingBetweenOpenSections: 8.0,
+  paddingBetweenClosedSections: 4.0,
+  maxOpenSections: 10,
+
+  contentBackgroundColor: Theme.of(context).colorScheme.primaryFixed,
   children: concentrations
       .where((concentration) => concentration.mixingInstructions?.isNotEmpty ?? false)
       .map((concentration) => AccordionSection(
             isOpen: true,
-            header: Text(
-              concentration.toString(),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            headerBackgroundColor: Theme.of(context).colorScheme.primary,
+      
+            headerBorderRadius: 20.0,
+            headerBorderWidth: 2,
+            contentBackgroundColor: const Color.fromARGB(255, 234, 228, 225),
+            contentBorderRadius: 8.0,
+            contentHorizontalPadding: 10,
+            contentVerticalPadding: 10,
+            header: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                concentration.toString(),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onInverseSurface,
+                ),
               ),
             ),
-            content: Column(
-              children: [
-                Text('Spädning: $concentration'),
-                Text('Instruktion: ${concentration.mixingInstructions}'),
-              ],
+
+             
+     
+            rightIcon: Icon(
+              Icons.expand_more,
+              color: Theme.of(context).colorScheme.inversePrimary,
             ),
-            headerBackgroundColor: Colors.blue,
-            headerBackgroundColorOpened: Colors.blueAccent,
-            headerBorderColor: Colors.blueGrey,
-            headerBorderColorOpened: Colors.blueGrey[700],
-            headerBorderWidth: 2.0,
-            headerBorderRadius: 8.0,
-            headerPadding: EdgeInsets.all(16.0),
-            leftIcon: Icon(Icons.info, color: Colors.white),
-            rightIcon: Icon(Icons.arrow_drop_down, color: Colors.white),
-            contentBackgroundColor: Colors.white,
-            contentBorderColor: Colors.blueGrey,
-            contentBorderWidth: 1.0,
-            contentBorderRadius: 8.0,
-            contentHorizontalPadding: 16.0,
-            contentVerticalPadding: 8.0,
-            paddingBetweenOpenSections: 8.0,
-            paddingBetweenClosedSections: 4.0,
+            content: 
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '${concentration.mixingInstructions}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+                  ),
+                ),
+            
           ))
       .toList(),
-)
-  );
+),
+);
 } 
