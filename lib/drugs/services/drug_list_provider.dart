@@ -20,7 +20,6 @@ class DrugListProvider with ChangeNotifier {
 
   Future<void> initializeProvider() async {
     _userMode = await determineUserMode(FirebaseAuth.instance.currentUser!);
-    print("User mode: $_userMode");
     await _checkIfUserIsReviewer(FirebaseAuth.instance.currentUser!);
     await getPreferGenericFromFirestore();
     await _getPossibleReviewerUIDs();
@@ -145,8 +144,6 @@ class DrugListProvider with ChangeNotifier {
     } else if (_userMode == UserMode.customMode) {
       setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
     }
-
-    print("User behavior updated: $userBehavior");
   }
 
   void clearProvider() {

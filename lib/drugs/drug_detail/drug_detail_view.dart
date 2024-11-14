@@ -206,6 +206,9 @@ class InfoButton extends StatelessWidget {
 class EditModeButton extends StatelessWidget {
   const EditModeButton({super.key});
 
+
+  
+
   @override
   Widget build(BuildContext context) {
     Drug drug = Provider.of<Drug>(context, listen: false);
@@ -315,6 +318,7 @@ class EditModeButton extends StatelessWidget {
                           );
                         },
                       );
+                      return;
                     } 
                     }
             editModeProvider.toggleEditMode();
