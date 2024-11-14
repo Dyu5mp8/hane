@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/concentration_detail_view.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/drug_detail/expanded_info/expanded_dialog.dart';
@@ -192,24 +193,29 @@ class BasicInfoRow extends StatelessWidget {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 100),
                     child: FittedBox(
-                      child: Column(
-                        children: [
-                          Consumer<EditModeProvider>(
-                            builder: (context, editModeProvider, child) {
-                              return EditableRow(
-                                text: "Styrkor",
-                                textStyle:
-                                    Theme.of(context).textTheme.bodySmall,
-                                editDialog:
-                                    EditConcentrationsDialog(drug: drug),
-                                isEditMode: editModeProvider.editMode,
-                              );
-                            },
-                          ),
-                          ...drug
-                              .getConcentrationsAsString()!
-                              .map((conc) => Text(conc))
-                        ],
+                      child: GestureDetector(
+                        onTap:() => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ConcentrationDetailView(concentrations),
+                        )),
+                        child: Column(
+                          children: [
+                            Consumer<EditModeProvider>(
+                              builder: (context, editModeProvider, child) {
+                                return EditableRow(
+                                  text: "Styrkor",
+                                  textStyle:
+                                      Theme.of(context).textTheme.bodySmall,
+                                  editDialog:
+                                      EditConcentrationsDialog(drug: drug),
+                                  isEditMode: editModeProvider.editMode,
+                                );
+                              },
+                            ),
+                            ...drug
+                                .getConcentrationsAsString()!
+                                .map((conc) => Text(conc))
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -219,6 +225,56 @@ class BasicInfoRow extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class ConcentrationWidget extends StatelessWidget {
+  final List<Concentration> concentrations;
+  final Drug drug;
+  final bool isEditMode;
+
+  const ConcentrationWidget({
+    required this.concentrations,
+    required this.drug,
+    required this.isEditMode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget content = Column(
+      children: [
+        EditableRow(
+          text: "Styrkor",
+          textStyle: Theme.of(context).textTheme.bodySmall,
+          editDialog: EditConcentrationsDialog(drug: drug),
+          isEditMode: isEditMode,
+        ),
+        ...drug.getConcentrationsAsString()!.map((conc) => Text(conc)),
+      ],
+    );
+
+    if (isEditMode) {
+      return GestureDetector(
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ConcentrationDetailView(concentrations),
+        )),
+        child: Align(
+          alignment: AlignmentDirectional.topEnd,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 100),
+            child: FittedBox(child: content),
+          ),
+        ),
+      );
+    } else {
+      return Align(
+        alignment: AlignmentDirectional.topEnd,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 100),
+          child: FittedBox(child: content),
+        ),
+      );
+    }
   }
 }
 

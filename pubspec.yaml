@@ -59,6 +59,7 @@ dependencies:
   reorderable_tabbar: ^1.0.6
   smooth_page_indicator: ^1.2.0+3
   package_info_plus: ^8.1.0
+  accordion: ^2.6.0
 
 
 dev_dependencies:
