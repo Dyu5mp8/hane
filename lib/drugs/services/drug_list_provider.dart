@@ -19,13 +19,31 @@ class DrugListProvider with ChangeNotifier {
   bool _isReviewer = false;
 
   Future<void> initializeProvider() async {
-    await getIsSyncedModeFromFirestore();
-    await getPreferGenericFromFirestore();
-    await _checkIfUserIsAdmin(FirebaseAuth.instance.currentUser!);
+    _userMode = await determineUserMode(FirebaseAuth.instance.currentUser!);
     await _checkIfUserIsReviewer(FirebaseAuth.instance.currentUser!);
+    await getPreferGenericFromFirestore();
     await _getPossibleReviewerUIDs();
     updateUserBehavior();
   }
+
+  Future<UserMode?> determineUserMode(User user) async {
+          final idTokenResult = await user.getIdTokenResult();
+      if (idTokenResult.claims?['admin'] == true) {
+        return UserMode.isAdmin;
+      }
+      if (await getIsSyncedModeFromFirestore()== null) {
+        return null;
+      }
+      else if (await getIsSyncedModeFromFirestore() == true) {
+        return UserMode.syncedMode;
+      } else {
+        return UserMode.customMode;
+      }
+
+  }
+
+
+
 
   bool get isReviewer => _isReviewer;
 
@@ -48,6 +66,16 @@ class DrugListProvider with ChangeNotifier {
   UserMode? get userMode => _userMode;
   set userMode(UserMode? value) {
     _userMode = value;
+    if (_userMode == UserMode.syncedMode) {
+      _isSyncedMode = true;
+      writeIsSyncedMode();
+    } else if (_userMode == UserMode.customMode) {
+      _isSyncedMode = false;
+      writeIsSyncedMode();
+    }
+    
+    updateUserBehavior();
+
   }
 
   Future<void> _checkIfUserIsAdmin(User user) async {
@@ -82,11 +110,11 @@ class DrugListProvider with ChangeNotifier {
   bool get preferGeneric => _preferGeneric;
   set preferGeneric(bool value) {
     _preferGeneric = value;
-    updateUserBehavior();
     writePreferGeneric();
+    notifyListeners();
   }
 
-  bool get isSyncedMode => _isSyncedMode;
+  bool get isSyncedMode => _userMode == UserMode.syncedMode;
   set isSyncedMode(bool value) {
     _isSyncedMode = value;
     updateUserBehavior();
@@ -100,16 +128,20 @@ class DrugListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+
   void updateUserBehavior() {
+
+   
+
     if (_user == null) {
       return;
     }
 
-    if (isAdmin) {
+    if (_userMode == UserMode.isAdmin) {
       setUserBehavior(AdminUserBehavior(masterUID: _masterUID));
-    } else if (_isSyncedMode) {
+    } else if (_userMode == UserMode.syncedMode) {
       setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
-    } else {
+    } else if (_userMode == UserMode.customMode) {
       setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
     }
   }
@@ -280,24 +312,21 @@ class DrugListProvider with ChangeNotifier {
   }
   }
 
-  Future<void> getIsSyncedModeFromFirestore() async {
-    try {
+  Future<bool?> getIsSyncedModeFromFirestore() async {
+    
       var db = FirebaseFirestore.instance;
       String userId = FirebaseAuth.instance.currentUser!.uid;
       DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
       if (userDoc.exists) {
         // Set private variable directly to avoid calling setter
-        _isSyncedMode =
-            (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'] ??
-                false;
-      } else {
-        _isSyncedMode = false;
+        return
+            (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'];
+      } 
+      else {
+        return null;
       }
-    } catch (e) {
-      print("Failed to get preferSyncedMode: $e");
-      rethrow;
-    }
+    
   }
 
   Future<void> addReviewUID(String drugId) async {
@@ -344,7 +373,7 @@ class DrugListProvider with ChangeNotifier {
   Future<void> writeIsSyncedMode() async {
     try {
       await FirebaseFirestore.instance.collection('users').doc(_user).set({
-        'preferSyncedMode': _isSyncedMode,
+        'preferSyncedMode': isSyncedMode,
       }, SetOptions(merge: true));
     } catch (e) {
       print("Failed to write preferSyncedMode: $e");

@@ -3,6 +3,8 @@ import 'package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart'
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/drug_detail/ui_components/add_indication_button.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:hane/login/user_status.dart';
 import 'ui_components/dosage_list.dart';
 
 class IndicationTabView extends StatelessWidget {
@@ -12,9 +14,9 @@ class IndicationTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     final drug = context.watch<Drug>();
     final editMode = context.watch<EditModeProvider>().editMode;
+    final provider = context.read<DrugListProvider  >();
 
-    if ((drug.indications == null || drug.indications!.isEmpty) &&
-        drug.changedByUser) {
+    if ((drug.indications == null|| drug.indications!.isEmpty) && (provider.userMode != UserMode.syncedMode)) {
       return Column(
         mainAxisSize:
             MainAxisSize.min, // Shrinks the column to fit its children

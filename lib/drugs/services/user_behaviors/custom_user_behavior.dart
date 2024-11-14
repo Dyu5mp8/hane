@@ -194,30 +194,41 @@ class CustomUserBehavior extends UserBehavior {
     }
   }
 
-  Future<void> addDrugsFromMaster(List<String> drugNames) async {
-    CollectionReference masterDrugsCollection = FirebaseFirestore.instance
-        .collection('users')
-        .doc('master')
-        .collection('drugs');
+Future<void> addDrugsFromMaster(List<String> drugNames) async {
+  CollectionReference masterDrugsCollection = FirebaseFirestore.instance
+      .collection('users')
+      .doc('master')
+      .collection('drugs');
+  CollectionReference userDrugsCollection = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user)
+      .collection('drugs');
 
-    try {
-      // Await the snapshot
-      final snapshot =
-          await masterDrugsCollection.where('name', whereIn: drugNames).get();
+  try {
+    // Fetch the drugs with the specified names from the master collection
+    final snapshot =
+        await masterDrugsCollection.where('name', whereIn: drugNames).get();
 
-      // Convert the documents into a list of Drug objects
-      final List<Drug> drugs = snapshot.docs
-          .map((doc) => Drug.fromFirestore(doc.data() as Map<String, dynamic>))
-          .toList();
+    // Initialize a Firestore batch
+    WriteBatch batch = FirebaseFirestore.instance.batch();
 
-      for (var drug in drugs) {
-        await addDrug(drug);
-      }
-    } catch (e) {
-      print("Failed to add drugs from master: $e");
-      rethrow;
+    // Add each drug document to the batch
+    for (var doc in snapshot.docs) {
+      // Create a new document reference in the user's drugs collection
+      DocumentReference newDocRef = userDrugsCollection.doc(doc.id);
+
+      // Add the set operation to the batch
+      batch.set(newDocRef, doc.data());
     }
+
+    // Commit the batch write
+    await batch.commit();
+    print("Successfully added drugs from master.");
+  } catch (e) {
+    print("Failed to add drugs from master: $e");
+    rethrow;
   }
+}
 
   Future<bool> getDataStatus() async {
     try {

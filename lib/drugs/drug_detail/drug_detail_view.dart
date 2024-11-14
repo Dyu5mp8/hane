@@ -206,6 +206,9 @@ class InfoButton extends StatelessWidget {
 class EditModeButton extends StatelessWidget {
   const EditModeButton({super.key});
 
+
+  
+
   @override
   Widget build(BuildContext context) {
     Drug drug = Provider.of<Drug>(context, listen: false);
@@ -269,14 +272,17 @@ class EditModeButton extends StatelessWidget {
                       )
                     : const Icon(Icons.edit_note_sharp, size: 30),
                 onPressed: () async {
-                  if (editMode){
-                    if(provider.isSyncedMode){
-                     provider.addDrug(drug);
+                  
+
+                  HapticFeedback.lightImpact();
+                  if (editMode) {
+                    if (provider.userMode == UserMode.customMode) {
+                      provider.addDrug(drug);
                     }
 
-                 
+                    if (provider.isAdmin){
+                  
            
-                  else if (provider.isAdmin) {
                     if (await provider.checkIfDrugChanged(drug) &&
                         context.mounted) {
                       showDialog(
@@ -307,17 +313,16 @@ class EditModeButton extends StatelessWidget {
 
                               // Save the drug
                               provider.addDrug(drug);
-                              editModeProvider.toggleEditMode();
+                           
                             },
                           );
                         },
                       );
+                      return;
                     } 
+                    }
+            editModeProvider.toggleEditMode();
                   } 
-                  HapticFeedback.heavyImpact();
-                  editModeProvider.toggleEditMode();
-                  }
-
                   
                   else {
                     editModeProvider.toggleEditMode();

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
+import 'package:hane/login/user_status.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/login_page.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
+
 
 abstract class MenuDrawer extends StatelessWidget {
   final Set<String>? userDrugNames;
@@ -197,7 +199,11 @@ class _SyncedModeTileState extends State<SyncedModeTile> {
       trailing: Switch(
         value: drugListProvider.isSyncedMode,
         onChanged: (value) {
-          drugListProvider.isSyncedMode = value;
+          if (value) {
+            drugListProvider.userMode = UserMode.syncedMode;  
+          } else {
+            drugListProvider.userMode = UserMode.customMode;
+          }
 
           // Show a SnackBar for feedback
           ScaffoldMessenger.of(context).showSnackBar(

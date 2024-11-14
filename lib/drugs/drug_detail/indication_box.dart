@@ -14,7 +14,7 @@ class IndicationBox extends StatelessWidget {
         return Expanded(
           child: DefaultTabController(
             length: drug.indications!.length,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.only(bottom: 20.0),
               child: Column(
                 children: [
