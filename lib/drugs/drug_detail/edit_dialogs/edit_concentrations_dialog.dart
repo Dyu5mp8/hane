@@ -135,9 +135,13 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
             const SizedBox(height: 12),
             Card(
               color: Theme.of(context).colorScheme.surface,
-           elevation: 1,
+              elevation: 1,
               margin: const EdgeInsets.symmetric(vertical: 6),
-           
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+                side: BorderSide(
+                    color: Theme.of(context).colorScheme.onSurface, width: 0.4),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Form(
@@ -152,12 +156,10 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
       flex: 3,
       child: TextFormField(
         controller: concentrationAmountController,
-      style: const TextStyle(fontSize: 17),
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           labelText: 'Värde',
-        
           hintText: 't.ex. 10',
           hintStyle: TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -178,12 +180,15 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
           labelText: 'Enhet',
           floatingLabelBehavior: FloatingLabelBehavior.always,
           errorMaxLines: 2,
+          suffixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0), // Ensures /ml suffix fits better
+          suffixText: '/ml',
+          suffixStyle: TextStyle(color: Colors.black, fontSize: 14), // Adjusted font size for better fit
         ),
         value: selectedUnit,
         items: unitsToSymbols(units).map((String unit) {
           return DropdownMenuItem<String>(
             value: unit,
-            child: Text("$unit/ml", style: const TextStyle(fontSize: 16)),
+            child: Text(unit),
           );
         }).toList(),
         onChanged: (String? newValue) {
@@ -192,7 +197,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
           });
         },
         validator: (value) {
-          return val.validateConcentrationUnit(value);
+          val.validateConcentrationUnit(value);
+          
         },
       ),
     ),
@@ -202,14 +208,15 @@ const SizedBox(height: 12),
                       // Mixing Instructions Input
                       TextFormField(
                         controller: mixingInstructionsController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Blandningsinstruktioner',
-                          hintStyle: TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
+                          hintStyle: const TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
                           hintText: '(valfritt) T.ex.  "Nipruss 60 mg + Glukos 50 mg/ml 60 ml i ljusskyddad spruta ger 1mg/ml."',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           errorMaxLines: 2,
-                          border: OutlineInputBorder(),
-                        
+                          border: const OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.grey[100],
                         ),
                         maxLines: 3,
                       ),

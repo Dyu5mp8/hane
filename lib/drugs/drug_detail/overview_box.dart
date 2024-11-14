@@ -227,7 +227,8 @@ class ConcentrationColumn extends StatelessWidget {
         ),
         ...concentrations.map((conc) => Text(conc.toString(),
             style: TextStyle(
-                color: conc.mixingInstructions == null
+                color: (conc.mixingInstructions == null ||
+                        conc.mixingInstructions!.isEmpty)
                     ? Colors.black
                     : Colors.blue))),
       ],
@@ -239,7 +240,8 @@ class ConcentrationColumn extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 100),
         child: FittedBox(
           child: (!isEditMode && concentrations.any((conc) =>
-                  conc.mixingInstructions != null))
+                  (conc.mixingInstructions != null &&
+                      conc.mixingInstructions!.isNotEmpty)))
               ? GestureDetector(
                   onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) =>
