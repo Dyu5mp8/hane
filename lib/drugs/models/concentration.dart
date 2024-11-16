@@ -30,7 +30,7 @@ class Concentration with EquatableMixin {
   }
 
   @override
-  List<Object?> get props => [amount, unit];
+  List<Object?> get props => [amount, unit, mixingInstructions];
 
   set amount(double newAmount) {
     if (amount != newAmount) {
