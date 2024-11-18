@@ -9,7 +9,7 @@ import 'package:hane/drugs/drug_detail/review_dialog.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/indication_box.dart';
-import 'package:hane/drugs/drug_detail/overview_box.dart';
+import 'package:hane/drugs/drug_detail/overview/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:icons_plus/icons_plus.dart';

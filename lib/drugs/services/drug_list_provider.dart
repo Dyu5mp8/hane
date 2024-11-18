@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/drug_detail/drug_chat/drug_chat.dart';
+
 import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 
 import 'package:flutter/material.dart';
 
 import 'package:hane/login/user_status.dart';
+export 'package:provider/provider.dart';
+
 
 class DrugListProvider with ChangeNotifier {
   String _masterUID = "master";
