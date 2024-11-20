@@ -46,11 +46,12 @@ class DrugListRow extends StatelessWidget {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (provider.isAdmin)
+              if (provider.isAdmin || provider.isReviewer)
                 if (_drug.shouldReviewUIDs != null &&
                     _drug.shouldReviewUIDs!.isNotEmpty)
                   _buildReviewStatusIcon(context),
-              if (_drug.hasUnreadMessages) _buildNewMessageChip(context),
+                  SizedBox(width: 5),
+                if (_drug.hasUnreadMessages) _buildNewMessageChip(context),
             ],
           ),
           onTap: () {
