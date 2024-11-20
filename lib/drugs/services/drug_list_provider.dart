@@ -255,21 +255,28 @@ class DrugListProvider with ChangeNotifier {
   }
 
   Future<void> sendChatMessage(String drugId , ChatMessage chatMessage) async {
-    print("Sending chat message: ${chatMessage.message}, ${chatMessage.id}");
     final db = FirebaseFirestore.instance;
 
-    CollectionReference chatCollection = db
+    DocumentReference drugDocRef = db
         .collection('users')
         .doc(masterUID)
         .collection('drugs')
-        .doc(drugId)
-        .collection('chat');
+        .doc(drugId);
 
-    
+    CollectionReference chatCollection = drugDocRef.collection('chat');
+
+      
       // The chatMessage doesn't have an id, create a new document
       DocumentReference docRef = await chatCollection.add(chatMessage.toMap());
       // Set the generated id back to the chatMessage object
       chatMessage.id = docRef.id;
+
+      drugDocRef.set({
+
+        'lastMessageTimestamp': chatMessage.timestamp,
+      }, SetOptions(merge: true));
+
+      
     
   }
 
