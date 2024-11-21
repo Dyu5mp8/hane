@@ -25,12 +25,20 @@ class ConcentrationColumn extends StatelessWidget {
           editDialog: EditConcentrationsDialog(drug: drug),
           isEditMode: isEditMode,
         ),
-        ...concentrations.map((conc) => Text(conc.toString(),
-            style: TextStyle(
-                color: (conc.mixingInstructions == null ||
-                        conc.mixingInstructions!.isEmpty)
-                    ? Colors.black
-                    : Colors.blue))),
+        ...concentrations.map((conc) => Row(
+    children: [
+       
+      Text(
+        conc.toString(),
+        style: TextStyle(
+          color: conc.mixingInstructions?.isEmpty ?? true ? Colors.black : Colors.blue,
+        ),
+      ),
+      const SizedBox(width: 2),
+      if (conc.mixingInstructions?.isNotEmpty ?? false)
+        const Icon(Icons.arrow_forward_ios_outlined ,color: Colors.blue, size: 8),
+    ],
+  )),
       ],
     );
 
