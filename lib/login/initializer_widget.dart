@@ -6,7 +6,6 @@ import 'package:hane/login/login_page.dart';
 import 'package:hane/login/preference_selection_screen.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/startup_errors.dart';
-import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -25,7 +24,7 @@ class InitializerWidget extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: const Center(child: CircularProgressIndicator()),
+            body: Center(child: CircularProgressIndicator()),
           );
         } else if (snapshot.hasError) {
           return Scaffold(

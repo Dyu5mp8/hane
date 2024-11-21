@@ -57,7 +57,7 @@ class _DrugListViewState extends State<DrugListView> {
     if (mounted && (seenTutorial == null || !seenTutorial)) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OnboardingScreen()),
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
       );
       db
           .collection('users')

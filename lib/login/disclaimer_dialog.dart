@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DisclaimerDialog extends StatelessWidget {
-  const DisclaimerDialog({Key? key, required this.onAccepted}) : super(key: key);
+  const DisclaimerDialog({super.key, required this.onAccepted});
 
   final VoidCallback onAccepted;
 

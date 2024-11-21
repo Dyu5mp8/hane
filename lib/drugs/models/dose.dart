@@ -13,8 +13,8 @@ class Dose with EquatableMixin {
 
   // Constructor to create a Dose from a string representation
   Dose.fromString({required double amount, required String unit})
-      : this.amount = amount,
-        this.units = getDoseUnitsAsMap(unit.replaceAll("μg", "mikrog"));
+      : amount = amount,
+        units = getDoseUnitsAsMap(unit.replaceAll("μg", "mikrog"));
 
   // Get the unit string representation
   String unitString() {

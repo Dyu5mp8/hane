@@ -365,7 +365,7 @@ class Drug extends ChangeNotifier with EquatableMixin {
   }
 
   void addIndication(Indication indication) {
-    this.indications = this.indications ?? [];
+    indications = indications ?? [];
     indications!.add(indication);
     notifyListeners();
   }

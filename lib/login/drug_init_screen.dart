@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/services/drug_list_wrapper.dart';
-import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 
 class DrugInitScreen extends StatelessWidget {
@@ -28,7 +27,7 @@ class DrugInitScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => DrugListWrapper()),
+                  MaterialPageRoute(builder: (context) => const DrugListWrapper()),
                 );
               },
               icon: Icons.create,
@@ -47,7 +46,7 @@ class DrugInitScreen extends StatelessWidget {
                 await drugProvider.copyMasterToUser();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => DrugListWrapper()),
+                  MaterialPageRoute(builder: (context) => const DrugListWrapper()),
                 );
               },
               icon: Icons.copy,
@@ -105,7 +104,6 @@ class DrugInitScreen extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: onPressed,
-                child: Text(buttonText, style: Theme.of(context).textTheme.headlineMedium),
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -114,6 +112,7 @@ class DrugInitScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   textStyle: const TextStyle(fontSize: 16),
                 ),
+                child: Text(buttonText, style: Theme.of(context).textTheme.headlineMedium),
               ),
             ),
           ],

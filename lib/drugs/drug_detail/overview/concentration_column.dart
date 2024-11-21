@@ -9,7 +9,7 @@ class ConcentrationColumn extends StatelessWidget {
   final Drug drug;
   final bool isEditMode;
 
-  const ConcentrationColumn({
+  const ConcentrationColumn({super.key, 
     required this.concentrations,
     required this.drug,
     required this.isEditMode,

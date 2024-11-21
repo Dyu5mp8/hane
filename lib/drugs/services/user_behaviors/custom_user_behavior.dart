@@ -1,8 +1,7 @@
 import "package:hane/drugs/services/user_behaviors/user_behavior.dart";
 
 class CustomUserBehavior extends UserBehavior {
-  CustomUserBehavior({required String user, required String masterUID})
-      : super(user: user, masterUID: masterUID);
+  CustomUserBehavior({required String super.user, required super.masterUID});
 
 
   @override

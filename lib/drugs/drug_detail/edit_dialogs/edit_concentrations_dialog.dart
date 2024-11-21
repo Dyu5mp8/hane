@@ -198,6 +198,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
         },
         validator: (value) {
           val.validateConcentrationUnit(value);
+          return null;
           
         },
       ),

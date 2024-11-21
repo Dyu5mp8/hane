@@ -50,7 +50,7 @@ class DrugListRow extends StatelessWidget {
                 if (_drug.shouldReviewUIDs != null &&
                     _drug.shouldReviewUIDs!.isNotEmpty)
                   _buildReviewStatusIcon(context),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                 if (_drug.hasUnreadMessages) _buildNewMessageChip(context),
             ],
           ),

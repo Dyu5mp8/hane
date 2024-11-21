@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 
 class ChangeLog extends StatefulWidget {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/change_log.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class ReviewDialog extends StatefulWidget {

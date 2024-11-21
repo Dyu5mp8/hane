@@ -4,7 +4,6 @@ import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/login_page.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
@@ -88,7 +87,7 @@ abstract class MenuDrawer extends StatelessWidget {
       title: const Text('Hur funkar det?'),
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => OnboardingScreen()),
+          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
         );
       },
     );

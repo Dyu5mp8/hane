@@ -5,7 +5,7 @@ import 'package:hane/drugs/models/concentration.dart';
 class ConcentrationDetailView extends StatelessWidget {
   final List<Concentration> concentrations;
 
-  const ConcentrationDetailView(this.concentrations);
+  const ConcentrationDetailView(this.concentrations, {super.key});
 
 @override
   build(context) => Scaffold(
@@ -14,7 +14,7 @@ class ConcentrationDetailView extends StatelessWidget {
           title: const Text('Spädningar'),
         ),
   body: Accordion(
-  headerPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+  headerPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
   paddingBetweenOpenSections: 8.0,
   paddingBetweenClosedSections: 4.0,
   maxOpenSections: 10,
@@ -59,7 +59,7 @@ class ConcentrationDetailView extends StatelessWidget {
                     '${concentration.mixingInstructions}',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
