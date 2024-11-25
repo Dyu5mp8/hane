@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hane/login/logo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/signup.dart';
@@ -198,35 +199,6 @@ class _LoginPageState extends State<LoginPage> {
       ],
     );
   }
-
-  // Title and other UI widgets
-  Widget _title() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-        text: '',
-        style: const TextStyle(fontSize: 50, fontWeight: FontWeight.w700),
-        children: [
-          TextSpan(
-            text: 'Anestesi',
-            style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: accentColor,
-                  fontSize: 50,
-                ),
-          ),
-          TextSpan(
-            text: 'H',
-            style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 255, 112, 30),
-                  fontSize: 50,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
 Widget _createAccountLabel() {
   return InkWell(
     onTap: () {
@@ -305,7 +277,7 @@ Widget build(BuildContext context) {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(height: height * .2),
-                      _title(),
+                      const Logo(),
                       const SizedBox(height: 50),
                       _emailPasswordWidget(),
                       const SizedBox(height: 20),

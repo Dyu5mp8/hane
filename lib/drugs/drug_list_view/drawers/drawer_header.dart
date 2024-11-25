@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hane/login/logo.dart';
 
 class CustomDrawerHeader extends StatelessWidget {
   const CustomDrawerHeader({super.key});
@@ -10,7 +11,7 @@ class CustomDrawerHeader extends StatelessWidget {
 
     return DrawerHeader(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
+        color: Color.fromRGBO(204, 214, 237, 1)
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,17 +40,12 @@ class CustomDrawerHeader extends StatelessWidget {
                   ),
                 ),
           const SizedBox(height: 16),
-          Text(
-            'AnestesiH',
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-          ),
+          Logo(size: 20),
           const SizedBox(height: 4),
           Text(
             user != null ? 'Inloggad som ${user.email!}' : 'Inte inloggad',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
                 ),
           ),
         ],

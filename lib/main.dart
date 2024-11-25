@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hane/login/signup.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'app_theme.dart';
@@ -121,7 +122,7 @@ class AuthGate extends StatelessWidget {
       return const InitializerWidget();
     } else {
       // User is not logged in
-      return const LoginPage();
+      return const SignUpPage();
     }
   }
 }

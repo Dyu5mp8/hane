@@ -77,7 +77,7 @@ class IndicationTabView extends StatelessWidget {
                     if (editMode)
                       Positioned(
                         bottom: 20,
-                        right: 20,
+                        left: 20,
                         child: FloatingActionButton.extended(
                           onPressed: () {
                             Navigator.push(

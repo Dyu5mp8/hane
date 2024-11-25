@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/medical_disclaimer_dialog.dart';
+import 'package:hane/login/logo.dart';
 import 'login_page.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -20,14 +21,6 @@ class _SignUpPageState extends State<SignUpPage> {
   String? errorMessage;
   bool _isLoading = false; // To manage loading state
 
-  Widget _backButton() {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back, color: Colors.black),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
-  }
 
   void showErrorMessage(String message) async {
     setState(() {
@@ -268,14 +261,14 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: _backButton(),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: height * .05),
+
+            const Logo(size: 30,),
             _title(),
             const SizedBox(height: 50),
             _emailPasswordWidget(),
