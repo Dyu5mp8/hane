@@ -35,7 +35,6 @@ class DrugListProvider with ChangeNotifier {
         return UserMode.isAdmin;
       }
       else if (idTokenResult.claims?['reviewer'] == true) {
-        print("User is a reviewer");
         return UserMode.reviewer;
       }
       if (await getIsSyncedModeFromFirestore()== null) {
@@ -139,7 +138,7 @@ class DrugListProvider with ChangeNotifier {
       setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
     }
     else if (_userMode == UserMode.reviewer) {
-      setUserBehavior(ReviewerUserBehavior(masterUID: _masterUID));
+      setUserBehavior(ReviewerUserBehavior(user: _user!, masterUID: _masterUID));
     }
   }
 
@@ -167,11 +166,7 @@ class DrugListProvider with ChangeNotifier {
   }
 
   Future<void> addUserNotes(String id, String notes) async {
-    if (userBehavior is SyncedUserBehavior) {
-      await (userBehavior as SyncedUserBehavior).addUserNotes(id, notes);
-    } else {
-      throw Exception("User notes are not supported for this user mode.");
-    }
+    userBehavior!.addUserNotes(id, notes);
   }
 
   Future<bool> checkIfDrugChanged(Drug drug) async {
@@ -338,7 +333,7 @@ class DrugListProvider with ChangeNotifier {
       throw Exception("User is not a reviewer.");
     }
     try {
-      print("Adding reviewUID to drug $drugId");
+   
       await FirebaseFirestore.instance
           .collection('users')
           .doc(masterUID)

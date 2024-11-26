@@ -187,7 +187,7 @@ class CustomUserBehavior extends UserBehavior {
         return {};
       }
     } catch (e) {
-      print("Failed to reawd");
+
       print("Failed to retrieve drug names: $e");
       rethrow;
     }

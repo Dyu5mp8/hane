@@ -11,12 +11,22 @@ class UserNoteRow extends StatefulWidget {
 
 class _UserNoteRowState extends State<UserNoteRow> {
   late TextEditingController _controller;
+  late FocusNode _focusNode;
   Drug? drug;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _focusNode = FocusNode();
+
+    // Add a listener to the focus node
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        // The TextField has lost focus, write to backend
+        _saveUserNotes();
+      }
+    });
   }
 
   @override
@@ -32,7 +42,24 @@ class _UserNoteRowState extends State<UserNoteRow> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose(); // Dispose of the focus node
     super.dispose();
+  }
+
+  void _saveUserNotes() {
+    try {
+      final value = _controller.text;
+      // Update the user notes in the provider
+      print("User notes: $value");
+      Provider.of<DrugListProvider>(context, listen: false)
+          .addUserNotes(drug!.id!, value);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Kunde inte spara anteckningar"),
+        ),
+      );
+    }
   }
 
   @override
@@ -44,29 +71,25 @@ class _UserNoteRowState extends State<UserNoteRow> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: TextField(
         controller: _controller,
+        focusNode: _focusNode,
         textCapitalization: TextCapitalization.sentences,
         maxLines: null, // Allows multiple lines
         textInputAction: TextInputAction.done,
         onTapOutside: (event) {
           FocusScope.of(context).previousFocus();
         },
-
         decoration: const InputDecoration(
           border: InputBorder.none, // Remove borders
           labelText: "Egna anteckningar",
           labelStyle: TextStyle(
             fontSize: 15,
           ),
-
           isDense: true, // Reduce height
           contentPadding: EdgeInsets.zero, // Remove padding
         ),
         style: const TextStyle(fontSize: 14),
-        onChanged: (value) {
-          // Update the user notes in the database
-          Provider.of<DrugListProvider>(context, listen: false)
-              .addUserNotes(drug!.id!, value);
-        },
+        // Remove the onChanged callback to prevent writes on every character
+        // onChanged: (value) {},
       ),
     );
   }

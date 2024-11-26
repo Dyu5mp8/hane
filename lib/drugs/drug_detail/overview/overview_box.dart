@@ -36,7 +36,7 @@ class _OverviewBoxState extends State<OverviewBox> {
 
   @override
   Widget build(BuildContext context) {
-    bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode);
+    bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode || provider.userMode == UserMode.reviewer);
 
     return Container(
       decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),

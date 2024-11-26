@@ -4,7 +4,7 @@ import "package:hane/drugs/services/user_behaviors/user_behavior.dart";
 import 'package:rxdart/rxdart.dart';
 
 class ReviewerUserBehavior extends UserBehavior {
-  ReviewerUserBehavior({required super.masterUID});
+  ReviewerUserBehavior({required super.user, required super.masterUID});
 
   @override
   Stream<List<Drug>> getDrugsStream({bool sortByGeneric = false}) {
@@ -104,8 +104,9 @@ class ReviewerUserBehavior extends UserBehavior {
     );
   }
 
-
+@override
   Future<void> addUserNotes(String id, String notes) async {
+
     var db = FirebaseFirestore.instance;
     DocumentReference userNotesDocRef = db
         .collection('users')

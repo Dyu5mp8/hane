@@ -69,7 +69,9 @@ class SyncedUserBehavior extends UserBehavior {
     });
   }
 
+  @override
   Future<void> addUserNotes(String id, String notes) async {
+    
     var db = FirebaseFirestore.instance;
     DocumentReference userNotesDocRef = db
         .collection('users')

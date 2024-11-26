@@ -21,4 +21,10 @@ abstract class UserBehavior {
   }
 
   Stream<List<Drug>> getDrugsStream({bool sortByGeneric = false});
+
+   Future<void> addUserNotes(String id, String notes) async {
+  throw UnimplementedError('addUserNotes not implemented');
+ }
+
+
 }
