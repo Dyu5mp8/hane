@@ -79,6 +79,8 @@ class _DrugListViewState extends State<DrugListView> {
     switch (userMode) {
       case UserMode.isAdmin:
         return const AdminMenuDrawer();
+      case UserMode.reviewer:
+        return const ReviewerMenuDrawer();
       case UserMode.syncedMode:
         return const SyncedUserMenuDrawer();
       case UserMode.customMode:

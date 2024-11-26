@@ -11,7 +11,21 @@ class CustomDrawerHeader extends StatelessWidget {
 
     return DrawerHeader(
       decoration: BoxDecoration(
-        color: Color.fromRGBO(204, 214, 237, 1)
+        color: Color.fromRGBO(204, 225, 237, 1),
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+            width: 1,
+          ),
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Theme.of(context).colorScheme.primaryContainer,
+            Theme.of(context).colorScheme.secondaryContainer,
+          ],
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

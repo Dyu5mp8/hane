@@ -34,6 +34,10 @@ class DrugListProvider with ChangeNotifier {
       if (idTokenResult.claims?['admin'] == true) {
         return UserMode.isAdmin;
       }
+      else if (idTokenResult.claims?['reviewer'] == true) {
+        print("User is a reviewer");
+        return UserMode.reviewer;
+      }
       if (await getIsSyncedModeFromFirestore()== null) {
         return null;
       }
@@ -133,6 +137,9 @@ class DrugListProvider with ChangeNotifier {
       setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
     } else if (_userMode == UserMode.customMode) {
       setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
+    }
+    else if (_userMode == UserMode.reviewer) {
+      setUserBehavior(ReviewerUserBehavior(masterUID: _masterUID));
     }
   }
 
@@ -326,24 +333,27 @@ class DrugListProvider with ChangeNotifier {
     
   }
 
-  Future<void> addReviewUID(String drugId) async {
+  Future<void> updateHasReviewed(String drugId, Map<String, String> hasReviewed) async {
     if (!_isReviewer) {
       throw Exception("User is not a reviewer.");
     }
     try {
+      print("Adding reviewUID to drug $drugId");
       await FirebaseFirestore.instance
           .collection('users')
           .doc(masterUID)
           .collection('drugs')
           .doc(drugId)
           .set({
-        'reviewerUIDs': FieldValue.arrayUnion([_user]),
+        'hasReviewedUIDs': hasReviewed,
+
       }, SetOptions(merge: true));
     } catch (e) {
       print("Failed to add reviewUID: $e");
       rethrow;
     }
   }
+
 
   Future<void> _getPossibleReviewerUIDs() async {
     try {

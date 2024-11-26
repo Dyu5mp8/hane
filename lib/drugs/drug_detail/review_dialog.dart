@@ -29,6 +29,16 @@ class _ReviewDialogState extends State<ReviewDialog> {
     availableReviewers = Map.from(widget.drug.shouldReviewUIDs ?? {});
   }
 
+  Future<void> _saveChanges() async {
+    // Update the drug's reviewerUIDs
+    widget.drug.hasReviewedUIDs = acceptedReviewers;
+    // Save changes using the DrugListProvider or appropriate method
+    final drugListProvider =
+        Provider.of<DrugListProvider>(context, listen: false);
+    
+    await drugListProvider.updateHasReviewed(widget.drug.id!, acceptedReviewers);
+  }
+
   String formatTimestamp(String timestamp) {
     final DateTime dateTime = DateTime.parse(timestamp);
     return DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
@@ -129,12 +139,7 @@ class _ReviewDialogState extends State<ReviewDialog> {
       actions: [
         TextButton(
           onPressed: () {
-            // Update the drug's reviewerUIDs
-            widget.drug.hasReviewedUIDs = acceptedReviewers;
-            // Save changes using the DrugListProvider or appropriate method
-            final drugListProvider =
-                Provider.of<DrugListProvider>(context, listen: false);
-            drugListProvider.addDrug(widget.drug);
+            _saveChanges();
             Navigator.pop(context);
           },
           child: const Text('Spara'),

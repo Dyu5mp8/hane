@@ -61,7 +61,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         centerTitle: true,
         actions: [
           if (!editMode && drugListProvider.isReviewer) const ReviewButton(),
-          if (drugListProvider.userMode == UserMode.isAdmin && !editMode)
+          if (drugListProvider.isReviewer && !editMode)
             const ChatButton(),
           if (!_editableDrug.changedByUser && !editMode) const InfoButton(),
           if (_editableDrug.changedByUser ||

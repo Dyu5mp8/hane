@@ -1,7 +1,8 @@
 enum UserMode {
   syncedMode,
   customMode,
-  isAdmin 
+  isAdmin,
+  reviewer 
 }
 enum UserDataStatus {
   hasExistingData,

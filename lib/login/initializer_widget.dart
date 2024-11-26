@@ -60,6 +60,9 @@ class InitializerWidget extends StatelessWidget {
  
     try {
       await drugListProvider.initializeProvider();
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      print("User mode: ${drugListProvider.userMode}");
 
       if (drugListProvider.userMode == null) {
         return PreferenceSelectionScreen(user: userId);
