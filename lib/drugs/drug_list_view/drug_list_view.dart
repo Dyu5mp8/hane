@@ -385,7 +385,7 @@ class _DrugListViewState extends State<DrugListView> {
 
   AppBar _buildAppBar(BuildContext context) {
     bool canEdit =
-        !(provider.userMode == UserMode.syncedMode);
+        (provider.userMode == UserMode.isAdmin || provider.userMode == UserMode.customMode);
     bool isAdmin = Provider.of<DrugListProvider>(context, listen: true).isAdmin;
     return AppBar(
       forceMaterialTransparency: true,

@@ -18,14 +18,12 @@ class DrugListProvider with ChangeNotifier {
   UserBehavior? userBehavior;
   bool _preferGeneric = false;
   bool _isSyncedMode = false;
-  Map<String, String> _possibleReviewerUIDs = {};
   bool _isReviewer = false;
 
   Future<void> initializeProvider() async {
     _userMode = await _determineUserMode(FirebaseAuth.instance.currentUser!);
     await _checkIfUserIsReviewer(FirebaseAuth.instance.currentUser!);
     await getPreferGenericFromFirestore();
-    await _getPossibleReviewerUIDs();
     updateUserBehavior();
   }
 
@@ -54,8 +52,6 @@ class DrugListProvider with ChangeNotifier {
   bool get isReviewer => _isReviewer;
 
   String get masterUID => _masterUID;
-
-  Map<String, String> get possibleReviewerUIDs => _possibleReviewerUIDs;
 
   set masterUID(String value) {
     _masterUID = value;
@@ -149,7 +145,6 @@ class DrugListProvider with ChangeNotifier {
     userBehavior = null;
     _preferGeneric = false;
     _isSyncedMode = false;
-    _possibleReviewerUIDs.clear();
     _isReviewer = false;
   }
 
@@ -350,7 +345,7 @@ class DrugListProvider with ChangeNotifier {
   }
 
 
-  Future<void> _getPossibleReviewerUIDs() async {
+  Future<Map<String,String>> getPossibleReviewerUIDs() async {
     try {
       var db = FirebaseFirestore.instance;
       DocumentSnapshot masterDoc =
@@ -358,13 +353,14 @@ class DrugListProvider with ChangeNotifier {
       if (masterDoc.exists) {
         Map<String, dynamic>? data = masterDoc.data() as Map<String, dynamic>?;
         if (data != null && data.containsKey('reviewers')) {
-          _possibleReviewerUIDs =
+          return
               Map<String, String>.from(data['reviewers'] as Map);
+        
         } else {
-          _possibleReviewerUIDs = {};
+          return {};
         }
       } else {
-        _possibleReviewerUIDs = {};
+        return {};
       }
     } catch (e) {
       print("Failed to get reviewerUIDs: $e");

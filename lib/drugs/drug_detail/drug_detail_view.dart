@@ -283,13 +283,15 @@ class EditModeButton extends StatelessWidget {
                     if (provider.isAdmin){
                   
            
-                    if (await provider.checkIfDrugChanged(drug) &&
-                        context.mounted) {
-                      showDialog(
+                    if (await provider.checkIfDrugChanged(drug)) {
+
+                      Map<String,String> possibleReviewerUIDs = await provider.getPossibleReviewerUIDs();
+                      if (context.mounted) {
+                        showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return CommitDialog(
-                            reviewers: provider.possibleReviewerUIDs,
+                            reviewers: possibleReviewerUIDs,
                             onCommit: (comment, selectedReviewerUIDs) {
                               final timestamp =
                                   DateTime.now().toIso8601String();
@@ -320,6 +322,7 @@ class EditModeButton extends StatelessWidget {
                           );
                         },
                       );
+                      }
                       return;
                     } 
                     }
