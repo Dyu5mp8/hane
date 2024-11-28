@@ -139,6 +139,14 @@ final ThemeData darkAppTheme = ThemeData(
     scrolledUnderElevation: 0
 
   ),
+
+  cardTheme: CardTheme(
+    color: const Color.fromARGB(255, 117, 117, 117),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12.0),
+
+    ),
+  ),
   badgeTheme: BadgeThemeData(
     backgroundColor: const Color.fromARGB(255, 181, 71, 16),
     textStyle: GoogleFonts.rubik(

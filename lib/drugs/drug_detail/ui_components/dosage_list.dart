@@ -49,10 +49,19 @@ class _DosageListState extends State<DosageList> {
             key: ValueKey(
                 widget.dosages[index].hashCode), // Unique key for the entire row
             decoration: BoxDecoration(
-              color: Colors.white, // Your background color
+              color: Theme.of(context).colorScheme.surfaceBright,
               borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.shadow.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                  offset: const Offset(0, 1),
+                ),
+              ],
               border: Border.all(
                 color: const Color.fromARGB(255, 220, 220, 220),
+              
                 width: 0.5,
               ),
             ),
