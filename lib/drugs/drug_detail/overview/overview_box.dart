@@ -39,7 +39,11 @@ class _OverviewBoxState extends State<OverviewBox> {
     bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode || provider.userMode == UserMode.reviewer);
 
     return Container(
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.primary, width: 0.5)
+        ),
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 350),
         child: Stack(

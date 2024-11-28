@@ -47,7 +47,10 @@ class IndicationTabView extends StatelessWidget {
             if (indication.notes != null && indication.notes!.isNotEmpty)
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
                   border: Border(
@@ -58,8 +61,10 @@ class IndicationTabView extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  indication.notes ?? '',
-                  style: Theme.of(context).textTheme.labelLarge,
+                  indication.notes != null ? "Kommentar: ${indication.notes!}" : '',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
             // Dosages section
