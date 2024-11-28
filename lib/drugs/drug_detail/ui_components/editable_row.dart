@@ -95,9 +95,9 @@ class _EditableRowState extends State<EditableRow>
         padding: padding,
         decoration: BoxDecoration(
           color: isEditMode
-              ? (widget.editingBackgroundColor ??
-                  Theme.of(context).primaryColorLight)
-              : widget.nonEditingBackgroundColor,
+              ? 
+                  Theme.of(context).chipTheme.backgroundColor
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
@@ -108,8 +108,7 @@ class _EditableRowState extends State<EditableRow>
               child: Text(
                 widget.text?.isNotEmpty == true ? widget.text! : "",
                 style: widget.textStyle?.copyWith(
-                      color:
-                          widget.isEditMode ? Colors.blue[800] : Colors.black,
+                    
                       fontWeight: widget.isEditMode
                           ? FontWeight.bold
                           : FontWeight.normal,

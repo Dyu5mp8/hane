@@ -83,7 +83,7 @@ class _MyAppState extends State<MyApp> {
           child:MaterialApp(
   title: 'AnestesiH',
   debugShowCheckedModeBanner: false,
-  theme: appTheme,
+  theme: darkAppTheme,
   home: homeWidget,
   builder: (context, child) {
     // Retrieve the current MediaQuery data

@@ -10,7 +10,7 @@ final ThemeData appTheme = ThemeData(
 
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 0, 79, 104),
+    seedColor: const Color.fromARGB(255, 0, 2, 3),
 
     // ···
     brightness: Brightness.light,
@@ -85,3 +85,77 @@ final ThemeData appTheme = ThemeData(
   ),
 );
   
+final ThemeData darkAppTheme = ThemeData(
+  useMaterial3: true,
+
+  // Define the default brightness and colors.
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color.fromARGB(255, 23, 23, 23),
+    surface: const Color.fromARGB(255, 32, 32, 32),
+    onSurface: const Color.fromARGB(255, 231, 231, 231),
+
+    // ···
+    brightness: Brightness.dark,
+  ),
+
+  textTheme: TextTheme(
+  
+    displayLarge: const TextStyle(
+      fontSize: 72,
+      fontWeight: FontWeight.bold,
+    ),
+    // ···
+    titleLarge: GoogleFonts.barlowSemiCondensed(
+      fontSize: 30,
+    ),
+    bodyMedium: GoogleFonts.rubik(
+      fontSize: 12,
+    ),
+    displaySmall: GoogleFonts.rubik(
+      fontSize: 10,
+    ),
+
+    headlineLarge: GoogleFonts.rubik(
+      fontSize: 20,
+    ),
+
+    bodyLarge: GoogleFonts.rubik(
+      fontSize: 16,
+    ),
+
+    headlineSmall: GoogleFonts.rubik(
+      fontSize: 14,
+    ),
+
+    bodySmall: GoogleFonts.rubik(
+      fontSize: 12,
+    ),
+
+    headlineMedium: GoogleFonts.rubik(
+      fontSize: 16,
+    ),
+  ),
+  appBarTheme: const AppBarTheme(
+    scrolledUnderElevation: 0
+
+  ),
+  badgeTheme: BadgeThemeData(
+    backgroundColor: const Color.fromARGB(255, 181, 71, 16),
+    textStyle: GoogleFonts.rubik(
+      fontSize: 12,
+      color: Colors.black,
+    ),
+
+  ),
+  chipTheme: ChipThemeData(
+    backgroundColor: const Color.fromARGB(255, 181, 71, 16),
+    labelStyle: GoogleFonts.rubik(
+      fontSize: 12,
+      color: Colors.black,
+
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+  ),
+);
