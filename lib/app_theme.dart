@@ -71,7 +71,7 @@ final ThemeData appTheme = ThemeData(
       borderRadius: BorderRadius.circular(10),
     ),
   ),
-
+  
   cardColor:  const Color.fromARGB(255, 0, 79, 104),
   cardTheme: CardTheme(
     color: const Color.fromARGB(255, 106, 136, 207),

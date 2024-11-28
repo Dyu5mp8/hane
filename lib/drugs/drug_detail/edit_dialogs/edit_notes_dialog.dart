@@ -85,6 +85,7 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
                   minLines: 4,
                   maxLines: 10,
                   textCapitalization: TextCapitalization.sentences,
+                  maxLength: 200,
                 ),
 
                 const SizedBox(height: 8),

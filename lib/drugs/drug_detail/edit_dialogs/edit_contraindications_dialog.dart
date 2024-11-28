@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hane/drugs/models/drug.dart';
 
 class EditContraindicationsDialog extends StatefulWidget {
@@ -76,7 +77,9 @@ class _EditContraindicationsDialogState
                       border: OutlineInputBorder(),
                     ),
                     minLines: 3,
-                    maxLines: 10),
+                    maxLines: 10,
+                    maxLength: 200,
+                    maxLengthEnforcement: MaxLengthEnforcement.truncateAfterCompositionEnds,),
 
                 const SizedBox(height: 20),
 
