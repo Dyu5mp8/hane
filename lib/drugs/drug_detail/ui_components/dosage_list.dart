@@ -60,7 +60,7 @@ class _DosageListState extends State<DosageList> {
                 ),
               ],
               border: Border.all(
-                color: const Color.fromARGB(255, 220, 220, 220),
+                color: Theme.of(context).colorScheme.onSurface,
               
                 width: 0.5,
               ),

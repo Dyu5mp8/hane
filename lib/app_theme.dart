@@ -92,7 +92,7 @@ final ThemeData darkAppTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 23, 23, 23),
     surface: const Color.fromARGB(255, 32, 32, 32),
-    onSurface: const Color.fromARGB(255, 231, 231, 231),
+    onSurface: const Color.fromARGB(255, 202, 202, 202),
 
     // ···
     brightness: Brightness.dark,
@@ -140,6 +140,20 @@ final ThemeData darkAppTheme = ThemeData(
 
   ),
 
+  tabBarTheme: TabBarTheme(
+    unselectedLabelStyle: const TextStyle(
+      color: Color.fromARGB(255, 155, 155, 155),
+    ),
+    labelColor: Color.fromARGB(255, 231, 231, 231),
+
+    indicatorSize: TabBarIndicatorSize.tab,
+    indicator: BoxDecoration(
+      borderRadius: BorderRadius.circular(5),
+      color: const Color.fromARGB(255, 181, 71, 16),
+      border: Border.all(color: Colors.black, width: 0.5),
+    ),
+  ),
+
   cardTheme: CardTheme(
     color: const Color.fromARGB(255, 117, 117, 117),
     shape: RoundedRectangleBorder(
@@ -154,6 +168,7 @@ final ThemeData darkAppTheme = ThemeData(
       color: Colors.black,
     ),
 
+  
   ),
   chipTheme: ChipThemeData(
     backgroundColor: const Color.fromARGB(255, 181, 71, 16),

@@ -28,12 +28,13 @@ class ConcentrationColumn extends StatelessWidget {
         ...concentrations.map((conc) => Row(
     children: [
        
-      Text(
-        conc.toString(),
-        style: TextStyle(
-          color: conc.mixingInstructions?.isEmpty ?? true ? Colors.black : Colors.blue,
-        ),
-      ),
+Text(
+  conc.toString(),
+  style: TextStyle(
+    color: (conc.mixingInstructions?.isEmpty ?? true) ? null : Colors.blue,
+  ),
+),
+      
       const SizedBox(width: 2),
       if (conc.mixingInstructions?.isNotEmpty ?? false)
         const Icon(Icons.arrow_forward_ios_outlined ,color: Colors.blue, size: 8),

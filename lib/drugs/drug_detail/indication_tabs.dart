@@ -108,15 +108,12 @@ class _IndicationTabsState extends State<IndicationTabs> {
                   )
                 : TabBar(
                     tabAlignment: TabAlignment.start,
-                    unselectedLabelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 61, 61, 61),
-                    ),
-                    labelColor: Colors.black,
+      
                     isScrollable: true,
                     indicatorSize: TabBarIndicatorSize.tab,
                     indicator: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: const Color.fromARGB(255, 255, 183, 148),
+                      color: Theme.of(context).chipTheme.backgroundColor,
                       border: Border.all(color: Colors.black, width: 0.5),
                     ),
                     tabs: indications
