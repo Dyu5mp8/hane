@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
 import 'package:hane/login/user_status.dart';
+import 'package:hane/theme_provider.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/login_page.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
-
 
 abstract class MenuDrawer extends StatelessWidget {
   final Set<String>? userDrugNames;
@@ -60,8 +60,11 @@ abstract class MenuDrawer extends StatelessWidget {
             children: <Widget>[
               const CustomDrawerHeader(),
               const DrugNameChoiceTile(),
+             ...buildUserSpecificTiles(context),  
 
               buildTutorialTile(context), // Added tutorial tile
+              const ThemeModeTile(), // Added theme mode tile 
+
               buildAboutTile(context), // Added about tile
               buildLogoutTile(context), // Common logout tile
             ],
@@ -69,6 +72,10 @@ abstract class MenuDrawer extends StatelessWidget {
         );
       },
     );
+  }
+
+  List<Widget> buildUserSpecificTiles(BuildContext context) {
+    return [];
   }
 
   ListTile buildLogoutTile(BuildContext context) {
@@ -210,6 +217,42 @@ class _SyncedModeTileState extends State<SyncedModeTile> {
               content: Text(value
                   ? 'Ändrat: Synkat läge aktiverat'
                   : 'Ändrat: Eget läge aktiverat'),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+  class ThemeModeTile extends StatefulWidget {
+  const ThemeModeTile({super.key});
+
+  @override
+  State<ThemeModeTile> createState() => _ThemeModeTileState();
+
+}
+
+class _ThemeModeTileState extends State<ThemeModeTile> {  
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.brightness_4),
+      title: const Text('Mörkt tema'),
+      trailing: Switch(
+        value: Provider.of<ThemeProvider>(context).isDarkMode,
+        onChanged: (value) {
+          if (value) {
+            Provider.of<ThemeProvider>(context, listen: false).setDarkMode();
+          } else {
+            Provider.of<ThemeProvider>(context, listen: false).setLightMode();
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(value
+                  ? 'Ändrat: Mörkt tema aktiverat'
+                  : 'Ändrat: Ljust tema aktiverat'),
             ),
           );
         },

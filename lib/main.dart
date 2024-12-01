@@ -3,16 +3,22 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hane/login/signup.dart';
+import 'package:hane/theme_provider.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'app_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hane/login/login_page.dart';
 import 'package:hane/startup_errors.dart';
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -51,6 +57,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = context.watch<ThemeProvider>().themeData;
     return FutureBuilder<FirebaseApp>(
       future: _initialization,
       builder: (context, snapshot) {
@@ -75,15 +82,17 @@ class _MyAppState extends State<MyApp> {
 
         return MultiProvider(
           providers: [
+
             ChangeNotifierProvider(
               create: (_) => DrugListProvider(),
+            
             ),
             // Other providers...
           ],
           child:MaterialApp(
   title: 'AnestesiH',
   debugShowCheckedModeBanner: false,
-  theme: darkAppTheme,
+  theme: theme,
   home: homeWidget,
   builder: (context, child) {
     // Retrieve the current MediaQuery data

@@ -6,27 +6,7 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 class SyncedUserMenuDrawer extends MenuDrawer {
   const SyncedUserMenuDrawer({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Provider.of<DrugListProvider>(context)
-          .getDrugNamesFromMaster()
-          .timeout(const Duration(seconds: 1)),
-      builder: (context, snapshot) {
-        return Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              const CustomDrawerHeader(),
-              const SyncedModeTile(),
-              const DrugNameChoiceTile(),
-              buildTutorialTile(context),
-              buildAboutTile(context),
-              buildLogoutTile(context),
-            ],
-          ),
-        );
-      },
-    );
+  @override List<Widget> buildUserSpecificTiles(BuildContext context) {
+    return [const SyncedModeTile()];
   }
 }

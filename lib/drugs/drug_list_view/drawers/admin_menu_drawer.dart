@@ -9,6 +9,7 @@ class AdminMenuDrawer extends MenuDrawer {
     super.key,
   });
 
+  @override
   List<Widget> buildUserSpecificTiles(BuildContext context) {
     return [
       ListTile(
@@ -32,28 +33,5 @@ class AdminMenuDrawer extends MenuDrawer {
         },
       ),
     ];
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Provider.of<DrugListProvider>(context)
-          .getDrugNamesFromMaster()
-          .timeout(const Duration(seconds: 1)),
-      builder: (context, snapshot) {
-        return Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              const CustomDrawerHeader(),
-              const DrugNameChoiceTile(),
-              ...buildUserSpecificTiles(context),
-              
-              buildLogoutTile(context),
-            ],
-          ),
-        );
-      },
-    );
   }
 }
