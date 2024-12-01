@@ -84,9 +84,9 @@ class _DrugListViewState extends State<DrugListView> {
       case UserMode.syncedMode:
         return const SyncedUserMenuDrawer();
       case UserMode.customMode:
-        return CustomUserMenuDrawer(userDrugNames: userDrugNames);
+        return CustomUserMenuDrawer();
       default:
-        return CustomUserMenuDrawer(userDrugNames: userDrugNames);
+        return CustomUserMenuDrawer();
     }
   }
 

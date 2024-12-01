@@ -4,6 +4,8 @@ import 'package:hane/login/logo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/signup.dart';
+import 'package:hane/app_theme.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, this.title, this.emailNotVerified});
@@ -163,7 +165,9 @@ class _LoginPageState extends State<LoginPage> {
               ),
               fillColor: Color.fromARGB(255, 232, 232, 255),
               filled: true,
+          
             ),
+            cursorColor: Theme.of(context).primaryColor,
           ),
         ],
       ),
@@ -238,60 +242,63 @@ Widget _createAccountLabel() {
 Widget build(BuildContext context) {
   final height = MediaQuery.sizeOf(context).height;
 
-  return Scaffold(
-    resizeToAvoidBottomInset: false, // Prevents resizing when the keyboard opens
-    body: LayoutBuilder(
-      builder: (context, constraints) {
-        return Container(
-          height: constraints.maxHeight, // Fixed height to avoid resizing
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                  "assets/images/concrete.jpg"), // Set your image path here
-              fit: BoxFit.cover,
+  return Theme(
+    data: appTheme,
+    child: Scaffold(
+      resizeToAvoidBottomInset: false, // Prevents resizing when the keyboard opens
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Container(
+            height: constraints.maxHeight, // Fixed height to avoid resizing
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                    "assets/images/concrete.jpg"), // Set your image path here
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          child: Stack(
-            children: <Widget>[
-              // Gradient overlay for smooth fade effect
-              Container(
-                height: constraints.maxHeight, // Fixed height for gradient
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.center,
-                    colors: [
-                      Colors.transparent, // Start with transparent at the top
-                      Color.fromARGB(
-                          255, 203, 223, 254), // Fade to white at the bottom
-                    ],
-                    stops: [0, 0.8],
+            child: Stack(
+              children: <Widget>[
+                // Gradient overlay for smooth fade effect
+                Container(
+                  height: constraints.maxHeight, // Fixed height for gradient
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.center,
+                      colors: [
+                        Colors.transparent, // Start with transparent at the top
+                        Color.fromARGB(
+                            255, 203, 223, 254), // Fade to white at the bottom
+                      ],
+                      stops: [0, 0.8],
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(height: height * .2),
-                      const Logo(),
-                      const SizedBox(height: 50),
-                      _emailPasswordWidget(),
-                      const SizedBox(height: 20),
-                      _submitButton(),
-                      const SizedBox(height: 10),
-                      _createAccountLabel(),
-                    ],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(height: height * .2),
+                        const Logo(),
+                        const SizedBox(height: 50),
+                        _emailPasswordWidget(),
+                        const SizedBox(height: 20),
+                        _submitButton(),
+                        const SizedBox(height: 10),
+                        _createAccountLabel(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     ),
   );
 }

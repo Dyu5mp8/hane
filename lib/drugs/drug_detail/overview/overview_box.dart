@@ -41,7 +41,7 @@ class _OverviewBoxState extends State<OverviewBox> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.primary, width: 0.5)
+        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 0.5)
         ),
       ),
       child: ConstrainedBox(

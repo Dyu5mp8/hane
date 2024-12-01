@@ -209,7 +209,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                     children: [
                       IconButton(
                         padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.delete, color:Color.fromARGB(255, 134, 9, 0)),
+                        icon: const Icon(Icons.delete, color:Color.fromARGB(255, 255, 99, 8)),
                         onPressed: () {
                           showDialog(
                             context: context,

@@ -33,6 +33,7 @@ class ConversionButton extends StatelessWidget {
           label,
           style: GoogleFonts.comfortaa(
             fontSize: 13,
+            color: Colors.black
           ),
         ),
         onPressed: buttonPressed,

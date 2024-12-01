@@ -4,17 +4,6 @@ import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 
 class CustomUserMenuDrawer extends MenuDrawer {
-  @override
-  final Set<String> userDrugNames;
-
-  const CustomUserMenuDrawer({super.key, Set<String>? userDrugNames})
-      : userDrugNames = userDrugNames ?? const {},
-        super(userDrugNames: userDrugNames ?? const {});
-
-  Set<String> masterUserDifference(
-      Set<String> masterList, Set<String> userList) {
-    return masterList.difference(userList);
-  }
 
   @override
   Widget build(BuildContext context) {

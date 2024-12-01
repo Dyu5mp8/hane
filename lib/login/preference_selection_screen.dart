@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hane/app_theme.dart'; 
 
 class PreferenceSelectionScreen extends StatelessWidget {
   final String user;
@@ -33,37 +34,40 @@ class PreferenceSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Välj läge')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _buildModeCard(
-              context,
-              title: 'Synkat läge (rekommenderat)',
-              description:
-                  'I detta läge synkas listan med stamlistan som är under kontinuerlig revision och uppdatering. Du kan inte ändra läkemedlena från stamlistan.',
-              buttonText: 'Använd Synkat läge',
-              onPressed: () => _setPreference(context, true),
-              icon: Icons.sync, // Adding an icon
-              cardColor: Colors.blue[50]!,
-              buttonColor: const Color.fromARGB(255, 184, 217, 244),
-            ),
-            const SizedBox(height: 20),
-            _buildModeCard(
-              context,
-              title: 'Användarskapat läge',
-              description:
-                  'I detta läge kan du redigera listan fritt och lägga till och ta bort läkemedel, och har mer kontroll över vad som visas under varje läkemedel. ',
-              buttonText: 'Använd användarskapat läge',
-              onPressed: () => _setPreference(context, false),
-              icon: Icons.settings,
-              cardColor: Colors.orange[50]!,
-              buttonColor: Colors.orange,
-            ),
-          ],
+    return Theme(
+      data: appTheme,
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Välj läge')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _buildModeCard(
+                context,
+                title: 'Synkat läge (rekommenderat)',
+                description:
+                    'I detta läge synkas listan med stamlistan som är under kontinuerlig revision och uppdatering. Du kan inte ändra läkemedlena från stamlistan.',
+                buttonText: 'Använd Synkat läge',
+                onPressed: () => _setPreference(context, true),
+                icon: Icons.sync, // Adding an icon
+                cardColor: Colors.blue[50]!,
+                buttonColor: const Color.fromARGB(255, 184, 217, 244),
+              ),
+              const SizedBox(height: 20),
+              _buildModeCard(
+                context,
+                title: 'Användarskapat läge',
+                description:
+                    'I detta läge kan du redigera listan fritt och lägga till och ta bort läkemedel, och har mer kontroll över vad som visas under varje läkemedel. ',
+                buttonText: 'Använd användarskapat läge',
+                onPressed: () => _setPreference(context, false),
+                icon: Icons.settings,
+                cardColor: Colors.orange[50]!,
+                buttonColor: Colors.orange,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -77,7 +81,9 @@ class PreferenceSelectionScreen extends StatelessWidget {
     required IconData icon,
     required Color cardColor,
     required Color buttonColor,
+  
   }) {
+    ThemeData theme = appTheme;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 4,
@@ -89,12 +95,12 @@ class PreferenceSelectionScreen extends StatelessWidget {
           children: <Widget>[
             Row(
               children: [
-                Icon(icon, size: 40, color: Theme.of(context).primaryColor), // Add icon
+                Icon(icon, size: 40, color: theme.primaryColor), // Add icon
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     title,
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    style: theme.textTheme.headlineLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -104,7 +110,7 @@ class PreferenceSelectionScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               description,
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+              style: theme.textTheme.headlineLarge?.copyWith(
                     fontSize: 16,
                     height: 1.4,
                   ),
@@ -122,7 +128,7 @@ class PreferenceSelectionScreen extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                   textStyle: const TextStyle(fontSize: 16),
                 ),
-                child: Text(buttonText, style: Theme.of(context).textTheme.headlineMedium),
+                child: Text(buttonText, style: theme.textTheme.headlineMedium),
               ),
             ),
           ],

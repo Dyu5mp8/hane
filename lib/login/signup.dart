@@ -4,6 +4,7 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/medical_disclaimer_dialog.dart';
 import 'package:hane/login/logo.dart';
 import 'login_page.dart';
+import 'package:hane/app_theme.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, this.title});
@@ -45,6 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         const SizedBox(height: 10),
         TextField(
+          cursorColor: Theme.of(context).primaryColor,
           controller: controller,
           obscureText: isPassword,
           decoration: const InputDecoration(
@@ -255,34 +257,37 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    const height = 80;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
 
-            const Logo(size: 30,),
-            _title(),
-            const SizedBox(height: 50),
-            _emailPasswordWidget(),
-            const SizedBox(height: 20),
-            _submitButton(),
-            const SizedBox(height: 20),
-            if (errorMessage != null)
-              Text(
-                errorMessage!,
-                style: const TextStyle(color: Colors.red),
-              ),
-            const SizedBox(height: 40),
-            _loginAccountLabel(),
-          ],
+    return Theme(
+      data: appTheme,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+      
+              const Logo(size: 30,),
+              _title(),
+              const SizedBox(height: 50),
+              _emailPasswordWidget(),
+              const SizedBox(height: 20),
+              _submitButton(),
+              const SizedBox(height: 20),
+              if (errorMessage != null)
+                Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              const SizedBox(height: 40),
+              _loginAccountLabel(),
+            ],
+          ),
         ),
       ),
     );

@@ -19,7 +19,7 @@ class Logo extends StatelessWidget {
             text: 'Anestesi',
             style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: accentColor,
+              
                   fontSize: size,
                 ),
           ),
@@ -27,7 +27,7 @@ class Logo extends StatelessWidget {
             text: 'H',
             style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 255, 112, 30),
+                  color: Theme.of(context).colorScheme.tertiaryFixed,
                   fontSize: size,
                 ),
           ),

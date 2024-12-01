@@ -62,7 +62,7 @@ class _DosageListState extends State<DosageList> {
               border: Border.all(
                 color: Theme.of(context).colorScheme.onSurface,
               
-                width: 0.5,
+                width: 0.1,
               ),
             ),
             margin: const EdgeInsets.symmetric(

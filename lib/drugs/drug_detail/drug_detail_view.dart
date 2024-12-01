@@ -223,8 +223,8 @@ class EditModeButton extends StatelessWidget {
             // Conditionally show delete button only when in edit mode
             if (editMode)
               IconButton(
-                icon: const Icon(Icons.delete,
-                    color: Color.fromARGB(255, 134, 9, 0)),
+                icon: Icon(Icons.delete,
+                   color: Color.fromARGB(255, 255, 99, 8)),  
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -267,7 +267,7 @@ class EditModeButton extends StatelessWidget {
                     ? Text(
                         "Spara",
                         style: TextStyle(
-                            color: Theme.of(context).primaryColor,
+                  
                             fontSize: 16),
                       )
                     : const Icon(Icons.edit_note_sharp, size: 30),

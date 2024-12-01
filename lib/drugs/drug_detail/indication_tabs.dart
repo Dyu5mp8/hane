@@ -57,6 +57,7 @@ class _IndicationTabsState extends State<IndicationTabs> {
                 icon: const Icon(Icons.add_circle_outline_sharp),
                 iconSize: 25,
                 color: Colors.black,
+                
                 padding: EdgeInsets.zero,
               ),
             ),
@@ -67,14 +68,14 @@ class _IndicationTabsState extends State<IndicationTabs> {
                     unselectedLabelStyle: const TextStyle(
                       color: Color.fromARGB(255, 61, 61, 61),
                     ),
-                    labelColor: Colors.black,
+                    labelColor: Theme.of(context).colorScheme.onSurface,
                     isScrollable: true,
                     indicatorSize: TabBarIndicatorSize.tab,
                     tabBorderRadius: BorderRadius.circular(5),
                     indicator: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: Theme.of(context).primaryColor,
-                      border: Border.all(color: Colors.black, width: 0.5),
+                     
                     ),
                     tabs: indications
                         .map((indication) => Tab(
@@ -111,11 +112,9 @@ class _IndicationTabsState extends State<IndicationTabs> {
       
                     isScrollable: true,
                     indicatorSize: TabBarIndicatorSize.tab,
-                    indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Theme.of(context).chipTheme.backgroundColor,
-                      border: Border.all(color: Colors.black, width: 0.5),
-                    ),
+                    labelColor: Theme.of(context).colorScheme.onSurface,
+                    unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),  
+              
                     tabs: indications
                         .map((indication) => Tab(text: indication.name))
                         .toList(),

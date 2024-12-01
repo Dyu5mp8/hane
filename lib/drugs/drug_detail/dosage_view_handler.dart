@@ -163,7 +163,7 @@ class DosageViewHandler {
               text: conversionInfo,
               style: const TextStyle(
                   fontSize: 14,
-                  color: Color.fromARGB(255, 0, 0, 0),
+            
                   fontStyle: FontStyle.italic),
             ),
           instructionSpan,

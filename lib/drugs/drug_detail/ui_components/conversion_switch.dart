@@ -32,8 +32,8 @@ class _ConversionSwitchState extends State<ConversionSwitch> {
         Switch.adaptive(
           value: widget.isActive,
           onChanged: widget.onSwitched,
-          activeColor: widget.activeColor,
-          inactiveTrackColor: widget.inactiveColor,
+          activeColor: Theme.of(context).colorScheme.tertiaryFixed,
+          inactiveTrackColor: Theme.of(context).colorScheme.secondary,
         ),
         Text("ml",
             style: TextStyle(

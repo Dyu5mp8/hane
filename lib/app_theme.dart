@@ -10,7 +10,9 @@ final ThemeData appTheme = ThemeData(
 
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 0, 2, 3),
+    seedColor: const Color.fromARGB(255, 18, 57, 78),
+    tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
+    
 
     // ···
     brightness: Brightness.light,
@@ -60,8 +62,32 @@ final ThemeData appTheme = ThemeData(
     scrolledUnderElevation: 0
 
   ),
+
+  tabBarTheme: TabBarTheme( 
+    unselectedLabelStyle: const TextStyle(
+      color: Color.fromARGB(255, 251, 196, 151),
+    ),
+    labelColor: Color.fromARGB(255, 218, 178, 171),
+
+    indicatorSize: TabBarIndicatorSize.tab,
+    indicator: BoxDecoration(
+      borderRadius: BorderRadius.circular(5),
+      color: const Color.fromARGB(255, 252, 202, 155),
+      border: Border.all(color: Colors.black, width: 0.5),
+    ),
+  ),
+  snackBarTheme: SnackBarThemeData(
+
+    backgroundColor: const Color.fromARGB(255, 255, 229, 221),
+    behavior: SnackBarBehavior.floating,
+    elevation: 8,
+    contentTextStyle: GoogleFonts.rubik(
+      fontSize: 12,
+      color: Colors.black,
+    ),
+  ),
   chipTheme: ChipThemeData(
-    backgroundColor: const Color.fromRGBO(255, 230, 218, 1),
+    backgroundColor: const Color.fromARGB(255, 255, 228, 220),
     labelStyle: GoogleFonts.rubik(
       fontSize: 12,
       color: Colors.black,
@@ -90,15 +116,16 @@ final ThemeData darkAppTheme = ThemeData(
 
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 23, 23, 23),
-    surface: const Color.fromARGB(255, 32, 32, 32),
-    onSurface: const Color.fromARGB(255, 202, 202, 202),
-
+    seedColor: const Color.fromARGB(255, 33, 80, 119),
+    surface: const Color.fromARGB(255, 41, 41, 41),
+    onSurface: const Color.fromARGB(255, 255, 255, 255),
+tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
     // ···
     brightness: Brightness.dark,
   ),
 
   textTheme: TextTheme(
+    
   
     displayLarge: const TextStyle(
       fontSize: 72,
@@ -144,12 +171,12 @@ final ThemeData darkAppTheme = ThemeData(
     unselectedLabelStyle: const TextStyle(
       color: Color.fromARGB(255, 155, 155, 155),
     ),
-    labelColor: Color.fromARGB(255, 231, 231, 231),
+    labelColor: Color.fromARGB(255, 163, 54, 11),
 
     indicatorSize: TabBarIndicatorSize.tab,
     indicator: BoxDecoration(
       borderRadius: BorderRadius.circular(5),
-      color: const Color.fromARGB(255, 181, 71, 16),
+      color: const Color.fromARGB(255, 196, 103, 66),
       border: Border.all(color: Colors.black, width: 0.5),
     ),
   ),
@@ -170,11 +197,40 @@ final ThemeData darkAppTheme = ThemeData(
 
   
   ),
-  chipTheme: ChipThemeData(
-    backgroundColor: const Color.fromARGB(255, 181, 71, 16),
-    labelStyle: GoogleFonts.rubik(
+
+  switchTheme: SwitchThemeData(
+          thumbColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> states) {
+    
+              return const Color.fromARGB(255, 100, 100, 100); // Dark grey when off
+            },
+          ),
+          trackColor: WidgetStateProperty.resolveWith<Color>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.selected)) {
+                return const Color.fromARGB(255, 219, 219, 219); // Light orange track when on
+              }
+              return const Color.fromARGB(255, 150, 150, 150); // Grey track when off
+            },
+          ),
+        ),
+
+
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: const Color.fromARGB(255, 255, 201, 135),
+    behavior: SnackBarBehavior.floating,
+    elevation: 8,
+    contentTextStyle: GoogleFonts.rubik(
       fontSize: 12,
       color: Colors.black,
+    ),
+  ),
+  
+  chipTheme: ChipThemeData(
+    backgroundColor: const Color.fromARGB(255, 120, 93, 81),
+    labelStyle: GoogleFonts.rubik(
+      fontSize: 12,
+      color: Colors.white
 
     ),
     shape: RoundedRectangleBorder(
