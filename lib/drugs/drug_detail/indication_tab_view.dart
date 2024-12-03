@@ -51,15 +51,7 @@ class IndicationTabView extends StatelessWidget {
                   horizontal: 8,
                   vertical: 16,
                 ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      width: 0.5,
-                    ),
-                  ),
-                ),
+     
                 child: Text(
                   indication.notes != null ? "Kommentar: ${indication.notes!}" : '',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
