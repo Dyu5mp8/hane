@@ -12,6 +12,7 @@ final ThemeData appTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 18, 57, 78),
     tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
+    secondaryFixed: const Color.fromARGB(255, 195, 225, 240),
     
 
     // ···
@@ -62,6 +63,18 @@ final ThemeData appTheme = ThemeData(
     scrolledUnderElevation: 0
 
   ),
+
+  elevatedButtonTheme: ElevatedButtonThemeData(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color.fromARGB(255, 236, 116, 18), // Orange background
+    foregroundColor: Colors.white, // White text
+    elevation: 4,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+  ),
+),
 
   tabBarTheme: TabBarTheme( 
     unselectedLabelStyle: const TextStyle(
@@ -116,7 +129,7 @@ final ThemeData darkAppTheme = ThemeData(
 
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 33, 80, 119),
+    seedColor: const Color.fromARGB(255, 55, 72, 86),
     surface: const Color.fromARGB(255, 41, 41, 41),
     onSurface: const Color.fromARGB(255, 255, 255, 255),
 tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
@@ -176,7 +189,7 @@ tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
     indicatorSize: TabBarIndicatorSize.tab,
     indicator: BoxDecoration(
       borderRadius: BorderRadius.circular(5),
-      color: const Color.fromARGB(255, 196, 103, 66),
+      color: const Color.fromARGB(255, 131, 82, 40),
       border: Border.all(color: Colors.black, width: 0.5),
     ),
   ),
@@ -225,9 +238,30 @@ tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
       color: Colors.black,
     ),
   ),
-  
+
+  floatingActionButtonTheme: FloatingActionButtonThemeData(
+   backgroundColor: const Color.fromARGB(255, 131, 109, 64), 
+    foregroundColor: Colors.white,
+    elevation: 4,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
+  ),
+
+  elevatedButtonTheme: ElevatedButtonThemeData(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color.fromARGB(255, 131, 109, 64), // Dark orange background
+    foregroundColor: Colors.white, // White text
+    elevation: 4,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+  ),
+),
+
   chipTheme: ChipThemeData(
-    backgroundColor: const Color.fromARGB(255, 120, 93, 81),
+    backgroundColor: const Color.fromARGB(255, 119, 75, 52),
     labelStyle: GoogleFonts.rubik(
       fontSize: 12,
       color: Colors.white

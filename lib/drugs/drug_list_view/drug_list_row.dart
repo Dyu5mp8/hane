@@ -90,7 +90,9 @@ class DrugListRow extends StatelessWidget {
   Chip _buildNewMessageChip(BuildContext context) {
     return Chip(
       label: Text('Nytt meddelande',
-          style: Theme.of(context).textTheme.labelSmall),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Colors.black,
+              )),
       labelPadding: const EdgeInsets.all(0),
       backgroundColor: const Color.fromARGB(255, 252, 220, 200),
       shape: RoundedRectangleBorder(

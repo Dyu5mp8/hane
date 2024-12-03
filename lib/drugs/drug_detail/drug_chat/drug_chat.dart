@@ -311,7 +311,7 @@ class _ChatInputFieldState extends State<ChatInputField> {
               controller: _controller,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.grey[200],
+               
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 hintText: 'Skicka ett meddelande...',

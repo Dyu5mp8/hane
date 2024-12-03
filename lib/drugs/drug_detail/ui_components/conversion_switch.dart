@@ -33,7 +33,7 @@ class _ConversionSwitchState extends State<ConversionSwitch> {
           value: widget.isActive,
           onChanged: widget.onSwitched,
           activeColor: Theme.of(context).colorScheme.tertiaryFixed,
-          inactiveTrackColor: Theme.of(context).colorScheme.secondary,
+          inactiveTrackColor: Theme.of(context).colorScheme.secondaryFixed  ,
         ),
         Text("ml",
             style: TextStyle(

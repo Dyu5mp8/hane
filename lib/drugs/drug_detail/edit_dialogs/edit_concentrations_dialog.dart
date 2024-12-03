@@ -176,13 +176,14 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
       child: DropdownButtonFormField<String>(
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
+        
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12), // Adjusted padding to fit content
           labelText: 'Enhet',
           floatingLabelBehavior: FloatingLabelBehavior.always,
           errorMaxLines: 2,
           suffixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0), // Ensures /ml suffix fits better
           suffixText: '/ml',
-          suffixStyle: TextStyle(color: Colors.black, fontSize: 14), // Adjusted font size for better fit
+
         ),
         value: selectedUnit,
         items: unitsToSymbols(units).map((String unit) {
@@ -211,13 +212,13 @@ const SizedBox(height: 12),
                         controller: mixingInstructionsController,
                         decoration: InputDecoration(
                           labelText: 'Blandningsinstruktioner',
-                          hintStyle: const TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
+                          hintStyle: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
                           hintText: '(valfritt) T.ex.  "Nipruss 60 mg + Glukos 50 mg/ml 60 ml i ljusskyddad spruta ger 1mg/ml."',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           errorMaxLines: 2,
                           border: const OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.grey[100],
+
+         
                         ),
                         maxLines: 3,
                       ),
@@ -229,11 +230,7 @@ const SizedBox(height: 12),
                           icon: Icon(
                             editingIndex != null ? Icons.save : Icons.add,
                           ),
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
+                   
                           label: Text(
                             editingIndex != null ? 'Spara ändringar' : 'Lägg till',
                           ),
@@ -273,7 +270,7 @@ const SizedBox(height: 12),
                     ),
                     subtitle: concentration.mixingInstructions != null &&
                             concentration.mixingInstructions!.isNotEmpty
-                        ? Text(concentration.mixingInstructions!)
+                        ? Text(concentration.mixingInstructions!, style: Theme.of(context).textTheme.bodyMedium,)
                         : null,
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
