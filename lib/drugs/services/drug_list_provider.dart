@@ -492,8 +492,9 @@ class DrugListProvider with ChangeNotifier {
       DocumentReference userDocRef = db.collection('appUserFeedback').doc();
 
   await userDocRef.set({
+    'id': userDocRef.id,
     'feedback': feedback,
-    'userId': userId,
+    'userId': FirebaseAuth.instance.currentUser!.email,
     'timestamp': Timestamp.now(),
     'master': masterUID,
   }, SetOptions(merge: true));
@@ -519,5 +520,8 @@ class DrugListProvider with ChangeNotifier {
     }
   }
 
+final userFeedbackQuery = FirebaseFirestore.instance
+    .collection('appUserFeedback')
+    .orderBy('timestamp', descending: true);
 
 }

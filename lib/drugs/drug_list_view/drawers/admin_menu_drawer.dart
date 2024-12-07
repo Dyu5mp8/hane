@@ -43,13 +43,11 @@ class AdminMenuDrawer extends MenuDrawer {
         leading: const Icon(Icons.feedback),
         title: const Text('Läs feedback'),
         onTap: () async {
-          List<UserFeedback> feedbackList = await Provider.of<DrugListProvider>(context, listen: false)
-              .getFeedback();
           if (context.mounted) {
             Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ReadFeedbackView(feedback: feedbackList), 
+              builder: (context) => ReadFeedbackView(), 
 
                 
               ),

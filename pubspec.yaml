@@ -60,6 +60,7 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   package_info_plus: ^8.1.0
   accordion: ^2.6.0
+  firebase_ui_firestore: ^1.7.0
 
 
 dev_dependencies:
