@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_list_view/drawers/menu_drawer.dart';
+import 'package:hane/drugs/drug_list_view/drawers/user_feedback.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:hane/drugs/drug_list_view/drawers/read_feedback_view.dart';
+
 
 class AdminMenuDrawer extends MenuDrawer {
   const AdminMenuDrawer({
     super.key,
   });
+
+
 
   @override
   List<Widget> buildUserSpecificTiles(BuildContext context) {
@@ -30,6 +35,26 @@ class AdminMenuDrawer extends MenuDrawer {
           Provider.of<DrugListProvider>(context, listen: false)
               .markEveryDrugAsReviewed(
                   Provider.of<List<Drug>>(context, listen: false));
+        },
+
+      ),
+
+      ListTile(
+        leading: const Icon(Icons.feedback),
+        title: const Text('Läs feedback'),
+        onTap: () async {
+          List<UserFeedback> feedbackList = await Provider.of<DrugListProvider>(context, listen: false)
+              .getFeedback();
+          if (context.mounted) {
+            Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ReadFeedbackView(feedback: feedbackList), 
+
+                
+              ),
+          );
+          }       
         },
       ),
     ];

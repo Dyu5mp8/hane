@@ -3,11 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/drug_detail/drug_chat/drug_chat.dart';
 
 import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
-
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_list_view/drawers/user_feedback.dart';
 
 import 'package:hane/login/user_status.dart';
 export 'package:provider/provider.dart';
+
 
 
 class DrugListProvider with ChangeNotifier {
@@ -483,4 +484,40 @@ class DrugListProvider with ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> sendFeedback(String feedback) async {
+
+      var db = FirebaseFirestore.instance;
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      DocumentReference userDocRef = db.collection('appUserFeedback').doc();
+
+  await userDocRef.set({
+    'feedback': feedback,
+    'userId': userId,
+    'timestamp': Timestamp.now(),
+    'master': masterUID,
+  }, SetOptions(merge: true));
+
+    
+  }
+
+  Future<List<UserFeedback>> getFeedback() async {
+    var db = FirebaseFirestore.instance;
+    try {
+      // Fetch documents from the 'appUserFeedback' collection
+      QuerySnapshot<Map<String, dynamic>> feedbackDocs = 
+          await db.collection('appUserFeedback').get();
+
+      // Map documents to UserFeedback objects and return the list
+      return feedbackDocs.docs
+          .map((doc) => UserFeedback.fromFirestore(doc.data()))
+          .toList();
+    } catch (e) {
+      // Log and rethrow the error
+      print("Failed to get feedback: $e");
+      throw Exception("Could not fetch feedback. Please try again later.");
+    }
+  }
+
+
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
+import 'package:hane/drugs/drug_list_view/drawers/submit_feedback_dialog.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/theme_provider.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -8,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/login_page.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
+
 
 abstract class MenuDrawer extends StatelessWidget {
   final Set<String>? userDrugNames;
@@ -259,4 +261,59 @@ class _ThemeModeTileState extends State<ThemeModeTile> {
       ),
     );
   }
+}
+
+class SendReviewTile extends StatefulWidget {
+  const SendReviewTile({super.key});
+
+  @override
+  SendReviewTileState createState() => SendReviewTileState();
+}
+
+class SendReviewTileState extends State<SendReviewTile> {
+  @override
+ Widget build(BuildContext context) {
+  return ListTile(
+    leading: const Icon(Icons.feedback),
+    title: const Text('Skicka feedback'),
+    onTap: () {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Skicka feedback'),
+            content: SubmitFeedbackDialog(
+              onFeedbackSaved: (String feedback) async {
+                try {
+                  // Timeout added to prevent long waits in case of issues
+                  await Provider.of<DrugListProvider>(context, listen: false)
+                      .sendFeedback(feedback)
+                      .timeout(const Duration(seconds: 5));
+
+                  if (!context.mounted) return; // Check if the widget is still in the tree
+
+                  // Show success message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Tack för din feedback! Eventuella svar skickas till din mail'),
+                    ),
+                  );
+                } catch (e) {
+                  if (!context.mounted) return; // Check if the widget is still in the tree
+
+                  // Show error message if something goes wrong
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Något gick fel. Försök igen senare'),
+                    ),
+                  );
+                }
+              },
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 }
