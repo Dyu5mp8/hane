@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_list_view/drawers/menu_drawer.dart';
 import 'package:hane/drugs/drug_list_view/drawers/user_feedback.dart';
@@ -6,13 +7,10 @@ import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drawers/read_feedback_view.dart';
 
-
 class AdminMenuDrawer extends MenuDrawer {
   const AdminMenuDrawer({
     super.key,
   });
-
-
 
   @override
   List<Widget> buildUserSpecificTiles(BuildContext context) {
@@ -27,7 +25,7 @@ class AdminMenuDrawer extends MenuDrawer {
                   Provider.of<List<Drug>>(context, listen: false));
         },
       ),
-       ListTile(
+      ListTile(
         leading: const Icon(Icons.check_circle_outline_sharp),
         title: const Text('Markera alla läkemedel som granskade'),
         onTap: () {
@@ -36,25 +34,51 @@ class AdminMenuDrawer extends MenuDrawer {
               .markEveryDrugAsReviewed(
                   Provider.of<List<Drug>>(context, listen: false));
         },
-
       ),
+     ListTile(
+  leading: Badge(
+    child: const Icon(Icons.feedback),
+  
+    label: Consumer<DrugListProvider>(
+      builder: (context, provider, child) {
+        return FutureBuilder<AggregateQuerySnapshot>(
+          future: provider.userFeedbackQuery.count().get(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Waiting for data, show nothing
+              return const SizedBox.shrink();
+            }
+            
+            if (snapshot.hasError || !snapshot.hasData) {
+              // Error or no data, show nothing
+              return const SizedBox.shrink();
+            }
 
-      ListTile(
-        leading: const Icon(Icons.feedback),
-        title: const Text('Läs feedback'),
-        onTap: () async {
-          if (context.mounted) {
-            Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ReadFeedbackView(), 
+            final count = snapshot.data!.count;
+            if (count == 0) {
+              // No documents, show nothing
+              return const SizedBox.shrink();
+            }
 
-                
-              ),
-          );
-          }       
-        },
-      ),
+            // Successfully got a count, show it
+            return Text(count.toString());
+          },
+        );
+      },
+    ),
+  ),
+  title: const Text('Läs feedback'),
+  onTap: () async {
+    if (context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ReadFeedbackView(),
+        ),
+      );
+    }
+  },
+),
     ];
   }
 }
