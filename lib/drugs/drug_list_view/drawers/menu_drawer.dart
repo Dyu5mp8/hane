@@ -9,6 +9,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/login_page.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
+import 'package:hane/legal/disclaimer.dart';
+
 
 
 abstract class MenuDrawer extends StatelessWidget {
@@ -117,11 +119,7 @@ abstract class MenuDrawer extends StatelessWidget {
             aboutBoxChildren: const [
               SizedBox(height: 5),
               Text(
-                  'Denna app är avsedd för medicinska yrkesverksamma. Informationen som '
-                  'presenteras är endast för utbildningsändamål och bör inte användas som '
-                  'ersättning för en klinisk bedömning. '
-                  'Skaparen av denna plattform tar inget '
-                  'ansvar för användningen av informationen i denna app.'),
+                 disclaimer),
               SizedBox(height: 10),
               Text(
                 'Om du har några frågor eller upptäcker något fel med appen, maila vichy576@gmail.com',
@@ -137,12 +135,7 @@ abstract class MenuDrawer extends StatelessWidget {
             applicationLegalese: '${DateTime.now().year}',
             aboutBoxChildren: const [
               SizedBox(height: 5),
-              Text(
-                  'Denna app är avsedd för medicinska yrkesverksamma. Informationen som '
-                  'presenteras är endast för utbildningsändamål och bör inte användas som '
-                  'ersättning för en klinisk bedömning. '
-                  'Skaparen av denna plattform tar inget '
-                  'ansvar för användningen av informationen i denna app.'),
+              Text(disclaimer),
               SizedBox(height: 10),
               Text(
                 'Om du har några frågor eller upptäcker något fel med appen, maila vichy576@gmail.com',

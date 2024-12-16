@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_list_view/drawers/menu_drawer.dart';
-import 'package:hane/drugs/drug_list_view/drawers/user_feedback.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drawers/read_feedback_view.dart';
 
@@ -37,8 +35,6 @@ class AdminMenuDrawer extends MenuDrawer {
       ),
      ListTile(
   leading: Badge(
-    child: const Icon(Icons.feedback),
-  
     label: Consumer<DrugListProvider>(
       builder: (context, provider, child) {
         return FutureBuilder<AggregateQuerySnapshot>(
@@ -66,6 +62,7 @@ class AdminMenuDrawer extends MenuDrawer {
         );
       },
     ),
+    child: const Icon(Icons.feedback),
   ),
   title: const Text('Läs feedback'),
   onTap: () async {

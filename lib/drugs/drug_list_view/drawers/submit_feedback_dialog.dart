@@ -42,7 +42,8 @@ class _SubmitFeedbackDialogState extends State<SubmitFeedbackDialog> {
               controller: _feedbackController,
               autofocus: true,
               decoration: const InputDecoration(
-                labelText: 'Anteckningar',
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                labelText: 'Feedback',
                 border: OutlineInputBorder(),
               ),
               minLines: 10,

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_list_view/drawers/user_feedback.dart';
-import 'package:hane/drugs/services/user_behaviors/behaviors.dart'; // For UserFeedback
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 
 class ReadFeedbackView extends StatelessWidget {
