@@ -4,6 +4,7 @@ import 'package:hane/drugs/drug_list_view/drawers/menu_drawer.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drugs/drug_list_view/drawers/read_feedback_view.dart';
+import 'package:hane/drugs/ui_components/count_badge.dart';
 
 class AdminMenuDrawer extends MenuDrawer {
   const AdminMenuDrawer({
@@ -12,13 +13,15 @@ class AdminMenuDrawer extends MenuDrawer {
 
   @override
   List<Widget> buildUserSpecificTiles(BuildContext context) {
+
+    var provider = Provider.of<DrugListProvider>(context, listen: false);
     return [
       ListTile(
         leading: const Icon(Icons.mark_chat_read),
         title: const Text('Markera alla meddelanden som lästa'),
         onTap: () {
           Navigator.pop(context);
-          Provider.of<DrugListProvider>(context, listen: false)
+          provider
               .markEveryMessageAsRead(
                   Provider.of<List<Drug>>(context, listen: false));
         },
@@ -28,54 +31,27 @@ class AdminMenuDrawer extends MenuDrawer {
         title: const Text('Markera alla läkemedel som granskade'),
         onTap: () {
           Navigator.pop(context);
-          Provider.of<DrugListProvider>(context, listen: false)
+          provider
               .markEveryDrugAsReviewed(
                   Provider.of<List<Drug>>(context, listen: false));
         },
       ),
-     ListTile(
-  leading: Badge(
-    label: Consumer<DrugListProvider>(
-      builder: (context, provider, child) {
-        return FutureBuilder<AggregateQuerySnapshot>(
-          future: provider.userFeedbackQuery.count().get(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Waiting for data, show nothing
-              return const SizedBox.shrink();
-            }
-            
-            if (snapshot.hasError || !snapshot.hasData) {
-              // Error or no data, show nothing
-              return const SizedBox.shrink();
-            }
-
-            final count = snapshot.data!.count;
-            if (count == 0) {
-              // No documents, show nothing
-              return const SizedBox.shrink();
-            }
-
-            // Successfully got a count, show it
-            return Text(count.toString());
-          },
-        );
-      },
-    ),
-    child: const Icon(Icons.feedback),
-  ),
-  title: const Text('Läs feedback'),
-  onTap: () async {
-    if (context.mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ReadFeedbackView(),
-        ),
-      );
-    }
-  },
-),
+      ListTile(
+       leading: CountBadge(futureCount: provider.getUserFeedbackCount() , child: const Icon(Icons.feedback_rounded)),
+        title: const Text('Läs feedback'),
+        onTap: () async {
+          if (context.mounted) {
+            Provider.of<DrugListProvider>(context, listen: false)
+                .markFeedbackAsRead();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ReadFeedbackView(),
+              ),
+            );
+          }
+        },
+      ),
     ];
   }
 }

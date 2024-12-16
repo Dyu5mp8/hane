@@ -502,26 +502,43 @@ class DrugListProvider with ChangeNotifier {
     
   }
 
-  Future<List<UserFeedback>> getFeedback() async {
-    var db = FirebaseFirestore.instance;
-    try {
-      // Fetch documents from the 'appUserFeedback' collection
-      QuerySnapshot<Map<String, dynamic>> feedbackDocs = 
-          await db.collection('appUserFeedback').get();
-
-      // Map documents to UserFeedback objects and return the list
-      return feedbackDocs.docs
-          .map((doc) => UserFeedback.fromFirestore(doc.data()))
-          .toList();
-    } catch (e) {
-      // Log and rethrow the error
-      print("Failed to get feedback: $e");
-      throw Exception("Could not fetch feedback. Please try again later.");
-    }
-  }
-
 final userFeedbackQuery = FirebaseFirestore.instance
     .collection('appUserFeedback')
     .orderBy('timestamp', descending: true);
+Future<int> getUserFeedbackCount() async {
+  // Fetch user document
+  final userDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(_user)
+      .get();
+
+  final userData = userDoc.data();
+  // If lastReadFeedback is not available or not a Timestamp, use current time
+  final Timestamp lastReadFeedback = (userData != null && userData['lastReadFeedback'] is Timestamp)
+      ? userData['lastReadFeedback']
+      : Timestamp.now();
+
+  // Create a query to get feedback after lastReadFeedback
+  final query = FirebaseFirestore.instance
+      .collection('appUserFeedback')
+      .where('timestamp', isGreaterThan: lastReadFeedback)
+      .orderBy('timestamp', descending: true);
+
+  // Get the aggregated count of unread feedback
+  final snapshot = await query.count().get();
+  return snapshot.count ?? 0;
+}
+
+Future<void> markFeedbackAsRead() async {
+  // Update the user document with the current time
+  await FirebaseFirestore.instance
+    .collection('users')
+    .doc(_user)
+    .set({
+      'lastReadFeedback': Timestamp.now(),
+    }, SetOptions(merge: true));
+
+    notifyListeners();
+}
 
 }

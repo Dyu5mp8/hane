@@ -37,7 +37,6 @@ class ReadFeedbackView extends StatelessWidget {
           }
 
           return Container(
-            color: Colors.grey[100],
             child: ListView.builder(
               itemCount: docs.length + (snapshot.hasMore ? 1 : 0),
               itemBuilder: (context, index) {
@@ -50,12 +49,10 @@ class ReadFeedbackView extends StatelessWidget {
                       .format(feedback.timestamp.toDate());
 
                   return Container(
+                    
                     margin: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 4.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4.0),
-                    ),
+                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -76,17 +73,11 @@ class ReadFeedbackView extends StatelessWidget {
                               children: [
                                 Text(
                                   feedback.userId,
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey,
-                                  ),
+                    
                                 ),
                                 Text(
                                   formattedDate,
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey,
-                                  ),
+                                
                                 ),
                               ],
                             ),
