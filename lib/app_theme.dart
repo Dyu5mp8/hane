@@ -221,7 +221,7 @@ tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
           trackColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> states) {
               if (states.contains(WidgetState.selected)) {
-                return const Color.fromARGB(255, 219, 219, 219); // Light orange track when on
+                return const Color.fromARGB(255, 211, 91, 0); // Light orange track when on
               }
               return const Color.fromARGB(255, 150, 150, 150); // Grey track when off
             },
