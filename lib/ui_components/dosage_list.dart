@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:hane/drugs/drug_detail/ui_components/dosage_snippet.dart';
-import 'package:hane/drugs/drug_detail/ui_components/scroll_indicator.dart';
+import 'package:hane/ui_components/dosage_snippet.dart';
+import 'package:hane/ui_components/scroll_indicator.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 import 'package:hane/drugs/services/user_behaviors/user_behavior.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/ui_components/scroll_indicator.dart';
+import 'package:hane/ui_components/scroll_indicator.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
 import 'package:provider/provider.dart';
 

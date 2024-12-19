@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
-import 'package:hane/drugs/drug_detail/ui_components/add_indication_button.dart';
+import 'package:hane/ui_components/add_indication_button.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
-import 'ui_components/dosage_list.dart';
+import '../../ui_components/dosage_list.dart';
 
 class IndicationTabView extends StatelessWidget {
   const IndicationTabView({super.key});

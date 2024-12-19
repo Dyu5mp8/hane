@@ -5,7 +5,7 @@ import 'package:hane/drugs/drug_detail/overview/note_row.dart';
 import 'package:hane/drugs/drug_detail/overview/user_note_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/drugs/drug_detail/ui_components/scroll_indicator.dart';
+import 'package:hane/ui_components/scroll_indicator.dart';
 import 'package:hane/login/user_status.dart';
 
 class OverviewBox extends StatefulWidget {

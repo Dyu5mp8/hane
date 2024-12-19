@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/drug_detail/expanded_info/expanded_dialog.dart';
-import 'package:hane/drugs/drug_detail/ui_components/editable_row.dart';
+import 'package:hane/ui_components/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:icons_plus/icons_plus.dart';
 

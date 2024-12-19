@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
-import 'package:hane/drugs/drug_detail/ui_components/concentration_picker.dart';
+import 'package:hane/ui_components/concentration_picker.dart';
 import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
-import 'package:hane/drugs/drug_detail/ui_components/conversion_button.dart';
-import 'package:hane/drugs/drug_detail/ui_components/conversion_switch.dart';
-import 'package:hane/drugs/drug_detail/ui_components/route_text.dart';
-import 'package:hane/drugs/drug_detail/ui_components/time_picker.dart';
-import 'package:hane/drugs/drug_detail/ui_components/weight_slider.dart';
+import 'package:hane/ui_components/conversion_button.dart';
+import 'package:hane/ui_components/conversion_switch.dart';
+import 'package:hane/ui_components/route_text.dart';
+import 'package:hane/ui_components/time_picker.dart';
+import 'package:hane/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/drug.dart';
 
 

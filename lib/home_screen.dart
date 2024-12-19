@@ -8,7 +8,7 @@ import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drawers/drawers.dart';
-import 'package:hane/drugs/drug_list_row.dart';
+import 'package:hane/ui_components/drug_list_row.dart';
 import 'package:hane/modules_feature/module_list_view.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
