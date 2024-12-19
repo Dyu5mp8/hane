@@ -9,32 +9,26 @@ class ModuleListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: AppBar(
-      ),
-      body: ListView.builder(
+
+
+    return ListView.builder(
         itemCount: modules.length,
         itemBuilder: (context, index) {
           final module = modules[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: ListTile(
-              title: Text(module.name),
-              subtitle: Text(module.description),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => module.moduleDetailView,
-                  ),
-                );
-              },
-            ),
+          return ListTile(
+            title: Text(module.name),
+            subtitle: Text(module.description),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => module.moduleDetailView,
+                ),
+              );
+            },
           );
         },
-      ),
-    );
+      );
   }
 }
