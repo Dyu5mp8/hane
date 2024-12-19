@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/modules/models/module.dart';
+import 'package:hane/modules_feature/models/module.dart';
 
 // Module List View
 class ModuleListView extends StatelessWidget {

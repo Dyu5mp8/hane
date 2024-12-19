@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_list_view/drawers/user_feedback.dart';
+import 'package:hane/drawers/user_feedback.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';

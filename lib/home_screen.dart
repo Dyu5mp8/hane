@@ -1,24 +1,27 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hane/app_bar.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/drugs/drug_list_view/drawers/drawers.dart';
-import 'package:hane/drugs/drug_list_view/drug_list_row.dart';
+import 'package:hane/drawers/drawers.dart';
+import 'package:hane/drugs/drug_list_row.dart';
+import 'package:hane/modules_feature/module_list_view.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:hane/modules_feature/data/modules_data.dart';
 
-class DrugListView extends StatefulWidget {
-  const DrugListView({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<DrugListView> createState() => _DrugListViewState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _DrugListViewState extends State<DrugListView> {
+class _HomeScreenState extends State<HomeScreen> {
   String _searchQuery = '';
   String? _selectedCategory;
   final TextEditingController _searchController = TextEditingController();
@@ -102,14 +105,24 @@ class _DrugListViewState extends State<DrugListView> {
     if (drugs == null) {
       // Show a loading indicator while the drugs are loading
       return Scaffold(
-        appBar: _buildAppBar(context),
+             appBar: CustomAppBar(
+        selectedIndex: _selectedIndex,
+        userMode: userMode,
+        onAddDrugPressed: _onAddDrugPressed,
+        searchFieldBuilder: _buildSearchField,
+      ),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (drugs.isEmpty) {
       return Scaffold(
-        appBar: _buildAppBar(context),
+             appBar: CustomAppBar(
+        selectedIndex: _selectedIndex,
+        userMode: userMode,
+        onAddDrugPressed: _onAddDrugPressed,
+        searchFieldBuilder: _buildSearchField,
+      ),
         drawer: buildDrawer(context, drugNames),
         body: Center(
             child: Column(
@@ -145,8 +158,13 @@ class _DrugListViewState extends State<DrugListView> {
         .toList()
       ..sort((a, b) => a.compareTo(b)); // Sorts the list alphabetically
 
-    return Scaffold(
-      appBar: _buildAppBar(context),
+        return Scaffold(
+      appBar: CustomAppBar(
+        selectedIndex: _selectedIndex,
+        userMode: userMode,
+        onAddDrugPressed: _onAddDrugPressed,
+        searchFieldBuilder: _buildSearchField,
+      ),
       drawer: buildDrawer(context, drugNames),
       body: PageView(
         controller: _pageController,
@@ -156,18 +174,19 @@ class _DrugListViewState extends State<DrugListView> {
           });
         },
         children: [
-          _buildDrugListView(filteredDrugs, allCategories),
-          if (provider.isReviewer)
-            _buildPendingReviewListView(pendingReviewDrugs),
+          _buildHomeScreen(filteredDrugs, allCategories),
+          provider.isReviewer ? 
+            _buildPendingReviewListView(pendingReviewDrugs) : 
+            _buildModulesListView(),
         ],
       ),
       bottomNavigationBar: provider.isReviewer
-          ? _buildBottomNavigationBar(pendingReviewDrugs.length)
-          : null,
+          ? _buildAdminBottomNavBar(pendingReviewDrugs.length)
+          : _buildBottomNavBar(),
     );
   }
 
-  Widget _buildDrugListView(List<Drug> filteredDrugs, List<dynamic> allCategories) {
+  Widget _buildHomeScreen(List<Drug> filteredDrugs, List<dynamic> allCategories) {
     return CustomScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       slivers: [
@@ -201,6 +220,11 @@ class _DrugListViewState extends State<DrugListView> {
               ),
       ],
     );
+  }
+
+  Widget _buildModulesListView (){
+      return ModuleListView(modules: modules);
+
   }
 
   Widget _buildPendingReviewListView(List<Drug> pendingReviewDrugs) {
@@ -383,57 +407,30 @@ class _DrugListViewState extends State<DrugListView> {
     }).toList();
   }
 
-  AppBar _buildAppBar(BuildContext context) {
-    bool canEdit =
-        (provider.userMode == UserMode.isAdmin || provider.userMode == UserMode.customMode);
-    bool isAdmin = Provider.of<DrugListProvider>(context, listen: true).isAdmin;
-    return AppBar(
-      forceMaterialTransparency: true,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Text('Läkemedel'),
-          isAdmin
-              ? const Padding(
-                  padding: EdgeInsets.only(
-                    top: 4.0,
-                    bottom: 6.0,
-                  ), // Reduce padding
-                  child: Text(
-                    'Admin: ÄNDRINGAR SKER I STAMLISTAN',
-                    style: TextStyle(
-                      fontSize: 14, // Reduced font size
-                      color: Color.fromARGB(255, 255, 77, 0),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ],
-      ),
-      bottom: _selectedIndex == 0
-          ? PreferredSize(
-              preferredSize:
-                  const Size.fromHeight(50), // Adjusted height to fit content
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: _buildSearchField(),
-                  )),
-            )
-          : null,
-      actions: [
-        canEdit
-            ? IconButton(
-                icon: const Icon(Icons.add),
-                onPressed: _onAddDrugPressed,
-              )
-            : const SizedBox.shrink(),
+
+  BottomNavigationBar _buildBottomNavBar() {
+    return BottomNavigationBar(
+      currentIndex: _selectedIndex,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+          _pageController.jumpToPage(index);
+        });
+      },
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.list),
+          label: 'Alla läkemedel',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.construction),
+          label: 'Verktyg'
+        ),
       ],
     );
   }
 
-  BottomNavigationBar _buildBottomNavigationBar(int pendingCount) {
+  BottomNavigationBar _buildAdminBottomNavBar(int pendingCount) {
 
     return BottomNavigationBar(
       currentIndex: _selectedIndex,

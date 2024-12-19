@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_list_view/drawers/menu_drawer.dart';
+import 'package:hane/drawers/menu_drawer.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
-import 'package:hane/drugs/drug_list_view/drawers/read_feedback_view.dart';
+import 'package:hane/drawers/read_feedback_view.dart';
 import 'package:hane/drugs/ui_components/count_badge.dart';
 
 class AdminMenuDrawer extends MenuDrawer {

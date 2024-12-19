@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hane/drugs/drug_list_view/drawers/drawer_header.dart';
-import 'package:hane/drugs/drug_list_view/drawers/submit_feedback_dialog.dart';
+import 'package:hane/drawers/drawer_header.dart';
+import 'package:hane/drawers/submit_feedback_dialog.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/theme_provider.dart';
 import 'package:icons_plus/icons_plus.dart';

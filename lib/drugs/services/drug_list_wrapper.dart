@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:hane/drugs/drug_list_view/drug_list_view.dart";
+import "package:hane/home_screen.dart";
 import "package:hane/drugs/models/drug.dart";
 import "package:hane/drugs/services/drug_list_provider.dart";
 
@@ -13,7 +13,7 @@ class DrugListWrapper extends StatelessWidget {
           Provider.of<DrugListProvider>(context, listen: true).getDrugsStream(),
       initialData: null, // Change initial data to null to indicate loading
       catchError: (_, error) => [],
-      child: const DrugListView(),
+      child: const HomeScreen(),
     );
   }
 }
