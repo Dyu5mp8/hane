@@ -19,6 +19,7 @@ class ModuleListView extends StatelessWidget {
           return ListTile(
             title: Text(module.name),
             subtitle: Text(module.description),
+            leading: Icon(module.icon),
             onTap: () {
               Navigator.push(
                 context,

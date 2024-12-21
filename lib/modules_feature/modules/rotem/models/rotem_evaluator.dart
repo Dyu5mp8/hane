@@ -1,4 +1,20 @@
-import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
+import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
+
+
+enum RotemField {
+  ctExtem,
+  ctIntem,
+  ctFibtem,
+  a5Fibtem,
+  a10Fibtem,
+  a5Extem,
+  a10Extem,
+  mlExtem,
+  ctHeptem,
+  li30Extem,
+}
+
+enum RotemSection { fibtem, extem, intem, heptem }
 
 class RotemEvaluator {
   final double? ctExtem;
@@ -9,6 +25,8 @@ class RotemEvaluator {
   final double? a5Extem;
   final double? mlExtem;
   final double? ctHeptem;
+  final double? ctFibtem;
+  final double? li30Extem;
   final RotemEvaluationStrategy strategy;
 
   RotemEvaluator({
@@ -20,6 +38,8 @@ class RotemEvaluator {
      this.a5Extem,
      this.mlExtem,
      this.ctHeptem,
+     this.ctFibtem,
+      this.li30Extem,
      required this.strategy,
   });
 
