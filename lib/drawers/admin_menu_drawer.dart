@@ -30,10 +30,32 @@ class AdminMenuDrawer extends MenuDrawer {
         leading: const Icon(Icons.check_circle_outline_sharp),
         title: const Text('Markera alla läkemedel som granskade'),
         onTap: () {
-          Navigator.pop(context);
-          provider
-              .markEveryDrugAsReviewed(
-                  Provider.of<List<Drug>>(context, listen: false));
+          showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Bekräfta'),
+            content: const Text('Är du säker på att du vill markera alla läkemedel som granskade?'),
+            actions: <Widget>[
+          TextButton(
+            child: const Text('Avbryt'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Bekräfta'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pop(context);
+              provider.markEveryDrugAsReviewed(
+              Provider.of<List<Drug>>(context, listen: false));
+            },
+          ),
+            ],
+          );
+        },
+          );
         },
       ),
       ListTile(
