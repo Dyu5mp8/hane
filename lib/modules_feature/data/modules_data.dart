@@ -22,7 +22,7 @@ List<Module> modules =
       name: 'ROTEM',
       description: 'Stöd för tolkning av ROTEM',
       icon: Icons.bloodtype,
-      moduleDetailView: RotemScreen(),
+      moduleDetailView: RotemWizardScreen()
     )
 
 

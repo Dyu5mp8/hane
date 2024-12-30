@@ -3,101 +3,125 @@ import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
 
 
-class ThoraxEvaluationStrategy implements RotemEvaluationStrategy {
+class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
+
   @override
-  Map<String, String> evaluate(RotemEvaluator evaluator) {
-    Map<String, String> actions = {};
+Map<String, String> evaluate(RotemEvaluator evaluator) {
+  final actions = <String, String>{};
 
-    // Rule 1: PCC (EXTEM) and/or FFP (EXTEM/INTEM)
-    if (evaluator.ctExtem != null && evaluator.ctExtem! > 79) {
-      if (evaluator.ctIntem != null && evaluator.ctIntem! > 240) {
-        actions["FFP"] = "Högt CT EXTEM och INTEM";
-      } else {
-        actions["PCC"] = "Högt CT EXTEM";
-      }
-    } else if (evaluator.ctIntem != null && evaluator.ctIntem! > 240) {
-      actions["FFP"] = "Högt CT INTEM";
-    }
+  // Create a quick lookup for your FieldConfig by RotemField
+  final configs = {
+    for (final cfg in getRequiredFields()) cfg.field: cfg
+  };
+  
+  // Grab the numeric fields
+  final ctExtem  = evaluator.ctExtem;
+  final ctIntem  = evaluator.ctIntem;
+  final ctHeptem = evaluator.ctHeptem;
+  final a5Fibtem = evaluator.a5Fibtem;
+  final a10Fibtem = evaluator.a10Fibtem;
+  final a5Extem = evaluator.a5Extem;
+  final a10Extem = evaluator.a10Extem;
+  final mlExtem = evaluator.mlExtem;
 
-    // Rule 2: Fibrinogen
-    if (_lowFibTem(evaluator)) {
-      actions["Fibrinogen"] = "Lågt Fibtem";
-    }
-
-    // Rule 3: Platelets
-    if (!_lowFibTem(evaluator) && _lowExtem(evaluator)) {
-      actions["Trombocyter"] = "Lågt EXTEM";
-    }
-
-    // Rule 4: Tranexamic acid
-    if (evaluator.mlExtem != null && evaluator.mlExtem! > 15) {
-      actions["Tranexamic acid"] = "Högt ML EXTEM";
-    }
-
-    // Rule 5: Protamine
-    if (evaluator.ctHeptem != null &&
-        evaluator.ctIntem != null &&
-        evaluator.ctHeptem! / evaluator.ctIntem! > 1.1) {
-      actions["Protamin"] = "Skillnad mellan CT HEPTEM och INTEM mer än 10%";
-    }
-
-    return actions;
+  // 1) PCC/FFP if CT EXTEM above max OR CT INTEM above max
+  if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high) {
+    actions['PCC/FFP'] = 'CT EXTEM för hög => Ge PCC/FFP';
+  }
+  if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
+    actions['PCC/FFP'] = 'CT INTEM för hög => Ge PCC/FFP';
   }
 
-  bool _lowFibTem(RotemEvaluator evaluator) {
-    return (evaluator.a10Fibtem != null && evaluator.a10Fibtem! < 12) ||
-        (evaluator.a5Fibtem != null && evaluator.a5Fibtem! < 11);
+  // 2) Fibrinogen if (A5 Fibtem below min) or (A10 Fibtem below min)
+  final bool fibtemBelowMin = 
+    (configs[RotemField.a5Fibtem]?.result(a5Fibtem)) == Result.low  ||
+    (configs[RotemField.a10Fibtem]?.result(a10Fibtem)) == Result.low;
+
+  if (fibtemBelowMin) {
+    actions['Fibrinogen'] = 'FIBTEM under normalvärde => Ge fibrinogen';
   }
 
-  bool _lowExtem(RotemEvaluator evaluator) {
-    return (evaluator.a10Extem != null && evaluator.a10Extem! < 43) ||
-        (evaluator.a5Extem != null && evaluator.a5Extem! < 34);
+  // 3) Platelets if EXTEM is low but FIBTEM is OK
+  final extemLow = 
+    (configs[RotemField.a5Extem]?.result(a5Extem)) == Result.low ||
+    (configs[RotemField.a10Extem]?.result(a10Extem)) == Result.low;
+
+  final fibtemOk = !fibtemBelowMin; // "OK" if not below min
+
+  if (extemLow && fibtemOk) {
+    actions['Trombocyter'] = 'EXTEM lågt men FIBTEM OK => Ge trombocyter';
   }
+
+  // 4) Tranexamsyra if ML EXTEM above max
+  if (configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
+    actions['Tranexamsyra'] = 'ML EXTEM för hög => Ge tranexamsyra';
+  }
+
+  // 5) Protamin if CT INTEM > CT HEPTEM
+  if (ctIntem != null && ctHeptem != null && ctIntem > ctHeptem) {
+    actions['Protamin'] = 'CT INTEM högre än CT HEPTEM => Ge protamin';
+  }
+
+  return actions;
+}
 
   @override
   List<FieldConfig> getRequiredFields() {
-    // Specify the fields this strategy requires and their sections.
-    // For this example, we include all fields that are used in evaluation logic.
     return [
-      FieldConfig(
+      const FieldConfig(
         label: "CT EXTEM",
         field: RotemField.ctExtem,
         section: RotemSection.extem,
+        // Normal range might be up to 79. 
+        // If CT EXTEM is above 79, we consider it out of range.
+        maxValue: 79,
       ),
-      FieldConfig(
+      const FieldConfig(
         label: "CT INTEM",
         field: RotemField.ctIntem,
         section: RotemSection.intem,
+        // Example threshold for out-of-range
+        maxValue: 240,
+  
       ),
-      FieldConfig(
+      const FieldConfig(
         label: "A5 FIBTEM",
         field: RotemField.a5Fibtem,
         section: RotemSection.fibtem,
+        minValue: 11,
+        isRequired: false
       ),
-      FieldConfig(
+      const FieldConfig(
         label: "A10 FIBTEM",
         field: RotemField.a10Fibtem,
         section: RotemSection.fibtem,
+        minValue: 12,
+        isRequired: false
       ),
-      FieldConfig(
+      const FieldConfig(
         label: "A5 EXTEM",
         field: RotemField.a5Extem,
         section: RotemSection.extem,
+        minValue: 34,
       ),
-      FieldConfig(
+      const FieldConfig(
         label: "A10 EXTEM",
         field: RotemField.a10Extem,
         section: RotemSection.extem,
+        minValue: 43,
       ),
-      FieldConfig(
+      const FieldConfig(
         label: "ML EXTEM",
         field: RotemField.mlExtem,
         section: RotemSection.extem,
+        maxValue: 15,
       ),
-      FieldConfig(
+      const FieldConfig(
         label: "CT HEPTEM",
         field: RotemField.ctHeptem,
         section: RotemSection.heptem,
+        // You can also set minValue, maxValue, or both
+        // depending on how you define normal for CT HEPTEM.
       ),
     ];
   }

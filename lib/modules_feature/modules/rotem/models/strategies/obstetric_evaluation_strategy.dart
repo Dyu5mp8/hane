@@ -2,102 +2,136 @@ import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
 
-class ObstetricEvaluationStrategy implements RotemEvaluationStrategy {
+
+
+class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
+
+
+
   @override
   List<FieldConfig> getRequiredFields() {
     return [
-      FieldConfig(
-        label: "A5 FIBTEM",
-        field: RotemField.a5Fibtem,
-        section: RotemSection.fibtem,
-        required: false,
+      const FieldConfig(
+        label: "CT EXTEM",
+        field: RotemField.ctExtem,
+        section: RotemSection.extem,
+        // Normal range might be up to 79. 
+        // If CT EXTEM is above 79, we consider it out of range.
+        maxValue: 80,
+        isRequired: true
       ),
-      FieldConfig(
-        label: "A10 FIBTEM",
-        field: RotemField.a10Fibtem,
-        section: RotemSection.fibtem,
-        required: false,
-      ),
-      FieldConfig(
+      const FieldConfig(
         label: "CT INTEM",
         field: RotemField.ctIntem,
         section: RotemSection.intem,
-        required: false,
+        // Example threshold for out-of-range
+        maxValue: 240,
+        isRequired: true
+  
       ),
-      FieldConfig(
-          label: "A5 EXTEM",
-          field: RotemField.a5Extem,
-          section: RotemSection.extem,
-          required: true),
-
-      FieldConfig(label: "CT EXTEM",
-          field: RotemField.ctExtem,
-          section: RotemSection.extem,
-          required: true),
-
-      FieldConfig(label: "CT FIBTEM",
-          field: RotemField.ctFibtem,
-          section: RotemSection.fibtem,
-          required: true),
-
-      FieldConfig(label: "ML EXTEM",
-          field: RotemField.mlExtem,
-          section: RotemSection.extem,
-          required: true),
+      const FieldConfig(
+        label: "A5 FIBTEM",
+        field: RotemField.a5Fibtem,
+        section: RotemSection.fibtem,
+        minValue: 12,
+        isRequired: true
+      ),
+      const FieldConfig(
+        label: "A5 EXTEM",
+        field: RotemField.a5Extem,
+        section: RotemSection.extem,
+        minValue: 34,
+        isRequired: true
+      ),
+      const FieldConfig(
+        label: "ML EXTEM",
+        field: RotemField.mlExtem,
+        section: RotemSection.extem,
+        maxValue: 10,
+        isRequired: true
+      ),
+      const FieldConfig(
+        label: "CT FIBTEM",
+        field: RotemField.ctFibtem,
+        section: RotemSection.fibtem,
+        maxValue: 600,
+      ),
     ];
   }
-
-  @override
-  String? validateAll(Map<RotemField, String?> values) {
-    // Example: require either A5 FIBTEM or A10 FIBTEM to be filled in
-    final a5 = values[RotemField.a5Fibtem];
-    final a10 = values[RotemField.a10Fibtem];
-
-    if ((a5 == null || a5.isEmpty) && (a10 == null || a10.isEmpty)) {
-      return 'Antingen A5 FIBTEM eller A10 FIBTEM måste fyllas i.';
-    }
-
-    // If no error:
-    return null;
-  }
-
+  
+  
   @override
   Map<String, String> evaluate(RotemEvaluator evaluator) {
-    Map<String, String> actions = {};
 
-    // Rule 1: A5 FIBTEM < 12 mm → Fibrinogen
-    if (evaluator.a5Fibtem != null && evaluator.a5Fibtem! < 12) {
-      actions["Fibrinogen"] = "Fibrinogen 2-4 g (MÅL: A5 FIBTEM ≥ 16 mm)";
+    final configs = {
+    for (final cfg in getRequiredFields()) cfg.field: cfg
+  };
+
+    final actions = <String, String>{};
+
+
+    // Extract numeric values from evaluator
+    final a5Fibtem = evaluator.a5Fibtem;     // A5 FIBTEM
+    final a5Extem = evaluator.a5Extem;       // A5 EXTEM
+    final ctExtem = evaluator.ctExtem;       // CT EXTEM
+    final ctIntem = evaluator.ctIntem;       // CT INTEM
+    final ctFibtem = evaluator.ctFibtem;     // CT FIBTEM (make sure RotemEvaluator has this!)
+    final mlExtem = evaluator.mlExtem;       // ML EXTEM
+
+
+
+
+    //----------------------------------------------------------------------
+    // 1) Fibrinogen if A5 FIBTEM < 12 mm
+    //----------------------------------------------------------------------
+      if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.low) {
+    actions['Fibrinogen'] = 'A5 FIBTEM < 12 mm => Ge fibrinogen 2-4g';
+  }
+
+    //----------------------------------------------------------------------
+    // 2) Platelets if (A5 FIBTEM ≥ 12 mm) AND (A5 EXTEM < 35 mm)
+    //----------------------------------------------------------------------
+
+    if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.normal &&
+        configs[RotemField.a5Extem]?.result(a5Extem) == Result.low) {
+      actions['Trombocyter'] =
+          'A5 FIBTEM ≥ 12 mm och A5 EXTEM < 35 mm => Ge trombocyter (1 E)';
+    }
+        
+    //----------------------------------------------------------------------
+    // 3) Ocplex/Confidex 10E/kg eller plasma 10-15 ml/kg om (CT EXTEM > 80 s) OCH (A5 FIBTEM ≥ 12 mm)
+    //----------------------------------------------------------------------
+    if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high &&
+        configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.normal) {
+      actions['Ocplex/Plasma'] =
+          'CT EXTEM > 80 s och A5 FIBTEM ≥ 12 mm => '
+          'Ocplex®/Confidex® 10 E/kg eller plasma 10–15 ml/kg';
     }
 
-    // Rule 2: A5 FIBTEM ≥ 12 mm and A5 EXTEM < 35 mm → Platelets
-    if (evaluator.a5Fibtem != null &&
-        evaluator.a5Fibtem! >= 12 &&
-        evaluator.a5Extem != null &&
-        evaluator.a5Extem! < 35) {
-      actions["Trombocyter"] = "Trombocyter 1 E";
+    //----------------------------------------------------------------------
+    // 4) Plasma if CT INTEM > 240 s
+    //----------------------------------------------------------------------
+    if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
+      actions['Plasma'] = 'CT INTEM > 240 s => Plasma 10 ml/kg';
     }
 
-    // Rule 3: CT EXTEM > 80 s and A5 FIBTEM ≥ 12 mm → Ocplex/Confidex or Plasma
-    if (evaluator.ctExtem != null &&
-        evaluator.ctExtem! > 80 &&
-        evaluator.a5Fibtem != null &&
-        evaluator.a5Fibtem! >= 12) {
-      actions["Ocplex/Confidex"] =
-          "Ocplex®/Confidex® 10 IE/kg eller plasma 10-15 ml/kg";
-    }
-
-    // Rule 4: CT INTEM > 240 s → Plasma
-    if (evaluator.ctIntem != null && evaluator.ctIntem! > 240) {
-      actions["Plasma"] = "Plasma 10 ml/kg";
-    }
-
-    // Rule 5: CT FIBTEM > 600 s or ML EXTEM > 10% → Tranexamic Acid
-    if ((evaluator.ctFibtem != null && evaluator.ctFibtem! > 600) ||
-        (evaluator.mlExtem != null && evaluator.mlExtem! > 10)) {
-      actions["Cyklokapron"] = "Cyklokapron® 1-2 g (20 mg/kg)";
+    //----------------------------------------------------------------------
+    // 5) Cyklokapron if (CT FIBTEM > 600 s) OR (ML EXTEM > 10%)
+    //----------------------------------------------------------------------
+    if (configs[RotemField.ctFibtem]?.result(ctFibtem) == Result.high ||
+        configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
+      actions['Cyklokapron'] = 'CT FIBTEM > 600 s eller ML EXTEM > 10% => Ge Cyklokapron';
     }
 
     return actions;
+  }
+
+
+  @override
+  String? validateAll(Map<RotemField, String?> values) {
+
+
+    // If no errors
+    return null;
   }
 }

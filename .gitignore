@@ -50,5 +50,6 @@ app.*.map.json
 
 # Ignore the entire config directory
 config/
+.scrapbook/
 möten/
 firebase_error_codes.txt
