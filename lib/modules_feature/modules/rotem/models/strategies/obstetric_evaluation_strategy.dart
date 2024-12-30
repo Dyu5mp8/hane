@@ -1,3 +1,4 @@
+import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
@@ -61,13 +62,13 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
   
   
   @override
-  Map<String, String> evaluate(RotemEvaluator evaluator) {
+  Map<String, Dosage> evaluate(RotemEvaluator evaluator) {
 
     final configs = {
     for (final cfg in getRequiredFields()) cfg.field: cfg
   };
 
-    final actions = <String, String>{};
+    final actions = <String, Dosage>{};
 
 
     // Extract numeric values from evaluator
@@ -85,7 +86,12 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     // 1) Fibrinogen if A5 FIBTEM < 12 mm
     //----------------------------------------------------------------------
       if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.low) {
-    actions['Fibrinogen'] = 'A5 FIBTEM < 12 mm => Ge fibrinogen 2-4g';
+    actions['Fibrinogen'] = Dosage(
+      instruction: "Lågt fibrinogen",
+      administrationRoute: "IV",
+      lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
+      higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
+    );
   }
 
     //----------------------------------------------------------------------
@@ -94,8 +100,11 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
 
     if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.normal &&
         configs[RotemField.a5Extem]?.result(a5Extem) == Result.low) {
-      actions['Trombocyter'] =
-          'A5 FIBTEM ≥ 12 mm och A5 EXTEM < 35 mm => Ge trombocyter (1 E)';
+      actions['Trombocyter'] = Dosage(
+        instruction: "Lågt trombocyter",
+        administrationRoute: "IV",
+        dose: Dose.fromString(amount: 1, unit: "E"),
+      );
     }
         
     //----------------------------------------------------------------------
@@ -104,8 +113,12 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high &&
         configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.normal) {
       actions['Ocplex/Plasma'] =
-          'CT EXTEM > 80 s och A5 FIBTEM ≥ 12 mm => '
-          'Ocplex®/Confidex® 10 E/kg eller plasma 10–15 ml/kg';
+        Dosage(
+          instruction: "Hög CT EXTEM och normal A5 FIBTEM - ge Ocplex/Confidex eller plasma",
+          administrationRoute: "IV",
+          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
+          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+        );
     }
 
     //----------------------------------------------------------------------

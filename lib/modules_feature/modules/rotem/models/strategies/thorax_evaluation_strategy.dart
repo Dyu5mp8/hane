@@ -1,69 +1,81 @@
+import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
+import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
 
-
 class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
-
   @override
-Map<String, String> evaluate(RotemEvaluator evaluator) {
-  final actions = <String, String>{};
+  Map<String, Dosage> evaluate(RotemEvaluator evaluator) {
+    final actions = <String, Dosage>{};
 
-  // Create a quick lookup for your FieldConfig by RotemField
-  final configs = {
-    for (final cfg in getRequiredFields()) cfg.field: cfg
-  };
-  
-  // Grab the numeric fields
-  final ctExtem  = evaluator.ctExtem;
-  final ctIntem  = evaluator.ctIntem;
-  final ctHeptem = evaluator.ctHeptem;
-  final a5Fibtem = evaluator.a5Fibtem;
-  final a10Fibtem = evaluator.a10Fibtem;
-  final a5Extem = evaluator.a5Extem;
-  final a10Extem = evaluator.a10Extem;
-  final mlExtem = evaluator.mlExtem;
+    // Create a quick lookup for your FieldConfig by RotemField
+    final configs = {for (final cfg in getRequiredFields()) cfg.field: cfg};
 
-  // 1) PCC/FFP if CT EXTEM above max OR CT INTEM above max
-  if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high) {
-    actions['PCC/FFP'] = 'CT EXTEM för hög => Ge PCC/FFP';
+    // Grab the numeric fields
+    final ctExtem = evaluator.ctExtem;
+    final ctIntem = evaluator.ctIntem;
+    final ctHeptem = evaluator.ctHeptem;
+    final a5Fibtem = evaluator.a5Fibtem;
+    final a10Fibtem = evaluator.a10Fibtem;
+    final a5Extem = evaluator.a5Extem;
+    final a10Extem = evaluator.a10Extem;
+    final mlExtem = evaluator.mlExtem;
+
+    // 1) PCC/FFP if CT EXTEM above max OR CT INTEM above max
+    if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high ||
+        configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
+ actions['PCC/FFP'] =
+          Dosage(administrationRoute: "iv", instruction: "Hög CT INTEM ELLER CT EXTEM => Ge plasma eller PCC", lowerLimitDose: Dose.fromString(amount: 10, unit:"ml/kg"), higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"));
+    }
+    
+        // 2) Fibrinogen if (A5 Fibtem below min) or (A10 Fibtem below min)
+    final bool fibtemBelowMin =
+        (configs[RotemField.a5Fibtem]?.result(a5Fibtem)) == Result.low ||
+            (configs[RotemField.a10Fibtem]?.result(a10Fibtem)) == Result.low;
+
+
+    if (fibtemBelowMin) {
+      actions['Fibrinogen'] = Dosage(
+          administrationRoute: "iv",
+          instruction: "Ge fibrinogen",
+          lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
+          higherLimitDose: Dose.fromString(amount: 4, unit: "g"));
+    }
+
+    // 3) Platelets if EXTEM is low but FIBTEM is OK
+    final extemLow =
+        (configs[RotemField.a5Extem]?.result(a5Extem)) == Result.low ||
+            (configs[RotemField.a10Extem]?.result(a10Extem)) == Result.low;
+
+    final fibtemOk = !fibtemBelowMin; // "OK" if not below min
+
+    if (extemLow && fibtemOk) {
+      actions['Trombocyter'] = Dosage(
+          administrationRoute: "iv",
+          instruction: "Ge trombocyter",
+          lowerLimitDose: Dose.fromString(amount: 1, unit: "E"));
+    }
+
+    // 4) Tranexamsyra if ML EXTEM above max
+    if (configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
+      actions['Tranexamsyra'] = Dosage(
+          administrationRoute: "iv",
+          instruction: "Ge tranexamsyra",
+          lowerLimitDose: Dose.fromString(amount: 10, unit: "mg/kg"));
+    }
+
+    // 5) Protamin if CT INTEM > CT HEPTEM
+    if (ctIntem != null && ctHeptem != null && ctIntem > ctHeptem) {
+      actions['Protamin'] = Dosage(
+          administrationRoute: "iv",
+          instruction: "Ge protamin",
+          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"));
+    }
+
+    return actions;
   }
-  if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
-    actions['PCC/FFP'] = 'CT INTEM för hög => Ge PCC/FFP';
-  }
-
-  // 2) Fibrinogen if (A5 Fibtem below min) or (A10 Fibtem below min)
-  final bool fibtemBelowMin = 
-    (configs[RotemField.a5Fibtem]?.result(a5Fibtem)) == Result.low  ||
-    (configs[RotemField.a10Fibtem]?.result(a10Fibtem)) == Result.low;
-
-  if (fibtemBelowMin) {
-    actions['Fibrinogen'] = 'FIBTEM under normalvärde => Ge fibrinogen';
-  }
-
-  // 3) Platelets if EXTEM is low but FIBTEM is OK
-  final extemLow = 
-    (configs[RotemField.a5Extem]?.result(a5Extem)) == Result.low ||
-    (configs[RotemField.a10Extem]?.result(a10Extem)) == Result.low;
-
-  final fibtemOk = !fibtemBelowMin; // "OK" if not below min
-
-  if (extemLow && fibtemOk) {
-    actions['Trombocyter'] = 'EXTEM lågt men FIBTEM OK => Ge trombocyter';
-  }
-
-  // 4) Tranexamsyra if ML EXTEM above max
-  if (configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
-    actions['Tranexamsyra'] = 'ML EXTEM för hög => Ge tranexamsyra';
-  }
-
-  // 5) Protamin if CT INTEM > CT HEPTEM
-  if (ctIntem != null && ctHeptem != null && ctIntem > ctHeptem) {
-    actions['Protamin'] = 'CT INTEM högre än CT HEPTEM => Ge protamin';
-  }
-
-  return actions;
-}
 
   @override
   List<FieldConfig> getRequiredFields() {
@@ -72,7 +84,7 @@ Map<String, String> evaluate(RotemEvaluator evaluator) {
         label: "CT EXTEM",
         field: RotemField.ctExtem,
         section: RotemSection.extem,
-        // Normal range might be up to 79. 
+        // Normal range might be up to 79.
         // If CT EXTEM is above 79, we consider it out of range.
         maxValue: 79,
       ),
@@ -82,22 +94,19 @@ Map<String, String> evaluate(RotemEvaluator evaluator) {
         section: RotemSection.intem,
         // Example threshold for out-of-range
         maxValue: 240,
-  
       ),
       const FieldConfig(
-        label: "A5 FIBTEM",
-        field: RotemField.a5Fibtem,
-        section: RotemSection.fibtem,
-        minValue: 11,
-        isRequired: false
-      ),
+          label: "A5 FIBTEM",
+          field: RotemField.a5Fibtem,
+          section: RotemSection.fibtem,
+          minValue: 11,
+          isRequired: false),
       const FieldConfig(
-        label: "A10 FIBTEM",
-        field: RotemField.a10Fibtem,
-        section: RotemSection.fibtem,
-        minValue: 12,
-        isRequired: false
-      ),
+          label: "A10 FIBTEM",
+          field: RotemField.a10Fibtem,
+          section: RotemSection.fibtem,
+          minValue: 12,
+          isRequired: false),
       const FieldConfig(
         label: "A5 EXTEM",
         field: RotemField.a5Extem,
@@ -125,7 +134,8 @@ Map<String, String> evaluate(RotemEvaluator evaluator) {
       ),
     ];
   }
-@override
+
+  @override
   String? validateAll(Map<RotemField, String?> values) {
     final ctExtemValue = values[RotemField.ctExtem];
     final ctIntemValue = values[RotemField.ctIntem];
@@ -144,6 +154,7 @@ Map<String, String> evaluate(RotemEvaluator evaluator) {
     // 2) Either A10 FIBTEM or A5 FIBTEM must be filled
     if ((a10FibtemValue == null || a10FibtemValue.isEmpty) &&
         (a5FibtemValue == null || a5FibtemValue.isEmpty)) {
+      print('a10FibtemValue: $a10FibtemValue');
       return 'Antingen A10 FIBTEM eller A5 FIBTEM måste fyllas i.';
     }
 

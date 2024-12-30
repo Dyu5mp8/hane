@@ -1,9 +1,11 @@
 
+import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
 
+
 abstract class RotemEvaluationStrategy {
-  Map<String, String> evaluate(RotemEvaluator evaluator);
+  Map<String, Dosage> evaluate(RotemEvaluator evaluator);
   List<FieldConfig> getRequiredFields();
   
   /// Global validation logic that checks multiple fields together.
@@ -15,7 +17,7 @@ bool isValueBelowMin(FieldConfig config, double value) =>
 
 bool isValueAboveMax(FieldConfig config, double value) =>
   (config.maxValue != null && value > config.maxValue!);
-  
+
   bool isValueOutOfRange(FieldConfig config, double value) {
   if (config.minValue != null && value < config.minValue!) {
     return true;
