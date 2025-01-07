@@ -1,0 +1,73 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class Antibiotic {
+  final String? category;
+  final String? name;
+  final String? description;        // maps from "Deklaration"
+  final String? pharmacodynamics;   // maps from "Farmakodynamik"
+  final String? dosage;             // maps from "Dosering"
+  final String? sideEffects;        // maps from "Biverkningar"
+
+  Antibiotic({
+    this.category,
+    this.name,
+    this.description,
+    this.pharmacodynamics,
+    this.dosage,
+    this.sideEffects,
+  });
+
+  /// Creates an Antibiotic from a Firestore/JSON map.
+  factory Antibiotic.fromMap(Map<String, dynamic> map) {
+    return Antibiotic(
+      category: map['category'] as String?,
+      name: map['antibioticName'] as String?,  
+      description: map['Deklaration'] as String?,       
+      pharmacodynamics: map['Farmakodynamik'] as String?,
+      dosage: map['Dosering'] as String?,
+      sideEffects: map['Biverkningar'] as String?,
+    );
+  }
+
+  /// Creates an Antibiotic from a DocumentSnapshot.
+  factory Antibiotic.fromDocument(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      return Antibiotic();
+    }
+    return Antibiotic.fromMap(data);
+  }
+
+  /// Fetch antibiotics from Firestore, checking the cache first, then server.
+  static Future<List<Antibiotic>> fetchFromCacheFirstThenServer() async {
+    final collectionRef = FirebaseFirestore.instance.collection('antibiotics');
+    QuerySnapshot querySnapshot;
+
+    try {
+      // 1) Try to get from the local cache only.
+      querySnapshot =
+          await collectionRef.get(const GetOptions(source: Source.cache));
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Cache has data, so return it immediately.
+        return querySnapshot.docs
+            .map((doc) => Antibiotic.fromDocument(doc))
+            .toList();
+      } else {
+        // 2) Cache is empty, so fetch from server.
+        querySnapshot =
+            await collectionRef.get(const GetOptions(source: Source.server));
+        return querySnapshot.docs
+            .map((doc) => Antibiotic.fromDocument(doc))
+            .toList();
+      }
+    } catch (e) {
+      // 3) If cache read fails or any other error, fallback to server fetch.
+      querySnapshot =
+          await collectionRef.get(const GetOptions(source: Source.server));
+      return querySnapshot.docs
+          .map((doc) => Antibiotic.fromDocument(doc))
+          .toList();
+    }
+  }
+}
