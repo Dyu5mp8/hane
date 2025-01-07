@@ -33,8 +33,7 @@ class AntibioticDetailView extends StatelessWidget {
             if (antibiotic.description != null)
               Text(
                 antibiotic.description!,
-                style: Theme.of(context).textTheme.
-                bodyLarge,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
 
             const SizedBox(height: 16),
@@ -65,6 +64,18 @@ class AntibioticDetailView extends StatelessWidget {
           ],
         ),
         ExpansionTile(
+          title: const Text('Farmakokinetik'),
+          children: [
+            ListTile(
+              title: Text(
+                antibiotic.pharmacokinetics?.isNotEmpty == true
+                    ? antibiotic.pharmacokinetics!
+                    : 'No farmakokinetik information available',
+              ),
+            ),
+          ],
+        ),
+        ExpansionTile(
           title: const Text('Side Effects'),
           children: [
             ListTile(
@@ -76,8 +87,78 @@ class AntibioticDetailView extends StatelessWidget {
             ),
           ],
         ),
-
-   
+        ExpansionTile(
+          title: const Text('Pharmacodynamics'),
+          children: [
+            ListTile(
+              title: Text(
+                antibiotic.pharmacodynamics?.isNotEmpty == true
+                    ? antibiotic.pharmacodynamics!
+                    : 'No pharmacodynamics information available',
+              ),
+            ),
+          ],
+        ),
+        ExpansionTile(
+          title: const Text('Pharmacokinetics'),
+          children: [
+            ListTile(
+              title: Text(
+                antibiotic.pharmacokinetics?.isNotEmpty == true
+                    ? antibiotic.pharmacokinetics!
+                    : 'No pharmacokinetics information available',
+              ),
+            ),
+          ],
+        ),
+        ExpansionTile(
+          title: const Text('Activity'),
+          children: [
+            ListTile(
+              title: Text(
+                antibiotic.activity?.isNotEmpty == true
+                    ? antibiotic.activity!
+                    : 'No activity information available',
+              ),
+            ),
+          ],
+        ),
+        ExpansionTile(
+          title: const Text('Interactions'),
+          children: [
+            ListTile(
+              title: Text(
+                antibiotic.interactions?.isNotEmpty == true
+                    ? antibiotic.interactions!
+                    : 'No interactions information available',
+              ),
+            ),
+          ],
+        ),
+        ExpansionTile(
+          title: const Text('Assessment'),
+          children: [
+            ListTile(
+              title: Text(
+                antibiotic.assessment?.isNotEmpty == true
+                    ? antibiotic.assessment!
+                    : 'No assessment information available',
+              ),
+            ),
+          ],
+        ),
+        ExpansionTile(
+          title: const Text('Resistance'),
+          children: [
+            ListTile(
+              title: Text(
+                antibiotic.resistance?.isNotEmpty == true
+                    ? antibiotic.resistance!
+                    : 'No resistance information available',
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
