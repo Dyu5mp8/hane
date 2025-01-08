@@ -59,27 +59,13 @@ class Antibiotic {
     QuerySnapshot querySnapshot;
 
     try {
-      // 1) Try to get from the local cache only.
-      querySnapshot =
-          await collectionRef.get(const GetOptions(source: Source.cache));
-
-      if (querySnapshot.docs.isNotEmpty) {
-        // Cache has data, so return it immediately.
-        return querySnapshot.docs
-            .map((doc) => Antibiotic.fromDocument(doc))
-            .toList();
-      } else {
-        // 2) Cache is empty, so fetch from server.
-        querySnapshot =
-            await collectionRef.get(const GetOptions(source: Source.server));
-        return querySnapshot.docs
-            .map((doc) => Antibiotic.fromDocument(doc))
-            .toList();
-      }
-    } catch (e) {
-      // 3) If cache read fails or any other error, fallback to server fetch.
       querySnapshot =
           await collectionRef.get(const GetOptions(source: Source.server));
+      return querySnapshot.docs
+          .map((doc) => Antibiotic.fromDocument(doc))
+          .toList();
+    } catch (e) { 
+      querySnapshot = await collectionRef.get();
       return querySnapshot.docs
           .map((doc) => Antibiotic.fromDocument(doc))
           .toList();
