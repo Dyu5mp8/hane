@@ -54,21 +54,29 @@ class Antibiotic {
   }
 
   /// Fetch antibiotics from Firestore, checking the cache first, then server.
-  static Future<List<Antibiotic>> fetchFromCacheFirstThenServer() async {
-    final collectionRef = FirebaseFirestore.instance.collection('antibiotics');
-    QuerySnapshot querySnapshot;
+/// Fetch antibiotics from Firestore, checking the cache first, then server.
+static Future<List<Antibiotic>> fetchFromCacheFirstThenServer() async {
+  final collectionRef = FirebaseFirestore.instance.collection('antibiotics');
+  QuerySnapshot querySnapshot;
 
-    try {
-      querySnapshot =
-          await collectionRef.get(const GetOptions(source: Source.server));
-      return querySnapshot.docs
-          .map((doc) => Antibiotic.fromDocument(doc))
-          .toList();
-    } catch (e) { 
-      querySnapshot = await collectionRef.get();
-      return querySnapshot.docs
-          .map((doc) => Antibiotic.fromDocument(doc))
-          .toList();
-    }
+  try {
+    querySnapshot =
+        await collectionRef.get(const GetOptions(source: Source.server));
+  } catch (e) {
+    querySnapshot = await collectionRef.get();
   }
+
+  // Map documents to Antibiotic objects and sort them alphabetically by name
+  final antibiotics = querySnapshot.docs
+      .map((doc) => Antibiotic.fromDocument(doc))
+      .toList();
+
+  antibiotics.sort((a, b) {
+    final nameA = (a.name ?? '').toLowerCase();
+    final nameB = (b.name ?? '').toLowerCase();
+    return nameA.compareTo(nameB);
+  });
+
+  return antibiotics;
+}
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/antibiotics/models/antibiotic.dart';
 
-class AntibioticDetailView extends StatelessWidget {
+class AntibioticDetailView extends StatefulWidget {
   final Antibiotic antibiotic;
 
   const AntibioticDetailView({
@@ -10,29 +10,41 @@ class AntibioticDetailView extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _AntibioticDetailViewState createState() => _AntibioticDetailViewState();
+}
+
+class _AntibioticDetailViewState extends State<AntibioticDetailView> {
+  bool _isExpanded = false;
+
+  void _toggleExpandCollapse() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // If some fields can be null, we provide a fallback
-    final String name = antibiotic.name ?? 'Unknown Antibiotic';
+    final String name = widget.antibiotic.name ?? 'Unknown Antibiotic';
 
     return Scaffold(
       appBar: AppBar(
         title: Text(name),
+        actions: [
+          IconButton(
+            icon: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
+            onPressed: _toggleExpandCollapse,
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Basic info
-            Text(
-              name,
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-            const SizedBox(height: 8),
-
             // Description
-            if (antibiotic.description != null)
+            if (widget.antibiotic.description != null)
               Text(
-                antibiotic.description!,
+                widget.antibiotic.description!,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
 
@@ -51,113 +63,75 @@ class AntibioticDetailView extends StatelessWidget {
   Widget _buildExpandableSections() {
     return Column(
       children: [
-        ExpansionTile(
-          title: const Text('Dosage'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.dosage?.isNotEmpty == true
-                    ? antibiotic.dosage!
-                    : 'No dosage information available',
-              ),
-            ),
-          ],
+        DetailExpansionTile(
+          title: 'Dosering',
+          content: widget.antibiotic.dosage,
+          isExpanded: _isExpanded,
         ),
-        ExpansionTile(
-          title: const Text('Farmakokinetik'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.pharmacokinetics?.isNotEmpty == true
-                    ? antibiotic.pharmacokinetics!
-                    : 'No farmakokinetik information available',
-              ),
-            ),
-          ],
+        DetailExpansionTile(
+          title: 'Farmakokinetik',
+          content: widget.antibiotic.pharmacokinetics,
+          isExpanded: _isExpanded,
         ),
-        ExpansionTile(
-          title: const Text('Side Effects'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.sideEffects?.isNotEmpty == true
-                    ? antibiotic.sideEffects!
-                    : 'No side effects listed',
-              ),
-            ),
-          ],
+        DetailExpansionTile(
+          title: 'Biverkningar',
+          content: widget.antibiotic.sideEffects,
+          isExpanded: _isExpanded,
         ),
-        ExpansionTile(
-          title: const Text('Pharmacodynamics'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.pharmacodynamics?.isNotEmpty == true
-                    ? antibiotic.pharmacodynamics!
-                    : 'No pharmacodynamics information available',
-              ),
-            ),
-          ],
+        DetailExpansionTile(
+          title: 'Farmakodynamik',
+          content: widget.antibiotic.pharmacodynamics,
+          isExpanded: _isExpanded,
         ),
-        ExpansionTile(
-          title: const Text('Pharmacokinetics'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.pharmacokinetics?.isNotEmpty == true
-                    ? antibiotic.pharmacokinetics!
-                    : 'No pharmacokinetics information available',
-              ),
-            ),
-          ],
+        DetailExpansionTile(
+          title: 'Brytpunkter och mikrobiologisk aktivitet',
+          content: widget.antibiotic.activity,
+          isExpanded: _isExpanded,
         ),
-        ExpansionTile(
-          title: const Text('Activity'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.activity?.isNotEmpty == true
-                    ? antibiotic.activity!
-                    : 'No activity information available',
-              ),
-            ),
-          ],
+        DetailExpansionTile(
+          title: 'Interaktioner',
+          content: widget.antibiotic.interactions,
+          isExpanded: _isExpanded,
         ),
-        ExpansionTile(
-          title: const Text('Interactions'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.interactions?.isNotEmpty == true
-                    ? antibiotic.interactions!
-                    : 'No interactions information available',
-              ),
-            ),
-          ],
+        DetailExpansionTile(
+          title: 'RAF:s bedömning',
+          content: widget.antibiotic.assessment,
+          isExpanded: _isExpanded,
         ),
-        ExpansionTile(
-          title: const Text('Assessment'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.assessment?.isNotEmpty == true
-                    ? antibiotic.assessment!
-                    : 'No assessment information available',
-              ),
-            ),
-          ],
+        DetailExpansionTile(
+          title: 'Resistensutveckling',
+          content: widget.antibiotic.resistance,
+          isExpanded: _isExpanded,
         ),
-        ExpansionTile(
-          title: const Text('Resistance'),
-          children: [
-            ListTile(
-              title: Text(
-                antibiotic.resistance?.isNotEmpty == true
-                    ? antibiotic.resistance!
-                    : 'No resistance information available',
-              ),
-            ),
-          ],
+      ],
+    );
+  }
+}
+
+class DetailExpansionTile extends StatelessWidget {
+  final String title;
+  final String? content;
+  final bool isExpanded;
+
+  const DetailExpansionTile({
+    Key? key,
+    required this.title,
+    this.content,
+    required this.isExpanded,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpansionTile(
+      title: Text(title),
+      initiallyExpanded: isExpanded,
+      leading: Icon(Icons.info_outline),
+      children: [
+        ListTile(
+          title: Text(
+            content?.isNotEmpty == true ? content! : 'Ingen information tillgänglig',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         ),
       ],
     );

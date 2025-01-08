@@ -1,56 +1,132 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hane/modules_feature/modules/antibiotics/models/antibiotic.dart';
 import 'package:hane/modules_feature/modules/antibiotics/antibiotic_detail_view.dart';
+import 'package:hane/ui_components/category_chips.dart';
+import 'package:hane/ui_components/search_field.dart'; // import reusable category chips widget
 
-class AntibioticsListView extends StatelessWidget {
+class AntibioticsListView extends StatefulWidget {
   const AntibioticsListView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Antibiotics List (Cache First)'),
-      ),
-      body: FutureBuilder<List<Antibiotic>>(
-        future: Antibiotic.fetchFromCacheFirstThenServer(),
-        builder: (context, snapshot) {
-          // 1) Loading state
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          // 2) Error state
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          // 3) Data retrieved
-          final antibiotics = snapshot.data ?? [];
-          if (antibiotics.isEmpty) {
-            return const Center(child: Text('No antibiotics found.'));
-          }
+  _AntibioticsListViewState createState() => _AntibioticsListViewState();
+}
 
-          return ListView.builder(
-            itemCount: antibiotics.length,
-            itemBuilder: (context, index) {
-              final antibiotic = antibiotics[index];
-              final name = antibiotic.name ?? 'Unnamed Antibiotic';
+class _AntibioticsListViewState extends State<AntibioticsListView> {
+  String _searchQuery = '';
+  String? _selectedCategory;
+  final TextEditingController _searchController = TextEditingController();
+  
+  // Cache the future
+  late final Future<List<Antibiotic>> _antibioticsFuture;
 
-              return ListTile(
-                title: Text(name),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AntibioticDetailView(antibiotic: antibiotic),
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
-      ),
-    );
+  @override
+  void initState() {
+    super.initState();
+    _antibioticsFuture = Antibiotic.fetchFromCacheFirstThenServer();
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text;
+      });
+    });
   }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // Filter antibiotics based on search query and selected category
+  // Filter antibiotics based on search query and selected category
+  List<Antibiotic> _filterAntibiotics(List<Antibiotic> antibiotics) {
+    final query = _searchQuery.toLowerCase();
+    return antibiotics.where((antibiotic) {
+      final nameMatches = (antibiotic.name ?? '').toLowerCase().contains(query);
+      final categoryMatches =
+          _selectedCategory == null || antibiotic.category == _selectedCategory;
+      return nameMatches && categoryMatches;
+    }).toList();
+  }
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Antibiotics List (Cache First)'),
+    ),
+    body: FutureBuilder<List<Antibiotic>>(
+      future: _antibioticsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        final antibiotics = snapshot.data ?? [];
+
+        // Extract categories once from the fetched data
+        final allCategories = antibiotics
+            .map((a) => a.category)
+            .where((category) => category != null)
+            .toSet()
+            .toList();
+
+        final filteredAntibiotics = _filterAntibiotics(antibiotics);
+
+        return Column(
+          children: [
+            SearchField(
+              controller: _searchController,
+              placeholder: 'Search antibiotics',
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              onSubmitted: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
+            CategoryChips(
+              categories: allCategories,
+              selectedCategory: _selectedCategory,
+              onCategorySelected: (category) {
+                setState(() {
+                  _selectedCategory = category;
+                });
+              },
+            ),
+            Expanded(
+              child: filteredAntibiotics.isEmpty
+                  ? const Center(child: Text('No antibiotics found.'))
+                  : ListView.builder(
+                      itemCount: filteredAntibiotics.length,
+                      itemBuilder: (context, index) {
+                        final antibiotic = filteredAntibiotics[index];
+                        final name = antibiotic.name ?? 'Unnamed Antibiotic';
+                        return ListTile(
+                          title: Text(name),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AntibioticDetailView(
+                                    antibiotic: antibiotic),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
+    ),
+  );
+}
 }
