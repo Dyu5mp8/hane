@@ -61,12 +61,12 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
   
   
   @override
-  Map<String, dynamic> evaluate(RotemEvaluator evaluator) {
+  Map<String, List<RotemAction>> evaluate(RotemEvaluator evaluator) {
     final configs = {
       for (final cfg in getRequiredFields()) cfg.field: cfg
     };
 
-    final actions = <String, dynamic>{};
+    final actions = <String, List<RotemAction>>{};
 
     // Extract numeric values from evaluator
     final a5Fibtem = evaluator.a5Fibtem;     // A5 FIBTEM
@@ -80,14 +80,14 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     // 1) Fibrinogen if A5 FIBTEM < 12 mm
     //----------------------------------------------------------------------
     if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.low) {
-      actions['Låg A5 FIBTEM'] = RotemAction(
+      actions['Låg A5 FIBTEM'] = [RotemAction(
         dosage: Dosage(
           instruction: "Fibrinogen",  
           administrationRoute: "IV",
           lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
           higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
         ),
-      );
+      )];
     }
 
     //----------------------------------------------------------------------
@@ -95,13 +95,13 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     //----------------------------------------------------------------------
     if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.normal &&
         configs[RotemField.a5Extem]?.result(a5Extem) == Result.low) {
-      actions['Normal A5 FIBTEM samt låg A5 EXTEM'] = RotemAction(
+      actions['Normal A5 FIBTEM samt låg A5 EXTEM'] = [RotemAction(
         dosage: Dosage(
           instruction: "Trombocytkoncentrat",
           administrationRoute: "IV",
           dose: Dose.fromString(amount: 1, unit: "E"),
         ),
-      );
+      )];
     }
 
     //----------------------------------------------------------------------
@@ -133,13 +133,13 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     // 4) Plasma if CT INTEM > 240 s and step 3 not taken
     //----------------------------------------------------------------------
     else if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
-      actions['Förlängd CT INTEM'] = RotemAction(
+      actions['Förlängd CT INTEM'] = [RotemAction(
         dosage: Dosage(
           instruction: "Plasma",
           administrationRoute: "IV",
           dose: Dose.fromString(amount: 10, unit: "ml/kg"),
         ),
-      );
+      )];
     }
 
     //----------------------------------------------------------------------
@@ -147,13 +147,13 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     //----------------------------------------------------------------------
     if (configs[RotemField.ctFibtem]?.result(ctFibtem) == Result.high ||
         configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
-      actions['CT FIBTEM > 600 s eller ML EXTEM > 10%'] = RotemAction(
+      actions['CT FIBTEM > 600 s eller ML EXTEM > 10%'] = [RotemAction(
         dosage: Dosage(
           instruction: "Cyklokapron",
           administrationRoute: "IV",
           dose: Dose.fromString(amount: 20, unit: "mg/kg"),
         ),
-      );
+      )];
     }
 
     return actions;

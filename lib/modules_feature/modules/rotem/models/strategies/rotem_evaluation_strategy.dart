@@ -1,11 +1,12 @@
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
+import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
 
 abstract class RotemEvaluationStrategy {
   String get name;
 
-  Map<String, dynamic> evaluate(RotemEvaluator evaluator);
+  Map<String, List<RotemAction>> evaluate(RotemEvaluator evaluator);
   List<FieldConfig> getRequiredFields();
   
   /// Global validation logic that checks multiple fields together.

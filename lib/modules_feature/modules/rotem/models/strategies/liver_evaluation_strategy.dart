@@ -10,8 +10,8 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
   String get name => "Leversvikt";
 
   @override
-  Map<String, dynamic> evaluate(RotemEvaluator evaluator) {
-    final actions = <String, dynamic>{};
+  Map<String, List<RotemAction>> evaluate(RotemEvaluator evaluator) {
+    final actions = <String, List<RotemAction>>{};
 
     // Quick lookup for FieldConfig by RotemField
     final fieldMap = {
@@ -31,13 +31,13 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     //----------------------------------------------------------------------
     if (fieldMap[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.low &&
         fieldMap[RotemField.a5Extem]?.result(a5Extem) == Result.low) {
-      actions['Lågt fibrinogen'] = RotemAction(
+      actions['Lågt fibrinogen'] = [RotemAction(
         dosage: Dosage(
           instruction: "Riastap eller fibryga. Mål är A5 FIBTEM ≥ 10 mm.",
           administrationRoute: "IV",
           dose: Dose.fromString(amount: 2, unit: "g"),
         ),
-      );
+      )];
     }
 
     //----------------------------------------------------------------------
@@ -45,13 +45,13 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     //----------------------------------------------------------------------
     if (fieldMap[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.normal &&
         fieldMap[RotemField.a5Extem]?.result(a5Extem) == Result.low) {
-      actions['Trombocyter'] = RotemAction(
+      actions['Trombocyter'] = [RotemAction(
         dosage: Dosage(
           instruction: "Behov av trombocyter",
           administrationRoute: "IV",
           dose: Dose.fromString(amount: 1, unit: "E"),
         ),
-      );
+      )];
     }
 
     //----------------------------------------------------------------------
@@ -87,13 +87,13 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     // 4) Plasma if CT INTEM > 280
     //----------------------------------------------------------------------
     if (fieldMap[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
-      actions['CT INTEM > 280 s'] = RotemAction(
+      actions['CT INTEM > 280 s'] = [RotemAction(
         dosage: Dosage(
           instruction: "Plasma",
           administrationRoute: "IV",
           dose: Dose.fromString(amount: 10, unit: "ml/kg"),
         ),
-      );
+      )];
     }
 
     //----------------------------------------------------------------------
@@ -101,14 +101,14 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     //----------------------------------------------------------------------
     if (fieldMap[RotemField.mlExtem]?.result(mlExtem) == Result.high ||
         fieldMap[RotemField.li30Extem]?.result(li30Extem) == Result.high) {
-      actions['Cyklokapron'] = RotemAction(
+      actions['Cyklokapron'] = [RotemAction(
         dosage: Dosage(
           instruction: "ML EXTEM > 85% eller LI30 EXTEM > 50% => Ge Cyklokapron",
           administrationRoute: "IV",
           lowerLimitDose: Dose.fromString(amount: 1, unit: "g"),
           higherLimitDose: Dose.fromString(amount: 2, unit: "g"),
         ),
-      );
+      )];
     }
 
     return actions;

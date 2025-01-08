@@ -44,7 +44,7 @@ class RotemEvaluator {
      required this.strategy,
   });
 
-  Map<String, Dosage> evaluate() {
+  Map<String, dynamic> evaluate() {
     return strategy.evaluate(this);
   }
 }

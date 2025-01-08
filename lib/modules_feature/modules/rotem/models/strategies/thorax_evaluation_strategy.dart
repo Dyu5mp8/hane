@@ -8,8 +8,8 @@ class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
   @override String get name => "Thorax";
 
   @override
-  Map<String, RotemAction> evaluate(RotemEvaluator evaluator) {
-    final actions = <String, RotemAction>{};
+  Map<String, List<RotemAction>> evaluate(RotemEvaluator evaluator) {
+    final actions = <String, List<RotemAction>>{};
 
     // Create a quick lookup for your FieldConfig by RotemField
     final configs = {for (final cfg in getRequiredFields()) cfg.field: cfg};
@@ -27,14 +27,14 @@ class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
     // 1) PCC/FFP if CT EXTEM above max OR CT INTEM above max
     if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high ||
         configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
-      actions['PCC/FFP'] = RotemAction(
+      actions['PCC/FFP'] = [RotemAction(
         dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Hög CT INTEM ELLER CT EXTEM => Ge plasma eller PCC",
           lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
           higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
         ),
-      );
+      )];
     }
 
     // 2) Fibrinogen if (A5 Fibtem below min) or (A10 Fibtem below min)
@@ -43,14 +43,14 @@ class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
         (configs[RotemField.a10Fibtem]?.result(a10Fibtem)) == Result.low;
 
     if (fibtemBelowMin) {
-      actions['Fibrinogen'] = RotemAction(
+      actions['Fibrinogen'] = [RotemAction(
         dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Ge fibrinogen",
           lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
           higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
         ),
-      );
+      )];
     }
 
     // 3) Platelets if EXTEM is low but FIBTEM is OK
@@ -61,35 +61,35 @@ class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
     final fibtemOk = !fibtemBelowMin; // "OK" if not below min
 
     if (extemLow && fibtemOk) {
-      actions['Trombocyter'] = RotemAction(
+      actions['Trombocyter'] = [RotemAction(
         dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Ge trombocyter",
           lowerLimitDose: Dose.fromString(amount: 1, unit: "E"),
         ),
-      );
+      )];
     }
 
     // 4) Tranexamsyra if ML EXTEM above max
     if (configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
-      actions['Tranexamsyra'] = RotemAction(
+      actions['Tranexamsyra'] = [RotemAction(
         dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Ge tranexamsyra",
           lowerLimitDose: Dose.fromString(amount: 10, unit: "mg/kg"),
         ),
-      );
+      )];
     }
 
     // 5) Protamin if CT INTEM > CT HEPTEM
     if (ctIntem != null && ctHeptem != null && ctIntem > ctHeptem) {
-      actions['Protamin'] = RotemAction(
+      actions['Protamin'] = [RotemAction(
         dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Ge protamin",
           lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
         ),
-      );
+      )];
     }
 
     return actions;

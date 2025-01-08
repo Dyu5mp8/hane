@@ -3,11 +3,15 @@ import 'package:hane/drugs/models/drug.dart';
 // Your existing imports...
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
+import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/thorax_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/obstetric_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/liver_evaluation_strategy.dart';
 import 'package:hane/ui_components/category_chips.dart';
+import 'package:hane/ui_components/dosage_snippet.dart';
+
+
 
 class RotemWizardScreen extends StatefulWidget {
   const RotemWizardScreen({Key? key}) : super(key: key);
@@ -390,25 +394,40 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     );
 
     // Evaluate to get recommended actions (or messages)
-    final Map<String, Dosage> actions = evaluator.evaluate();
+    final Map<String, dynamic> actions = evaluator.evaluate();
 
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 40),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Divider(thickness: 1),
-          const SizedBox(height: 8),
-          const Text(
-            'Recommended Actions',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const Divider(thickness: 1),
+    const SizedBox(height: 8),
+    const Text(
+      'Recommended Actions',
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+    const SizedBox(height: 6),
+    if (actions.isEmpty) 
+      const Text('No specific actions.')
+    else 
+      for (final entry in actions.entries) ...[
+        // Assuming entry.value is a List<RotemAction>
+        for (int i = 0; i < entry.value.length; i++) ...[
+          DosageSnippet(
+            dosage: entry.value[i].dosage,
+            onDosageUpdated: (_) {
+              // Update handler logic here
+            },
+            availableConcentrations: entry.value[i].availableConcentrations,
           ),
-          const SizedBox(height: 6),
-          if (actions.isEmpty) const Text('No specific actions.'),
-          for (final entry in actions.entries)
-            Text('• ${entry.key}: ${entry.value}'),
+          // Insert "Eller" between items, but not after the last one
+          if (i < entry.value.length - 1) 
+            const Text("Eller"),
         ],
-      ),
+      ],
+  ],
+)
     );
   }
 
