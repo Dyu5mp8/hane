@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
+import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
 
 class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
+  @override String get name => "Thorax";
+
   @override
-  Map<String, Dosage> evaluate(RotemEvaluator evaluator) {
-    final actions = <String, Dosage>{};
+  Map<String, RotemAction> evaluate(RotemEvaluator evaluator) {
+    final actions = <String, RotemAction>{};
 
     // Create a quick lookup for your FieldConfig by RotemField
     final configs = {for (final cfg in getRequiredFields()) cfg.field: cfg};
@@ -26,52 +27,69 @@ class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
     // 1) PCC/FFP if CT EXTEM above max OR CT INTEM above max
     if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high ||
         configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
- actions['PCC/FFP'] =
-          Dosage(administrationRoute: "iv", instruction: "Hög CT INTEM ELLER CT EXTEM => Ge plasma eller PCC", lowerLimitDose: Dose.fromString(amount: 10, unit:"ml/kg"), higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"));
+      actions['PCC/FFP'] = RotemAction(
+        dosage: Dosage(
+          administrationRoute: "iv",
+          instruction: "Hög CT INTEM ELLER CT EXTEM => Ge plasma eller PCC",
+          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
+          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+        ),
+      );
     }
-    
-        // 2) Fibrinogen if (A5 Fibtem below min) or (A10 Fibtem below min)
+
+    // 2) Fibrinogen if (A5 Fibtem below min) or (A10 Fibtem below min)
     final bool fibtemBelowMin =
         (configs[RotemField.a5Fibtem]?.result(a5Fibtem)) == Result.low ||
-            (configs[RotemField.a10Fibtem]?.result(a10Fibtem)) == Result.low;
-
+        (configs[RotemField.a10Fibtem]?.result(a10Fibtem)) == Result.low;
 
     if (fibtemBelowMin) {
-      actions['Fibrinogen'] = Dosage(
+      actions['Fibrinogen'] = RotemAction(
+        dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Ge fibrinogen",
           lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
-          higherLimitDose: Dose.fromString(amount: 4, unit: "g"));
+          higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
+        ),
+      );
     }
 
     // 3) Platelets if EXTEM is low but FIBTEM is OK
     final extemLow =
         (configs[RotemField.a5Extem]?.result(a5Extem)) == Result.low ||
-            (configs[RotemField.a10Extem]?.result(a10Extem)) == Result.low;
+        (configs[RotemField.a10Extem]?.result(a10Extem)) == Result.low;
 
     final fibtemOk = !fibtemBelowMin; // "OK" if not below min
 
     if (extemLow && fibtemOk) {
-      actions['Trombocyter'] = Dosage(
+      actions['Trombocyter'] = RotemAction(
+        dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Ge trombocyter",
-          lowerLimitDose: Dose.fromString(amount: 1, unit: "E"));
+          lowerLimitDose: Dose.fromString(amount: 1, unit: "E"),
+        ),
+      );
     }
 
     // 4) Tranexamsyra if ML EXTEM above max
     if (configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
-      actions['Tranexamsyra'] = Dosage(
+      actions['Tranexamsyra'] = RotemAction(
+        dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Ge tranexamsyra",
-          lowerLimitDose: Dose.fromString(amount: 10, unit: "mg/kg"));
+          lowerLimitDose: Dose.fromString(amount: 10, unit: "mg/kg"),
+        ),
+      );
     }
 
     // 5) Protamin if CT INTEM > CT HEPTEM
     if (ctIntem != null && ctHeptem != null && ctIntem > ctHeptem) {
-      actions['Protamin'] = Dosage(
+      actions['Protamin'] = RotemAction(
+        dosage: Dosage(
           administrationRoute: "iv",
           instruction: "Ge protamin",
-          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"));
+          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
+        ),
+      );
     }
 
     return actions;
@@ -84,29 +102,28 @@ class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
         label: "CT EXTEM",
         field: RotemField.ctExtem,
         section: RotemSection.extem,
-        // Normal range might be up to 79.
-        // If CT EXTEM is above 79, we consider it out of range.
         maxValue: 79,
       ),
       const FieldConfig(
         label: "CT INTEM",
         field: RotemField.ctIntem,
         section: RotemSection.intem,
-        // Example threshold for out-of-range
         maxValue: 240,
       ),
       const FieldConfig(
-          label: "A5 FIBTEM",
-          field: RotemField.a5Fibtem,
-          section: RotemSection.fibtem,
-          minValue: 11,
-          isRequired: false),
+        label: "A5 FIBTEM",
+        field: RotemField.a5Fibtem,
+        section: RotemSection.fibtem,
+        minValue: 11,
+        isRequired: false,
+      ),
       const FieldConfig(
-          label: "A10 FIBTEM",
-          field: RotemField.a10Fibtem,
-          section: RotemSection.fibtem,
-          minValue: 12,
-          isRequired: false),
+        label: "A10 FIBTEM",
+        field: RotemField.a10Fibtem,
+        section: RotemSection.fibtem,
+        minValue: 12,
+        isRequired: false,
+      ),
       const FieldConfig(
         label: "A5 EXTEM",
         field: RotemField.a5Extem,
@@ -129,8 +146,6 @@ class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
         label: "CT HEPTEM",
         field: RotemField.ctHeptem,
         section: RotemSection.heptem,
-        // You can also set minValue, maxValue, or both
-        // depending on how you define normal for CT HEPTEM.
       ),
     ];
   }
@@ -154,7 +169,6 @@ class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
     // 2) Either A10 FIBTEM or A5 FIBTEM must be filled
     if ((a10FibtemValue == null || a10FibtemValue.isEmpty) &&
         (a5FibtemValue == null || a5FibtemValue.isEmpty)) {
-      print('a10FibtemValue: $a10FibtemValue');
       return 'Antingen A10 FIBTEM eller A5 FIBTEM måste fyllas i.';
     }
 

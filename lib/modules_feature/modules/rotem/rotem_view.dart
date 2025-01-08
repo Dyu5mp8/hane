@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/models/drug.dart';
 // Your existing imports...
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
@@ -6,6 +7,7 @@ import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evalu
 import 'package:hane/modules_feature/modules/rotem/models/strategies/thorax_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/obstetric_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/liver_evaluation_strategy.dart';
+import 'package:hane/ui_components/category_chips.dart';
 
 class RotemWizardScreen extends StatefulWidget {
   const RotemWizardScreen({Key? key}) : super(key: key);
@@ -45,7 +47,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ROTEM Wizard (Draggable Overlay)'),
+        title: const Text('ROTEM guide'),
       ),
       body: Stack(
         children: [
@@ -62,24 +64,17 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           ),
           // The draggable overlay
           Positioned(
-            left: _overlayOffset.dx,
-            top: _overlayOffset.dy,
-            child: GestureDetector(
-              onPanUpdate: (details) {
-                setState(() {
-                  _overlayOffset += details.delta;
-                });
-              },
-              onPanEnd: (details) {
-                _snapOverlayToCorner();
-              },
+
+              left: MediaQuery.sizeOf(context).width - 150,
+              top: MediaQuery.sizeOf(context).height/4,
               child: _buildMiniSummaryCard(),
             ),
+        ]
           ),
-        ],
-      ),
-    );
-  }
+          
+        
+      );
+    }
 
   Widget _buildStepperContent() {
     return Stepper(
@@ -95,15 +90,10 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
             ElevatedButton(
               onPressed: details.onStepContinue,
               child: Text(
-                _currentStep < _totalSteps - 1 ? 'Continue' : 'Finish',
+                _currentStep < _totalSteps - 1 ? 'Nästa steg' : 'Se resultat',
               ),
             ),
-            const SizedBox(width: 8),
-            if (_currentStep > 0)
-              TextButton(
-                onPressed: details.onStepCancel,
-                child: const Text('Back'),
-              ),
+      
           ],
         );
       },
@@ -206,29 +196,19 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   // ──────────────────────────────────────────
   // STRATEGY PICKER (STEP 0)
   Widget _buildStrategyPicker() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Which ROTEM strategy do you want to use?',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 10),
-        DropdownButton<int>(
-          value: _selectedStrategyIndex,
-          items: List.generate(_allStrategies.length, (i) {
-            return DropdownMenuItem(
-              value: i,
-              child: Text(_allStrategies[i].runtimeType.toString()),
-            );
-          }),
-          onChanged: (val) {
-            setState(() => _selectedStrategyIndex = val ?? 0);
-          },
-        ),
-        const SizedBox(height: 10),
-        const Text('Press "Continue" to proceed to FIBTEM.'),
-      ],
+    return CategoryChips(
+      acceptAll: false,
+      categories: _allStrategies.map((s) => s.name).toList(),
+      selectedCategory: _allStrategies[_selectedStrategyIndex].name,
+      onCategorySelected: (selectedCategory) {
+        setState(() {
+      
+          _selectedStrategyIndex = _allStrategies.indexWhere(
+        
+            (s) => s.name == selectedCategory,
+          );
+        });
+      },
     );
   }
 
@@ -250,16 +230,15 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: const EdgeInsets.only(bottom: 10.0, top: 10.00),
       child: SizedBox(
-        width: 90,
+        width: 120,
         child: TextFormField(
           textAlign: TextAlign.left,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
             labelText: label,
-            hintText: _buildHintText(fieldConfig), // e.g. "0-79"
-            hintStyle: const TextStyle(fontSize: 9, color: Colors.grey),
+            labelStyle: const TextStyle(fontSize: 10),
             border: const OutlineInputBorder(),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 6,
@@ -271,14 +250,12 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
             // If we're on step 0, there's no real fields => skip
             if (_currentStep == 0) return null;
 
-
             if (value == null || value.trim().isEmpty) {
               if (fieldConfig.isRequired) {
                 return 'Req'; // required
               }
               return null; // OK
             }
-
 
             final parsed = double.tryParse(value);
             if (parsed == null) {
@@ -315,7 +292,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
-          width: 220,
+          width: 120,
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade300, width: 1),
             borderRadius: BorderRadius.circular(5),
@@ -352,7 +329,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         const Text(
-          '4‑Quadrant Summary',
+          'Inmatade värden',
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 6),
@@ -413,7 +390,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     );
 
     // Evaluate to get recommended actions (or messages)
-    final Map<String, String> actions = evaluator.evaluate();
+    final Map<String, Dosage> actions = evaluator.evaluate();
 
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 40),
@@ -471,95 +448,90 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   }
 
   void _onStepContinue() {
-  // Step 0 has no actual form fields, so skip validation
-  if (_currentStep == 0) {
-    setState(() => _currentStep = 1);
-    _snapOverlayToCorner();
-    return;
-  }
-
-  // 1) Per-field validation on the current step
-  final formKey = _formKeys[_currentStep];
-  final isValid = formKey.currentState?.validate() ?? false;
-  _stepValidity[_currentStep] = isValid; // track validity state
-
-  if (!isValid) {
-    // If this step’s fields are invalid, don’t proceed
-    setState(() {});
-    return;
-  }
-
-  // Save the field values into _inputValues
-  formKey.currentState?.save();
-
-  // 2) If we are on the last step, run strategy-level validation
-  if (_currentStep == _totalSteps - 1) {
-    final selectedStrategy = _allStrategies[_selectedStrategyIndex];
-    final globalError = selectedStrategy.validateAll(_inputValues);
-
-    if (globalError != null) {
-      // The strategy says something is still missing or invalid
-      // => Show a dialog or a SnackBar to the user
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Felaktig inmatning'),
-          content: Text(globalError),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-      // Mark this step invalid
-      _stepValidity[_currentStep] = false;
-      setState(() {});
-      return; // Stop here
+    // Step 0 has no actual form fields, so skip validation
+    if (_currentStep == 0) {
+      setState(() => _currentStep = 1);
+      _snapOverlayToCorner();
+      return;
     }
 
-    // Otherwise, everything is good => mark wizard completed
-    setState(() => _wizardCompleted = true);
+    // 1) Per-field validation on the current step
+    final formKey = _formKeys[_currentStep];
+    final isValid = formKey.currentState?.validate() ?? false;
+    _stepValidity[_currentStep] = isValid; // track validity state
 
-    // Optionally show a summary dialog
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('All steps completed!'),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Here are your final values:'),
-              const SizedBox(height: 8),
-              ..._inputValues.entries.map(
-                (entry) => Text('${entry.key.name}: ${entry.value}'),
+    if (!isValid) {
+      // If this step’s fields are invalid, don’t proceed
+      setState(() {});
+      return;
+    }
+
+    // Save the field values into _inputValues
+    formKey.currentState?.save();
+
+    // 2) If we are on the last step, run strategy-level validation
+    if (_currentStep == _totalSteps - 1) {
+      final selectedStrategy = _allStrategies[_selectedStrategyIndex];
+      final globalError = selectedStrategy.validateAll(_inputValues);
+
+      if (globalError != null) {
+        // The strategy says something is still missing or invalid
+        // => Show a dialog or a SnackBar to the user
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Felaktig inmatning'),
+            content: Text(globalError),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
               ),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('OK'),
+        );
+        // Mark this step invalid
+        _stepValidity[_currentStep] = false;
+        setState(() {});
+        return; // Stop here
+      }
+
+      // Otherwise, everything is good => mark wizard completed
+      setState(() => _wizardCompleted = true);
+
+      // Optionally show a summary dialog
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('All steps completed!'),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Here are your final values:'),
+                const SizedBox(height: 8),
+                ..._inputValues.entries.map(
+                  (entry) => Text('${entry.key.name}: ${entry.value}'),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
-    );
+        ),
 
-    // Show a quick toast
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('All steps completed!')),
-    );
-  } else {
-    // Not the last step => move to the next
-    setState(() => _currentStep += 1);
+      );
+
+      // Show a quick toast
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All steps completed!')),
+      );
+    } else {
+      // Not the last step => move to the next
+      setState(() => _currentStep += 1);
+    }
+
+    // Re-snap the draggable overlay
+    _snapOverlayToCorner();
   }
-
-  // Re-snap the draggable overlay
-  _snapOverlayToCorner();
-}
 
   void _onStepCancel() {
     if (_currentStep == 0) {

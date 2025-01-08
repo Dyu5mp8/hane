@@ -10,7 +10,6 @@ import 'package:hane/ui_components/time_picker.dart';
 import 'package:hane/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/drug.dart';
 
-
 class DosageSnippet extends StatefulWidget {
   Dosage dosage;
   final bool editMode;
@@ -21,15 +20,19 @@ class DosageSnippet extends StatefulWidget {
 
   DosageSnippet({
     super.key,
-    required this.dosage,
+    DosageViewHandler? dosageViewHandler,
+    Dosage? dosage,
     this.editMode = false,
     required this.onDosageUpdated,
     this.onDosageDeleted,
     this.availableConcentrations,
-  }) : dosageViewHandler = DosageViewHandler(
-            availableConcentrations: availableConcentrations,
-            key,
-            dosage: dosage);
+  })  : dosage = dosage ?? dosageViewHandler!.dosage,
+        dosageViewHandler = dosageViewHandler ??
+            DosageViewHandler(
+              availableConcentrations: availableConcentrations,
+              key,
+              dosage: dosage!,
+            );
 
   @override
   DosageSnippetState createState() => DosageSnippetState();
@@ -120,14 +123,10 @@ class DosageSnippetState extends State<DosageSnippet> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-
       children: [
         ListTile(
-          
           contentPadding:
               const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 0),
-         
-          
           minVerticalPadding: 12,
           title: Row(
             children: [
@@ -136,34 +135,32 @@ class DosageSnippetState extends State<DosageSnippet> {
                     widget.dosageViewHandler.showDosage(isOriginalText: true),
               ),
               const SizedBox(width: 8),
-              Column(children: [
-                                   Row(children:  [
-                    if (!widget.editMode &&
-                        widget.dosageViewHandler.ableToConvert.weight)
-                      ConversionButton(
-                        label: "kg",
-                        isActive: widget.dosageViewHandler.conversionWeight != null,
-                        onPressed: () {
-                          if (widget.dosageViewHandler.conversionWeight == null) {
-                            _showWeightSlider(context);
-                          } else {
-                            _resetWeightConversion();
-                          }
-                        },
-                      ),
-                                      
+              Column(
+                children: [
+                  Row(
+                    children: [
+                      if (!widget.editMode &&
+                          widget.dosageViewHandler.ableToConvert.weight)
+                        ConversionButton(
+                          label: "kg",
+                          isActive:
+                              widget.dosageViewHandler.conversionWeight != null,
+                          onPressed: () {
+                            if (widget.dosageViewHandler.conversionWeight ==
+                                null) {
+                              _showWeightSlider(context);
+                            } else {
+                              _resetWeightConversion();
+                            }
+                          },
+                        ),
                       const SizedBox(width: 5),
-                    
-                
-                
-                          
                       if (!widget.editMode &&
                           widget.dosageViewHandler.ableToConvert.time)
                         ConversionButton(
                           label: "t",
                           isActive:
-                              widget.dosageViewHandler.conversionTime !=
-                                  null,
+                              widget.dosageViewHandler.conversionTime != null,
                           onPressed: () {
                             if (widget.dosageViewHandler.conversionTime ==
                                 null) {
@@ -173,43 +170,39 @@ class DosageSnippetState extends State<DosageSnippet> {
                             }
                           },
                         )
-                  ],),
-
-
-                if (!widget.editMode &&
-                        widget.dosageViewHandler.ableToConvert.concentration)
+                    ],
+                  ),
+                  if (!widget.editMode &&
+                      widget.dosageViewHandler.ableToConvert.concentration)
                     Transform.scale(
                       scale: 0.9,
-                      child: ConversionSwitch(isActive: (widget.dosageViewHandler.conversionConcentration != null), onSwitched: (value) {
-                        HapticFeedback.mediumImpact();
-                        if (value) {
-                          _showConcentrationPicker(context);
-                        } else {
-                          _resetConcentrationConversion();
-                        }
-                      }, unit: widget.dosageViewHandler.getCommonUnitSymbol()),
+                      child: ConversionSwitch(
+                        isActive: (widget.dosageViewHandler
+                                .conversionConcentration !=
+                            null),
+                        onSwitched: (value) {
+                          HapticFeedback.mediumImpact();
+                          if (value) {
+                            _showConcentrationPicker(context);
+                          } else {
+                            _resetConcentrationConversion();
+                          }
+                        },
+                        unit: widget.dosageViewHandler.getCommonUnitSymbol(),
+                      ),
                     ),
-
-       
-                
-              ]),
-
-
-
-
+                ],
+              ),
               if (widget.editMode)
-
                 SizedBox(
-
                   width: 100,
-                  
                   child: Row(
-                  
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       IconButton(
                         padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.delete, color:Color.fromARGB(255, 255, 99, 8)),
+                        icon: const Icon(Icons.delete,
+                            color: Color.fromARGB(255, 255, 99, 8)),
                         onPressed: () {
                           showDialog(
                             context: context,
@@ -239,29 +232,25 @@ class DosageSnippetState extends State<DosageSnippet> {
                           );
                         },
                       ),
-                        IconButton(
-
-                  
-                  icon: const Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) {
-                        return EditDosageDialog(
-                          dosage: widget.dosage,
-                          onSave: (updatedDosage) {
-                            _updateDosage(updatedDosage);
-                          },
-                        );
-                      },
-                    );
-                  },
-                ),
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) {
+                              return EditDosageDialog(
+                                dosage: widget.dosage,
+                                onSave: (updatedDosage) {
+                                  _updateDosage(updatedDosage);
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
-         
-              
             ],
           ),
           subtitle: _isConversionActive

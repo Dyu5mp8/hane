@@ -1,3 +1,4 @@
+import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
 
 
@@ -43,7 +44,7 @@ class RotemEvaluator {
      required this.strategy,
   });
 
-  Map<String, String> evaluate() {
+  Map<String, Dosage> evaluate() {
     return strategy.evaluate(this);
   }
 }

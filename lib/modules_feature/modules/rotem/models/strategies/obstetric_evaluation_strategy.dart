@@ -2,12 +2,11 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
-
-
+import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
 
 class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
-
-
+  @override
+  String get name => "Obstetrisk blödning";
 
   @override
   List<FieldConfig> getRequiredFields() {
@@ -62,14 +61,12 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
   
   
   @override
-  Map<String, Dosage> evaluate(RotemEvaluator evaluator) {
-
+  Map<String, dynamic> evaluate(RotemEvaluator evaluator) {
     final configs = {
-    for (final cfg in getRequiredFields()) cfg.field: cfg
-  };
+      for (final cfg in getRequiredFields()) cfg.field: cfg
+    };
 
-    final actions = <String, Dosage>{};
-
+    final actions = <String, dynamic>{};
 
     // Extract numeric values from evaluator
     final a5Fibtem = evaluator.a5Fibtem;     // A5 FIBTEM
@@ -79,53 +76,70 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     final ctFibtem = evaluator.ctFibtem;     // CT FIBTEM (make sure RotemEvaluator has this!)
     final mlExtem = evaluator.mlExtem;       // ML EXTEM
 
-
-
-
     //----------------------------------------------------------------------
     // 1) Fibrinogen if A5 FIBTEM < 12 mm
     //----------------------------------------------------------------------
-      if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.low) {
-    actions['Fibrinogen'] = Dosage(
-      instruction: "Lågt fibrinogen",
-      administrationRoute: "IV",
-      lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
-      higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
-    );
-  }
+    if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.low) {
+      actions['Låg A5 FIBTEM'] = RotemAction(
+        dosage: Dosage(
+          instruction: "Fibrinogen",  
+          administrationRoute: "IV",
+          lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
+          higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
+        ),
+      );
+    }
 
     //----------------------------------------------------------------------
     // 2) Platelets if (A5 FIBTEM ≥ 12 mm) AND (A5 EXTEM < 35 mm)
     //----------------------------------------------------------------------
-
     if (configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.normal &&
         configs[RotemField.a5Extem]?.result(a5Extem) == Result.low) {
-      actions['Trombocyter'] = Dosage(
-        instruction: "Lågt trombocyter",
-        administrationRoute: "IV",
-        dose: Dose.fromString(amount: 1, unit: "E"),
+      actions['Normal A5 FIBTEM samt låg A5 EXTEM'] = RotemAction(
+        dosage: Dosage(
+          instruction: "Trombocytkoncentrat",
+          administrationRoute: "IV",
+          dose: Dose.fromString(amount: 1, unit: "E"),
+        ),
       );
     }
-        
+
     //----------------------------------------------------------------------
     // 3) Ocplex/Confidex 10E/kg eller plasma 10-15 ml/kg om (CT EXTEM > 80 s) OCH (A5 FIBTEM ≥ 12 mm)
     //----------------------------------------------------------------------
     if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high &&
         configs[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.normal) {
-      actions['Ocplex/Plasma'] =
-        Dosage(
-          instruction: "Hög CT EXTEM och normal A5 FIBTEM - ge Ocplex/Confidex eller plasma",
+      actions['Förlängd CT EXTEM samt normal A5 FIBTEM'] = 
+      [
+      RotemAction(
+        dosage: Dosage(
+          instruction: "Plasma",
           administrationRoute: "IV",
           lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
           higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
-        );
+        ),
+      ),
+      RotemAction(
+        dosage: Dosage(
+          instruction: "Ocplex/Confidex",
+          administrationRoute: "IV",
+          dose: Dose.fromString(amount: 10, unit: "E/kg"),
+        ),
+      ),
+      ];
     }
 
     //----------------------------------------------------------------------
-    // 4) Plasma if CT INTEM > 240 s
+    // 4) Plasma if CT INTEM > 240 s and step 3 not taken
     //----------------------------------------------------------------------
-    if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
-      actions['Plasma'] = 'CT INTEM > 240 s => Plasma 10 ml/kg';
+    else if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
+      actions['Förlängd CT INTEM'] = RotemAction(
+        dosage: Dosage(
+          instruction: "Plasma",
+          administrationRoute: "IV",
+          dose: Dose.fromString(amount: 10, unit: "ml/kg"),
+        ),
+      );
     }
 
     //----------------------------------------------------------------------
@@ -133,7 +147,13 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     //----------------------------------------------------------------------
     if (configs[RotemField.ctFibtem]?.result(ctFibtem) == Result.high ||
         configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
-      actions['Cyklokapron'] = 'CT FIBTEM > 600 s eller ML EXTEM > 10% => Ge Cyklokapron';
+      actions['CT FIBTEM > 600 s eller ML EXTEM > 10%'] = RotemAction(
+        dosage: Dosage(
+          instruction: "Cyklokapron",
+          administrationRoute: "IV",
+          dose: Dose.fromString(amount: 20, unit: "mg/kg"),
+        ),
+      );
     }
 
     return actions;
