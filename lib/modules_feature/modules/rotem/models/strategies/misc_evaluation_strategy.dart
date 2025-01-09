@@ -4,8 +4,8 @@ import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
 
-class ThoraxEvaluationStrategy extends RotemEvaluationStrategy {
-  @override String get name => "Thorax";
+class MiscEvaluationStrategy extends RotemEvaluationStrategy {
+  @override String get name => "Trauma/övrigt";
 
   @override
   Map<String, List<RotemAction>> evaluate(RotemEvaluator evaluator) {

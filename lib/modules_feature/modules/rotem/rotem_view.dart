@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/modules_feature/modules/rotem/mini_summary_card.dart';
 // Your existing imports...
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/thorax_evaluation_strategy.dart';
+import 'package:hane/modules_feature/modules/rotem/models/strategies/misc_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/obstetric_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/liver_evaluation_strategy.dart';
 import 'package:hane/ui_components/category_chips.dart';
 import 'package:hane/ui_components/dosage_snippet.dart';
-
 
 
 class RotemWizardScreen extends StatefulWidget {
@@ -26,11 +26,13 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
   // Strategies
   final List<RotemEvaluationStrategy> _allStrategies = [
-    ThoraxEvaluationStrategy(),
+    MiscEvaluationStrategy(),
     ObstetricEvaluationStrategy(),
     LiverFailureEvaluationStrategy(),
   ];
-  int _selectedStrategyIndex = 0;
+  int? _selectedStrategyIndex;
+  RotemEvaluationStrategy? get selectedStrategy =>
+      _selectedStrategyIndex == null ? null : _allStrategies[_selectedStrategyIndex!];
 
   // One GlobalKey<FormState> per step (except step 0).
   final _formKeys = List.generate(_totalSteps, (_) => GlobalKey<FormState>());
@@ -40,6 +42,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
   // Once the user completes all steps, show the final recommended actions
   bool _wizardCompleted = false;
+  bool _shouldShowSummary = false;
 
   // Input values, stored as strings
   final Map<RotemField, String> _inputValues = {};
@@ -67,18 +70,19 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
             ),
           ),
           // The draggable overlay
-          Positioned(
-
-              left: MediaQuery.sizeOf(context).width - 150,
-              top: MediaQuery.sizeOf(context).height/4,
-              child: _buildMiniSummaryCard(),
-            ),
-        ]
-          ),
-          
-        
-      );
-    }
+    if (_shouldShowSummary)
+  Positioned(
+    left: MediaQuery.sizeOf(context).width - 150,
+    top: MediaQuery.sizeOf(context).height / 8,
+    child: MiniSummaryCard(
+      strategy: selectedStrategy,
+      inputValues: _inputValues,
+    ),
+  ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildStepperContent() {
     return Stepper(
@@ -87,7 +91,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       onStepTapped: _onStepTapped,
       steps: _buildSteps(),
       onStepContinue: _onStepContinue,
-      onStepCancel: _onStepCancel,
+
       controlsBuilder: (context, details) {
         return Row(
           children: [
@@ -97,7 +101,6 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
                 _currentStep < _totalSteps - 1 ? 'Nästa steg' : 'Se resultat',
               ),
             ),
-      
           ],
         );
       },
@@ -109,6 +112,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       // Step 0 - Strategy Picker
       Step(
         title: const Text('Select Strategy'),
+        subtitle: Text('Vald kontext: ${selectedStrategy?.name ?? "Ingen vald"}'),
         isActive: _currentStep == 0,
         state: _stepState(0),
         content: Align(
@@ -148,7 +152,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildNumField('CT EXTEM (sec)', RotemField.ctExtem),
+                _buildNumField('CT EXTEM (s)', RotemField.ctExtem),
                 _buildNumField('A5 EXTEM (mm)', RotemField.a5Extem),
                 _buildNumField('A10 EXTEM (mm)', RotemField.a10Extem),
                 _buildNumField('ML EXTEM (%)', RotemField.mlExtem),
@@ -199,30 +203,48 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
   // ──────────────────────────────────────────
   // STRATEGY PICKER (STEP 0)
-  Widget _buildStrategyPicker() {
-    return CategoryChips(
-      acceptAll: false,
-      categories: _allStrategies.map((s) => s.name).toList(),
-      selectedCategory: _allStrategies[_selectedStrategyIndex].name,
-      onCategorySelected: (selectedCategory) {
-        setState(() {
-      
-          _selectedStrategyIndex = _allStrategies.indexWhere(
-        
-            (s) => s.name == selectedCategory,
-          );
-        });
-      },
-    );
-  }
-
+Widget _buildStrategyPicker() {
+  return CategoryChips(
+    acceptAll: false,
+    categories: _allStrategies.map((s) => s.name).toList(),
+    selectedCategory: selectedStrategy?.name,
+    onCategorySelected: (selectedCategory) {
+      setState(() {
+        _selectedStrategyIndex = _allStrategies.indexWhere(
+          (s) => s.name == selectedCategory,
+        );
+        // Optionally reset or clear input values if the strategy changed
+        _inputValues.clear();
+      });
+    },
+  );
+}
   // ──────────────────────────────────────────
-  // UPDATED _buildNumField USING FieldConfig’s minValue/maxValue
+  // UPDATED _buildNumField WITH NULL CHECK
   Widget _buildNumField(String label, RotemField field) {
-    // Find the currently selected strategy
-    final strategy = _allStrategies[_selectedStrategyIndex];
+    // Check if selectedStrategy is null
+    final RotemEvaluationStrategy? strategy = selectedStrategy;
+    if (strategy == null) {
+      // Strategy not selected yet, return a disabled or placeholder widget
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10.0, top: 10.0),
+        child: SizedBox(
+          width: 120,
+          child: TextFormField(
+            enabled: false,
+            decoration: InputDecoration(
+              labelText: label,
+              labelStyle: const TextStyle(fontSize: 10, color: Colors.grey),
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            ),
+            style: const TextStyle(fontSize: 12),
+          ),
+        ),
+      );
+    }
 
-    // Find the config for the requested field, if it exists
+    // If strategy is available, proceed with normal logic
     late final FieldConfig fieldConfig;
     try {
       fieldConfig = strategy
@@ -234,7 +256,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0, top: 10.00),
+      padding: const EdgeInsets.only(bottom: 10.0, top: 10.0),
       child: SizedBox(
         width: 120,
         child: TextFormField(
@@ -278,102 +300,16 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     );
   }
 
-  String _buildHintText(FieldConfig config) {
-    final minStr =
-        (config.minValue != null) ? '${config.minValue!.toInt()}' : '0';
-    final maxStr =
-        (config.maxValue != null) ? '${config.maxValue!.toInt()}' : '∞';
-    return '$minStr - $maxStr';
-  }
-
-  // ──────────────────────────────────────────
-  // DRAGGABLE OVERLAY SUMMARY (mini summary in top layer)
-  Widget _buildMiniSummaryCard() {
-    return Card(
-      elevation: 6,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-          width: 120,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300, width: 1),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          padding: const EdgeInsets.all(8),
-          child: _buildMiniQuadrantSummary(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMiniQuadrantSummary() {
-    final fibtemLines = [
-      'CT: ${_inputValues[RotemField.ctFibtem] ?? ''}',
-      'A5: ${_inputValues[RotemField.a5Fibtem] ?? ''}',
-      'A10: ${_inputValues[RotemField.a10Fibtem] ?? ''}',
-    ];
-    final extemLines = [
-      'CT: ${_inputValues[RotemField.ctExtem] ?? ''}',
-      'A5: ${_inputValues[RotemField.a5Extem] ?? ''}',
-      'A10: ${_inputValues[RotemField.a10Extem] ?? ''}',
-      'ML: ${_inputValues[RotemField.mlExtem] ?? ''}',
-      'LI30: ${_inputValues[RotemField.li30Extem] ?? ''}',
-    ];
-    final intemLines = [
-      'CT: ${_inputValues[RotemField.ctIntem] ?? ''}',
-    ];
-    final heptemLines = [
-      'CT: ${_inputValues[RotemField.ctHeptem] ?? ''}',
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Text(
-          'Inmatade värden',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 6),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: _buildQuadrantCell('FIBTEM', fibtemLines)),
-            const SizedBox(width: 8),
-            Expanded(child: _buildQuadrantCell('EXTEM', extemLines)),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: _buildQuadrantCell('INTEM', intemLines)),
-            const SizedBox(width: 8),
-            Expanded(child: _buildQuadrantCell('HEPTEM', heptemLines)),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuadrantCell(String title, List<String> lines) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        ),
-        for (final line in lines) Text(line, style: const TextStyle(fontSize: 10)),
-      ],
-    );
-  }
-
   // ──────────────────────────────────────────
   // FINAL EVALUATION RESULTS
   Widget _buildEvaluationResults() {
+    if (selectedStrategy == null) {
+      return const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Text('Ingen strategi vald. Vänligen välj en strategi.'),
+      );
+    }
+
     // Parse numeric values from _inputValues (note: check for null/empty)
     double? parseField(RotemField f) =>
         double.tryParse(_inputValues[f] ?? '');
@@ -390,7 +326,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       li30Extem: parseField(RotemField.li30Extem),
       ctIntem: parseField(RotemField.ctIntem),
       ctHeptem: parseField(RotemField.ctHeptem),
-      strategy: _allStrategies[_selectedStrategyIndex],
+      strategy: selectedStrategy!,
     );
 
     // Evaluate to get recommended actions (or messages)
@@ -399,103 +335,86 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 40),
       child: Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    const Divider(thickness: 1),
-    const SizedBox(height: 8),
-    const Text(
-      'Recommended Actions',
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-    ),
-    const SizedBox(height: 6),
-    if (actions.isEmpty) 
-      const Text('No specific actions.')
-    else 
-      for (final entry in actions.entries) ...[
-        // Assuming entry.value is a List<RotemAction>
-        for (int i = 0; i < entry.value.length; i++) ...[
-          DosageSnippet(
-            dosage: entry.value[i].dosage,
-            onDosageUpdated: (_) {
-              // Update handler logic here
-            },
-            availableConcentrations: entry.value[i].availableConcentrations,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(thickness: 1),
+          const SizedBox(height: 8),
+          const Text(
+            'Recommended Actions',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          // Insert "Eller" between items, but not after the last one
-          if (i < entry.value.length - 1) 
-            const Text("Eller"),
+          const SizedBox(height: 6),
+          if (actions.isEmpty)
+            const Text('No specific actions.')
+          else
+            for (final entry in actions.entries) ...[
+              // Assuming entry.value is a List<RotemAction>
+              for (int i = 0; i < entry.value.length; i++) ...[
+                DosageSnippet(
+                  dosage: entry.value[i].dosage,
+                  onDosageUpdated: (_) {
+                    // Update handler logic here
+                  },
+                  availableConcentrations: entry.value[i].availableConcentrations,
+                ),
+                // Insert "Eller" between items, but not after the last one
+                if (i < entry.value.length - 1) const Text("Eller"),
+              ],
+            ],
         ],
-      ],
-  ],
-)
+      ),
     );
   }
-
-  // ──────────────────────────────────────────
-  // CORNER-SNAPPING
-  void _snapOverlayToCorner() {
-    final screenSize = MediaQuery.of(context).size;
-    const overlayWidth = 220;  // must match the card width
-    const overlayHeight = 180; // approximate card height after padding
-
-    final corners = [
-      const Offset(10, 0), // top-left
-      Offset(screenSize.width - overlayWidth - 40, 0), // top-right
-      Offset(10, screenSize.height - overlayHeight - 80), // bottom-left
-      Offset(screenSize.width - overlayWidth - 40,
-          screenSize.height - overlayHeight - 80), // bottom-right
-    ];
-
-    double minDist = double.infinity;
-    Offset bestCorner = corners.first;
-    for (final c in corners) {
-      final dist = (c - _overlayOffset).distanceSquared;
-      if (dist < minDist) {
-        minDist = dist;
-        bestCorner = c;
-      }
+void _onStepTapped(int step) {
+  if (selectedStrategy == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Välj en strategi först'))
+    );
+    // If tapping beyond step 0 without a strategy, reset to step 0.
+    if (step > 0) {
+      setState(() => _currentStep = 0);
     }
-    setState(() => _overlayOffset = bestCorner);
+    return;
   }
-
-  // ──────────────────────────────────────────
-  // STEPPER LOGIC
-  void _onStepTapped(int stepIndex) {
-    setState(() => _currentStep = stepIndex);
-    // Reposition overlay whenever a step is tapped:
-    _snapOverlayToCorner();
-  }
+  setState(() => _currentStep = step);
+}
 
   void _onStepContinue() {
-    // Step 0 has no actual form fields, so skip validation
+    
+    // Step 0 logic
     if (_currentStep == 0) {
-      setState(() => _currentStep = 1);
-      _snapOverlayToCorner();
+      if (selectedStrategy == null) {
+        // Show a warning if no strategy is selected
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Välj en strategi först')),
+        );
+        return;
+      }
+      setState(() {
+        _currentStep += 1;
+        if (_currentStep > 0) _shouldShowSummary = true;
+      });
+
       return;
     }
 
-    // 1) Per-field validation on the current step
+    // Step 1 and onward
     final formKey = _formKeys[_currentStep];
     final isValid = formKey.currentState?.validate() ?? false;
     _stepValidity[_currentStep] = isValid; // track validity state
 
     if (!isValid) {
-      // If this step’s fields are invalid, don’t proceed
       setState(() {});
       return;
     }
 
-    // Save the field values into _inputValues
     formKey.currentState?.save();
 
-    // 2) If we are on the last step, run strategy-level validation
     if (_currentStep == _totalSteps - 1) {
-      final selectedStrategy = _allStrategies[_selectedStrategyIndex];
+      final selectedStrategy = _allStrategies[_selectedStrategyIndex!];
       final globalError = selectedStrategy.validateAll(_inputValues);
 
       if (globalError != null) {
-        // The strategy says something is still missing or invalid
-        // => Show a dialog or a SnackBar to the user
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -509,16 +428,13 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
             ],
           ),
         );
-        // Mark this step invalid
         _stepValidity[_currentStep] = false;
         setState(() {});
-        return; // Stop here
+        return;
       }
 
-      // Otherwise, everything is good => mark wizard completed
       setState(() => _wizardCompleted = true);
 
-      // Optionally show a summary dialog
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -536,35 +452,20 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
             ),
           ),
         ),
-
       );
 
-      // Show a quick toast
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All steps completed!')),
       );
     } else {
-      // Not the last step => move to the next
       setState(() => _currentStep += 1);
     }
 
-    // Re-snap the draggable overlay
-    _snapOverlayToCorner();
   }
 
-  void _onStepCancel() {
-    if (_currentStep == 0) {
-      Navigator.pop(context);
-    } else {
-      setState(() => _currentStep -= 1);
-      _snapOverlayToCorner();
-    }
-  }
 
   // Updated stepState logic:
-  // If a step’s form is known invalid, show StepState.error
   StepState _stepState(int stepIndex) {
-    // Step 0 has no fields; ignore validity for step 0
     if (stepIndex == 0) {
       if (_currentStep > stepIndex) return StepState.complete;
       return (_currentStep == stepIndex)
@@ -574,7 +475,6 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
     final stepValid = _stepValidity[stepIndex];
     if (stepValid == false) {
-      // The user tried to continue but that step was invalid
       return StepState.error;
     } else if (_currentStep > stepIndex) {
       return StepState.complete;
