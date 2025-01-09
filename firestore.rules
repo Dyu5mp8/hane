@@ -2,6 +2,14 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+  
+	match /appUserFeedback/{feedback} {
+    
+    	allow create: if request.auth != null;
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
+    }
+    
+    
 
     match /users/{userId} {
 
@@ -67,6 +75,12 @@ service cloud.firestore {
           }
       
 
+  }
+  
+  
+  match /antibiotics/{ab}{
+  
+  	allow read;
   }
 }
 }

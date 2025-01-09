@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' show Icons;
 import 'package:hane/modules_feature/models/module.dart';
+import 'package:hane/modules_feature/modules/antibiotics/antibiotic_list_view.dart';
 import 'package:hane/modules_feature/modules/dialysis/dialysis_view.dart';
 import 'package:hane/modules_feature/modules/rotem/rotem_view.dart';
 
@@ -24,7 +25,14 @@ List<Module> modules =
       icon: Icons.bloodtype,
       moduleDetailView: RotemWizardScreen()
     )
-
+,
+    Module(
+      id: 'antibiotics',
+      name: 'Antibiotika',
+      description: 'Antibiotikalista (RAF)',
+      icon: Icons.medication,
+      moduleDetailView: AntibioticsListView()
+    )
 
 
 

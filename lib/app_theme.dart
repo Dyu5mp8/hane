@@ -19,6 +19,8 @@ final ThemeData appTheme = ThemeData(
     brightness: Brightness.light,
   ),
 
+  
+
   textTheme: TextTheme(
     displayLarge: const TextStyle(
       fontSize: 72,

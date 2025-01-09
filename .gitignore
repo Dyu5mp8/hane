@@ -9,11 +9,16 @@
 .history
 .svn/
 
+
 # Ignore Firebase local configuration directory
 /.firebase/
 .firebase/
 
+
 migrate_working_dir/
+
+# Ignore firestore rules file
+firestore.rules
 
 # IntelliJ related
 *.iml
