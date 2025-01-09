@@ -1,8 +1,8 @@
 import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
+import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
+import 'package:hane/modules_feature/modules/rotem/models/field_config.dart';
+import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
 
 class MiscEvaluationStrategy extends RotemEvaluationStrategy {
   @override String get name => "Trauma/övrigt";
@@ -29,7 +29,7 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
       actions['PCC/FFP'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "iv",
+          administrationRoute: "IV",
           instruction: "Hög CT INTEM ELLER CT EXTEM => Ge plasma eller PCC",
           lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
           higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
@@ -45,7 +45,7 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     if (fibtemBelowMin) {
       actions['Fibrinogen'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "iv",
+          administrationRoute: "IV",
           instruction: "Ge fibrinogen",
           lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
           higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
@@ -63,9 +63,9 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     if (extemLow && fibtemOk) {
       actions['Trombocyter'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "iv",
+          administrationRoute: "IV",
           instruction: "Ge trombocyter",
-          lowerLimitDose: Dose.fromString(amount: 1, unit: "E"),
+          dose: Dose.fromString(amount: 1, unit: "E"),
         ),
       )];
     }
@@ -74,20 +74,20 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     if (configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
       actions['Tranexamsyra'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "iv",
+          administrationRoute: "IV",
           instruction: "Ge tranexamsyra",
-          lowerLimitDose: Dose.fromString(amount: 10, unit: "mg/kg"),
+          dose: Dose.fromString(amount: 2, unit: "g"),
         ),
       )];
     }
 
     // 5) Protamin if CT INTEM > CT HEPTEM
-    if (ctIntem != null && ctHeptem != null && ctIntem > ctHeptem) {
+    if (ctIntem != null && ctHeptem != null && ctIntem/ctHeptem > heptemCutoff) {
       actions['Protamin'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "iv",
+          administrationRoute: "IV",
           instruction: "Ge protamin",
-          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
+          dose: Dose.fromString(amount: 50, unit: "mg"),
         ),
       )];
     }
@@ -141,12 +141,9 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         field: RotemField.mlExtem,
         section: RotemSection.extem,
         maxValue: 15,
+        isRequired: false
       ),
-      const FieldConfig(
-        label: "CT HEPTEM",
-        field: RotemField.ctHeptem,
-        section: RotemSection.heptem,
-      ),
+      const FieldConfig(label: "CT HEPTEM", field: RotemField.ctHeptem, section: RotemSection.heptem, isRequired: false),
     ];
   }
 
@@ -158,7 +155,6 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     final a10FibtemValue = values[RotemField.a10Fibtem];
     final a5ExtemValue = values[RotemField.a5Extem];
     final a10ExtemValue = values[RotemField.a10Extem];
-    final mlExtemValue = values[RotemField.mlExtem];
 
     // 1) Either CT EXTEM or CT INTEM must be filled
     if ((ctExtemValue == null || ctExtemValue.isEmpty) &&
@@ -177,12 +173,6 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         (a5ExtemValue == null || a5ExtemValue.isEmpty)) {
       return 'Antingen A10 EXTEM eller A5 EXTEM måste fyllas i.';
     }
-
-    // 4) ML EXTEM must be filled
-    if (mlExtemValue == null || mlExtemValue.isEmpty) {
-      return 'ML EXTEM måste fyllas i.';
-    }
-
     // If no errors:
     return null;
   }

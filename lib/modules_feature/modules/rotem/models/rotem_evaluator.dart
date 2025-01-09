@@ -1,5 +1,5 @@
-import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
+import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
+import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
 
 
 enum RotemField {
@@ -32,19 +32,19 @@ class RotemEvaluator {
 
   RotemEvaluator({
     this.ctExtem,
-     this.ctIntem,
-     this.a10Fibtem,
-     this.a5Fibtem,
-     this.a10Extem,
-     this.a5Extem,
-     this.mlExtem,
-     this.ctHeptem,
-     this.ctFibtem,
-      this.li30Extem,
-     required this.strategy,
+    this.ctIntem,
+    this.a10Fibtem,
+    this.a5Fibtem,
+    this.a10Extem,
+    this.a5Extem,
+    this.mlExtem,
+    this.ctHeptem,
+    this.ctFibtem,
+    this.li30Extem,
+    required this.strategy,
   });
 
-  Map<String, dynamic> evaluate() {
+  Map<String, List<RotemAction>> evaluate() {
     return strategy.evaluate(this);
   }
 }

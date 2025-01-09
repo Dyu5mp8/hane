@@ -1,8 +1,8 @@
 import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
+import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
+import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
+import 'package:hane/modules_feature/modules/rotem/models/field_config.dart';
 import 'package:hane/drugs/models/drug.dart';
 
 class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
@@ -25,6 +25,7 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     final ctIntem  = evaluator.ctIntem;
     final mlExtem  = evaluator.mlExtem;
     final li30Extem = evaluator.li30Extem;
+        final ctHeptem = evaluator.ctHeptem;
 
     //----------------------------------------------------------------------
     // 1) Fibrinogen if (A5 FIBTEM < 8) AND (A5 EXTEM < 25)
@@ -111,48 +112,62 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
       )];
     }
 
+        // 5) Protamin if CT INTEM > CT HEPTEM
+    if (ctIntem != null && ctHeptem != null && ctIntem/ctHeptem > heptemCutoff) {
+      actions['Protamin'] = [RotemAction(
+        dosage: Dosage(
+          administrationRoute: "IV",
+          instruction: "Ge protamin",
+          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
+        ),
+      )];
+    }
+
     return actions;
   }
 
   @override
   List<FieldConfig> getRequiredFields() {
     return [
-      FieldConfig(
+      const FieldConfig(
         label: 'A5 FIBTEM',
         field: RotemField.a5Fibtem,
         section: RotemSection.fibtem,
         minValue: 8,
       ),
-      FieldConfig(
+      const FieldConfig(
         label: 'A5 EXTEM',
         field: RotemField.a5Extem,
         section: RotemSection.extem,
         minValue: 25,
       ),
-      FieldConfig(
+      const FieldConfig(
         label: 'CT EXTEM',
         field: RotemField.ctExtem,
         section: RotemSection.extem,
         maxValue: 75,
       ),
-      FieldConfig(
+      const FieldConfig(
         label: 'CT INTEM',
         field: RotemField.ctIntem,
         section: RotemSection.intem,
         maxValue: 280,
       ),
-      FieldConfig(
+      const FieldConfig(
         label: 'ML EXTEM',
         field: RotemField.mlExtem,
         section: RotemSection.extem,
         maxValue: 85,
+        isRequired: false
       ),
-      FieldConfig(
+      const FieldConfig(
         label: 'LI 30 EXTEM',
         field: RotemField.li30Extem,
         section: RotemSection.extem,
         maxValue: 50,
+        isRequired: false
       ),
+    // add CT HEPTEM HERE IF NECESSARY
     ];
   }
 
@@ -162,8 +177,6 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     final a5ExtemVal  = values[RotemField.a5Extem];
     final ctExtemVal  = values[RotemField.ctExtem];
     final ctIntemVal  = values[RotemField.ctIntem];
-    final mlExtemVal  = values[RotemField.mlExtem];
-    final li30Val     = values[RotemField.li30Extem];
 
     if (a5FibtemVal == null || a5FibtemVal.isEmpty) {
       return 'A5 FIBTEM måste fyllas i.';
@@ -176,12 +189,6 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     }
     if (ctIntemVal == null || ctIntemVal.isEmpty) {
       return 'CT INTEM måste fyllas i.';
-    }
-    if (mlExtemVal == null || mlExtemVal.isEmpty) {
-      return 'ML EXTEM måste fyllas i.';
-    }
-    if (li30Val == null || li30Val.isEmpty) {
-      return 'LI 30 EXTEM måste fyllas i.';
     }
 
     return null;

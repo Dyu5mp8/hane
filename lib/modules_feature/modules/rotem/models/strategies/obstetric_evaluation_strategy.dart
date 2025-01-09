@@ -1,8 +1,8 @@
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/field_config.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_evaluation_strategy.dart';
-import 'package:hane/modules_feature/modules/rotem/models/strategies/rotem_action.dart';
+import 'package:hane/modules_feature/modules/rotem/models/field_config.dart';
+import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
+import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
 
 class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
   @override
@@ -48,7 +48,7 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         field: RotemField.mlExtem,
         section: RotemSection.extem,
         maxValue: 10,
-        isRequired: true
+        isRequired: false
       ),
       const FieldConfig(
         label: "CT FIBTEM",
@@ -56,6 +56,8 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         section: RotemSection.fibtem,
         maxValue: 600,
       ),
+
+          // add CT HEPTEM HERE IF NECESSARY
     ];
   }
   
@@ -74,7 +76,8 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     final ctExtem = evaluator.ctExtem;       // CT EXTEM
     final ctIntem = evaluator.ctIntem;       // CT INTEM
     final ctFibtem = evaluator.ctFibtem;     // CT FIBTEM (make sure RotemEvaluator has this!)
-    final mlExtem = evaluator.mlExtem;       // ML EXTEM
+    final mlExtem = evaluator.mlExtem;   
+        final ctHeptem = evaluator.ctHeptem;   // ML EXTEM
 
     //----------------------------------------------------------------------
     // 1) Fibrinogen if A5 FIBTEM < 12 mm
@@ -156,15 +159,42 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
       )];
     }
 
+    // 5) Protamin if CT INTEM > CT HEPTEM
+    if (ctIntem != null && ctHeptem != null && ctIntem/ctHeptem > heptemCutoff) {
+      actions['Protamin'] = [RotemAction(
+        dosage: Dosage(
+          administrationRoute: "IV",
+          instruction: "Ge protamin",
+          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
+        ),
+      )];
+    }
+
     return actions;
   }
 
 
   @override
   String? validateAll(Map<RotemField, String?> values) {
+   final a5FibtemVal = values[RotemField.a5Fibtem];
+    final a5ExtemVal  = values[RotemField.a5Extem];
+    final ctExtemVal  = values[RotemField.ctExtem];
+    final ctIntemVal  = values[RotemField.ctIntem];
 
+    if (a5FibtemVal == null || a5FibtemVal.isEmpty) {
+      return 'A5 FIBTEM måste fyllas i.';
+    }
+    if (a5ExtemVal == null || a5ExtemVal.isEmpty) {
+      return 'A5 EXTEM måste fyllas i.';
+    }
+    if (ctExtemVal == null || ctExtemVal.isEmpty) {
+      return 'CT EXTEM måste fyllas i.';
+    }
+    if (ctIntemVal == null || ctIntemVal.isEmpty) {
+      return 'CT INTEM måste fyllas i.';
+    }
 
-    // If no errors
     return null;
+  
   }
 }
