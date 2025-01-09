@@ -12,7 +12,7 @@ class DialysisView extends StatelessWidget {
       create: (_) => DialysisViewModel(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Dialysberäkning', style: TextStyle(fontSize: 18)),
+          title: Text('Dialysberäkning'),
         ),
         body: Consumer<DialysisViewModel>(
           builder: (context, model, child) {
@@ -158,7 +158,7 @@ class DialysisView extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0), // Reduced vertical padding
+                  padding: const EdgeInsets.symmetric(vertical: 40), // Reduced vertical padding
                   child: Column(
                     children: [
                       Text(

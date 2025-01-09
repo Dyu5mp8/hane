@@ -52,7 +52,8 @@ class _AntibioticsListViewState extends State<AntibioticsListView> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: const Text('Antibiotics List (Cache First)'),
+      title: const Text('Antibiotika (RAF)'),
+  
     ),
     body: FutureBuilder<List<Antibiotic>>(
       future: _antibioticsFuture,
@@ -79,7 +80,7 @@ Widget build(BuildContext context) {
           children: [
             SearchField(
               controller: _searchController,
-              placeholder: 'Search antibiotics',
+              placeholder: 'Sök',
               onChanged: (value) {
                 setState(() {
                   _searchQuery = value;
@@ -102,7 +103,7 @@ Widget build(BuildContext context) {
             ),
             Expanded(
               child: filteredAntibiotics.isEmpty
-                  ? const Center(child: Text('No antibiotics found.'))
+                  ? const Center(child: Text('Inga antibiotika matchar din sökning'))
                   : ListView.builder(
                       itemCount: filteredAntibiotics.length,
                       itemBuilder: (context, index) {
