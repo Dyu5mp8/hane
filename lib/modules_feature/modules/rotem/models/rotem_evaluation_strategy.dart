@@ -26,12 +26,6 @@ abstract class RotemEvaluationStrategy {
       (config.maxValue != null && value > config.maxValue!);
 
   bool isValueOutOfRange(FieldConfig config, double value) {
-    if (config.minValue != null && value < config.minValue!) {
-      return true;
-    }
-    if (config.maxValue != null && value > config.maxValue!) {
-      return true;
-    }
-    return false;
+  return (config.result(value) == Result.normal);
   }
 }

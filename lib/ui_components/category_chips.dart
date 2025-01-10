@@ -6,6 +6,7 @@ class CategoryChips extends StatelessWidget {
   final String? selectedCategory;
   final void Function(String?) onCategorySelected;
   final bool acceptAll;
+  final TextStyle? style;
 
   const CategoryChips({
     Key? key,
@@ -13,6 +14,7 @@ class CategoryChips extends StatelessWidget {
     required this.selectedCategory,
     required this.onCategorySelected,
     this.acceptAll = true,
+    this.style,
   }) : super(key: key);
 
   @override

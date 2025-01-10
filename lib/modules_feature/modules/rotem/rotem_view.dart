@@ -4,14 +4,13 @@ import 'package:hane/modules_feature/modules/rotem/mini_summary_card.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/field_config.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
-import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
-import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
+
 import 'package:hane/modules_feature/modules/rotem/models/strategies/misc_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/obstetric_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/liver_evaluation_strategy.dart';
 import 'package:hane/ui_components/category_chips.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
-import 'package:hane/ui_components/dosage_snippet.dart';
+import 'package:flutter/foundation.dart';
 
 class RotemWizardScreen extends StatefulWidget {
   const RotemWizardScreen({super.key});
@@ -24,7 +23,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   int _currentStep = 0;
   int _totalSteps = 1; // Initially one step.
   List<FocusNode> _focusNodes = [];
-  Map<RotemField, FocusNode> _fieldFocusNodes = {};
+  final Map<RotemField, FocusNode> _fieldFocusNodes = {};
   final List<RotemEvaluationStrategy> _allStrategies = [
     MiscEvaluationStrategy(),
     ObstetricEvaluationStrategy(),
@@ -76,6 +75,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
         child: Stack(
           children: [
             SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.only(bottom: 100),
               child: Column(
                 children: [
@@ -434,7 +434,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
   KeyboardActionsConfig _buildKeyboardActionsConfig() {
     return KeyboardActionsConfig(
-      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+   keyboardActionsPlatform: !kIsWeb 
+        ? KeyboardActionsPlatform.ALL 
+        : KeyboardActionsPlatform.IOS, // or any default, won't af
       keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
       actions: _focusNodes.map((node) {
         return KeyboardActionsItem(

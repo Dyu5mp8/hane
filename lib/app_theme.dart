@@ -69,7 +69,8 @@ final ThemeData appTheme = ThemeData(
   elevatedButtonTheme: ElevatedButtonThemeData(
  
   style: ElevatedButton.styleFrom(
-    backgroundColor: Color.fromARGB(255, 0, 79, 104),
+  backgroundColor: const Color.fromARGB(255, 53, 99, 135),
+
     foregroundColor: Colors.white, // White text
     elevation: 4,
     shape: RoundedRectangleBorder(
@@ -116,7 +117,7 @@ final ThemeData appTheme = ThemeData(
   
   cardColor:  const Color.fromARGB(255, 0, 79, 104),
   cardTheme: CardTheme(
-    color: const Color.fromARGB(255, 106, 136, 207),
+    color: const Color.fromARGB(255, 234, 240, 255),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12.0),
       side: const BorderSide(

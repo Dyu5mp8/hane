@@ -32,99 +32,117 @@ class MiniSummaryCard extends StatelessWidget {
       ),
     );
   }
-Widget _buildContent() {
-  if (strategy == null) {
-    return const Text('Ingen strategi vald.');
-  }
 
-  // Obtain required fields from the strategy and group them by section.
-  final fieldsBySection = <RotemSection, List<FieldConfig>>{};
-  for (var config in strategy!.getRequiredFields()) {
-    fieldsBySection.putIfAbsent(config.section, () => []).add(config);
-  }
-
-  // Helper to get a short label for each RotemField.
-  String fieldLabel(RotemField field) {
-    switch (field) {
-      case RotemField.ctFibtem: return 'CT';
-      case RotemField.a5Fibtem: return 'A5';
-      case RotemField.a10Fibtem: return 'A10';
-      case RotemField.ctExtem: return 'CT';
-      case RotemField.a5Extem: return 'A5';
-      case RotemField.a10Extem: return 'A10';
-      case RotemField.mlExtem: return 'ML';
-      case RotemField.li30Extem: return 'LI30';
-      case RotemField.ctIntem: return 'CT';
-      case RotemField.ctHeptem: return 'CT';
-      default: return field.toString();
+  Widget _buildContent() {
+    if (strategy == null) {
+      return const Text('Ingen strategi vald.');
     }
-  }
 
-  // Generate lines for each section.
-  Map<RotemSection, List<String>> linesBySection = {};
-  fieldsBySection.forEach((section, configs) {
-    final lines = configs.map((config) {
-      final value = inputValues[config.field] ?? '';
-      return '${fieldLabel(config.field)}: $value';
-    }).toList();
-    // Only add non-empty lines.
-    if (lines.isNotEmpty) {
-      linesBySection[section] = lines;
+    // Group required fields from the strategy by section.
+    final fieldsBySection = <RotemSection, List<FieldConfig>>{};
+    for (var config in strategy!.getRequiredFields()) {
+      fieldsBySection.putIfAbsent(config.section, () => []).add(config);
     }
-  });
 
-  // Build UI quadrants dynamically based on available sections.
-  List<Widget> quadrantRows = [];
-  // Define an order for sections and layout in pairs.
-  final sectionOrder = [
-    RotemSection.fibtem,
-    RotemSection.extem,
-    RotemSection.intem,
-    RotemSection.heptem,
-  ];
+    // Helper to get a short label for each RotemField.
+    String fieldLabel(RotemField field) {
+      switch (field) {
+        case RotemField.ctFibtem:
+          return 'CT';
+        case RotemField.a5Fibtem:
+          return 'A5';
+        case RotemField.a10Fibtem:
+          return 'A10';
+        case RotemField.ctExtem:
+          return 'CT';
+        case RotemField.a5Extem:
+          return 'A5';
+        case RotemField.a10Extem:
+          return 'A10';
+        case RotemField.mlExtem:
+          return 'ML';
+        case RotemField.li30Extem:
+          return 'LI30';
+        case RotemField.ctIntem:
+          return 'CT';
+        case RotemField.ctHeptem:
+          return 'CT';
+        default:
+          return field.toString();
+      }
+    }
 
-  for (int i = 0; i < sectionOrder.length; i += 2) {
-    // For each pair of sections, create a row if at least one has data.
-    final firstSection = sectionOrder[i];
-    final secondSection = (i + 1 < sectionOrder.length) ? sectionOrder[i + 1] : null;
+    // Generate styled text widgets for each section.
+    Map<RotemSection, List<Widget>> linesBySection = {};
+    fieldsBySection.forEach((section, configs) {
+      final lines = configs.map((config) {
+        final valueStr = inputValues[config.field] ?? '';
+        final valueDouble = double.tryParse(valueStr);
+        final result = (valueDouble != null) ? config.result(valueDouble) : null;
 
-    final firstLines = linesBySection[firstSection] ?? [];
-    final secondLines = (secondSection != null) ? linesBySection[secondSection] ?? [] : [] as List<String>;
+        return Text(
+          '${fieldLabel(config.field)}: $valueStr',
+          style: TextStyle(
+            fontSize: 10,
+            color: (result != null && result != Result.normal) ? Colors.red : Colors.black,
+          ),
+        );
+      }).toList();
 
-    // Skip row if both sections are empty.
-    if (firstLines.isEmpty && (secondLines.isEmpty || secondSection == null)) continue;
+      if (lines.isNotEmpty) {
+        linesBySection[section] = lines;
+      }
+    });
 
-    quadrantRows.add(
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (firstLines.isNotEmpty)
-            Expanded(child: _buildQuadrantCell(firstSection.name.toUpperCase(), firstLines)),
-          if (firstLines.isNotEmpty && secondLines.isNotEmpty)
-            const SizedBox(width: 8),
-          if (secondSection != null && secondLines.isNotEmpty)
-            Expanded(child: _buildQuadrantCell(secondSection.name.toUpperCase(), secondLines)),
-        ],
-      ),
+    // Build UI quadrants dynamically based on available sections.
+    List<Widget> quadrantRows = [];
+    final sectionOrder = [
+      RotemSection.fibtem,
+      RotemSection.extem,
+      RotemSection.intem,
+      RotemSection.heptem,
+    ];
+
+    for (int i = 0; i < sectionOrder.length; i += 2) {
+      final firstSection = sectionOrder[i];
+      final secondSection = (i + 1 < sectionOrder.length) ? sectionOrder[i + 1] : null;
+
+      final firstLines = linesBySection[firstSection] ?? [];
+      final secondLines = (secondSection != null) ? linesBySection[secondSection] ?? [] : [];
+
+      if (firstLines.isEmpty && (secondLines.isEmpty || secondSection == null)) continue;
+
+      quadrantRows.add(
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (firstLines.isNotEmpty)
+              Expanded(child: _buildQuadrantCell(firstSection.name.toUpperCase(), firstLines)),
+            if (firstLines.isNotEmpty && secondLines.isNotEmpty)
+              const SizedBox(width: 8),
+            if (secondSection != null && secondLines.isNotEmpty)
+              Expanded(child: _buildQuadrantCell(secondSection.name.toUpperCase(), secondLines as List<Widget>)),
+          ],
+        ),
+      );
+      quadrantRows.add(const SizedBox(height: 8)); // spacing between rows
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          'Inmatade värden',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 6),
+        ...quadrantRows,
+      ],
     );
-    quadrantRows.add(const SizedBox(height: 8)); // spacing between rows
   }
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      const Text(
-        'Inmatade värden',
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 6),
-      ...quadrantRows,
-    ],
-  );
-}
-
-  Widget _buildQuadrantCell(String title, List<String> lines) {
+  Widget _buildQuadrantCell(String title, List<Widget> lines) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -132,8 +150,7 @@ Widget _buildContent() {
           title,
           style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
         ),
-        for (final line in lines)
-          Text(line, style: const TextStyle(fontSize: 10)),
+        ...lines,
       ],
     );
   }
