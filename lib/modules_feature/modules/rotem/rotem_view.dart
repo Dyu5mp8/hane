@@ -10,6 +10,7 @@ import 'package:hane/modules_feature/modules/rotem/models/strategies/misc_evalua
 import 'package:hane/modules_feature/modules/rotem/models/strategies/obstetric_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/strategies/liver_evaluation_strategy.dart';
 import 'package:hane/ui_components/category_chips.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:hane/ui_components/dosage_snippet.dart';
 
 class RotemWizardScreen extends StatefulWidget {
@@ -22,7 +23,8 @@ class RotemWizardScreen extends StatefulWidget {
 class _RotemWizardScreenState extends State<RotemWizardScreen> {
   int _currentStep = 0;
   int _totalSteps = 1; // Initially one step.
-
+  List<FocusNode> _focusNodes = [];
+  Map<RotemField, FocusNode> _fieldFocusNodes = {};
   final List<RotemEvaluationStrategy> _allStrategies = [
     MiscEvaluationStrategy(),
     ObstetricEvaluationStrategy(),
@@ -31,7 +33,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
   int? _selectedStrategyIndex;
   RotemEvaluationStrategy? get selectedStrategy =>
-      _selectedStrategyIndex == null ? null : _allStrategies[_selectedStrategyIndex!];
+      _selectedStrategyIndex == null
+          ? null
+          : _allStrategies[_selectedStrategyIndex!];
 
   List<GlobalKey<FormState>> _formKeys = [];
   List<bool?> _stepValidity = [];
@@ -49,6 +53,16 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     // Initialize with one step.
     _formKeys = List.generate(_totalSteps, (_) => GlobalKey<FormState>());
     _stepValidity = List.filled(_totalSteps, null);
+    _focusNodes = List.generate(_totalSteps, (_) => FocusNode());
+  }
+
+  @override
+  void dispose() {
+    // Dispose all focus nodes when done.
+    for (final node in _focusNodes) {
+      node.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -57,42 +71,43 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       appBar: AppBar(
         title: const Text('ROTEM guide'),
       ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 100),
-            child: Column(
-              children: [
-                _buildStepperContent(),
-                if (_wizardCompleted) _buildEvaluationResults(),
-              ],
-            ),
-          ),
-          if (_shouldShowSummary)
-            Positioned(
-              left: MediaQuery.sizeOf(context).width - 150,
-              top: MediaQuery.sizeOf(context).height / 8,
+      body: KeyboardActions(
+        config: _buildKeyboardActionsConfig(),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 100),
               child: Column(
-                
                 children: [
-                  MiniSummaryCard(
-                    strategy: selectedStrategy,
-                    inputValues: _inputValues,
-                  ),
-                  if (selectedStrategy?.validateAll(_inputValues) == null)
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _wizardCompleted = true;
-                        });
-                      },
-                      child: const Text('Gå till resultat'),
-                    ),
-   
+                  _buildStepperContent(),
+                  if (_wizardCompleted) _buildEvaluationResults(),
                 ],
               ),
             ),
-        ],
+            if (_shouldShowSummary)
+              Positioned(
+                left: MediaQuery.sizeOf(context).width - 150,
+                top: MediaQuery.sizeOf(context).height / 8,
+                child: Column(
+                  children: [
+                    MiniSummaryCard(
+                      strategy: selectedStrategy,
+                      inputValues: _inputValues,
+                    ),
+                    if (selectedStrategy?.validateAll(_inputValues) == null)
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _wizardCompleted = true;
+                          });
+                        },
+                        child: const Text('Gå till resultat'),
+                      ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -113,7 +128,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
               ElevatedButton(
                 onPressed: details.onStepContinue,
                 child: Text(
-                  (_currentStep < _totalSteps - 1) || (_totalSteps == 1) ? 'Nästa steg' : 'Se resultat',
+                  (_currentStep < _totalSteps - 1) || (_totalSteps == 1)
+                      ? 'Nästa steg'
+                      : 'Se resultat',
                 ),
               ),
             ],
@@ -148,7 +165,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       // Group fields by section.
       final fieldsBySection = <RotemSection, List<FieldConfig>>{};
       for (var fieldConfig in selectedStrategy!.getRequiredFields()) {
-        fieldsBySection.putIfAbsent(fieldConfig.section, () => []).add(fieldConfig);
+        fieldsBySection
+            .putIfAbsent(fieldConfig.section, () => [])
+            .add(fieldConfig);
       }
 
       // For each section, create a step.
@@ -162,7 +181,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
             content: Align(
               alignment: Alignment.centerLeft,
               child: Form(
-                key: _formKeys.length > stepIndex ? _formKeys[stepIndex] : GlobalKey<FormState>(),
+                key: _formKeys.length > stepIndex
+                    ? _formKeys[stepIndex]
+                    : GlobalKey<FormState>(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: fields.map((fieldConfig) {
@@ -196,103 +217,108 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           _shouldShowSummary = false;
 
           // After selecting a strategy, determine the number of unique sections.
-          final sections = selectedStrategy!.getRequiredFields()
+          final sections = selectedStrategy!
+              .getRequiredFields()
               .map((fc) => fc.section)
               .toSet();
-          _totalSteps = 1 + sections.length; // 1 for strategy picker + one per section
+          _totalSteps =
+              1 + sections.length; // 1 for strategy picker + one per section
 
           _formKeys = List.generate(_totalSteps, (_) => GlobalKey<FormState>());
           _stepValidity = List.filled(_totalSteps, null);
 
           // Force Stepper to rebuild with a new key to handle changed steps length.
           _stepperKey = UniqueKey();
+          _fieldFocusNodes.clear();
+          _focusNodes.clear();
+          for (var fieldConfig in selectedStrategy!.getRequiredFields()) {
+            final node = FocusNode();
+            _fieldFocusNodes[fieldConfig.field] = node;
+            _focusNodes.add(node);
+          }
         });
       },
     );
   }
 
   Widget _buildNumField(String label, RotemField field) {
-    final RotemEvaluationStrategy? strategy = selectedStrategy;
-    if (strategy == null) {
-      return const SizedBox.shrink();
-    }
+    final strategy = selectedStrategy;
+    if (strategy == null) return const SizedBox.shrink();
 
-    // Retrieve field config to know if required, etc.
     late final FieldConfig fieldConfig;
     try {
-      fieldConfig = strategy.getRequiredFields().firstWhere((cfg) => cfg.field == field);
+      fieldConfig =
+          strategy.getRequiredFields().firstWhere((cfg) => cfg.field == field);
     } on StateError {
       return const SizedBox.shrink();
     }
+
+    final focusNode = _fieldFocusNodes[field] ?? FocusNode();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: SizedBox(
         width: 120,
         child: TextFormField(
+          focusNode: focusNode,
           textAlign: TextAlign.left,
           keyboardType: TextInputType.number,
+          textInputAction: TextInputAction.done,
           decoration: InputDecoration(
             labelText: label,
             labelStyle: const TextStyle(fontSize: 10),
             border: const OutlineInputBorder(),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
           ),
           style: const TextStyle(fontSize: 12),
           validator: (value) {
             if (_currentStep == 0) return null;
             if (value == null || value.trim().isEmpty) {
-              if (fieldConfig.isRequired) {
-                return 'Obligatoriskt';
-              }
+              if (fieldConfig.isRequired) return 'Obligatoriskt';
               return null;
             }
-            final parsed = double.tryParse(value);
-            if (parsed == null) {
-              return 'Felaktig inmatning';
-            }
+            if (double.tryParse(value) == null) return 'Felaktig inmatning';
             return null;
           },
           onSaved: (val) {
-            if (val != null) {
-              _inputValues[field] = val;
-            }
+            if (val != null) _inputValues[field] = val;
           },
           initialValue: _inputValues[field],
-
-              onFieldSubmitted: (_) {
-          FocusScope.of(context).nextFocus();
-        },
+          onFieldSubmitted: (_) {
+            FocusScope.of(context).nextFocus();
+          },
         ),
       ),
     );
   }
-Widget _buildEvaluationResults() {
-  if (selectedStrategy == null) {
-    return const Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Text('Ingen strategi vald. Vänligen välj en strategi.'),
+
+  Widget _buildEvaluationResults() {
+    if (selectedStrategy == null) {
+      return const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Text('Ingen strategi vald. Vänligen välj en strategi.'),
+      );
+    }
+
+    double? parseField(RotemField f) => double.tryParse(_inputValues[f] ?? '');
+
+    final evaluator = RotemEvaluator(
+      ctFibtem: parseField(RotemField.ctFibtem),
+      a5Fibtem: parseField(RotemField.a5Fibtem),
+      a10Fibtem: parseField(RotemField.a10Fibtem),
+      ctExtem: parseField(RotemField.ctExtem),
+      a5Extem: parseField(RotemField.a5Extem),
+      a10Extem: parseField(RotemField.a10Extem),
+      mlExtem: parseField(RotemField.mlExtem),
+      li30Extem: parseField(RotemField.li30Extem),
+      ctIntem: parseField(RotemField.ctIntem),
+      ctHeptem: parseField(RotemField.ctHeptem),
+      strategy: selectedStrategy!,
     );
+
+    return EvaluationResult(evaluator: evaluator);
   }
-
-  double? parseField(RotemField f) => double.tryParse(_inputValues[f] ?? '');
-
-  final evaluator = RotemEvaluator(
-    ctFibtem: parseField(RotemField.ctFibtem),
-    a5Fibtem: parseField(RotemField.a5Fibtem),
-    a10Fibtem: parseField(RotemField.a10Fibtem),
-    ctExtem: parseField(RotemField.ctExtem),
-    a5Extem: parseField(RotemField.a5Extem),
-    a10Extem: parseField(RotemField.a10Extem),
-    mlExtem: parseField(RotemField.mlExtem),
-    li30Extem: parseField(RotemField.li30Extem),
-    ctIntem: parseField(RotemField.ctIntem),
-    ctHeptem: parseField(RotemField.ctHeptem),
-    strategy: selectedStrategy!,
-  );
-
-  return EvaluationResult(evaluator: evaluator);
-}
 
   void _onStepTapped(int step) {
     if (selectedStrategy == null && step > 0) {
@@ -388,10 +414,13 @@ Widget _buildEvaluationResults() {
   StepState _stepState(int stepIndex) {
     if (stepIndex == 0) {
       if (_currentStep > stepIndex) return StepState.complete;
-      return (_currentStep == stepIndex) ? StepState.editing : StepState.indexed;
+      return (_currentStep == stepIndex)
+          ? StepState.editing
+          : StepState.indexed;
     }
 
-    final stepValid = _stepValidity.length > stepIndex ? _stepValidity[stepIndex] : null;
+    final stepValid =
+        _stepValidity.length > stepIndex ? _stepValidity[stepIndex] : null;
     if (stepValid == false) {
       return StepState.error;
     } else if (_currentStep > stepIndex) {
@@ -401,5 +430,33 @@ Widget _buildEvaluationResults() {
     } else {
       return StepState.indexed;
     }
+  }
+
+  KeyboardActionsConfig _buildKeyboardActionsConfig() {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
+      actions: _focusNodes.map((node) {
+        return KeyboardActionsItem(
+          displayArrows: false,
+          focusNode: node,
+          toolbarButtons: [
+            (node) {
+              return TextButton(
+                onPressed: () => node.nextFocus(),
+                child:
+                    Row(
+                      children: [
+                        Text("Nästa", style: Theme.of(context).textTheme.bodyLarge),
+                        SizedBox(width: 8),
+                        const Icon(Icons.arrow_forward),
+                      ],
+                    ),
+              );
+            }
+          ],
+        );
+      }).toList(),
+    );
   }
 }

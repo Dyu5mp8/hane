@@ -253,7 +253,7 @@ tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
 
   elevatedButtonTheme: ElevatedButtonThemeData(
   style: ElevatedButton.styleFrom(
-    backgroundColor: const Color.fromARGB(255, 131, 109, 64), // Dark orange background
+  backgroundColor: Color.fromARGB(255, 0, 79, 104),
     foregroundColor: Colors.white, // White text
     elevation: 4,
     shape: RoundedRectangleBorder(

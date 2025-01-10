@@ -61,6 +61,7 @@ dependencies:
   package_info_plus: ^8.1.0
   accordion: ^2.6.0
   firebase_ui_firestore: ^1.7.0
+  keyboard_actions: ^4.2.0
 
 
 dev_dependencies:

@@ -129,12 +129,15 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         field: RotemField.a5Extem,
         section: RotemSection.extem,
         minValue: 34,
+        isRequired: false
+
       ),
       const FieldConfig(
         label: "A10 EXTEM",
         field: RotemField.a10Extem,
         section: RotemSection.extem,
         minValue: 43,
+        isRequired: false
       ),
       const FieldConfig(
         label: "ML EXTEM",
