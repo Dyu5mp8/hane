@@ -27,13 +27,13 @@ class MiniSummaryCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(5),
           ),
           padding: const EdgeInsets.all(8),
-          child: _buildContent(),
+          child: _buildContent(context),
         ),
       ),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     if (strategy == null) {
       return const Text('Ingen strategi vald.');
     }
@@ -79,14 +79,16 @@ class MiniSummaryCard extends StatelessWidget {
         final valueStr = inputValues[config.field] ?? '';
         final valueDouble = double.tryParse(valueStr);
         final result = (valueDouble != null) ? config.result(valueDouble) : null;
-
-        return Text(
-          '${fieldLabel(config.field)}: $valueStr',
-          style: TextStyle(
-            fontSize: 10,
-            color: (result != null && result != Result.normal) ? Colors.red : Colors.black,
-          ),
-        );
+return Text(
+  '${fieldLabel(config.field)}: $valueStr',
+  style: TextStyle(
+    fontSize: 10,
+    color: (result != null && result != Result.normal)
+        ? Theme.of(context).colorScheme.error
+        : Theme.of(context).textTheme.bodyMedium?.color,
+  ),
+);
+      
       }).toList();
 
       if (lines.isNotEmpty) {

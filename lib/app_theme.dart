@@ -14,6 +14,7 @@ final ThemeData appTheme = ThemeData(
     tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
     secondaryFixed: const Color.fromARGB(255, 195, 225, 240),
     
+    error: const Color.fromARGB(255, 255, 0, 0),
 
     // ···
     brightness: Brightness.light,
@@ -56,6 +57,8 @@ final ThemeData appTheme = ThemeData(
     headlineMedium: GoogleFonts.rubik(
       fontSize: 16,
     ),
+
+
 
 
     
@@ -137,6 +140,7 @@ final ThemeData darkAppTheme = ThemeData(
     surface: const Color.fromARGB(255, 41, 41, 41),
     onSurface: const Color.fromARGB(255, 255, 255, 255),
 tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
+error: const Color.fromARGB(255, 177, 10, 66),
     // ···
     brightness: Brightness.dark,
   ),
