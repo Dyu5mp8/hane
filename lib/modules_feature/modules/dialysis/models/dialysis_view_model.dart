@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:hane/modules_feature/modules/dialysis/models/dialysis_setting.dart';
 
 class DialysisViewModel extends ChangeNotifier {
   // Private variables with initial values
@@ -35,6 +36,18 @@ class DialysisViewModel extends ChangeNotifier {
       _postDilutionFlow = value;
       notifyListeners();
     }
+  }
+
+  void loadDialysisSetting(DialysisSetting setting) {
+    weight = setting.weight;
+    postDilutionFlow = setting.postDilutionFlow;
+    dialysateFlow = setting.dialysateFlow;
+    fluidRemoval = setting.fluidRemoval;
+    hematocritLevel = setting.hematocritLevel;
+    isCitrateLocked = setting.isCitrateLocked;
+    citrateLevel = setting.citrateLevel;
+    preDilutionFlow = setting.preDilutionFlow;
+    bloodFlow = setting.bloodFlow;
   }
 
   // Getter and setter for dialysateFlow
