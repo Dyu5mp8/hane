@@ -1,6 +1,6 @@
-class DialysisSetting {
+class DialysisPreset {
 
-  double weight;
+  double? weight;
   double postDilutionFlow;
   double dialysateFlow;
   double fluidRemoval;
@@ -10,8 +10,8 @@ class DialysisSetting {
   double preDilutionFlow;
   double bloodFlow;
 
-  DialysisSetting({
-    required this.weight,
+  DialysisPreset
+({
     required this.postDilutionFlow,
     required this.dialysateFlow,
     required this.fluidRemoval,
@@ -22,7 +22,8 @@ class DialysisSetting {
     required this.bloodFlow,
   });
 
-  DialysisSetting.fromJson(Map<String, dynamic> json)
+  DialysisPreset
+.fromJson(Map<String, dynamic> json)
       : weight = json['weight'],
         postDilutionFlow = json['postDilutionFlow'],
         dialysateFlow = json['dialysateFlow'],
