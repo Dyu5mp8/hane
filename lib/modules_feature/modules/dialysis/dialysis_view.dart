@@ -1,14 +1,98 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:hane/ui_components/scroll_indicator.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
-import 'package:provider/provider.dart';
-import 'package:keyboard_actions/keyboard_actions.dart';
-// Import Syncfusion sliders
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
-class DialysisView extends StatelessWidget {
+
+class DialysisView extends StatefulWidget {
+  @override
+  State<DialysisView> createState() => _DialysisViewState();
+}
+
+class _DialysisViewState extends State<DialysisView> {
   final ScrollController _scrollController = ScrollController();
+
+  /// Utility method to show a dialog for editing weight
+  Future<void> _showWeightDialog(BuildContext context, double currentWeight) async {
+    final controller = TextEditingController(text: currentWeight.toStringAsFixed(1));
+
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Vikt'),
+          content: TextField(
+            controller: controller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              hintText: 'Ange patientvikt',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Avbryt'),
+            ),
+            TextButton(
+              onPressed: () {
+                final parsed = double.tryParse(controller.text);
+                if (parsed != null && parsed >= 0 && parsed <= 300) {
+                  context.read<DialysisViewModel>().weight = parsed;
+                  Navigator.of(ctx).pop(); // Close dialog
+                }
+              },
+              child: const Text('Ställ in'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Utility method to show a dialog for editing hematocrit
+  Future<void> _showHematocritDialog(BuildContext context, double currentHct) async {
+    // Convert [0.0–1.0] to [0–100] for user input
+    final controller = TextEditingController(text: (currentHct * 100).toStringAsFixed(1));
+
+    await showDialog(
+
+      context: context,
+
+      builder: (ctx) {
+        return AlertDialog(
+
+          title: const Text('Ange hematokrit (%)'),
+          content: TextField(
+            controller: controller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(
+              hintText: 'Ange hematokrit % (0–100)',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Avbryt'),
+            ),
+            TextButton(
+              onPressed: () {
+                final parsed = double.tryParse(controller.text);
+                if (parsed != null && parsed >= 0 && parsed <= 100) {
+                  // Convert [0–100] back to [0.0–1.0] range
+                  context.read<DialysisViewModel>().hematocritLevel = parsed / 100.0;
+                  Navigator.of(ctx).pop();
+                }
+              },
+              child: const Text('Ställ in'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,18 +100,11 @@ class DialysisView extends StatelessWidget {
       create: (_) => DialysisViewModel(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Dialysberäkning'),
+          title: const Text('Dialysberäkning'),
         ),
         body: Consumer<DialysisViewModel>(
           builder: (context, model, child) {
-            final textStyle = TextStyle(fontSize: 14);
-
-            // Create controllers with current values from the model
-            final _weightController =
-                TextEditingController(text: model.weight.toStringAsFixed(1));
-            final _hematocritController = TextEditingController(
-              text: (model.hematocritLevel * 100).toStringAsFixed(1),
-            );
+            final textStyle = Theme.of(context).textTheme.bodyLarge;
 
             return Column(
               children: [
@@ -41,90 +118,61 @@ class DialysisView extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Weight Input (TextField)
+                              // Weight Display & Edit Button
                               Padding(
                                 padding: const EdgeInsets.all(20.0),
                                 child: Row(
                                   children: [
+                                    // Display the current weight
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text('Vikt (kg)', style: textStyle),
-                                        SizedBox(height: 4),
-                                        Container(
-                                          width: 100,
-                                          height: 40,
-                                          child: TextField(
-                                            controller: _weightController,
-                                            keyboardType:
-                                                TextInputType.numberWithOptions(decimal: true),
-                                            inputFormatters: [
-                                              // Only allow digits and decimal point
-                                              FilteringTextInputFormatter.allow(
-                                                RegExp(r'^\d{0,3}(\.\d{0,2})?$'),
-                                              ),
-                                            ],
-                                            onSubmitted: (value) {
-                                              final parsed = double.tryParse(value);
-                                              // Validate parsed value (e.g., 0–300 kg)
-                                              if (parsed != null && parsed >= 0 && parsed <= 300) {
-                                                model.weight = parsed;
-                                              }
-                                            },
-                                            decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.symmetric(
-                                                vertical: 1,
-                                                horizontal: 4,
-                                              ),
-                                              suffix: Text('kg'),
-                                              border: OutlineInputBorder(),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "${model.weight.toStringAsFixed(0)} kg",
+                                              style: textStyle,
                                             ),
-                                            style: textStyle,
-                                          ),
+                                            const SizedBox(width: 8),
+                                            IconButton(
+                                              icon: const Icon(Icons.edit),
+                                              onPressed: () => _showWeightDialog(
+                                                context,
+                                                model.weight,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                    SizedBox(width: 50),
-                                    // Hematokrit Level Input (TextField)
+                                    const SizedBox(width: 50),
+                                    // Hematocrit Display & Edit Button
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text('Hematokritnivå (%)', style: textStyle),
-                                        SizedBox(height: 4),
-                                        Container(
-                                          width: 100,
-                                          height: 40,
-                                          child: TextField(
-                                            controller: _hematocritController,
-                                            keyboardType:
-                                                TextInputType.numberWithOptions(decimal: true),
-                                            inputFormatters: [
-                                              // Only allow digits and decimal point
-                                              FilteringTextInputFormatter.allow(
-                                                RegExp(r'^\d{0,3}(\.\d{0,2})?$'),
-                                              ),
-                                            ],
-                                            onChanged: (value) {
-                                              final parsed = double.tryParse(value);
-                                              // If parsed is within 0–100, store it as 0.0–1.0
-                                              if (parsed != null && parsed >= 0 && parsed <= 100) {
-                                                model.hematocritLevel = parsed / 100.0;
-                                              }
-                                            },
-                                            decoration: InputDecoration(
-                                              contentPadding: EdgeInsets.symmetric(
-                                                vertical: 1,
-                                                horizontal: 4,
-                                              ),
-                                              suffix: Text('%'),
-                                              border: OutlineInputBorder(),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Text(
+                                            "${ (model.hematocritLevel * 100)
+                                                  .toStringAsFixed(1)} %",
+                                              style: textStyle,
                                             ),
-                                            style: textStyle,
-                                          ),
+                                            const SizedBox(width: 8),
+                                            IconButton(
+                                              icon: const Icon(Icons.edit),
+                                              onPressed: () => _showHematocritDialog(
+                                                context,
+                                                model.hematocritLevel,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                    SizedBox(width: 8),
                                   ],
                                 ),
                               ),
@@ -136,7 +184,7 @@ class DialysisView extends StatelessWidget {
                                     'Citratnivå: ${model.citrateLevel.toStringAsFixed(1)}',
                                     style: textStyle,
                                   ),
-                                  Expanded(child: SizedBox()),
+                                  const Expanded(child: SizedBox()),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
@@ -161,13 +209,12 @@ class DialysisView extends StatelessWidget {
                                 value: model.citrateLevel.clamp(1.0, 4.0),
                                 interval: 0.5,
                                 showTicks: true,
-                                showLabels: true,
                                 stepSize: 0.5,
                                 onChanged: (dynamic value) {
                                   model.citrateLevel = value;
                                 },
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
 
                               // Blood Flow Input (SfSlider)
                               Text(
@@ -179,14 +226,21 @@ class DialysisView extends StatelessWidget {
                                 max: 300.0,
                                 value: model.bloodFlow.clamp(50.0, 300.0),
                                 interval: 25,
-                                showTicks: true,
-                                showLabels: true,
+                                thumbIcon: Container(
+                                  decoration: BoxDecoration(
+                                    color: model.isCitrateLocked
+                                        ? Colors.orange
+                                        : null, // set your desired color
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                                 stepSize: 5,
+                                showTicks: true,
                                 onChanged: (dynamic value) {
                                   model.bloodFlow = value;
                                 },
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
 
                               // Pre-Dilution Flow Input (SfSlider)
                               Text(
@@ -197,15 +251,22 @@ class DialysisView extends StatelessWidget {
                                 min: 500.0,
                                 max: 3000.0,
                                 value: model.preDilutionFlow.clamp(500.0, 3000.0),
-                                interval: 250,
+                                interval: 500,
                                 showTicks: true,
-                                showLabels: true,
+                                thumbIcon: Container(
+                                  decoration: BoxDecoration(
+                                    color: model.isCitrateLocked
+                                        ? Colors.orange
+                                        : null, // set your desired color
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                                 stepSize: 50,
                                 onChanged: (dynamic value) {
                                   model.preDilutionFlow = value;
                                 },
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
 
                               // Fluid Removal Input (SfSlider)
                               Text(
@@ -216,15 +277,14 @@ class DialysisView extends StatelessWidget {
                                 min: 0.0,
                                 max: 500.0,
                                 value: model.fluidRemoval.clamp(0.0, 500.0),
-                                interval: 25,
+                                interval: 100,
                                 showTicks: true,
-                                showLabels: true,
                                 stepSize: 25,
                                 onChanged: (dynamic value) {
                                   model.fluidRemoval = value;
                                 },
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
 
                               // Dialysate Flow Input (SfSlider)
                               Text(
@@ -237,13 +297,12 @@ class DialysisView extends StatelessWidget {
                                 value: model.dialysateFlow.clamp(500.0, 3000.0),
                                 interval: 250,
                                 showTicks: true,
-                                showLabels: true,
                                 stepSize: 50,
                                 onChanged: (dynamic value) {
                                   model.dialysateFlow = value;
                                 },
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
 
                               // Post-Dilution Flow Input (SfSlider)
                               Text(
@@ -256,7 +315,6 @@ class DialysisView extends StatelessWidget {
                                 value: model.postDilutionFlow.clamp(500.0, 5000.0),
                                 interval: 500,
                                 showTicks: true,
-                                showLabels: true,
                                 stepSize: 100,
                                 onChanged: (dynamic value) {
                                   model.postDilutionFlow = value;
@@ -285,12 +343,12 @@ class DialysisView extends StatelessWidget {
                     children: [
                       Text(
                         'Dialysdos (ml/kg/h): ${model.dose.toStringAsFixed(2)}',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
                         'Filtrationsfraktion: ${(model.filtrationFraction * 100).toStringAsFixed(2)}%',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
