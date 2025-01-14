@@ -41,6 +41,7 @@ firestore.rules
 .pub/
 /.firebase/
 /build/
+/packages/  
 
 # Symbolication related
 app.*.symbols

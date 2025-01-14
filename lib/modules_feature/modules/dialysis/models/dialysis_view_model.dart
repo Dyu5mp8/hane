@@ -16,6 +16,8 @@ class DialysisViewModel extends ChangeNotifier {
   double _preDilutionFlow = 1000.0;
   double _bloodFlow = 100.0;
 
+
+
   bool _isUpdating = false;
 
   // Getter and setter for weight

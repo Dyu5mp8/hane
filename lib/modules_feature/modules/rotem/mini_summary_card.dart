@@ -67,8 +67,6 @@ class MiniSummaryCard extends StatelessWidget {
           return 'CT';
         case RotemField.ctHeptem:
           return 'CT';
-        default:
-          return field.toString();
       }
     }
 
