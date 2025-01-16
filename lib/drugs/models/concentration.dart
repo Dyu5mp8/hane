@@ -6,11 +6,24 @@ class Concentration with EquatableMixin {
   final double amount;
   final String unit;
   final String? mixingInstructions;
+  final bool? isStockSolution;
+  final String? aliasUnit;
 
-  Concentration({required this.amount, required this.unit, this.mixingInstructions});
+  Concentration({
+    required this.amount,
+    required this.unit,
+    this.mixingInstructions,
+    this.isStockSolution,
+    this.aliasUnit,
+  });
 
-  Concentration.fromString({required this.amount, required String unit, this.mixingInstructions})
-      : unit = unit.replaceAll("μg", "mikrog");
+  Concentration.fromString({
+    required this.amount,
+    required String unit,
+    this.mixingInstructions,
+    this.isStockSolution,
+    this.aliasUnit,
+  }) : unit = unit.replaceAll("μg", "mikrog");
 
   factory Concentration.fromMap(Map<String, dynamic> map) {
     num amount = map['amount'] as num;
@@ -18,6 +31,8 @@ class Concentration with EquatableMixin {
       amount: amount.toDouble(),
       unit: map['unit'] as String,
       mixingInstructions: map['mixingInstructions'] as String?,
+      isStockSolution: map['isStockSolution'] as bool?,
+      aliasUnit: map['aliasUnit'] as String?,
     );
   }
 
@@ -26,11 +41,13 @@ class Concentration with EquatableMixin {
       'amount': amount,
       'unit': unit,
       'mixingInstructions': mixingInstructions,
+      'isStockSolution': isStockSolution,
+      'aliasUnit': aliasUnit,
     };
   }
 
   @override
-  List<Object?> get props => [amount, unit, mixingInstructions];
+  List<Object?> get props => [amount, unit, mixingInstructions, isStockSolution, aliasUnit];
 
   set amount(double newAmount) {
     if (amount != newAmount) {
@@ -38,9 +55,9 @@ class Concentration with EquatableMixin {
     }
   }
 
-  String normalizeFirstdUnit(){
+  String normalizeFirstdUnit() {
     return unit.replaceAll("mikrog", "μg").split('/')[0];
-    }
+  }
 
   set unit(String newUnit) {
     if (unit != newUnit) {
@@ -50,11 +67,15 @@ class Concentration with EquatableMixin {
 
   @override
   String toString() {
+    if (aliasUnit != null && aliasUnit!.isNotEmpty) {
+    
+      return "$amount $aliasUnit";
+    }
     var visuallyModifiedUnit = unit.replaceAll("mikrog", "μg");
     return "$amount $visuallyModifiedUnit";
   }
 
-  Map concentrationUnit = {
+  final Map concentrationUnit = {
     "mg": "mass",
     "g": "mass",
     "mL": "volume",

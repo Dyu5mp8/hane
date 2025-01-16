@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/drugs/ui_components/custom_chip_with_radio.dart';
 import 'package:hane/utils/unit_parser.dart';
 import 'package:hane/utils/validate_concentration_save.dart' as val;
 import 'package:hane/utils/unit_validator.dart';
@@ -19,6 +20,9 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
       TextEditingController();
   final TextEditingController mixingInstructionsController =
       TextEditingController();
+  final TextEditingController aliasUnitController = TextEditingController();
+
+  bool isStockSolution = false;
   final _formKey = GlobalKey<FormState>();
   List<Concentration> concentrations = [];
 
@@ -31,6 +35,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
   void dispose() {
     concentrationAmountController.dispose();
     mixingInstructionsController.dispose();
+    aliasUnitController.dispose();
     super.dispose();
   }
 
@@ -55,6 +60,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
           amount: UnitParser.normalizeDouble(concentrationAmountController.text),
           unit: '$selectedUnit/ml',
           mixingInstructions: mixingInstructionsController.text,
+          aliasUnit: aliasUnitController.text,
+          isStockSolution: isStockSolution,
         );
 
         if (editingIndex != null) {
@@ -68,8 +75,10 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
         // Clear form fields
         concentrationAmountController.clear();
         mixingInstructionsController.clear();
+        aliasUnitController.clear();
         selectedUnit = null;
         editingIndex = null;
+        isStockSolution = false;
       });
     }
   }
@@ -81,8 +90,10 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
       if (editingIndex != null &&
           concentrations.length <= editingIndex!) {
         editingIndex = null;
+        isStockSolution = false;
         concentrationAmountController.clear();
         mixingInstructionsController.clear();
+        aliasUnitController.clear();
         selectedUnit = null;
       }
     });
@@ -94,8 +105,10 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
       concentrationAmountController.text =
           concentration.amount.toString();
       selectedUnit = concentration.normalizeFirstdUnit();
+      isStockSolution = concentration.isStockSolution ?? false;
       mixingInstructionsController.text =
           concentration.mixingInstructions ?? '';
+      aliasUnitController.text = concentration.aliasUnit ?? '';
       editingIndex = index;
     });
   }
@@ -222,20 +235,41 @@ const SizedBox(height: 12),
                         ),
                         maxLines: 3,
                       ),
+                      const SizedBox(height: 12),
+                      // Alias Unit Input
+                      TextFormField(
+                        controller: aliasUnitController,
+                        decoration: InputDecoration(
+                          labelText: 'Alternativ benämning',
+                          hintStyle: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                          hintText: '(valfritt) T.ex. "3%", "1:1000" etc',
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          errorMaxLines: 2,
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       // Add or Save Button
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton.icon(
-                          icon: Icon(
-                            editingIndex != null ? Icons.save : Icons.add,
+                      Row(
+                        children: [
+                          Checkbox(value: isStockSolution, onChanged: (value) {
+                            setState(() {
+                              isStockSolution = value ?? false;
+                            });
+                          }),
+                          const Text('Stamlösning'),
+                          Expanded(child: SizedBox()),
+                          ElevatedButton.icon(
+                            icon: Icon(
+                              editingIndex != null ? Icons.save : Icons.add,
+                            ),
+                                             
+                            label: Text(
+                              editingIndex != null ? 'Spara ändringar' : 'Lägg till',
+                            ),
+                            onPressed: addOrUpdateConcentration,
                           ),
-                   
-                          label: Text(
-                            editingIndex != null ? 'Spara ändringar' : 'Lägg till',
-                          ),
-                          onPressed: addOrUpdateConcentration,
-                        ),
+                        ],
                       ),
                     ],
                   ),

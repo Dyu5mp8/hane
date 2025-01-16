@@ -3,12 +3,13 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hane/login/signup.dart';
+import 'package:hane/splash_screen.dart';
 import 'package:hane/theme_provider.dart';
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'app_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hane/startup_errors.dart';
+
 
 
 void main() {
@@ -64,9 +65,7 @@ class _MyAppState extends State<MyApp> {
         Widget homeWidget;
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          homeWidget = const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+         homeWidget = const SplashScreenWidget();
         } else if (snapshot.hasError) {
           homeWidget = GenericErrorWidget(
             errorMessage: 'Failed to initialize Firebase: ${snapshot.error}',

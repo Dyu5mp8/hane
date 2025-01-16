@@ -3,6 +3,8 @@ import 'package:hane/drugs/drug_detail/concentration_detail_view.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dialogs.dart';
 import 'package:hane/ui_components/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/ui_components/letter_icon.dart';
+
 
 class ConcentrationColumn extends StatelessWidget {
   final List<Concentration> concentrations;
@@ -17,6 +19,8 @@ class ConcentrationColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    
     Widget content = Column(
       children: [
         EditableRow(
@@ -27,6 +31,8 @@ class ConcentrationColumn extends StatelessWidget {
         ),
         ...concentrations.map((conc) => Row(
     children: [
+      if (conc.isStockSolution ?? false) const SizedBox(height: 10,child: LetterIcon(letter: "S")),
+      SizedBox(width: 2,),
        
 Text(
   conc.toString(),
