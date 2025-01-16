@@ -21,6 +21,60 @@ class _DialysisViewState extends State<DialysisView> {
     StandardDialysisPreset(weight: 70, label: "Standard (Baxter)"),
     CivaStandardDialysisPreset(weight: 70, label: "Standard (Civa)")
   ];
+Future<void> _showPresetSelectionDialog(BuildContext context) async {
+  await showDialog(
+    context: context,
+    builder: (dialogContext) {
+      // Wrap the dialog with a provider that supplies the existing DialysisViewModel.
+      return ChangeNotifierProvider.value(
+        value: Provider.of<DialysisViewModel>(context, listen: false),
+        child: Dialog(
+          child: Container(
+            width: double.infinity,
+            height: 300,
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'Välj startförslag',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: presets.length,
+                    itemBuilder: (ctx, index) {
+                      final preset = presets[index];
+                      return ListTile(
+                        title: Text(preset.label),
+                        onTap: () {
+                          // Access the provider directly from the dialog's context.
+                          context.read<DialysisViewModel>().loadDialysispreset(preset);
+                          setState(() {
+                            selectedPreset = preset;
+                          });
+                          Navigator.of(dialogContext).pop();
+                        },
+                      );
+                    },
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Avbryt'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
 
   Future<void> _showWeightDialog(
     BuildContext context,
@@ -119,32 +173,8 @@ class _DialysisViewState extends State<DialysisView> {
           builder: (context, model, child) {
             final textStyle = Theme.of(context).textTheme.bodyLarge;
 
-            return Column(
+               return Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: DropdownButton<DialysisPreset>(
-                    hint: const Text('Välj preset'),
-                    value: selectedPreset,
-                    isExpanded: true,
-                    items: presets.map((preset) {
-                      return DropdownMenuItem<DialysisPreset>(
-                        value: preset,
-                        child: Text(preset.label),
-                      );
-                    }).toList(),
-                    onChanged: (preset) {
-                      if (preset != null) {
-                        setState(() {
-                          selectedPreset = preset;
-                        });
-
-                        // Load selected preset using the current weight
-                        model.loadDialysispreset(preset);
-                      }
-                    },
-                  ),
-                ),
                 Expanded(
                   child: Stack(
                     children: [
@@ -159,6 +189,7 @@ class _DialysisViewState extends State<DialysisView> {
                               Padding(
                                 padding: const EdgeInsets.all(5.0),
                                 child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Column(
                                       crossAxisAlignment:
@@ -212,6 +243,12 @@ class _DialysisViewState extends State<DialysisView> {
                                         ),
                                       ],
                                     ),
+                                    Expanded(child: SizedBox()), // Align trailing to the right
+                                       ElevatedButton(
+                  onPressed: () => _showPresetSelectionDialog(context),
+                  child: Text('Välj startförslag'),
+                  
+                ),
                                   ],
                                 ),
                               ),
