@@ -3,19 +3,22 @@ import 'package:flutter/material.dart';
 class LetterIcon extends StatelessWidget {
 
   final String letter;
+  final Color? color;
 
-  const LetterIcon({super.key, required this.letter}) : assert(letter.length == 1, 'Letter must be a single character');
+  const LetterIcon({super.key, required this.letter, this.color}) : assert(letter.length == 1, 'Letter must be a single character');
 
   @override
   Widget build(BuildContext context) {
+    final Color effectiveColor = color ?? Theme.of(context).colorScheme.primary;
+
     return AspectRatio(
       aspectRatio: 1.0, // Ensures the container is square
       child: Container(
         // Removed padding for more space for the "S"
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.fromBorderSide(
-            BorderSide(color: Colors.blue, width: 1.0),
+            BorderSide(color: effectiveColor, width: 1.0),
           ),
         ),
         child: Center(
@@ -23,8 +26,8 @@ class LetterIcon extends StatelessWidget {
             // FittedBox will scale the text to fill available space
             child: Text(
               letter,
-              style: const TextStyle(
-                color: Colors.blue,
+              style: TextStyle(
+                color: effectiveColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 100, // Large base font size for scaling
               ),

@@ -31,11 +31,8 @@ class ConcentrationColumn extends StatelessWidget {
         ),
         ...concentrations.map((conc) => Row(
     children: [
-      if (conc.isStockSolution ?? false) const SizedBox(height: 10,child: LetterIcon(letter: "S")),
-      SizedBox(width: 2,),
-       
 Text(
-  conc.toString(),
+  "${conc.isStockSolution == true ? '● ' : ''}${conc.toString()}",
   style: TextStyle(
     color: (conc.mixingInstructions?.isEmpty ?? true) ? null : Colors.blue,
   ),

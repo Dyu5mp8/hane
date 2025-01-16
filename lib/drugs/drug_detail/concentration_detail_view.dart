@@ -1,4 +1,3 @@
-import 'package:accordion/accordion.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/concentration.dart';
 
@@ -7,65 +6,61 @@ class ConcentrationDetailView extends StatelessWidget {
 
   const ConcentrationDetailView(this.concentrations, {super.key});
 
-@override
-  build(context) => Scaffold(
-       
-        appBar: AppBar(
-          title: const Text('Spädningar'),
-        ),
-  body: Accordion(
-  headerPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-  paddingBetweenOpenSections: 8.0,
-  paddingBetweenClosedSections: 4.0,
-  maxOpenSections: 10,
-  scaleWhenAnimating: true,
-  initialOpeningSequenceDelay: 0,
-
-  contentBackgroundColor: Theme.of(context).colorScheme.primaryFixed,
-  children: concentrations
-      .where((concentration) => concentration.mixingInstructions?.isNotEmpty ?? false)
-      .map((concentration) => AccordionSection(
-            isOpen: true,
-            headerBackgroundColor: Theme.of(context).colorScheme.primary,
-      
-            headerBorderRadius: 20.0,
-            headerBorderWidth: 2,
-            contentBackgroundColor: const Color.fromARGB(255, 234, 228, 225),
-            contentBorderRadius: 8.0,
-            contentHorizontalPadding: 10,
-            contentVerticalPadding: 10,
-            header: Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                "${concentration.toString()} ${(concentration.isStockSolution ?? false) ? " (Stamlösning)" : ""}",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onInverseSurface,
-                ),
-              ),
-            ),
-
-             
-     
-            rightIcon: Icon(
-              Icons.expand_more,
-              color: Theme.of(context).colorScheme.inversePrimary,
-            ),
-            content: 
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '${concentration.mixingInstructions}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).colorScheme.onSurface,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Spädningar'),
+      ),
+      body: ListView(
+        children: concentrations
+            .where((concentration) => concentration.mixingInstructions?.isNotEmpty ?? false)
+            .map((concentration) => ExpansionTile(
+              initiallyExpanded: true,
+                  title: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "${concentration.getPrimaryRepresentation()} ${(concentration.isStockSolution ?? false) ? " (Stamlösning)" : ""}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                 
+                      ),
                     ),
+
+                    
+                    
                   ),
-                ),
-            
-          ))
-      .toList(),
-),
-);
-} 
+                  subtitle: concentration.getSecondaryRepresentation() != null
+                      ? Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            "(${concentration.getSecondaryRepresentation()!})",
+                            style: const TextStyle(
+                              fontSize: 16,
+    
+                            ),
+                          ),
+                        )
+                      : null,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '${concentration.mixingInstructions}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ))
+            .toList(),
+      ),
+    );
+  }
+}

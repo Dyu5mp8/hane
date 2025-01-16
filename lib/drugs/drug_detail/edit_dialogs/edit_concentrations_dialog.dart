@@ -299,7 +299,7 @@ const SizedBox(height: 12),
                   ),
                   child: ListTile(
                     title: Text(
-                      concentration.toString(),
+                        '${concentration.getPrimaryRepresentation()}${concentration.getSecondaryRepresentation() != null ? ' (${concentration.getSecondaryRepresentation()})' : ''}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: concentration.mixingInstructions != null &&

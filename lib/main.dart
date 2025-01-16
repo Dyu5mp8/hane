@@ -37,24 +37,32 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _initialization = initializeFirebase();
   }
-
-  Future<FirebaseApp> initializeFirebase() async {
-    try {
-      final app = await Firebase.initializeApp(
+Future<FirebaseApp> initializeFirebase() async {
+  try {
+    // Begin Firebase initialization and delay concurrently
+    final results = await Future.wait([
+      Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
-      );
+      ),
+      // Ensures a minimum of 3 seconds
+      Future.delayed(Duration(seconds: 1)),
+    ]);
 
-      var firestore = FirebaseFirestore.instance;
-      firestore.settings = const Settings(
-        persistenceEnabled: true,
-        cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
-      );
+    // Extract the FirebaseApp from the results (first item in the list)
+    final app = results[0] as FirebaseApp;
 
-      return app;
-    } catch (e) {
-      rethrow; // Propagate the error to be caught in the FutureBuilder
-    }
+    // Configure Firestore settings
+    var firestore = FirebaseFirestore.instance;
+    firestore.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+    );
+
+    return app;
+  } catch (e) {
+    rethrow; // Propagate errors to be caught by the FutureBuilder
   }
+}
 
   @override
   Widget build(BuildContext context) {

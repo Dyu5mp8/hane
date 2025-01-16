@@ -69,11 +69,23 @@ class Concentration with EquatableMixin {
   String toString() {
     if (aliasUnit != null && aliasUnit!.isNotEmpty) {
     
-      return "$amount $aliasUnit";
+      return "$aliasUnit";
     }
     var visuallyModifiedUnit = unit.replaceAll("mikrog", "μg");
     return "$amount $visuallyModifiedUnit";
   }
+
+  String getPrimaryRepresentation() {
+    return "$amount ${unit.replaceAll("mikrog", "μg")}";
+  }
+
+  String? getSecondaryRepresentation() {
+    if (aliasUnit == null || aliasUnit!.isEmpty) {
+      return null;
+    }
+    return "$aliasUnit";
+  }
+
 
   final Map concentrationUnit = {
     "mg": "mass",
