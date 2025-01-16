@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hane/modules_feature/modules/dialysis/models/dialysis_preset.dart';
+import 'package:hane/modules_feature/modules/dialysis/models/presets/standard_dialysis_preset_civa.dart';
+import 'package:hane/modules_feature/modules/dialysis/parameter_slider.dart';
+import 'package:hane/ui_components/blinking_icon.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:hane/ui_components/scroll_indicator.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
-
+import 'package:hane/modules_feature/modules/dialysis/models/presets/standard_dialysis_preset.dart';
 
 class DialysisView extends StatefulWidget {
   @override
@@ -13,9 +17,17 @@ class DialysisView extends StatefulWidget {
 class _DialysisViewState extends State<DialysisView> {
   final ScrollController _scrollController = ScrollController();
 
-  /// Utility method to show a dialog for editing weight
-  Future<void> _showWeightDialog(BuildContext context, double currentWeight) async {
-    final controller = TextEditingController(text: currentWeight.toStringAsFixed(1));
+  final List<DialysisPreset> presets = [
+    StandardDialysisPreset(weight: 70, label: "Standard (Baxter)"),
+    CivaStandardDialysisPreset(weight: 70, label: "Standard (Civa)")
+  ];
+
+  Future<void> _showWeightDialog(
+    BuildContext context,
+    double currentWeight,
+  ) async {
+    final controller =
+        TextEditingController(text: currentWeight.toStringAsFixed(1));
 
     await showDialog(
       context: context,
@@ -40,7 +52,7 @@ class _DialysisViewState extends State<DialysisView> {
                 final parsed = double.tryParse(controller.text);
                 if (parsed != null && parsed >= 0 && parsed <= 300) {
                   context.read<DialysisViewModel>().weight = parsed;
-                  Navigator.of(ctx).pop(); // Close dialog
+                  Navigator.of(ctx).pop();
                 }
               },
               child: const Text('Ställ in'),
@@ -51,18 +63,18 @@ class _DialysisViewState extends State<DialysisView> {
     );
   }
 
-  /// Utility method to show a dialog for editing hematocrit
-  Future<void> _showHematocritDialog(BuildContext context, double currentHct) async {
-    // Convert [0.0–1.0] to [0–100] for user input
-    final controller = TextEditingController(text: (currentHct * 100).toStringAsFixed(1));
+  Future<void> _showHematocritDialog(
+    BuildContext context,
+    double currentHct,
+  ) async {
+    final controller = TextEditingController(
+      text: (currentHct * 100).toStringAsFixed(1),
+    );
 
     await showDialog(
-
       context: context,
-
       builder: (ctx) {
         return AlertDialog(
-
           title: const Text('Ange hematokrit (%)'),
           content: TextField(
             controller: controller,
@@ -81,8 +93,8 @@ class _DialysisViewState extends State<DialysisView> {
               onPressed: () {
                 final parsed = double.tryParse(controller.text);
                 if (parsed != null && parsed >= 0 && parsed <= 100) {
-                  // Convert [0–100] back to [0.0–1.0] range
-                  context.read<DialysisViewModel>().hematocritLevel = parsed / 100.0;
+                  context.read<DialysisViewModel>().hematocritLevel =
+                      parsed / 100.0;
                   Navigator.of(ctx).pop();
                 }
               },
@@ -94,6 +106,7 @@ class _DialysisViewState extends State<DialysisView> {
     );
   }
 
+  DialysisPreset? selectedPreset;
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -108,6 +121,30 @@ class _DialysisViewState extends State<DialysisView> {
 
             return Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton<DialysisPreset>(
+                    hint: const Text('Välj preset'),
+                    value: selectedPreset,
+                    isExpanded: true,
+                    items: presets.map((preset) {
+                      return DropdownMenuItem<DialysisPreset>(
+                        value: preset,
+                        child: Text(preset.label),
+                      );
+                    }).toList(),
+                    onChanged: (preset) {
+                      if (preset != null) {
+                        setState(() {
+                          selectedPreset = preset;
+                        });
+
+                        // Load selected preset using the current weight
+                        model.loadDialysispreset(preset);
+                      }
+                    },
+                  ),
+                ),
                 Expanded(
                   child: Stack(
                     children: [
@@ -118,17 +155,16 @@ class _DialysisViewState extends State<DialysisView> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Weight Display & Edit Button
+                              // Weight & Hematocrit Section
                               Padding(
-                                padding: const EdgeInsets.all(20.0),
+                                padding: const EdgeInsets.all(5.0),
                                 child: Row(
                                   children: [
-                                    // Display the current weight
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text('Vikt (kg)', style: textStyle),
-                                        const SizedBox(height: 4),
                                         Row(
                                           children: [
                                             Text(
@@ -137,8 +173,10 @@ class _DialysisViewState extends State<DialysisView> {
                                             ),
                                             const SizedBox(width: 8),
                                             IconButton(
-                                              icon: const Icon(Icons.edit),
-                                              onPressed: () => _showWeightDialog(
+                                              icon: const Icon(Icons.edit,
+                                                  color: Colors.lightBlue),
+                                              onPressed: () =>
+                                                  _showWeightDialog(
                                                 context,
                                                 model.weight,
                                               ),
@@ -148,23 +186,24 @@ class _DialysisViewState extends State<DialysisView> {
                                       ],
                                     ),
                                     const SizedBox(width: 50),
-                                    // Hematocrit Display & Edit Button
                                     Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text('Hematokritnivå (%)', style: textStyle),
-                                        const SizedBox(height: 4),
+                                        Text('Hematokritnivå (%)',
+                                            style: textStyle),
                                         Row(
                                           children: [
                                             Text(
-                                            "${ (model.hematocritLevel * 100)
-                                                  .toStringAsFixed(1)} %",
+                                              "${(model.hematocritLevel * 100).toStringAsFixed(1)} %",
                                               style: textStyle,
                                             ),
                                             const SizedBox(width: 8),
                                             IconButton(
-                                              icon: const Icon(Icons.edit),
-                                              onPressed: () => _showHematocritDialog(
+                                              icon: const Icon(Icons.edit,
+                                                  color: Colors.lightBlue),
+                                              onPressed: () =>
+                                                  _showHematocritDialog(
                                                 context,
                                                 model.hematocritLevel,
                                               ),
@@ -177,180 +216,161 @@ class _DialysisViewState extends State<DialysisView> {
                                 ),
                               ),
 
-                              // Citrate Level Input (SfSlider)
-                              Row(
-                                children: [
-                                  Text(
-                                    'Citratnivå: ${model.citrateLevel.toStringAsFixed(1)}',
-                                    style: textStyle,
-                                  ),
-                                  const Expanded(child: SizedBox()),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text('Behåll citrat konstant', style: textStyle),
-                                      Transform.scale(
-                                        scale: 0.7, // Slightly smaller switch
-                                        child: Switch(
-                                          value: model.isCitrateLocked,
-                                          onChanged: (value) {
-                                            model.isCitrateLocked = value;
-                                          },
-                                          activeTrackColor: Colors.orange,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SfSlider(
-                                min: 1.0,
-                                max: 4.0,
-                                value: model.citrateLevel.clamp(1.0, 4.0),
+                              // Sliders using ParameterSlider
+                              ParameterSlider(
+                                label: 'Citratnivå',
+                                parameterSelector: (vm) => vm.citrateParam,
+                                onChanged: (vm, newVal) =>
+                                    vm.setCitrate(newVal),
                                 interval: 0.5,
-                                showTicks: true,
                                 stepSize: 0.5,
-                                onChanged: (dynamic value) {
-                                  model.citrateLevel = value;
-                                },
+                                showTicks: true,
+                                trailing: const CitrateSwitch(),
                               ),
                               const SizedBox(height: 5),
 
-                              // Blood Flow Input (SfSlider)
-                              Text(
-                                'Blodflöde (ml/min): ${model.bloodFlow.toStringAsFixed(1)}',
-                                style: textStyle,
-                              ),
-                              SfSlider(
-                                min: 50.0,
-                                max: 300.0,
-                                value: model.bloodFlow.clamp(50.0, 300.0),
+                              ParameterSlider(
+                                label: 'Blodflöde (ml/min)',
+                                parameterSelector: (vm) => vm.bloodFlowParam,
+                                onChanged: (vm, newVal) =>
+                                    vm.setBloodFlow(newVal),
                                 interval: 25,
-                                thumbIcon: Container(
-                                  decoration: BoxDecoration(
-                                    color: model.isCitrateLocked
-                                        ? Colors.orange
-                                        : null, // set your desired color
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
                                 stepSize: 5,
                                 showTicks: true,
-                                onChanged: (dynamic value) {
-                                  model.bloodFlow = value;
-                                },
+                                thumbColor: model.isCitrateLocked
+                                    ? Colors.orange
+                                    : null,
                               ),
                               const SizedBox(height: 5),
 
-                              // Pre-Dilution Flow Input (SfSlider)
-                              Text(
-                                'Predilutionsflöde (ml/h): ${model.preDilutionFlow.toStringAsFixed(1)}',
-                                style: textStyle,
-                              ),
-                              SfSlider(
-                                min: 500.0,
-                                max: 3000.0,
-                                value: model.preDilutionFlow.clamp(500.0, 3000.0),
+                              ParameterSlider(
+                                label: 'Predilutionsflöde (ml/h)',
+                                parameterSelector: (vm) =>
+                                    vm.preDilutionFlowParam,
+                                onChanged: (vm, newVal) =>
+                                    vm.setPreDilutionFlow(newVal),
                                 interval: 500,
-                                showTicks: true,
-                                thumbIcon: Container(
-                                  decoration: BoxDecoration(
-                                    color: model.isCitrateLocked
-                                        ? Colors.orange
-                                        : null, // set your desired color
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
                                 stepSize: 50,
-                                onChanged: (dynamic value) {
-                                  model.preDilutionFlow = value;
-                                },
+                                showTicks: true,
+                                thumbColor: model.isCitrateLocked
+                                    ? Colors.orange
+                                    : null,
                               ),
                               const SizedBox(height: 5),
 
-                              // Fluid Removal Input (SfSlider)
-                              Text(
-                                'Vätskeborttag (ml/h): ${model.fluidRemoval.toStringAsFixed(1)}',
-                                style: textStyle,
-                              ),
-                              SfSlider(
-                                min: 0.0,
-                                max: 500.0,
-                                value: model.fluidRemoval.clamp(0.0, 500.0),
+                              ParameterSlider(
+                                label: 'Vätskeborttag (ml/h)',
+                                parameterSelector: (vm) => vm.fluidRemovalParam,
+                                onChanged: (vm, newVal) =>
+                                    vm.setFluidRemoval(newVal),
                                 interval: 100,
-                                showTicks: true,
                                 stepSize: 25,
-                                onChanged: (dynamic value) {
-                                  model.fluidRemoval = value;
-                                },
+                                showTicks: true,
                               ),
                               const SizedBox(height: 5),
 
-                              // Dialysate Flow Input (SfSlider)
-                              Text(
-                                'Dialysatflöde (ml/h): ${model.dialysateFlow.toStringAsFixed(1)}',
-                                style: textStyle,
-                              ),
-                              SfSlider(
-                                min: 500.0,
-                                max: 3000.0,
-                                value: model.dialysateFlow.clamp(500.0, 3000.0),
+                              ParameterSlider(
+                                label: 'Dialysatflöde (ml/h)',
+                                parameterSelector: (vm) =>
+                                    vm.dialysateFlowParam,
+                                onChanged: (vm, newVal) =>
+                                    vm.setDialysateFlow(newVal),
                                 interval: 250,
-                                showTicks: true,
                                 stepSize: 50,
-                                onChanged: (dynamic value) {
-                                  model.dialysateFlow = value;
-                                },
+                                showTicks: true,
                               ),
                               const SizedBox(height: 8),
 
-                              // Post-Dilution Flow Input (SfSlider)
-                              Text(
-                                'Postdilutionsflöde (ml/h): ${model.postDilutionFlow.toStringAsFixed(1)}',
-                                style: textStyle,
-                              ),
-                              SfSlider(
-                                min: 500.0,
-                                max: 5000.0,
-                                value: model.postDilutionFlow.clamp(500.0, 5000.0),
+                              ParameterSlider(
+                                label: 'Postdilutionsflöde (ml/h)',
+                                parameterSelector: (vm) =>
+                                    vm.postDilutionFlowParam,
+                                onChanged: (vm, newVal) =>
+                                    vm.setPostDilutionFlow(newVal),
                                 interval: 500,
-                                showTicks: true,
                                 stepSize: 100,
-                                onChanged: (dynamic value) {
-                                  model.postDilutionFlow = value;
-                                  model.notifyListeners();
-                                },
+                                showTicks: true,
                               ),
+                              const SizedBox(height: 50),
                             ],
                           ),
                         ),
                       ),
-
-                      // Scroll Indicator
                       Positioned(
                         bottom: 15,
                         right: 15,
-                        child: ScrollIndicator(scrollController: _scrollController),
+                        child: ScrollIndicator(
+                            scrollController: _scrollController),
                       ),
                     ],
                   ),
                 ),
-
-                // Bottom section with computed fields
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 40),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Dialysdos (ml/kg/h): ${model.dose.toStringAsFixed(2)}',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Filtrationsfraktion: ${(model.filtrationFraction * 100).toStringAsFixed(2)}%',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                  child: Consumer<DialysisViewModel>(
+                    builder: (context, model, _) => Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Dialysdos (ml/kg/h): ${model.dose.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            Visibility(
+                              visible: model.doseWarning != null,
+                              maintainSize: true,
+                              maintainAnimation: true,
+                              maintainState: true,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 24, // desired width
+                                    height: 24, // desired height
+                                    child: IconButton(
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text('Varning'),
+                                              content:
+                                                  Text(model.doseWarning ?? ''),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed:
+                                                      Navigator.of(context).pop,
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: BlinkingIcon(
+                                          child: const Icon(
+                                        FontAwesome.circle_exclamation_solid,
+                                        size: 20,
+                                        color: Colors.deepOrange,
+                                      )), // Smaller icon size
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Filtrationsfraktion: ${(model.filtrationFraction * 100).toStringAsFixed(2)}%',
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
