@@ -66,6 +66,7 @@ class DialysisViewModel extends ChangeNotifier {
   // 1) CITRATE
   //    Moved your cross-updating logic from _onCitrateChanged.
   // ---------------------------------------------------------
+
   void setCitrate(double newValue) {
     if (!_isUpdating) {
       _isUpdating = true;

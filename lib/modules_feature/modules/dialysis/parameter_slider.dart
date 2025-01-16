@@ -51,25 +51,31 @@ class ParameterSlider extends StatelessWidget {
                   style: textStyle,
                 ),
                 SizedBox(width: 8),
-               Visibility(
-  visible: parameter.warning != null,
-  maintainSize: true,
-  maintainAnimation: true,
-  maintainState: true,
-  child: SizedBox(
-    width: 24, // desired width
-    height: 24, // desired height
-    child: IconButton(
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(), 
-      onPressed: () {
-        _showWarningDialog(context, parameter);
-      },
-      icon: BlinkingIcon(key :Key(label),child: const Icon(FontAwesome.circle_exclamation_solid, size: 20, color: Colors.deepOrange,)), // Smaller icon size
-    ),
-  ),
-),
-Expanded(child:SizedBox()), // Align trailing to the right
+                Visibility(
+                  visible: parameter.warning != null,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  child: SizedBox(
+                    width: 24, // desired width
+                    height: 24, // desired height
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        _showWarningDialog(context, parameter);
+                      },
+                      icon: BlinkingIcon(
+                          key: Key(label),
+                          child: const Icon(
+                            FontAwesome.circle_exclamation_solid,
+                            size: 20,
+                            color: Colors.deepOrange,
+                          )), // Smaller icon size
+                    ),
+                  ),
+                ),
+                Expanded(child: SizedBox()), // Align trailing to the right
                 trailing ?? const SizedBox(),
               ],
             ),
@@ -92,8 +98,7 @@ Expanded(child:SizedBox()), // Align trailing to the right
                   : null,
               onChangeEnd: (_) {
                 if (parameter.warning != null)
-                _showWarningDialog(context, parameter);
-                
+                  _showWarningDialog(context, parameter);
               },
               onChanged: (dynamic newVal) {
                 onChanged(model, newVal as double);
@@ -121,8 +126,6 @@ Expanded(child:SizedBox()), // Align trailing to the right
         );
       },
     );
-
-
   }
 }
 

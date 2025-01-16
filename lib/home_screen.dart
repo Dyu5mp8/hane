@@ -383,30 +383,34 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final Map<String, String> _drugSearchCache = {};
+List<Drug> _filterDrugs(List<Drug> drugs) {
+  final searchQuery = _searchQuery.toLowerCase();
 
-  List<Drug> _filterDrugs(List<Drug> drugs) {
-    final searchQuery = _searchQuery.toLowerCase();
+  return drugs.where((drug) {
+    // Build/cache the combined string of the drug’s name + brand names
+    if (!_drugSearchCache.containsKey(drug.name)) {
+      _drugSearchCache[drug.name!] = [
+        drug.name?.toLowerCase(),
+        ...?drug.brandNames?.map((brand) => brand.toString().toLowerCase()),
+      ].join(' ');
+    }
 
-    return drugs.where((drug) {
-      // Combine the name and brand names into one searchable string
-      if (!_drugSearchCache.containsKey(drug.name)) {
-        _drugSearchCache[drug.name!] = [
-          drug.name?.toLowerCase(),
-          ...?drug.brandNames?.map((brand) => brand.toString().toLowerCase())
-        ].join(' ');
-      }
+    final combinedString = _drugSearchCache[drug.name!]!;
+    final matchesSearchQuery = combinedString.contains(searchQuery);
 
-      final combinedString = _drugSearchCache[drug.name!];
-
-      // Search within the combined string
-      final matchesSearchQuery = combinedString!.contains(searchQuery);
-      final matchesCategory = _selectedCategory == null ||
+    // If there’s a search term, ignore category filtering:
+    // Category filtering only applies if the search query is empty.
+    bool matchesCategory;
+    if (searchQuery.isNotEmpty) {
+      matchesCategory = true; 
+    } else {
+      matchesCategory = _selectedCategory == null ||
           (drug.categories?.contains(_selectedCategory) ?? false);
+    }
 
-      return matchesSearchQuery && matchesCategory;
-    }).toList();
-  }
-
+    return matchesSearchQuery && matchesCategory;
+  }).toList();
+}
 
   BottomNavigationBar _buildBottomNavBar() {
     return BottomNavigationBar(
