@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/dialysis/dialysis_info_view.dart';
+import 'package:hane/modules_feature/modules/dialysis/dialysis_result.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_preset.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/presets/standard_dialysis_preset_civa.dart';
 import 'package:hane/modules_feature/modules/dialysis/parameter_slider.dart';
@@ -155,7 +156,7 @@ class _DialysisViewState extends State<DialysisView> {
                     ],
                   ),
                 ),
-                _buildFooter(context, model),
+                DialysisResult(),
               ],
             );
           },
@@ -172,7 +173,7 @@ class _DialysisViewState extends State<DialysisView> {
         children: [
           _buildEditableText(context, 'Vikt (kg)', '${model.weight.toStringAsFixed(0)} kg', () => _showInputDialog(context, 'Vikt', 'Ange patientvikt', model.weight, (value) => model.weight = value), textStyle),
           const SizedBox(width: 50),
-          _buildEditableText(context, 'Hematokritnivå (%)', '${(model.hematocritLevel * 100).toStringAsFixed(1)} %', () => _showInputDialog(context, 'Ange hematokrit (%)', 'Ange hematokrit % (0–100)', model.hematocritLevel * 100, (value) => model.hematocritLevel = value / 100), textStyle),
+          _buildEditableText(context, 'Hematokrit (%)', '${(model.hematocritLevel * 100).toStringAsFixed(1)} %', () => _showInputDialog(context, 'Ange hematokrit (%)', 'Ange hematokrit % (0–100)', model.hematocritLevel * 100, (value) => model.hematocritLevel = value / 100), textStyle),
           Expanded(child: SizedBox()), // Align trailing to the right
         ],
       ),
@@ -186,7 +187,7 @@ class _DialysisViewState extends State<DialysisView> {
         Text(label, style: textStyle),
         Row(
           children: [
-            Text(value, style: textStyle),
+            Text(value, style: textStyle?.copyWith(fontWeight: FontWeight.bold, fontSize: 18)),
             const SizedBox(width: 8),
             IconButton(icon: const Icon(Icons.edit, color: Colors.lightBlue), onPressed: onEdit),
           ],
@@ -259,69 +260,5 @@ class _DialysisViewState extends State<DialysisView> {
     );
   }
 
-  Widget _buildFooter(BuildContext context, DialysisViewModel model) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 30, top:10 ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Dialysdos (ml/kg/h): ${model.dose.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Visibility(
-                visible: model.doseWarning != null,
-                maintainSize: true,
-                maintainAnimation: true,
-                maintainState: true,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Varning'),
-                                content: Text(model.doseWarning ?? ''),
-                                actions: [
-                                  TextButton(
-                                    onPressed: Navigator.of(context).pop,
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        icon: BlinkingIcon(
-                          child: const Icon(
-                            FontAwesome.circle_exclamation_solid,
-                            size: 20,
-                            color: Colors.deepOrange,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'Filtrationsfraktion: ${(model.filtrationFraction * 100).toStringAsFixed(2)}%',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
+
 }

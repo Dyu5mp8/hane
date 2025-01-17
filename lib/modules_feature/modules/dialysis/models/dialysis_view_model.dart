@@ -56,8 +56,8 @@ class DialysisViewModel extends ChangeNotifier {
 
   final DialysisParameter postDilutionFlowParam = DialysisParameter(
     initialValue: 1500.0,
-    minValue: 500.0,
-    maxValue: 5000.0,
+    minValue: 0.0,
+    maxValue: 4000.0,
   );
 
   // Some fields that remain simple:

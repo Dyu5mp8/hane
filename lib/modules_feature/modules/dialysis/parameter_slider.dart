@@ -11,8 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_parameter.dart';
-
-class ParameterSlider extends StatelessWidget {
+class ParameterSlider extends StatefulWidget {
   final String label;
   final DialysisParameter Function(DialysisViewModel) parameterSelector;
   final void Function(DialysisViewModel, double) onChanged;
@@ -35,11 +34,24 @@ class ParameterSlider extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _ParameterSliderState createState() => _ParameterSliderState();
+}
+class _ParameterSliderState extends State<ParameterSlider> {
+  // GlobalKey to access the blinking icon state
+  final GlobalKey<BlinkingIconState> _blinkKey = GlobalKey<BlinkingIconState>();
+
+  // Track the previous warning visibility for this slider
+  bool _wasWarningPreviouslyVisible = false;
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<DialysisViewModel>(
       builder: (context, model, child) {
-        final parameter = parameterSelector(model);
+        final parameter = widget.parameterSelector(model);
         final textStyle = Theme.of(context).textTheme.bodyLarge;
+        
+        // Current warning visibility for this parameter
+        bool isWarningCurrentlyVisible = parameter.warning != null;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,18 +59,18 @@ class ParameterSlider extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  '$label: ${parameter.value.toStringAsFixed(1)}',
+                  '${widget.label}: ${parameter.value.toStringAsFixed(1)}',
                   style: textStyle,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Visibility(
-                  visible: parameter.warning != null,
+                  visible: isWarningCurrentlyVisible,
                   maintainSize: true,
                   maintainAnimation: true,
                   maintainState: true,
                   child: SizedBox(
-                    width: 24, // desired width
-                    height: 24, // desired height
+                    width: 24,
+                    height: 24,
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -66,42 +78,51 @@ class ParameterSlider extends StatelessWidget {
                         _showWarningDialog(context, parameter);
                       },
                       icon: BlinkingIcon(
-                          key: Key(label),
-                          child: const Icon(
-                            FontAwesome.circle_exclamation_solid,
-                            size: 20,
-                            color: Colors.deepOrange,
-                          )), // Smaller icon size
+                        key: _blinkKey, // Assign the global key
+                        child: const Icon(
+                          Icons.error_outline,
+                          size: 23,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                Expanded(child: SizedBox()), // Align trailing to the right
-                trailing ?? const SizedBox(),
+                Expanded(child: const SizedBox()),
+                widget.trailing ?? const SizedBox(),
               ],
             ),
             const SizedBox(height: 4),
             SfSlider(
               min: parameter.minValue,
               max: parameter.maxValue,
-              value:
-                  parameter.value.clamp(parameter.minValue, parameter.maxValue),
-              interval: interval,
-              stepSize: stepSize,
-              showTicks: showTicks,
-              thumbIcon: thumbColor != null
+              value: parameter.value.clamp(parameter.minValue, parameter.maxValue),
+              interval: widget.interval,
+              stepSize: widget.stepSize,
+              showTicks: widget.showTicks,
+              thumbIcon: widget.thumbColor != null
                   ? Container(
                       decoration: BoxDecoration(
-                        color: thumbColor,
+                        color: widget.thumbColor,
                         shape: BoxShape.circle,
                       ),
                     )
                   : null,
               onChangeEnd: (_) {
-                if (parameter.warning != null)
+                // Check for first-time warning transition upon slider release
+                if (!_wasWarningPreviouslyVisible && isWarningCurrentlyVisible) {
+                  _blinkKey.currentState?.restartBlink();
+                }
+                // Update previous warning state after handling
+                _wasWarningPreviouslyVisible = isWarningCurrentlyVisible;
+
+                // If warning exists, show dialog
+                if (parameter.warning != null) {
                   _showWarningDialog(context, parameter);
+                }
               },
               onChanged: (dynamic newVal) {
-                onChanged(model, newVal as double);
+                widget.onChanged(model, newVal as double);
               },
             ),
           ],
@@ -110,7 +131,7 @@ class ParameterSlider extends StatelessWidget {
     );
   }
 
-  _showWarningDialog(BuildContext context, DialysisParameter parameter) {
+  void _showWarningDialog(BuildContext context, DialysisParameter parameter) {
     showDialog(
       context: context,
       builder: (context) {
@@ -128,7 +149,6 @@ class ParameterSlider extends StatelessWidget {
     );
   }
 }
-
 class CitrateSwitch extends StatelessWidget {
   const CitrateSwitch({super.key});
   @override

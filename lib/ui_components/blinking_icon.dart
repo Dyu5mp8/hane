@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 class BlinkingIcon extends StatefulWidget {
   final Widget child;
   final Duration duration;
@@ -11,10 +10,10 @@ class BlinkingIcon extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _BlinkingIconState createState() => _BlinkingIconState();
+  BlinkingIconState createState() => BlinkingIconState();
 }
 
-class _BlinkingIconState extends State<BlinkingIcon>
+class BlinkingIconState extends State<BlinkingIcon>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -29,10 +28,8 @@ class _BlinkingIconState extends State<BlinkingIcon>
       duration: widget.duration,
     );
 
-    // Create a tween for opacity from fully visible to invisible.
     _animation = Tween<double>(begin: 1.0, end: 0.0).animate(_controller);
 
-    // Loop the animation for a specified number of times.
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         if (_blinkCount < _maxBlinks) {
@@ -46,6 +43,13 @@ class _BlinkingIconState extends State<BlinkingIcon>
       }
     });
 
+    _controller.forward();
+  }
+
+  /// Method to restart blinking animation
+  void restartBlink() {
+    _blinkCount = 0;
+    _controller.reset();
     _controller.forward();
   }
 
