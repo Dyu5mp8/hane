@@ -20,9 +20,9 @@ class CivaStandardDialysisPreset implements DialysisPreset {
   double suggestedBloodFlow() {
     switch (weight) {
       case var w when w < 70:
-        return 200;
+        return 130;
       case var w when w >= 70 && w < 90:
-        return 225;
+        return 150 + (w - 70) * (200 - 150) / (90 - 70);
       case var w when w >= 90:
         return 250;
       default:
@@ -60,17 +60,8 @@ double suggestedPostdilutionFlow() {
 
   @override
   suggestedPredilutionFlow() {
-    switch (weight) {
-      case var w when w < 70:
-        return 1300;
-      case var w when w >= 70 && w < 90:
-        return 1500 + (w - 70) * (2000 - 1500) / (90 - 70);
-      case var w when w >= 90:
-        return 2000;
-      default:
-        throw Exception('Unexpected weight value: $weight');
+    return suggestedBloodFlow() * 10;
     }
   }
   
 
-}

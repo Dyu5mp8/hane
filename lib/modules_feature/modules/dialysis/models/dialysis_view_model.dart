@@ -4,7 +4,11 @@ import 'package:hane/modules_feature/modules/dialysis/models/presets/standard_di
 import 'dialysis_parameter.dart'; // path to the new class
 
 class DialysisViewModel extends ChangeNotifier {
-  DialysisViewModel();
+  DialysisViewModel() {
+    // Initialize with a standard preset as soon as the ViewModel is created
+    loadDialysispreset(StandardDialysisPreset(weight: 70, label: 'Standard'));
+  }
+
 
   // Example parameters:
   final DialysisParameter citrateParam = DialysisParameter(
@@ -58,7 +62,7 @@ class DialysisViewModel extends ChangeNotifier {
 
   // Some fields that remain simple:
   double _hematocritLevel = 0.30; // range [0–1] => 30%
-  double _weight = 93.0; // in kg
+  double _weight = 70.0; // in kg
   bool _isCitrateLocked = true;
   bool _isUpdating = false; // to prevent circular updates
 
@@ -163,9 +167,7 @@ class DialysisViewModel extends ChangeNotifier {
   // 5) Load preset
   // ---------------------------------------------------------
   void loadDialysispreset(DialysisPreset preset) {
-    if (isCitrateLocked) {
-      isCitrateLocked = false;
-    }
+    isCitrateLocked = true;
     preset.setWeight(_weight);
     setBloodFlow(preset.suggestedBloodFlow());
     setDialysateFlow(preset.suggestedDialysateFlow());
