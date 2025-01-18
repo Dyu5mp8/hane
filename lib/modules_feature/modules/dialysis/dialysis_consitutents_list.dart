@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hane/ui_components/auto_scroll_expansion_tile.dart';
+
 
 class DialysisConsitutentsList extends StatelessWidget {
   const DialysisConsitutentsList({Key? key}) : super(key: key);
@@ -79,44 +81,44 @@ class DialysisConsitutentsList extends StatelessWidget {
       children: [
         Text(
           "Innehåll dialysvätskor",
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(decoration: TextDecoration.underline),
+          style: Theme.of(context)
+              .textTheme
+              .headlineLarge
+              ?.copyWith(decoration: TextDecoration.underline),
         ),
         ...dialysisData.map((group) {
-        // Top-level tile (no extra indentation here)
-        return ExpansionTile(
-          title: Text(group['title'] as String),
-          children: [
-            // Add some indentation for second-level tiles
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Column(
-                children: (group['children'] as List).map((solution) {
-                  return ExpansionTile(
-                    title: Text(solution['title'] as String),
-                    // Indent the row data even more
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0),
-                        child: Column(
-                          children: (solution['rows'] as List).map((row) {
-                            return ListTile(
-                              dense: true,
-                              title: Text(row['label'] as String),
-                              trailing: Text(row['value'] as String),
-                              // Additional indentation, if desired:
-                              contentPadding: const EdgeInsets.only(left: 8.0, right: 16.0),
-                            );
-                          }).toList(),
+          return AutoScrollExpansionTile(
+            title: Text(group['title'] as String),
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Column(
+                  children: (group['children'] as List).map((solution) {
+                    return AutoScrollExpansionTile(
+                      title: Text(solution['title'] as String),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          child: Column(
+                            children: (solution['rows'] as List).map((row) {
+                              return ListTile(
+                                dense: true,
+                                title: Text(row['label'] as String),
+                                trailing: Text(row['value'] as String),
+                                contentPadding: const EdgeInsets.only(left: 8.0, right: 16.0),
+                              );
+                            }).toList(),
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                }).toList(),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
-          ],
-        );
-      }).toList(),
-    ]);
+            ],
+          );
+        }).toList(),
+      ],
+    );
   }
 }

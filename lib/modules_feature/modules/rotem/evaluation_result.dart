@@ -34,7 +34,7 @@ final String strategyName;
       
             // If there are no actions, show a placeholder text
             if (actions.isEmpty)
-              const Text('Inga föreslagna åtgärder')
+              const Text('Inga föreslagna åtgärder utifrån givna resultat.')
             else
               // Otherwise, display each key-value pair in its own Container
               for (final entry in actions.entries) ...[

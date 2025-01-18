@@ -79,6 +79,7 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     final mlExtem = evaluator.mlExtem;   
         final ctHeptem = evaluator.ctHeptem;   // ML EXTEM
 
+
     //----------------------------------------------------------------------
     // 1) Fibrinogen if A5 FIBTEM < 12 mm
     //----------------------------------------------------------------------

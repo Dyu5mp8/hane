@@ -99,6 +99,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
                     if (evaluator.strategy?.validateAll(_inputValues) == null)
                       ElevatedButton(
                         onPressed: () {
+                                evaluator.parseAndSet(_inputValues);
                           showResultsModal();
                         },
                         child: const Text('Gå till resultat'),
