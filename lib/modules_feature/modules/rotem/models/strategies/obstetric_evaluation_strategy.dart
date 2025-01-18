@@ -26,7 +26,7 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         section: RotemSection.intem,
         // Example threshold for out-of-range
         maxValue: 240,
-        isRequired: true
+        isRequired: false
   
       ),
       const FieldConfig(
@@ -189,9 +189,6 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     }
     if (ctExtemVal == null || ctExtemVal.isEmpty) {
       return 'CT EXTEM måste fyllas i.';
-    }
-    if (ctIntemVal == null || ctIntemVal.isEmpty) {
-      return 'CT INTEM måste fyllas i.';
     }
 
     return null;

@@ -10,6 +10,34 @@ class DialysisInfoView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mer information'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () {
+              // Show a dialog with more information
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Om denna modul'),
+                    content: const Text(
+                      'Denna modul bygger på hjälpmedlet "Dialysordinationsblad IVA Huddinge (20220625) utformat av Jonatan Grip. Ordination av kontinuerlig dialys kräver kunskap och erfarenhet. Denna modul är endast ett räknehjälpmedel. Varken upphovsmännen eller appskaparen ansvarar för eventuella fel eller skador som kan uppstå vid användning av detta hjälpmedel.', 
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Stäng'),
+                      ),
+                    ],
+                  );
+                },
+              );
+           
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

@@ -98,6 +98,13 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
   @override
   List<FieldConfig> getRequiredFields() {
     return [
+            const FieldConfig(
+        label: "A5 FIBTEM",
+        field: RotemField.a5Fibtem,
+        section: RotemSection.fibtem,
+        minValue: 11,
+        isRequired: false,
+      ),
       const FieldConfig(
         label: "CT EXTEM",
         field: RotemField.ctExtem,
@@ -109,14 +116,9 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         field: RotemField.ctIntem,
         section: RotemSection.intem,
         maxValue: 240,
+        isRequired: false
       ),
-      const FieldConfig(
-        label: "A5 FIBTEM",
-        field: RotemField.a5Fibtem,
-        section: RotemSection.fibtem,
-        minValue: 11,
-        isRequired: false,
-      ),
+
       const FieldConfig(
         label: "A10 FIBTEM",
         field: RotemField.a10Fibtem,

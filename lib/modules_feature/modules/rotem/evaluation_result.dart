@@ -4,42 +4,93 @@ import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/ui_components/dosage_snippet.dart';
 
 class EvaluationResult extends StatelessWidget {
-  final RotemEvaluator evaluator;
+final Map<String, List<RotemAction>> actions;
+final String strategyName;
 
-  const EvaluationResult({Key? key, required this.evaluator}) : super(key: key);
+  const EvaluationResult({
+    Key? key,
+    this.strategyName = 'Fel: klinisk kontext okänd',
+    required this.actions,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, List<RotemAction>> actions = evaluator.evaluate();
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Divider(thickness: 1),
-          const SizedBox(height: 8),
-          Text(
-            'Vald klinisk kontext: ${evaluator.strategy.name}',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          const Text('Överväg dessa åtgärder i kombination med klinisk bedömning:'),
-          const SizedBox(height: 6),
-          if (actions.isEmpty)
-            const Text('Inga föreslagna åtgärder')
-          else
-            for (final entry in actions.entries) ...[
-              for (int i = 0; i < entry.value.length; i++) ...[
-                DosageSnippet(
-                  dosage: entry.value[i].dosage,
-                  onDosageUpdated: (_) {},
-                  availableConcentrations: entry.value[i].availableConcentrations,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 40),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Divider(thickness: 1),
+            const SizedBox(height: 8),
+            Text(
+              'Vald klinisk kontext: ${strategyName}',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            const Text('Överväg dessa åtgärder i kombination med klinisk bedömning:'),
+            const SizedBox(height: 6),
+      
+            // If there are no actions, show a placeholder text
+            if (actions.isEmpty)
+              const Text('Inga föreslagna åtgärder')
+            else
+              // Otherwise, display each key-value pair in its own Container
+              for (final entry in actions.entries) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+               
+                
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // The entry key as a descriptor
+                      Text(
+                        entry.key,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // List all associated dosages, with "ELLER" in between
+                      for (int i = 0; i < entry.value.length; i++) ...[
+                        DosageSnippet(
+                          dosage: entry.value[i].dosage,
+                          onDosageUpdated: (_) {},
+                          availableConcentrations: entry.value[i].availableConcentrations,
+                        ),
+                        if (i < entry.value.length - 1)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4),
+                            child: Row(
+                              children: const [
+                                Expanded(child: Divider()),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    'ELLER',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontStyle: FontStyle.italic),
+                                  ),
+                                ),
+                                Expanded(child: Divider()),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ],
+                  ),
                 ),
-                if (i < entry.value.length - 1) const Text("Eller"),
               ],
-            ],
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -26,12 +26,11 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     final mlExtem  = evaluator.mlExtem;
     final li30Extem = evaluator.li30Extem;
         final ctHeptem = evaluator.ctHeptem;
-
+    
     //----------------------------------------------------------------------
     // 1) Fibrinogen if (A5 FIBTEM < 8) AND (A5 EXTEM < 25)
     //----------------------------------------------------------------------
-    if (fieldMap[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.low &&
-        fieldMap[RotemField.a5Extem]?.result(a5Extem) == Result.low) {
+    if (fieldMap[RotemField.a5Fibtem]?.result(a5Fibtem) == Result.low) {
       actions['Lågt fibrinogen'] = [RotemAction(
         dosage: Dosage(
           instruction: "Riastap eller fibryga. Mål är A5 FIBTEM ≥ 10 mm.",
@@ -40,6 +39,8 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
         ),
       )];
     }
+
+
 
     //----------------------------------------------------------------------
     // 2) Platelets if (A5 FIBTEM ≥ 8) AND (A5 EXTEM < 25)
@@ -102,9 +103,9 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     //----------------------------------------------------------------------
     if (fieldMap[RotemField.mlExtem]?.result(mlExtem) == Result.high ||
         fieldMap[RotemField.li30Extem]?.result(li30Extem) == Result.high) {
-      actions['Cyklokapron'] = [RotemAction(
+      actions['ML EXTEM > 85% eller LI30 EXTEM > 50%'] = [RotemAction(
         dosage: Dosage(
-          instruction: "ML EXTEM > 85% eller LI30 EXTEM > 50% => Ge Cyklokapron",
+          instruction: "Cyklokapron",
           administrationRoute: "IV",
           lowerLimitDose: Dose.fromString(amount: 1, unit: "g"),
           higherLimitDose: Dose.fromString(amount: 2, unit: "g"),
@@ -152,6 +153,7 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
         field: RotemField.ctIntem,
         section: RotemSection.intem,
         maxValue: 280,
+        isRequired: false
       ),
       const FieldConfig(
         label: 'ML EXTEM',
@@ -176,7 +178,6 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     final a5FibtemVal = values[RotemField.a5Fibtem];
     final a5ExtemVal  = values[RotemField.a5Extem];
     final ctExtemVal  = values[RotemField.ctExtem];
-    final ctIntemVal  = values[RotemField.ctIntem];
 
     if (a5FibtemVal == null || a5FibtemVal.isEmpty) {
       return 'A5 FIBTEM måste fyllas i.';
@@ -186,9 +187,6 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     }
     if (ctExtemVal == null || ctExtemVal.isEmpty) {
       return 'CT EXTEM måste fyllas i.';
-    }
-    if (ctIntemVal == null || ctIntemVal.isEmpty) {
-      return 'CT INTEM måste fyllas i.';
     }
 
     return null;

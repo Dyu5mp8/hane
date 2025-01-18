@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/rotem/evaluation_result.dart';
 import 'package:hane/modules_feature/modules/rotem/mini_summary_card.dart';
@@ -30,16 +32,16 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     LiverFailureEvaluationStrategy(),
   ];
 
+  final RotemEvaluator evaluator = RotemEvaluator();
+
   int? _selectedStrategyIndex;
   RotemEvaluationStrategy? get selectedStrategy =>
-      _selectedStrategyIndex == null
-          ? null
-          : _allStrategies[_selectedStrategyIndex!];
+      _selectedStrategyIndex != null
+          ? _allStrategies[_selectedStrategyIndex!]
+          : null;
 
   List<GlobalKey<FormState>> _formKeys = [];
   List<bool?> _stepValidity = [];
-
-  bool _wizardCompleted = false;
   bool _shouldShowSummary = false;
   final Map<RotemField, String> _inputValues = {};
 
@@ -80,7 +82,6 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
               child: Column(
                 children: [
                   _buildStepperContent(),
-                  if (_wizardCompleted) _buildEvaluationResults(),
                 ],
               ),
             ),
@@ -91,15 +92,13 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
                 child: Column(
                   children: [
                     MiniSummaryCard(
-                      strategy: selectedStrategy,
+                      strategy: evaluator.strategy,
                       inputValues: _inputValues,
                     ),
-                    if (selectedStrategy?.validateAll(_inputValues) == null)
+                    if (evaluator.strategy?.validateAll(_inputValues) == null)
                       ElevatedButton(
                         onPressed: () {
-                          setState(() {
-                            _wizardCompleted = true;
-                          });
+                          showResultsModal();
                         },
                         child: const Text('Gå till resultat'),
                       ),
@@ -145,10 +144,10 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     List<Step> steps = [
       Step(
         title: const Text('Välj kontext'),
-        subtitle: selectedStrategy == null
+        subtitle: evaluator.strategy == null
             ? null
             : Text(
-                'Vald klinisk kontext: ${selectedStrategy?.name}',
+                'Vald klinisk kontext: ${evaluator.strategy!.name}',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
         isActive: _currentStep == 0,
@@ -161,41 +160,55 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     ];
 
     // If a strategy is selected, dynamically build additional steps based on sections.
-    if (selectedStrategy != null) {
+    if (evaluator.strategy != null) {
+      // Define the desired order of sections
+      const sectionOrder = [
+        RotemSection.fibtem,
+        RotemSection.extem,
+        RotemSection.intem,
+        RotemSection.heptem,
+      ];
+
       // Group fields by section.
       final fieldsBySection = <RotemSection, List<FieldConfig>>{};
-      for (var fieldConfig in selectedStrategy!.getRequiredFields()) {
+      for (var fieldConfig in evaluator.strategy!.getRequiredFields()) {
         fieldsBySection
             .putIfAbsent(fieldConfig.section, () => [])
             .add(fieldConfig);
       }
 
-      // For each section, create a step.
-      int stepIndex = 1; // starting index for steps after the picker
-      fieldsBySection.forEach((section, fields) {
-        steps.add(
-          Step(
-            title: Text(section.name.toUpperCase()),
-            isActive: _currentStep == stepIndex,
-            state: _stepState(stepIndex),
-            content: Align(
-              alignment: Alignment.centerLeft,
-              child: Form(
-                key: _formKeys.length > stepIndex
-                    ? _formKeys[stepIndex]
-                    : GlobalKey<FormState>(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: fields.map((fieldConfig) {
-                    return _buildNumField(fieldConfig.label, fieldConfig.field);
-                  }).toList(),
+      // For each section in the desired order, create a step if it exists in the map.
+      int stepIndex = 1; // Starting index for steps after the picker
+      for (var section in sectionOrder) {
+        if (fieldsBySection.containsKey(section)) {
+          final fields = fieldsBySection[section]!;
+
+          // Create a step for the section
+          steps.add(
+            Step(
+              title: Text(section.name.toUpperCase()),
+              isActive: _currentStep == stepIndex,
+              state: _stepState(stepIndex),
+              content: Align(
+                alignment: Alignment.centerLeft,
+                child: Form(
+                  key: _formKeys.length > stepIndex
+                      ? _formKeys[stepIndex]
+                      : GlobalKey<FormState>(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: fields.map((fieldConfig) {
+                      return _buildNumField(
+                          fieldConfig.label, fieldConfig.field);
+                    }).toList(),
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-        stepIndex++;
-      });
+          );
+          stepIndex++;
+        }
+      }
     }
 
     return steps;
@@ -208,12 +221,18 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       selectedCategory: selectedStrategy?.name,
       onCategorySelected: (selectedCategory) {
         setState(() {
+          // First update the selected strategy index.
           _selectedStrategyIndex = _allStrategies.indexWhere(
             (s) => s.name == selectedCategory,
           );
+
+          // Now that selectedStrategy is updated, assign it to the evaluator.
+          evaluator.strategy = selectedStrategy;
+
           _inputValues.clear();
+          evaluator.clear();
           _currentStep = 0;
-          _wizardCompleted = false;
+
           _shouldShowSummary = false;
 
           // After selecting a strategy, determine the number of unique sections.
@@ -242,7 +261,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   }
 
   Widget _buildNumField(String label, RotemField field) {
-    final strategy = selectedStrategy;
+    final strategy = evaluator.strategy;
     if (strategy == null) return const SizedBox.shrink();
 
     late final FieldConfig fieldConfig;
@@ -265,8 +284,22 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
-            labelText: label,
-            labelStyle: const TextStyle(fontSize: 10),
+            label: fieldConfig.isRequired
+                ? RichText(
+                    text: TextSpan(
+                      text: '$label ',
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: '*',
+                          style: TextStyle(color: Colors.red, fontSize: 20),
+                        ),
+                      ],
+                    ),
+                  )
+                : Text(label),
             border: const OutlineInputBorder(),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
@@ -288,46 +321,30 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           onFieldSubmitted: (_) {
             FocusScope.of(context).nextFocus();
           },
+          onTapOutside: (event) {
+            final formState =
+                focusNode.context != null ? Form.of(focusNode.context!) : null;
+            setState(() {
+              if (formState != null) {
+                formState.save();
+              }
+            });
+
+            focusNode.unfocus();
+          },
         ),
       ),
     );
   }
 
-  Widget _buildEvaluationResults() {
-    if (selectedStrategy == null) {
-      return const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text('Ingen strategi vald. Vänligen välj en strategi.'),
-      );
-    }
-
-    double? parseField(RotemField f) => double.tryParse(_inputValues[f] ?? '');
-
-    final evaluator = RotemEvaluator(
-      ctFibtem: parseField(RotemField.ctFibtem),
-      a5Fibtem: parseField(RotemField.a5Fibtem),
-      a10Fibtem: parseField(RotemField.a10Fibtem),
-      ctExtem: parseField(RotemField.ctExtem),
-      a5Extem: parseField(RotemField.a5Extem),
-      a10Extem: parseField(RotemField.a10Extem),
-      mlExtem: parseField(RotemField.mlExtem),
-      li30Extem: parseField(RotemField.li30Extem),
-      ctIntem: parseField(RotemField.ctIntem),
-      ctHeptem: parseField(RotemField.ctHeptem),
-      strategy: selectedStrategy!,
-    );
-
-    return EvaluationResult(evaluator: evaluator);
-  }
-
   void _onStepTapped(int step) {
-    if (selectedStrategy == null && step > 0) {
+    if (evaluator.strategy == null && step > 0) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Välj en strategi först')));
       setState(() => _currentStep = 0);
       return;
     }
-    if (selectedStrategy != null && _shouldShowSummary == false) {
+    if (evaluator.strategy != null && _shouldShowSummary == false) {
       setState(() => _shouldShowSummary = true);
     }
     setState(() => _currentStep = step);
@@ -335,7 +352,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
   void _onStepContinue() {
     if (_currentStep == 0) {
-      if (selectedStrategy == null) {
+      if (evaluator.strategy == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Välj en strategi först')),
         );
@@ -360,8 +377,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     formKey.currentState?.save();
 
     if (_currentStep == _totalSteps - 1) {
-      final selectedStrategy = _allStrategies[_selectedStrategyIndex!];
-      final globalError = selectedStrategy.validateAll(_inputValues);
+      final globalError = evaluator.strategy!.validateAll(_inputValues);
 
       if (globalError != null) {
         showDialog(
@@ -382,33 +398,32 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
         return;
       }
 
-      setState(() => _wizardCompleted = true);
+      // Use the existing evaluator and update its fields in bulk
+      evaluator.parseAndSet(_inputValues);
 
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Inmatningen är färdig'),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Värden'),
-                const SizedBox(height: 8),
-                ..._inputValues.entries.map(
-                  (entry) => Text('${entry.key.name}: ${entry.value}'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+      // Display evaluation result in a modal dialog
+      showResultsModal();
 
+      // Optionally show a snackbar or perform other UI updates
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Inmatningen är färdig')),
       );
     } else {
       setState(() => _currentStep += 1);
     }
+  }
+
+  void showResultsModal() {
+    showModalBottomSheet(
+      isDismissible: true,
+      scrollControlDisabledMaxHeightRatio: 100,
+      context: context,
+      builder: (BuildContext context) {
+        return EvaluationResult(
+            actions: evaluator.evaluate(),
+            strategyName: evaluator.strategy!.name);
+      },
+    );
   }
 
   StepState _stepState(int stepIndex) {
@@ -434,9 +449,8 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
   KeyboardActionsConfig _buildKeyboardActionsConfig() {
     return KeyboardActionsConfig(
-   keyboardActionsPlatform: !kIsWeb 
-        ? KeyboardActionsPlatform.ALL 
-        : KeyboardActionsPlatform.IOS, // or any default, won't af
+      keyboardActionsPlatform:
+          !kIsWeb ? KeyboardActionsPlatform.ALL : KeyboardActionsPlatform.IOS,
       keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
       actions: _focusNodes.map((node) {
         return KeyboardActionsItem(
@@ -445,15 +459,27 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           toolbarButtons: [
             (node) {
               return TextButton(
-                onPressed: () => node.nextFocus(),
-                child:
-                    Row(
-                      children: [
-                        Text("Nästa", style: Theme.of(context).textTheme.bodyLarge),
-                        SizedBox(width: 8),
-                        const Icon(Icons.arrow_forward),
-                      ],
-                    ),
+                onPressed: () {
+                  // Save current field's form
+
+                  final currentContext = node.context;
+                  if (currentContext != null) {
+                    final formState = Form.of(currentContext);
+                    if (formState != null) {
+                      setState(() {
+                        formState.save();
+                      });
+                    }
+                  }
+                  node.nextFocus();
+                },
+                child: Row(
+                  children: [
+                    Text("Nästa", style: Theme.of(context).textTheme.bodyLarge),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward),
+                  ],
+                ),
               );
             }
           ],
