@@ -179,7 +179,6 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
    final a5FibtemVal = values[RotemField.a5Fibtem];
     final a5ExtemVal  = values[RotemField.a5Extem];
     final ctExtemVal  = values[RotemField.ctExtem];
-    final ctIntemVal  = values[RotemField.ctIntem];
 
     if (a5FibtemVal == null || a5FibtemVal.isEmpty) {
       return 'A5 FIBTEM måste fyllas i.';

@@ -44,6 +44,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   List<bool?> _stepValidity = [];
   bool _shouldShowSummary = false;
   final Map<RotemField, String> _inputValues = {};
+   List<FocusNode> get _allFocusNodes => _fieldFocusNodes.values.toList();
 
   // Unique key for the Stepper to force rebuild when steps count changes.
   Key _stepperKey = UniqueKey();
@@ -54,8 +55,8 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     // Initialize with one step.
     _formKeys = List.generate(_totalSteps, (_) => GlobalKey<FormState>());
     _stepValidity = List.filled(_totalSteps, null);
-    _focusNodes = List.generate(_totalSteps, (_) => FocusNode());
   }
+  
 
   @override
   void dispose() {
@@ -330,7 +331,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
               }
             });
 
-            focusNode.unfocus();
+  
           },
         ),
       ),
@@ -446,45 +447,44 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       return StepState.indexed;
     }
   }
+KeyboardActionsConfig _buildKeyboardActionsConfig() {
+  return KeyboardActionsConfig(
+    keyboardActionsPlatform: !kIsWeb 
+        ? KeyboardActionsPlatform.ALL 
+        : KeyboardActionsPlatform.IOS,
+    keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
+    actions: _allFocusNodes.map((node) {
+      return KeyboardActionsItem(
+        displayArrows: false,
+        focusNode: node,
+        toolbarButtons: [
+          (node) {
+            return TextButton(
+              onPressed: () {
+                // Use FocusScope to move to the next field
+                FocusScope.of(context).nextFocus();
 
-  KeyboardActionsConfig _buildKeyboardActionsConfig() {
-    return KeyboardActionsConfig(
-      keyboardActionsPlatform:
-          !kIsWeb ? KeyboardActionsPlatform.ALL : KeyboardActionsPlatform.IOS,
-      keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
-      actions: _focusNodes.map((node) {
-        return KeyboardActionsItem(
-          displayArrows: false,
-          focusNode: node,
-          toolbarButtons: [
-            (node) {
-              return TextButton(
-                onPressed: () {
-                  // Save current field's form
-
-                  final currentContext = node.context;
-                  if (currentContext != null) {
-                    final formState = Form.of(currentContext);
-                    if (formState != null) {
-                      setState(() {
-                        formState.save();
-                      });
-                    }
+                // Optionally save the current field's form state
+                final currentContext = node.context;
+                if (currentContext != null) {
+                  final formState = Form.of(currentContext);
+                  if (formState != null) {
+                    formState.save();
                   }
-                  node.nextFocus();
-                },
-                child: Row(
-                  children: [
-                    Text("Nästa", style: Theme.of(context).textTheme.bodyLarge),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.arrow_forward),
-                  ],
-                ),
-              );
-            }
-          ],
-        );
-      }).toList(),
-    );
-  }
+                }
+              },
+              child: Row(
+                children: [
+                  Text("Nästa", style: Theme.of(context).textTheme.bodyLarge),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward),
+                ],
+              ),
+            );
+          }
+        ],
+      );
+    }).toList(),
+  );
+}
 }
