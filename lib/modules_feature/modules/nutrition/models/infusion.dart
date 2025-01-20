@@ -2,7 +2,6 @@ import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 
 class Infusion extends Nutrition {
-  // We store a typed field to avoid casting Source -> InfusionSource.
   final InfusionSource infusionSource;
 
   double mlPerHour;
@@ -26,6 +25,10 @@ class Infusion extends Nutrition {
 
   double volumePerDay() {
     return mlPerHour * 24;
+  }
+
+  double getInfusionRate() {
+    return mlPerHour;
   }
 
   void updateInfusionRate(double mlPerHour) {

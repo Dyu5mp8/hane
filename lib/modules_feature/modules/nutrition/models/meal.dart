@@ -5,16 +5,30 @@ class Meal extends Nutrition {
   
   final OralSource oralSource;
 
+
   Meal({
     required this.oralSource,
   }) : super(source: oralSource);
 
+
+
   @override
   double kcalPerDay() {
-    return oralSource.kcalPerUnit;
+    // Example calculation, adjust as necessary
+    return oralSource.kcalPerUnit * quantity;
   }
 
   @override
   double proteinPerDay() {
-    return oralSource.proteinPerUnit;  }
+    // Example calculation, adjust as necessary
+    return oralSource.proteinPerUnit * quantity;
+  }
+
+@override
+double volumePerDay() {
+  return (oralSource.mlPerUnit ?? 0) * quantity;
+}
+
+
+
 }
