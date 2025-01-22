@@ -3,11 +3,10 @@ import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 
 abstract class Nutrition {
   final Source source;
-  int quantity;
+
 
   Nutrition({
     required this.source,
-    this.quantity = 0,
 
   });
 
@@ -17,14 +16,7 @@ abstract class Nutrition {
 
   double volumePerDay();
 
+  double lipidsPerDay();
 
-
-  void increaseQuantity() {
-    quantity++;
-  }
-
-    void decreaseQuantity() {
-    if(quantity > 0) quantity--;
-  }
 
 }

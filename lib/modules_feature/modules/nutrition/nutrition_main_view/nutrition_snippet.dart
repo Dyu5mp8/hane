@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
-import 'package:hane/modules_feature/modules/nutrition/models/infusion.dart';
-import 'package:hane/modules_feature/modules/nutrition/models/meal.dart';
+import 'package:hane/modules_feature/modules/nutrition/models/continuous.dart';
+import 'package:hane/modules_feature/modules/nutrition/models/intermittent.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
-import 'package:hane/modules_feature/modules/nutrition/nutrition_view_model.dart';
-
-
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 
 class NutritionSnippet extends StatelessWidget {
   final Nutrition nutrition;
@@ -15,16 +13,15 @@ class NutritionSnippet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Step 1: Check the runtime type
-    if (nutrition is Infusion) {
+    if (nutrition is Continuous) {
       // Step 2: Cast to the correct subtype
-      final infusion = nutrition as Infusion;
+      final infusion = nutrition as Continuous;
       // Step 3: Use a dedicated widget
       return InfusionTile(infusion: infusion);
-    } 
-    else if (nutrition is Meal) {
-      final meal = nutrition as Meal;
-      return MealTile(meal: meal);
-    } 
+    } else if (nutrition is Intermittent) {
+      final nutr = nutrition as Intermittent;
+      return IntermittentTile(nutrition: nutr);
+    }
     // Step 4: Handle "unrecognized" subtypes gracefully
     else {
       return const ListTile(
@@ -35,7 +32,7 @@ class NutritionSnippet extends StatelessWidget {
 }
 
 class InfusionTile extends StatelessWidget {
-  final Infusion infusion;
+  final Continuous infusion;
 
   const InfusionTile({Key? key, required this.infusion}) : super(key: key);
 
@@ -47,33 +44,27 @@ class InfusionTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Infusionstakt: ${infusion.getInfusionRate} ml/h"),
+          Text("Infusionstakt: ${infusion.getRate} ml/h"),
           Text("Kcal per day: ${infusion.kcalPerDay()}"),
           Text("Protein per day: ${infusion.proteinPerDay()}"),
         ],
-
-        
-
-
-
-    
       ),
-
       trailing: IconButton(
         icon: Icon(Icons.edit),
         onPressed: () {
-          var vm = Provider.of<NutritionViewModel>(context, listen: false); 
-          infusion.updateInfusionRate(infusion.mlPerHour + 10);
+          var vm = Provider.of<NutritionViewModel>(context, listen: false);
+          infusion.updateRate(infusion.mlPerHour + 10);
           print("totalKcalPerDay: ${infusion.kcalPerDay()}");
         },
       ),
     );
   }
 }
-class MealTile extends StatelessWidget {
-  final Meal meal;
 
-  const MealTile({Key? key, required this.meal}) : super(key: key);
+class IntermittentTile extends StatelessWidget {
+  final Intermittent nutrition;
+
+  const IntermittentTile({Key? key, required this.nutrition}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,14 +72,14 @@ class MealTile extends StatelessWidget {
     final viewModel = Provider.of<NutritionViewModel>(context, listen: false);
 
     return ListTile(
-      title: Text(meal.source.name),
+      title: Text(nutrition.source.name),
       isThreeLine: true,
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Kcal per day: ${meal.kcalPerDay()}"),
-          Text("Protein per day: ${meal.proteinPerDay()}"),
-        ],  
+          Text("Kcal per day: ${nutrition.kcalPerDay()}"),
+          Text("Protein per day: ${nutrition.proteinPerDay()}"),
+        ],
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min, // shrink to content width
@@ -96,17 +87,15 @@ class MealTile extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.remove),
             onPressed: () {
-              viewModel.decreaseQuantity(meal); 
-              
+              viewModel.decreaseQuantity(nutrition);
             },
           ),
-          Text('${meal.quantity}'), // display current count
+          Text('${nutrition.quantity}'), // display current count
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              viewModel.increaseQuantity(meal);
+              viewModel.increaseQuantity(nutrition);
               // Update the view model if necessary, e.g. notifyListeners or similar logic
-            
             },
           ),
         ],

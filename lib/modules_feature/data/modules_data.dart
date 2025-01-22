@@ -3,8 +3,8 @@ import 'package:flutter/material.dart' show Icons;
 import 'package:hane/modules_feature/models/module.dart';
 import 'package:hane/modules_feature/modules/antibiotics/antibiotic_list_view.dart';
 import 'package:hane/modules_feature/modules/dialysis/dialysis_view.dart';
-import 'package:hane/modules_feature/modules/nutrition/nutrition_view.dart';
-import 'package:hane/modules_feature/modules/nutrition/nutrition_view_model.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:hane/modules_feature/modules/rotem/rotem_view.dart';
 import 'package:provider/provider.dart';
 

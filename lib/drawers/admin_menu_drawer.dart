@@ -5,6 +5,8 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drawers/read_feedback_view.dart';
 import 'package:hane/drugs/ui_components/count_badge.dart';
+import 'package:hane/modules_feature/modules/nutrition/admin/nutrition_admin.dart';
+
 
 class AdminMenuDrawer extends MenuDrawer {
   const AdminMenuDrawer({
@@ -58,6 +60,18 @@ class AdminMenuDrawer extends MenuDrawer {
           );
         },
       ),
+
+      ListTile(
+        leading: const Icon(Icons.food_bank),
+        title: const Text('Redigera i nutritionsmodulen'),
+        onTap: () {
+          Navigator.pop(context);
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => NutritionAdmin(),
+          ));
+        },
+      ),
+
       ListTile(
        leading: CountBadge(futureCount: provider.getUserFeedbackCount() , child: const Icon(Icons.feedback_rounded)),
         title: const Text('Läs feedback'),

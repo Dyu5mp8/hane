@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
-import 'package:hane/modules_feature/modules/nutrition/models/infusion.dart';
-import 'package:hane/modules_feature/modules/nutrition/models/meal.dart';
+import 'package:hane/modules_feature/modules/nutrition/models/continuous.dart';
+import 'package:hane/modules_feature/modules/nutrition/models/intermittent.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
 
 class NutritionViewModel extends ChangeNotifier {
@@ -11,9 +11,9 @@ class NutritionViewModel extends ChangeNotifier {
 
   List<Nutrition> allNutritions = [];
 
-  List<Infusion> get infusions => allNutritions.whereType<Infusion>().toList();
+  List<Continuous> get infusions => allNutritions.whereType<Continuous>().toList();
 
-  List<Meal> get meals => allNutritions.whereType<Meal>().toList();
+  List<Intermittent> get meals => allNutritions.whereType<Intermittent>().toList();
 
   setNewWeight(double weight) {
     patientWeight = weight;
@@ -55,12 +55,12 @@ class NutritionViewModel extends ChangeNotifier {
     return infusions.fold(0, (acc, infusion) => acc + infusion.volumePerDay());
   }
 
-  void increaseQuantity(Nutrition nutrition) {
+  void increaseQuantity(Intermittent nutrition) {
     nutrition.increaseQuantity();
     notifyListeners();
   }
 
-  void decreaseQuantity(Nutrition nutrition) {
+  void decreaseQuantity(Intermittent nutrition) {
     nutrition.decreaseQuantity();
     notifyListeners();
   }

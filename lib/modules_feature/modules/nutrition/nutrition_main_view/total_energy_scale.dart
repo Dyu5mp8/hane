@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
-import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
-
-import 'package:flutter/material.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-class NutritionalScale extends StatelessWidget {
+class TotalEnergyScale extends StatelessWidget {
   final double requirementValue = 2000; // e.g., fixed nutritional requirement
+
+  final NutritionViewModel vm;
+
+  TotalEnergyScale({required this.vm});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class NutritionalScale extends StatelessWidget {
         // Custom widget pointer as a box with a downward pointer
         markerPointers: [
           LinearWidgetPointer(
-            value: 1000,
+            value: vm.totalKcalPerDay(),
             child: Transform.translate(
               offset: Offset(0, -20), // adjust offset to position above gauge
               child: Column(
@@ -40,7 +40,7 @@ class NutritionalScale extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      '$requirementValue',
+                      "${vm.totalKcalPerDay()} kcal",
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
