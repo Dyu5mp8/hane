@@ -8,16 +8,25 @@ class NutritionViewModel extends ChangeNotifier {
   double patientWeight = 70;
   double patientLength = 180;
 
+  double? calorimetricGoal;
+
   int day = 0;
 
   List<Nutrition> allNutritions = [];
 
-  List<Continuous> get infusions => allNutritions.whereType<Continuous>().toList();
+  List<Continuous> get infusions =>
+      allNutritions.whereType<Continuous>().toList();
 
-  List<Intermittent> get meals => allNutritions.whereType<Intermittent>().toList();
+  List<Intermittent> get meals =>
+      allNutritions.whereType<Intermittent>().toList();
 
   setNewWeight(double weight) {
     patientWeight = weight;
+    notifyListeners();
+  }
+
+  setCalorimetricGoal(double goal) {
+    calorimetricGoal = goal;
     notifyListeners();
   }
 
@@ -31,30 +40,34 @@ class NutritionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  double calculateNeeds() {
 
+    if (calorimetricGoal != null) {
+      return calorimetricGoal!;
+    }
 
-  calculateNeeds(double requirementPerKg) {
-   idealWeight() * requirementPerKg;
+  return calculateNeedBasedOnDay();
+
+    
   }
 
-
-
-  calculateNeedBasedOnDay(int day) {
-
+  double calculateNeedBasedOnDay() {
     // 25 kcal/kg/day for day 8 and above
     double requirementPerKg = day < 8 ? 20 : 25;
-    return patientWeight * requirementPerKg;
+    return idealWeight() * requirementPerKg;
   }
 
-
-  double get bmi => patientWeight / (patientWeight * patientWeight / 10000);
+  double get bmi => patientWeight / (patientLength * patientLength / 10000);
 
   double idealWeight() {
-    if (bmi < 25){
-
+    if (bmi < 25) {
       return patientWeight;
     }
-    return (patientLength - 100) + 0.25 * (patientWeight - (patientLength - 100)); 
+
+    var idealWeight =
+        (patientLength - 100) + 0.25 * (patientWeight - (patientLength - 100));
+
+    return idealWeight;
   }
 
   double totalKcalPerDay() {
@@ -70,6 +83,11 @@ class NutritionViewModel extends ChangeNotifier {
 
   double totalVolumePerDay() {
     return infusions.fold(0, (acc, infusion) => acc + infusion.volumePerDay());
+  }
+
+  void updateRate(Continuous nutrition, double newRate) {
+    nutrition.updateRate(newRate);
+    notifyListeners();
   }
 
   void increaseQuantity(Intermittent nutrition) {

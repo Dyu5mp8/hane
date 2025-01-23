@@ -7,6 +7,7 @@ import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source_type.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:hane/modules_feature/modules/nutrition/data/source_firestore_handler.dart';
 import 'package:sticky_headers/sticky_headers.dart';
 
 class AddNutritionView extends StatefulWidget {
@@ -16,7 +17,7 @@ class AddNutritionView extends StatefulWidget {
   _AddNutritionViewState createState() => _AddNutritionViewState();
 }
 
-class _AddNutritionViewState extends State<AddNutritionView> {
+class _AddNutritionViewState extends State<AddNutritionView> with SourceFirestoreHandler {
   late Future<Map<SourceType, List<Source>>> _futureSources;
   String _searchQuery = '';
 
@@ -28,14 +29,7 @@ class _AddNutritionViewState extends State<AddNutritionView> {
 
   // Fetch data from Firestore
   Future<Map<SourceType, List<Source>>> fetchSourcesGroupedByType() async {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('nutritions') // Firestore collection name
-        .get();
-
-    final sources =
-        querySnapshot.docs.map((doc) => Source.fromJson(doc.data())).toList();
-
-    // Group by SourceType
+    final sources = await fetchAllDocuments(collectionPath: 'nutritions');
     return {
       for (var type in SourceType.values)
         type: sources.where((s) => s.type == type).toList(),
@@ -189,6 +183,7 @@ class SourceCard extends StatelessWidget {
         trailing: IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
+           
             if (source is IntermittentSource) {
               viewModel.addNutrition(Intermittent(intermittentSource: source as IntermittentSource,
                 quantity: 1,

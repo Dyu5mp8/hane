@@ -11,10 +11,7 @@ class TotalEnergyScaleRadial extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate the angle for the annotation based on value.
-    // Assuming a full 360° sweep for simplicity.
-    double gaugeValue = requirementValue; 
-    double angle = (gaugeValue / 3000) * 360; 
+    final needs = vm.calculateNeeds();
 
     return Container(
       height: 300,
@@ -39,7 +36,7 @@ class TotalEnergyScaleRadial extends StatelessWidget {
             pointers: <GaugePointer>[
 
               MarkerPointer(
-                value: vm.totalKcalPerDay(),
+                value: needs,
                 markerType: MarkerType.invertedTriangle,
                 text: "${vm.totalKcalPerDay()} kcal",
                 textStyle: GaugeTextStyle(fontSize: 12),
@@ -49,18 +46,19 @@ class TotalEnergyScaleRadial extends StatelessWidget {
                 markerHeight: 14,
               ),
 
-              MarkerPointer(
-                value: vm.totalKcalPerDay(),
-                markerType: MarkerType.text,
-                text: "Beräknat kaloribehov\n${vm.totalKcalPerDay().toStringAsFixed(0)} kcal",
-                textStyle: GaugeTextStyle(fontSize: 12),
-                markerOffset: -40,
-                color: Colors.blueAccent,
-                markerWidth: 14,
-                markerHeight: 14,
-              ),
+              // MarkerPointer(
+              //   value: needs,
+              //   markerType: MarkerType.text,
+              //   text: "Beräknat kaloribehov\n${vm.totalKcalPerDay().toStringAsFixed(0)} kcal",
+              //   textStyle: GaugeTextStyle(fontSize: 12),
+              //   markerOffset: -40,
+              //   color: Colors.blueAccent,
+              //   markerWidth: 14,
+              //   markerHeight: 14,
+              // ),
 
               NeedlePointer(
+                enableDragging: true,
                 value: vm.totalKcalPerDay(),
                 needleLength: 0.8,
                 lengthUnit: GaugeSizeUnit.factor,
@@ -69,46 +67,33 @@ class TotalEnergyScaleRadial extends StatelessWidget {
                 needleEndWidth: 2,
                 knobStyle: KnobStyle(knobRadius: 0.08),
               )
-        
+
 
               // Primary marker pointer at the exact value
               
 
             ],
-            annotations: <GaugeAnnotation>[
+            annotations: [
               GaugeAnnotation(
-                // Place the custom widget near the pointer
-                widget: Transform.translate(
-                  offset: Offset(0, -20), // offset the widget vertically if needed
+                widget: Container(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Box with text
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          "$requirementValue kcal",
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                      Text(
+                       "${vm.totalKcalPerDay().toStringAsFixed(0)} kcal (${(vm.totalKcalPerDay() / needs * 100).toStringAsFixed(0)}%)",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      // Downward pointer (icon)
-                      Icon(
-                        Icons.arrow_drop_down,
-                        size: 16,
-                        color: Colors.redAccent,
-                      ),
+                      Text("Beräknat mål ${needs.toStringAsFixed(0)}", style: TextStyle(fontSize: 13)),
                     ],
                   ),
                 ),
-                angle: angle,
-                positionFactor: 1.2, 
-                // positionFactor > 1 places the annotation outside the axis line
+                angle: 90,
+                positionFactor: 1.2,
               ),
             ],
+         
           ),
         ],
       ),

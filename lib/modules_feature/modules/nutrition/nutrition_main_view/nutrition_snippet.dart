@@ -3,7 +3,9 @@ import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/continuous.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/intermittent.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
+import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class NutritionSnippet extends StatelessWidget {
   final Nutrition nutrition;
@@ -38,23 +40,41 @@ class InfusionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ContinousSource source = infusion.source as ContinousSource;
+    final vm = Provider.of<NutritionViewModel>(context, listen: false);
+    print(source.name); 
+    print(source.rateRangeMax);
+    print(source.rateRangeMin);
+  
     return ListTile(
-      title: Text(infusion.source.name),
+      title: Text(source.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
       isThreeLine: true,
+      dense: true ,
       subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Infusionstakt: ${infusion.getRate().toStringAsFixed(0)} ml/h"),
-          Text("Kcal per day: ${infusion.kcalPerDay().toStringAsFixed(0)}"),
-          Text("Protein per day: ${infusion.proteinPerDay()}"),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Infusionstakt: ${infusion.getRate().toStringAsFixed(0)} ml/h"),
+              Expanded(child: SizedBox()),
+              Text("Kcal per day: ${infusion.kcalPerDay().toStringAsFixed(0)}"),
+              
+          
+            ],
+          ),
+          SfSlider(
+              min: source.rateRangeMin ?? 0,
+              max: source.rateRangeMax ?? 100,
+              value: infusion.mlPerHour, onChanged: (value) {
+                vm.updateRate(infusion, value);
+              }),
         ],
       ),
       trailing: IconButton(
-        icon: Icon(Icons.edit),
+        icon: Icon(Icons.delete_forever),
         onPressed: () {
           var vm = Provider.of<NutritionViewModel>(context, listen: false);
-          infusion.updateRate(infusion.mlPerHour + 10);
-          print("totalKcalPerDay: ${infusion.kcalPerDay()}");
+          vm.removeNutrition(infusion);
         },
       ),
     );
@@ -74,7 +94,7 @@ class IntermittentTile extends StatelessWidget {
     return ListTile(
       title: Text(nutrition.source.name),
       isThreeLine: true,
-      subtitle: Column(
+      subtitle: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Kcal per day: ${nutrition.kcalPerDay()}"),

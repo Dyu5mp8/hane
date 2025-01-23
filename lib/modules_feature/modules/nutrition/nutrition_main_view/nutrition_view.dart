@@ -13,36 +13,66 @@ import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/total
 
 
 class NutritionView extends StatelessWidget {
+
+
+  Widget emptyListPlaceholder() {
+    return Center(
+      child: Text('Lägg till nutritionskällor med plussymbolen nedan', style: TextStyle(fontSize: 20), textAlign: TextAlign.center,)
+      ,
+    );
+  }
+
+Widget mainView(NutritionViewModel vm){
+
+  return Column(
+        children: [
+ 
+          Expanded(
+            child: ListView.builder(
+              itemCount: vm.allNutritions.length,
+              itemBuilder: (context, index) {
+                return NutritionSnippet(nutrition: vm.allNutritions[index]);
+              },
+            ), 
+          ),
+
+          Row(
+            children: [
+              TotalEnergyScaleRadial(vm: vm),
+            ],
+          ),
+          
+         
+     
+        ],
+      );  
+
+
+}
+ 
+
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<NutritionViewModel>(context);
+    final viewModel = Provider.of<NutritionViewModel>(context, listen: true);
     print("NutritionView build");
     print("viewModel.allNutritions.length: ${viewModel.allNutritions.length}");
 
     return Scaffold(
       appBar: AppBar(title: Text('Nutrition')),
       body: Column(
-        children: [
-          Padding(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [        Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: PatientDataWidget(),
           ),
-          
-          Expanded(
-            child: ListView.builder(
-              itemCount: viewModel.allNutritions.length,
-              itemBuilder: (context, index) {
-                return NutritionSnippet(nutrition: viewModel.allNutritions[index]);
-              },
-            ),
-          ),
-
-          TotalEnergyScaleRadial(vm: viewModel),
-          
-         
-     
+       Expanded(
+  child: viewModel.allNutritions.isEmpty
+      ? emptyListPlaceholder()
+      : mainView(viewModel),
+),
         ],
-      ),
+      )
+      ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(context).push(

@@ -5,7 +5,8 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drawers/read_feedback_view.dart';
 import 'package:hane/drugs/ui_components/count_badge.dart';
-import 'package:hane/modules_feature/modules/nutrition/admin/nutrition_admin.dart';
+import 'package:hane/modules_feature/modules/nutrition/admin/admin_nutrition_listview.dart';
+import 'package:hane/modules_feature/modules/nutrition/admin/admin_nutrition_editview.dart';
 
 
 class AdminMenuDrawer extends MenuDrawer {
@@ -67,7 +68,7 @@ class AdminMenuDrawer extends MenuDrawer {
         onTap: () {
           Navigator.pop(context);
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => NutritionAdmin(),
+            builder: (context) => AdminNutritionListview()
           ));
         },
       ),
