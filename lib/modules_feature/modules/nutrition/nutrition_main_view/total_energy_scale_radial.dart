@@ -66,6 +66,8 @@ class TotalEnergyScaleRadial extends StatelessWidget {
                 needleStartWidth: 1,
                 needleEndWidth: 2,
                 knobStyle: KnobStyle(knobRadius: 0.08),
+                 animationType: AnimationType.ease, // Smooth animation type
+                animationDuration: 2000, // Duration f
               )
 
 
@@ -85,7 +87,7 @@ class TotalEnergyScaleRadial extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text("Beräknat mål ${needs.toStringAsFixed(0)}", style: TextStyle(fontSize: 13)),
+                      Text("▼ Beräknat mål:\n ${needs.toStringAsFixed(0)} kcal", style: TextStyle(fontSize: 13), textAlign: TextAlign.center,),
                     ],
                   ),
                 ),

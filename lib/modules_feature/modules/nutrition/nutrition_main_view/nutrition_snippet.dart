@@ -63,8 +63,8 @@ class InfusionTile extends StatelessWidget {
             ],
           ),
           SfSlider(
-              min: source.rateRangeMin ?? 0,
-              max: source.rateRangeMax ?? 100,
+              min: source.rateRangeMin,
+              max: source.rateRangeMax,
               value: infusion.mlPerHour, onChanged: (value) {
                 vm.updateRate(infusion, value);
               }),
