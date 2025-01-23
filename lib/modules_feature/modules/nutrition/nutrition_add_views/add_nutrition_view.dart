@@ -1,10 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart' hide Source;
 import 'package:flutter/material.dart';
+import 'package:hane/modules_feature/modules/nutrition/models/continuous.dart';
+import 'package:hane/modules_feature/modules/nutrition/models/intermittent.dart';
+import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source_type.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
+import 'package:provider/provider.dart';
+import 'package:sticky_headers/sticky_headers.dart';
 
-class AddNutritionView extends StatelessWidget {
+class AddNutritionView extends StatefulWidget {
   const AddNutritionView({Key? key}) : super(key: key);
+
+  @override
+  _AddNutritionViewState createState() => _AddNutritionViewState();
+}
+
+class _AddNutritionViewState extends State<AddNutritionView> {
+  late Future<Map<SourceType, List<Source>>> _futureSources;
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _futureSources = fetchSourcesGroupedByType();
+  }
 
   // Fetch data from Firestore
   Future<Map<SourceType, List<Source>>> fetchSourcesGroupedByType() async {
@@ -22,122 +42,191 @@ class AddNutritionView extends StatelessWidget {
     };
   }
 
+  // Filter sources based on search query
+  Map<SourceType, List<Source>> _filterSources(
+      Map<SourceType, List<Source>> groupedSources) {
+    if (_searchQuery.isEmpty) {
+      return groupedSources;
+    }
+
+    final lowerCaseQuery = _searchQuery.toLowerCase();
+
+    return {
+      for (var entry in groupedSources.entries)
+        entry.key: entry.value
+            .where((source) =>
+                source.name.toLowerCase().contains(lowerCaseQuery) ||
+                source.displayContents
+                    .any((content) => content.toLowerCase().contains(lowerCaseQuery)))
+            .toList(),
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Lägg till Nutrition"),
       ),
-      body: FutureBuilder<Map<SourceType, List<Source>>>(
-        future: fetchSourcesGroupedByType(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Fel: ${snapshot.error}"));
-          } else if (snapshot.hasData) {
-            final groupedSources = snapshot.data!;
+      body: Column(
+        children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Sök Nutrition',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.trim();
+                });
+              },
+            ),
+          ),
+          // Expanded List
+          Expanded(
+            child: FutureBuilder<Map<SourceType, List<Source>>>(
+              future: _futureSources,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Fel: ${snapshot.error}"));
+                } else if (snapshot.hasData) {
+                  final groupedSources = _filterSources(snapshot.data!);
 
-            // ListView for vertical scrolling of categories
-            return ListView(
-              // Optional: Bouncing scroll effect for iOS-like feel
-              physics: const BouncingScrollPhysics(),
-              children: groupedSources.entries.map((entry) {
-                final sourceType = entry.key;
-                final sources = entry.value;
+                  // Flatten the grouped data for ListView
+                  List<Widget> listItems = [];
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Category title
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 8.0,
-                      ),
-                      child: Text(
-                        sourceType.displayName, // Swedish display name
-                        style: Theme.of(context).textTheme.bodyLarge
-                      ),
-                    ),
+                  groupedSources.forEach((type, sources) {
+                    if (sources.isEmpty) return;
 
-                    // Horizontally scrolling list of items
-                    SizedBox(
-                      height: 160, // Increase to fit content better
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: sources.length,
-                        itemBuilder: (context, index) {
-                          final source = sources[index];
-                          return Container(
-                            // Give each item a consistent width
-                            width: 160,
-                            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Card(
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Example: an image or icon at the top
-                                    // If you have an image URL in `source`, you can replace
-                                    // the placeholder Icon with an Image.network(...) widget.
-                                    Expanded(
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.food_bank_outlined,
-                                          size: 48,
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ),
-
-                                    const SizedBox(height: 8),
-
-                                    // Source name
-                                    Text(
-                                      source.name,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-
-                                    // Additional info from displayContents
-                                    const SizedBox(height: 4),
-                                    for (final content in source.displayContents)
-                                      Text(
-                                        content,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                  ],
+                    listItems.add(
+                      StickyHeader(
+                        header: Container(
+                          width: double.infinity,
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8.0),
+                          child: Text(
+                            type.displayName,
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                            ),
-                          );
-                        },
+                          ),
+                        ),
+                        content: Column(
+                          children: sources.map((source) {
+                            return SourceCard(source: source);
+                          }).toList(),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }).toList(),
+                    );
+                  });
+
+                  if (listItems.isEmpty) {
+                    return const Center(child: Text("Inga resultat matchade sökningen."));
+                  }
+
+                  return ListView.separated(
+                    itemCount: listItems.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 8.0),
+                    itemBuilder: (context, index) {
+                      return listItems[index];
+                    },
+                  );
+                } else {
+                  return const Center(child: Text("Ingen data hittades"));
+                }
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SourceCard extends StatelessWidget {
+  final Source source;
+
+  const SourceCard({Key? key, required this.source}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+     final viewModel = Provider.of<NutritionViewModel>(context);
+    return Card(
+      margin:
+          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+  
+        title: Text(
+          source.name,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: source.displayContents.map((content) {
+            return Text(
+              content,
+              style: Theme.of(context).textTheme.bodySmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             );
-          } else {
-            return const Center(child: Text("Ingen data hittades"));
-          }
+          }).toList(),
+        ),
+        trailing: IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            if (source is IntermittentSource) {
+              viewModel.addNutrition(Intermittent(intermittentSource: source as IntermittentSource,
+                quantity: 1,
+              ));
+            } else if (source is ContinousSource) {
+              viewModel.addNutrition(Continuous(continuousSource: source as ContinousSource, mlPerHour: 42)
+          
+              );
+                  print(viewModel.allNutritions);
+            }
+            
+            // Handle add nutrition event
+          },
+        ),
+        onTap: () {
+
+          showModalBottomSheet(context: context, builder: (context) {
+            return Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    source.name,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 8.0),
+                  ...source.displayContents.map((content) {
+                    return Text(
+                      content,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    );
+                  }).toList(),
+                ],
+              ),
+            );
+          });
+          // Handle tap event, e.g., navigate to detail or add nutrition
         },
       ),
     );

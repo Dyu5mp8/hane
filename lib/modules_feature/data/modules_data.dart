@@ -36,10 +36,8 @@ List<Module> modules =
       name: 'Nutrition',
       description: 'Kalkylator för nutrition IVA',
       icon: Icons.food_bank,
-      moduleDetailView: ChangeNotifierProvider(
-        create: (_) => NutritionViewModel(),
-        child: NutritionView(),
-      )
+      moduleDetailView: NutritionView(),
+      
     ),
 
     Module(

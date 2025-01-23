@@ -6,6 +6,7 @@ import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
 
 class NutritionViewModel extends ChangeNotifier {
   double patientWeight = 70;
+  double patientLength = 180;
 
   int day = 0;
 
@@ -20,6 +21,11 @@ class NutritionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  setNewLength(double length) {
+    patientLength = length;
+    notifyListeners();
+  }
+
   setNewDay(int newDay) {
     day = newDay;
     notifyListeners();
@@ -28,7 +34,7 @@ class NutritionViewModel extends ChangeNotifier {
 
 
   calculateNeeds(double requirementPerKg) {
-    patientWeight * requirementPerKg;
+   idealWeight() * requirementPerKg;
   }
 
 
@@ -38,6 +44,17 @@ class NutritionViewModel extends ChangeNotifier {
     // 25 kcal/kg/day for day 8 and above
     double requirementPerKg = day < 8 ? 20 : 25;
     return patientWeight * requirementPerKg;
+  }
+
+
+  double get bmi => patientWeight / (patientWeight * patientWeight / 10000);
+
+  double idealWeight() {
+    if (bmi < 25){
+
+      return patientWeight;
+    }
+    return (patientLength - 100) + 0.25 * (patientWeight - (patientLength - 100)); 
   }
 
   double totalKcalPerDay() {

@@ -44,8 +44,8 @@ class InfusionTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Infusionstakt: ${infusion.getRate} ml/h"),
-          Text("Kcal per day: ${infusion.kcalPerDay()}"),
+          Text("Infusionstakt: ${infusion.getRate().toStringAsFixed(0)} ml/h"),
+          Text("Kcal per day: ${infusion.kcalPerDay().toStringAsFixed(0)}"),
           Text("Protein per day: ${infusion.proteinPerDay()}"),
         ],
       ),

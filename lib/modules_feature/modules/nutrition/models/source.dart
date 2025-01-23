@@ -1,6 +1,6 @@
 import 'package:hane/modules_feature/modules/nutrition/models/source_type.dart';
 
-abstract class Source {
+sealed class Source {
   String get name;
   SourceType get type;
 
@@ -20,28 +20,28 @@ abstract class Source {
     switch (flow) {
       case "intermittent":
 
-        print(json);
-        return IntermittentSource(
-          name: json['name'],
-          type: type,
-          mlPerUnit: json['mlPerUnit'],
-          kcalPerUnit: json['kcalPerUnit'],
-          proteinPerUnit: json['proteinPerUnit'],
-          lipidsPerUnit: json['lipidsPerUnit'],
-        );
+return IntermittentSource(
+  name: json['name'] as String,
+  type: type,
+  mlPerUnit: (json['mlPerUnit'] as num).toDouble(),
+  kcalPerUnit: (json['kcalPerUnit'] as num).toDouble(),
+  proteinPerUnit: (json['proteinPerUnit'] as num).toDouble(),
+  lipidsPerUnit: (json['lipidsPerUnit'] as num).toDouble(),
+);
       case "continuous":
-      print(flow);
-      print(type);
-       print(json);
+ 
+       for (var value in json.entries) {
+        print(value.value);
+         print(value.value.runtimeType);
+       }
 
-        return ContinousSource(
-          name: json['name'],
-          type: type,
-          kcalPerMl: json['kcalPerMl'],
-          proteinPerMl: json['proteinPerMl'],
-          lipidsPerMl: json['lipidsPerMl'],
-        );
-
+return ContinousSource(
+  name: json['name'] as String,
+  type: type,
+  kcalPerMl: (json['kcalPerMl'] as num).toDouble(),
+  proteinPerMl: (json['proteinPerMl'] as num).toDouble(),
+  lipidsPerMl: (json['lipidsPerMl'] as num).toDouble(),
+);
       default:
         throw Exception("Unknown source type: $type");
     }
