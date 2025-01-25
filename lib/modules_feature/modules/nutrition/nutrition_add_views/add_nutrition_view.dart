@@ -60,7 +60,7 @@ class _AddNutritionViewState extends State<AddNutritionView> with SourceFirestor
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Lägg till Nutrition"),
+        title: const Text("Lägg till nutritionskälla"),
       ),
       body: Column(
         children: [
@@ -69,7 +69,7 @@ class _AddNutritionViewState extends State<AddNutritionView> with SourceFirestor
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               decoration: InputDecoration(
-                labelText: 'Sök Nutrition',
+                labelText: 'Sök',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
@@ -151,6 +151,19 @@ class SourceCard extends StatelessWidget {
 
   const SourceCard({Key? key, required this.source}) : super(key: key);
 
+  void _handleAddNutrition(NutritionViewModel vm) {
+    if (source is IntermittentSource) {
+              vm.addNutrition(Intermittent(intermittentSource: source as IntermittentSource,
+                quantity: 1,
+              ));
+            } else if (source is ContinousSource) {
+              vm.addNutrition(Continuous(continuousSource: source as ContinousSource, mlPerHour: 42)
+          
+              );
+   
+            }
+    // Handle add nutrition event
+  }
   @override
   Widget build(BuildContext context) {
      final viewModel = Provider.of<NutritionViewModel>(context);
@@ -184,43 +197,18 @@ class SourceCard extends StatelessWidget {
           icon: const Icon(Icons.add),
           onPressed: () {
            
-            if (source is IntermittentSource) {
-              viewModel.addNutrition(Intermittent(intermittentSource: source as IntermittentSource,
-                quantity: 1,
-              ));
-            } else if (source is ContinousSource) {
-              viewModel.addNutrition(Continuous(continuousSource: source as ContinousSource, mlPerHour: 42)
-          
-              );
-                  print(viewModel.allNutritions);
-            }
+            
+            _handleAddNutrition(viewModel);
+            Navigator.pop(context);
             
             // Handle add nutrition event
           },
         ),
         onTap: () {
 
-          showModalBottomSheet(context: context, builder: (context) {
-            return Container(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    source.name,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 8.0),
-                  ...source.displayContents.map((content) {
-                    return Text(
-                      content,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    );
-                  }).toList(),
-                ],
-              ),
-            );
-          });
+             
+            _handleAddNutrition(viewModel);
+            Navigator.pop(context);
           // Handle tap event, e.g., navigate to detail or add nutrition
         },
       ),

@@ -26,7 +26,7 @@ class TotalEnergyScale extends StatelessWidget {
         // Custom widget pointer as a box with a downward pointer
         markerPointers: [
           LinearWidgetPointer(
-            value: vm.totalKcalPerDay(),
+            value: vm.totalProteinPerDay(),
             child: Transform.translate(
               offset: Offset(0, -20), // adjust offset to position above gauge
               child: Column(
@@ -40,7 +40,7 @@ class TotalEnergyScale extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      "${vm.totalKcalPerDay()} kcal",
+                      "${vm.totalProteinPerDay()} kcal",
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),

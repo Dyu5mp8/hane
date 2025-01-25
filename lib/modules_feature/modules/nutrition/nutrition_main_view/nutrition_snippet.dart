@@ -5,6 +5,7 @@ import 'package:hane/modules_feature/modules/nutrition/models/intermittent.dart'
 import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class NutritionSnippet extends StatelessWidget {
@@ -26,8 +27,9 @@ class NutritionSnippet extends StatelessWidget {
     }
     // Step 4: Handle "unrecognized" subtypes gracefully
     else {
-      return const ListTile(
-        title: Text('Unknown nutrition type'),
+      return const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Text('Unknown nutrition type'),
       );
     }
   }
@@ -42,40 +44,70 @@ class InfusionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final ContinousSource source = infusion.source as ContinousSource;
     final vm = Provider.of<NutritionViewModel>(context, listen: false);
-    print(source.name); 
-    print(source.rateRangeMax);
-    print(source.rateRangeMin);
-  
-    return ListTile(
-      title: Text(source.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-      isThreeLine: true,
-      dense: true ,
-      subtitle: Column(
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+     
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title and Delete Button Row
           Row(
+  crossAxisAlignment: CrossAxisAlignment.center, // Align vertically centered
+  children: [
+    Expanded(
+      child: Text(
+        source.name,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+      ),
+    ),
+    IconButton(
+      icon: const Icon(Icons.close),
+      onPressed: () {
+        vm.removeNutrition(infusion);
+      },
+    ),
+  ],
+),
+
+          // Infusion Rate and Kcal per day Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Infusionstakt: ${infusion.getRate().toStringAsFixed(0)} ml/h"),
-              Expanded(child: SizedBox()),
-              Text("Kcal per day: ${infusion.kcalPerDay().toStringAsFixed(0)}"),
-              
-          
+              Column(
+                children: [
+                  Text(
+                    "Infusionstakt: ${infusion.getRate().toStringAsFixed(0)} ml/h",
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  Text("Volym per dag: ${infusion.volumePerDay().toStringAsFixed(0)} ml",
+                      style: const TextStyle(fontSize: 14)),
+                ],
+              ),
+              Text(
+                "Kcal per dag: ${infusion.kcalPerDay().toStringAsFixed(0)}",
+                style: const TextStyle(fontSize: 14),
+              ),
             ],
           ),
+
+          // Slider
           SfSlider(
-              min: source.rateRangeMin,
-              max: source.rateRangeMax,
-              value: infusion.mlPerHour, onChanged: (value) {
-                vm.updateRate(infusion, value);
-              }),
+            min: source.rateRangeMin ?? 0,
+            max: source.rateRangeMax ?? 100,
+            value: infusion.mlPerHour,
+            onChanged: (value) {
+              vm.updateRate(infusion, value);
+            },
+
+    
+          ),
         ],
-      ),
-      trailing: IconButton(
-        icon: Icon(Icons.delete_forever),
-        onPressed: () {
-          var vm = Provider.of<NutritionViewModel>(context, listen: false);
-          vm.removeNutrition(infusion);
-        },
       ),
     );
   }
@@ -88,36 +120,84 @@ class IntermittentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Retrieve the NutritionViewModel if needed for further updates
     final viewModel = Provider.of<NutritionViewModel>(context, listen: false);
 
-    return ListTile(
-      title: Text(nutrition.source.name),
-      isThreeLine: true,
-      subtitle: Row(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal:16),
+      decoration: BoxDecoration(
+
+        borderRadius: BorderRadius.circular(12.0),
+     
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Kcal per day: ${nutrition.kcalPerDay()}"),
-          Text("Protein per day: ${nutrition.proteinPerDay()}"),
-        ],
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min, // shrink to content width
-        children: [
-          IconButton(
-            icon: const Icon(Icons.remove),
-            onPressed: () {
-              viewModel.decreaseQuantity(nutrition);
-            },
+          // Title Row
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Text(
+                  nutrition.source.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+               Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                onPressed: () {
+                  viewModel.decreaseQuantity(nutrition);
+                  if (nutrition.quantity == 0) {
+                    viewModel.removeNutrition(nutrition);
+                  }
+                },
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+                decoration: BoxDecoration(
+               
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: Text(
+                  '${nutrition.quantity}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add_circle_outline, color: Colors.green),
+                onPressed: () {
+                  viewModel.increaseQuantity(nutrition);
+                },
+              ),
+            ],
           ),
-          Text('${nutrition.quantity}'), // display current count
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              viewModel.increaseQuantity(nutrition);
-              // Update the view model if necessary, e.g. notifyListeners or similar logic
-            },
+              // Optional: Add more actions if needed
+            ],
           ),
+
+          // Kcal and Protein per day Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Kcal per dag: ${nutrition.kcalPerDay()}",
+                style: const TextStyle(fontSize: 14),
+              ),
+              Text(
+                "Protein per dag: ${nutrition.proteinPerDay()}",
+                style: const TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+   
+          // Quantity Control Row
+       
         ],
       ),
     );

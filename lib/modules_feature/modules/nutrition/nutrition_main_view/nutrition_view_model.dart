@@ -3,6 +3,7 @@ import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/continuous.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/intermittent.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/scale_zone.dart';
 
 class NutritionViewModel extends ChangeNotifier {
   double patientWeight = 70;
@@ -10,7 +11,7 @@ class NutritionViewModel extends ChangeNotifier {
 
   double? calorimetricGoal;
 
-  int day = 0;
+  int day = 10;
 
   List<Nutrition> allNutritions = [];
 
@@ -36,6 +37,7 @@ class NutritionViewModel extends ChangeNotifier {
   }
 
   setNewDay(int newDay) {
+
     day = newDay;
     notifyListeners();
   }
@@ -50,6 +52,45 @@ class NutritionViewModel extends ChangeNotifier {
 
     
   }
+
+  List<ScaleZone?> getCalorieScaleZones() {
+
+    ScaleZone? lowRed;
+    ScaleZone? lowYellow;
+    ScaleZone? green;
+    ScaleZone? highYellow;
+    ScaleZone? highRed;
+
+    
+    if (day < 4)
+
+   lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 4, color: ScaleZoneColor.yellow);
+   green = ScaleZone(weight: idealWeight(), minPerWeight: 4, maxPerWeight: 14, color: ScaleZoneColor.green);
+   highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 14, maxPerWeight: 20, color: ScaleZoneColor.yellow);
+  highRed = ScaleZone(weight: idealWeight(), minPerWeight: 20, maxPerWeight: 1000, color: ScaleZoneColor.red);
+
+    if (day >= 4 && day < 7) {
+      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 10, color: ScaleZoneColor.red);
+      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 10, maxPerWeight: 15, color: ScaleZoneColor.yellow);
+      green = ScaleZone(weight: idealWeight(), minPerWeight: 15, maxPerWeight: 20, color: ScaleZoneColor.green);
+      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 20, maxPerWeight: 25, color: ScaleZoneColor.yellow);
+      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 25, maxPerWeight: 1000, color: ScaleZoneColor.red);
+    }
+
+    if (day >= 7) {
+      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 15, color: ScaleZoneColor.red);
+      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 15, maxPerWeight: 20, color: ScaleZoneColor.yellow);
+      green = ScaleZone(weight: idealWeight(), minPerWeight: 20, maxPerWeight: 25, color: ScaleZoneColor.green);
+      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 25, maxPerWeight: 30, color: ScaleZoneColor.yellow);
+      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 30, maxPerWeight: 1000, color: ScaleZoneColor.red);
+    }
+    print(day);
+    print([lowRed, lowYellow, green, highYellow, highRed]);
+
+    return [lowRed, lowYellow, green, highYellow, highRed];
+
+  }
+ 
 
   double calculateNeedBasedOnDay() {
     // 25 kcal/kg/day for day 8 and above
