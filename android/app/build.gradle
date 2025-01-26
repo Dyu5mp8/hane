@@ -35,6 +35,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+      kotlinOptions {
+        jvmTarget = "17"
+    }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
@@ -47,6 +50,10 @@ android {
         versionName = flutterVersionName
         minSdkVersion 23
     }
+       kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
 
     buildTypes {
         release {
@@ -55,6 +62,10 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.10" // Ensure compatibility
+    // Other dependencies...
 }
 
 flutter {

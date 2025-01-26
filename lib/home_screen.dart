@@ -424,7 +424,7 @@ List<Drug> _filterDrugs(List<Drug> drugs) {
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.list),
-          label: 'Alla läkemedel',
+          label: 'Läkemedel',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.construction),
