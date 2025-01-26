@@ -46,7 +46,11 @@ class DayWidget extends StatelessWidget {
     ),
     const SizedBox(height: 8),
     GestureDetector(
-      onTap:() => vm.setNewDay(vm.day - 1),
+      onTap: () {
+        if (vm.day > 0) {
+          vm.setNewDay(vm.day - 1);
+        }
+      },
       child: Icon(
         Icons.arrow_downward_rounded,
       

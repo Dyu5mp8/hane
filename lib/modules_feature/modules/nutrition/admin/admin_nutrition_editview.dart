@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hane/modules_feature/modules/nutrition/data/source_firestore_handler.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source_type.dart';
@@ -79,7 +80,22 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
     super.dispose();
   }
 
+  double sanitizeDouble(String value) {
+
+
+  String trimmed = value.trim();
+  
+  String decimalFixed = trimmed.replaceAll(",", ".");
+  
+   return double.parse(decimalFixed);
+}
+
+
+  
+
   Future<void> _submitForm() async {
+
+    try {
     if (_formKey.currentState!.validate() &&
         _selectedFlow != null &&
         _selectedSourceType != null) {
@@ -87,32 +103,34 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
     String? id = widget.source?.id;
 
       Source source;
+
+
       if (_selectedFlow == "intermittent") {
         source = IntermittentSource(
           id: id,
           name: _nameController.text.trim(),
           type: _selectedSourceType!,
-          mlPerUnit: double.parse(_mlPerUnitController.text.trim()),
-          kcalPerUnit: double.parse(_kcalPerUnitController.text.trim()),
-          proteinPerUnit: double.parse(_proteinPerUnitController.text.trim()),
-          lipidsPerUnit: double.parse(_lipidPerUnitController.text.trim()),
+          mlPerUnit: sanitizeDouble(_mlPerUnitController.text.trim()),
+          kcalPerUnit: sanitizeDouble(_kcalPerUnitController.text.trim()),
+          proteinPerUnit: sanitizeDouble(_proteinPerUnitController.text.trim()),
+          lipidsPerUnit: sanitizeDouble(_lipidPerUnitController.text.trim()),
         );
       } else if (_selectedFlow == "continuous") {
         source = ContinousSource(
           id: id,
           name: _nameController.text.trim(),
           type: _selectedSourceType!,
-          kcalPerMl: double.parse(_kcalPerMlController.text.trim()),
-          proteinPerMl: double.parse(_proteinPerMlController.text.trim()),
-          lipidsPerMl: double.parse(_lipidPerMlController.text.trim()),
-          rateRangeMin: _rateRangeMinController.text.trim().isNotEmpty ? double.parse(_rateRangeMinController.text.trim()) : 0,
-          rateRangeMax: _rateRangeMaxController.text.trim().isNotEmpty ? double.parse(_rateRangeMaxController.text.trim()) : 100,
+          kcalPerMl: sanitizeDouble(_kcalPerMlController.text.trim()),
+          proteinPerMl: sanitizeDouble(_proteinPerMlController.text.trim()),
+          lipidsPerMl: sanitizeDouble(_lipidPerMlController.text.trim()),
+          rateRangeMin: _rateRangeMinController.text.isNotEmpty ? sanitizeDouble(_rateRangeMinController.text.trim()) : null,
+          rateRangeMax: _rateRangeMaxController.text.isNotEmpty ? sanitizeDouble(_rateRangeMaxController.text.trim()) : null,
         );
       } else {
         return;
       }
 
-      try {
+      
         await addDocument(collectionPath: 'nutritions', source: source);
         _resetForm();
         if (mounted) {
@@ -120,14 +138,14 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
             SnackBar(content: Text('Nutrition sparad framgångsrikt!')),
           );
         }
-      } catch (e) {
+      }} catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Fel när datan skulle sparas: $e')),
           );
         }
       }
-    }
+    
   }
 
   void _resetForm() {
@@ -216,9 +234,10 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
         labelText: label,
       ),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+   
       validator: (value) {
         if (value == null || value.isEmpty) return 'Ange $label';
-        if (double.tryParse(value) == null) return 'Ange ett giltigt tal';
+        if (double.tryParse(value.replaceAll(",", ".")) == null) return 'Ange ett giltigt tal';
         return null;
       },
     );

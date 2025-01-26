@@ -41,7 +41,7 @@ class TotalProteinScale extends StatelessWidget with RangeGetter {
             
                     child: Text(
                       "Proteininnehåll ${vm.totalProteinPerDay().toStringAsFixed(0)} g",
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ),
                   // A small triangle pointing downwards
