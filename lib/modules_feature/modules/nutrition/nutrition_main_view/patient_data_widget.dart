@@ -35,13 +35,21 @@ class PatientDataWidget extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(width: 1, color: Theme.of(context).colorScheme.onSurface),
-       
-        ),
-        child: Row(
+  decoration: BoxDecoration(
+    color: Theme.of(context).cardColor, // Removed opacity for better clarity
+    borderRadius: BorderRadius.circular(12), // Increased border radius for a smoother look
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1), // Softer shadow color
+        offset: const Offset(0, 4), // Increased vertical offset for depth
+        blurRadius: 12, // Increased blur radius for a more diffused shadow
+      ),
+    ],
+    border: Border.all(
+      width: 1,
+      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), // Softer border color
+    ),
+  ),        child: Row(
           children: [
             Icon(
               Icons.person,
@@ -66,17 +74,51 @@ class PatientDataWidget extends StatelessWidget {
                   'Längd: $lengthText cm',
                   style: subtitleStyle,
                 ),
-                Text(
-                  'Vårddygn: ${vm.day}',
-                  style: subtitleStyle,
-                ),
+               Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Static Text
+            Text(
+              'Vårddygn: ',
+              style: subtitleStyle,
+            ),
+            // AnimatedSwitcher for Dynamic Text
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+    // Combine Fade, Scale, and Slide Transitions
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0.0, 0.5), // Start slightly below
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeInOut,
+      )),
+      child: FadeTransition(
+        opacity: animation,
+        child: ScaleTransition(
+          scale: animation,
+          child: child,
+        ),
+      ),
+    );
+  },
+              child: Text(
+                '${vm.day}',
+                key: ValueKey<int>(vm.day), // Unique Key based on vm.day
+                style: subtitleStyle// Optional styling
+              ),
+            ),
+          ],
+        ),
               ],
             ),
             const Spacer(),
             const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Colors.white54,
+         
               semanticLabel: 'Gå till detaljer',
             ),
           ],

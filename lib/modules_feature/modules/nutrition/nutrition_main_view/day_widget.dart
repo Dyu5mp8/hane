@@ -9,16 +9,23 @@ class DayWidget extends StatelessWidget {
 
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.all(11),
       decoration: BoxDecoration(
-        
-        // Dark background to match the screenshot style; adjust if you have a Theme color for cards.
- 
-        borderRadius: BorderRadius.circular(8),
-         border: Border.all(width: 1, color: Theme.of(context).colorScheme.onSurface),
-      
+    color: Theme.of(context).cardColor, // Removed opacity for better clarity
+    borderRadius: BorderRadius.circular(12), // Increased border radius for a smoother look
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1), // Softer shadow color
+        offset: const Offset(0, 4), // Increased vertical offset for depth
+        blurRadius: 12, // Increased blur radius for a more diffused shadow
       ),
+    ],
+    border: Border.all(
+      width: 1,
+      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), // Softer border color
+    ),
+  ),
       child:Column(
   mainAxisAlignment: MainAxisAlignment.center,
   crossAxisAlignment: CrossAxisAlignment.center, // Ensures horizontal centering

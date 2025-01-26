@@ -158,16 +158,9 @@ class IntermittentTile extends StatelessWidget {
                   }
                 },
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-                decoration: BoxDecoration(
-               
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  '${nutrition.quantity}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+              Text(
+                '${nutrition.quantity}',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               IconButton(
                 icon: const Icon(Icons.add_circle_outline, color: Colors.green),
@@ -175,6 +168,13 @@ class IntermittentTile extends StatelessWidget {
                   viewModel.increaseQuantity(nutrition);
                 },
               ),
+               IconButton(
+      icon: const Icon(Icons.close),
+      onPressed: () {
+        viewModel.removeNutrition(nutrition);
+      },
+    ),
+              
             ],
           ),
               // Optional: Add more actions if needed

@@ -83,14 +83,18 @@ class NutritionView extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-             SizedBox(
-                  width: 330,
-                  height: 140,
-              child: PatientDataWidget()),
-                Expanded(
+             Expanded(
+               child: SizedBox(
+                    width: 330,
+                    height: 140,
+                child: PatientDataWidget()),
+             ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),  
                   child: SizedBox(
                   
                     height: 140,
+                    width: 50,
                     child: DayWidget(),
                   ),
                 ),
