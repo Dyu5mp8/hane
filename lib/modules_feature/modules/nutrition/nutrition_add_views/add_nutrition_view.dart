@@ -157,7 +157,8 @@ class SourceCard extends StatelessWidget {
                 quantity: 1,
               ));
             } else if (source is ContinousSource) {
-              vm.addNutrition(Continuous(continuousSource: source as ContinousSource, mlPerHour: 42)
+              ContinousSource c = source as ContinousSource;
+              vm.addNutrition(Continuous(continuousSource: c, mlPerHour: c.rateRangeMin ?? 20)
           
               );
    

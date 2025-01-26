@@ -27,7 +27,7 @@ Nutrition createNewNutrition(Source source) {
   return switch (source) {
     ContinousSource c => Continuous(
       continuousSource: c,
-      mlPerHour: 42,
+      mlPerHour: 0,
       ),
     IntermittentSource i => Intermittent(
       intermittentSource: i,

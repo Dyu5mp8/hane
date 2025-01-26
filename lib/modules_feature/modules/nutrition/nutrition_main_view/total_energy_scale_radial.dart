@@ -1,39 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
-import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/scale_zone.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/range_getter.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-class TotalEnergyScaleRadial extends StatelessWidget {
+
+class TotalEnergyScaleRadial extends StatelessWidget with RangeGetter {
   final double requirementValue = 2000; // e.g., fixed nutritional requirement
 
   final NutritionViewModel vm;
 
-  TotalEnergyScaleRadial({required this.vm});
-
-  Color getRangeColor(ScaleZoneColor color) {
-    switch (color) {
-      case ScaleZoneColor.red:
-        return const Color.fromARGB(255, 228, 107, 13);
-      case ScaleZoneColor.yellow:
-        return Colors.yellow;
-      case ScaleZoneColor.green:
-        return Colors.green;
-    }
-  }
-
-  List<GaugeRange> getGaugeRanges(List<ScaleZone?> zones) {
-    return zones.whereType<ScaleZone>().map((zone) {
-      Color color = getRangeColor(zone.color);
-
-      return GaugeRange(
-        startValue: zone.min,
-        endValue: zone.max,
-        color: color,
-        startWidth: 10,
-        endWidth: 10,
-      );
-    }).toList();
-  }
+  TotalEnergyScaleRadial({super.key, required this.vm});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +17,7 @@ class TotalEnergyScaleRadial extends StatelessWidget {
 
     return Container(
       height: 300,
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: SfRadialGauge(
         axes: <RadialAxis>[
           RadialAxis(
@@ -54,7 +30,7 @@ class TotalEnergyScaleRadial extends StatelessWidget {
             showLabels: true,
             ranges: getGaugeRanges(vm.getCalorieScaleZones()),
             showTicks: true,
-            axisLineStyle: AxisLineStyle(
+            axisLineStyle: const AxisLineStyle(
               thickness: 0.05,
               thicknessUnit: GaugeSizeUnit.factor,
             ),
@@ -63,7 +39,7 @@ class TotalEnergyScaleRadial extends StatelessWidget {
                 value: needs,
                 markerType: MarkerType.invertedTriangle,
                 text: "${vm.totalKcalPerDay()} kcal",
-                textStyle: GaugeTextStyle(fontSize: 12),
+                textStyle: const GaugeTextStyle(fontSize: 12),
                 markerOffset: -10,
                 color: Colors.blueAccent,
                 markerWidth: 14,
@@ -89,7 +65,7 @@ class TotalEnergyScaleRadial extends StatelessWidget {
                 needleColor: Colors.redAccent,
                 needleStartWidth: 1,
                 needleEndWidth: 2,
-                knobStyle: KnobStyle(knobRadius: 0.08),
+                knobStyle: const KnobStyle(knobRadius: 0.08),
                 animationType: AnimationType.ease, // Smooth animation type
                 animationDuration: 2000, // Duration f
               )
@@ -104,14 +80,14 @@ class TotalEnergyScaleRadial extends StatelessWidget {
                     children: [
                       Text(
                         "${vm.totalKcalPerDay().toStringAsFixed(0)} kcal (${(vm.totalKcalPerDay() / needs * 100).toStringAsFixed(0)}%)",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         "▼ Beräknat mål:\n ${needs.toStringAsFixed(0)} kcal",
-                        style: TextStyle(fontSize: 13),
+                        style: const TextStyle(fontSize: 13),
                         textAlign: TextAlign.center,
                       ),
                     ],

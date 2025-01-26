@@ -38,20 +38,14 @@ class PatientDataWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor.withOpacity(0.9),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.white24),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black45,
-              offset: Offset(0, 2),
-              blurRadius: 4,
-            ),
-          ],
+          border: Border.all(width: 1, color: Theme.of(context).colorScheme.onSurface),
+       
         ),
         child: Row(
           children: [
             Icon(
               Icons.person,
-              color: Theme.of(context).primaryColorLight,
+              color: Theme.of(context).colorScheme.primary,
               size: 28,
               semanticLabel: 'Patient ikon',
             ),

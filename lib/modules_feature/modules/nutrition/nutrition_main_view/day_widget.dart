@@ -7,33 +7,17 @@ class DayWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final vm = context.watch<NutritionViewModel>();
 
-    /// Safely handle null or unexpected values.
-    final String dayText = vm.day.toStringAsFixed(0);
-      
-    /// You can adapt these text styles to your theme or dark mode needs.
-    final titleStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-
-          fontWeight: FontWeight.bold,
-        );
-    final subtitleStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-
-        );
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
       padding: const EdgeInsets.all(11),
       decoration: BoxDecoration(
+        
         // Dark background to match the screenshot style; adjust if you have a Theme color for cards.
-        color: Theme.of(context).cardColor.withOpacity(0.9), 
+ 
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black45,
-            offset: Offset(0, 2),
-            blurRadius: 4,
-          ),
-        ],
+         border: Border.all(width: 1, color: Theme.of(context).colorScheme.onSurface),
+      
       ),
       child:Column(
   mainAxisAlignment: MainAxisAlignment.center,
@@ -46,6 +30,7 @@ class DayWidget extends StatelessWidget {
       child: Icon(
         Icons.arrow_upward_rounded,
       
+      
         size: 20,
       ),
     ),
@@ -55,6 +40,7 @@ class DayWidget extends StatelessWidget {
 
     Icon(
       Icons.calendar_month_outlined,
+      color: Theme.of(context).colorScheme.primary,
 
       size: 24,
     ),

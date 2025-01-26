@@ -53,6 +53,42 @@ class NutritionViewModel extends ChangeNotifier {
     
   }
 
+  List<ScaleZone?> getProteinScaleZones(){
+
+
+    ScaleZone? lowRed;
+    ScaleZone? lowYellow;
+    ScaleZone? green;
+    ScaleZone? highYellow;
+    ScaleZone? highRed;
+
+    if (day < 4) {
+      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 0.1, color: ScaleZoneColor.red);
+      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 0.1, maxPerWeight: 0.2, color: ScaleZoneColor.yellow);
+      green = ScaleZone(weight: idealWeight(), minPerWeight: 0.2, maxPerWeight: 1, color: ScaleZoneColor.green);
+      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 1, maxPerWeight: 1.3, color: ScaleZoneColor.yellow);
+      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 1.3, maxPerWeight: 1000, color: ScaleZoneColor.red);
+    }
+
+    if (day >= 4 && day < 7) {
+      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 0.5, color: ScaleZoneColor.red);
+      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 0.5, maxPerWeight: 1, color: ScaleZoneColor.yellow);
+      green = ScaleZone(weight: idealWeight(), minPerWeight: 1, maxPerWeight: 1.3, color: ScaleZoneColor.green);
+      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 1.3, maxPerWeight: 1.6, color: ScaleZoneColor.yellow);
+      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 1.6, maxPerWeight: 1000, color: ScaleZoneColor.red);
+    }
+
+    if (day >= 7) {
+      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 0.8, color: ScaleZoneColor.red);
+      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 0.8, maxPerWeight: 1.2, color: ScaleZoneColor.yellow);
+      green = ScaleZone(weight: idealWeight(), minPerWeight: 1.2, maxPerWeight: 1.4, color: ScaleZoneColor.green);
+      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 1.4, maxPerWeight: 1.6, color: ScaleZoneColor.yellow);
+      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 1.6, maxPerWeight: 1000, color: ScaleZoneColor.red);
+  }
+
+    return [lowRed, lowYellow, green, highYellow, highRed];
+  }
+
   List<ScaleZone?> getCalorieScaleZones() {
 
     ScaleZone? lowRed;
@@ -84,8 +120,7 @@ class NutritionViewModel extends ChangeNotifier {
       highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 25, maxPerWeight: 30, color: ScaleZoneColor.yellow);
       highRed = ScaleZone(weight: idealWeight(), minPerWeight: 30, maxPerWeight: 1000, color: ScaleZoneColor.red);
     }
-    print(day);
-    print([lowRed, lowYellow, green, highYellow, highRed]);
+
 
     return [lowRed, lowYellow, green, highYellow, highRed];
 

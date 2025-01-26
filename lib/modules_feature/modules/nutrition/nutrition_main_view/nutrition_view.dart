@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/day_widget.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/total_protein_scale.dart';
 import 'package:provider/provider.dart'; // Ensure provider is imported
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_add_views/add_nutrition_view.dart';
@@ -22,6 +23,8 @@ class NutritionView extends StatelessWidget {
       ),
     );
   }
+
+
 
   /// Widget to build the list of nutrition items along with the energy scale
   Widget buildNutritionList(NutritionViewModel vm, BuildContext context) {
@@ -56,6 +59,8 @@ class NutritionView extends StatelessWidget {
         ),
       ]),
       SizedBox(height: 30), // Spacing between the energy scale and the bottom of the screen
+
+      TotalProteinScale(vm: vm),
       ],
       
     );
@@ -66,8 +71,6 @@ class NutritionView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Accessing the NutritionViewModel from the Provider
     final viewModel = Provider.of<NutritionViewModel>(context, listen: true);
-    print("NutritionView build");
-    print("viewModel.allNutritions.length: ${viewModel.allNutritions.length}");
 
     return Scaffold(
       appBar: AppBar(title: Text('Nutrition')),

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/range_getter.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/scale_zone.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-class TotalEnergyScale extends StatelessWidget {
+
+
+class TotalProteinScale extends StatelessWidget with RangeGetter {
   final double requirementValue = 2000; // e.g., fixed nutritional requirement
 
   final NutritionViewModel vm;
 
-  TotalEnergyScale({required this.vm});
+  TotalProteinScale({required this.vm});
 
   @override
   Widget build(BuildContext context) {
@@ -16,31 +20,27 @@ class TotalEnergyScale extends StatelessWidget {
       padding: EdgeInsets.all(20),
       child: SfLinearGauge(
         minimum: 0,
-        maximum: 3000,
+        maximum: 200,
         orientation: LinearGaugeOrientation.horizontal,
         majorTickStyle: LinearTickStyle(length: 10),
-        minorTickStyle: LinearTickStyle(length: 5),
         axisLabelStyle: TextStyle(fontSize: 10),
-        interval: 500,
+        interval: 50,
 
         // Custom widget pointer as a box with a downward pointer
         markerPointers: [
           LinearWidgetPointer(
             value: vm.totalProteinPerDay(),
             child: Transform.translate(
-              offset: Offset(0, -20), // adjust offset to position above gauge
+              offset: Offset(0, -30), // adjust offset to position above gauge
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // The box containing the text
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
+            
                     child: Text(
-                      "${vm.totalProteinPerDay()} kcal",
+                      "Proteininnehåll ${vm.totalProteinPerDay().toStringAsFixed(0)} g",
                       style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
@@ -55,6 +55,8 @@ class TotalEnergyScale extends StatelessWidget {
             ),
           ),
         ],
+        ranges: getLinearGaugeRanges(vm.getProteinScaleZones()),
+
       ),
     );
   }
