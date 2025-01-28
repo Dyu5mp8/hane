@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 final largeFont = GoogleFonts.rubik(fontSize: 30);
 final mediumFont = GoogleFonts.rubik(fontSize: 14);
@@ -137,7 +138,7 @@ final ThemeData darkAppTheme = ThemeData(
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
     seedColor: const Color.fromARGB(255, 111, 118, 124),
-    surface: const Color.fromARGB(255, 37, 37, 37),
+    surface: const Color.fromARGB(255, 28, 27, 27),
     onSurface: const Color.fromARGB(255, 255, 255, 255),
 tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
 error: const Color.fromARGB(255, 177, 10, 66),
@@ -269,14 +270,18 @@ error: const Color.fromARGB(255, 177, 10, 66),
 ),
 
   chipTheme: ChipThemeData(
-    backgroundColor: const Color.fromARGB(255, 170, 81, 56),
+    backgroundColor: const Color.fromARGB(255, 75, 45, 32),
     labelStyle: GoogleFonts.rubik(
-      fontSize: 12,
-      color: Colors.white
+      fontSize: kIsWeb ? 14 : 12,
+      fontWeight: FontWeight.w400,
+               
+
+      color: const Color.fromARGB(255, 255, 255, 255),
 
     ),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
+   shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      kIsWeb ? 12 : 10), // Adjust rounding for web
+                ),
   ),
 );

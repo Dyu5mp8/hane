@@ -333,15 +333,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 visualDensity: VisualDensity.compact,
                 side: BorderSide.none,
                 showCheckmark: false,
-                label: Text("Alla",
-                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                        fontSize: isWeb ? 14 : 11,
-                        fontWeight: FontWeight.w800)), // Larger font on web
+                label: Text("Alla"),
+   
                 selected: _selectedCategory == null,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      isWeb ? 12 : 10), // Adjust rounding for web
-                ),
+              
                 onSelected: (bool selected) {
                   setState(() {
                     _searchController.clear();
@@ -357,19 +352,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   side: BorderSide.none,
                   showCheckmark: false,
                   labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-                  label: Text(category,
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                          fontSize:
-                              isWeb ? 14 : 11)), // Adjust font size for web
+                  label: Text(category),
+                   
                   selected: _selectedCategory == category,
                   onSelected: (bool selected) {
                     setState(() {
                       _selectedCategory = selected ? category : null;
                     });
                   },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(isWeb ? 12 : 10),
-                  ),
+                
                   padding: const EdgeInsets.symmetric(
                       horizontal: 6.0,
                       vertical: 4.0), // Increased padding for web

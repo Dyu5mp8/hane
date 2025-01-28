@@ -96,7 +96,7 @@ class _EditableRowState extends State<EditableRow>
         decoration: BoxDecoration(
           color: isEditMode
               ? 
-                  Color.fromARGB(180, 173, 209, 255)
+                Theme.of(context).colorScheme.secondaryContainer
               : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(4),
         ),

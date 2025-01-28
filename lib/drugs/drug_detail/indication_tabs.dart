@@ -31,7 +31,7 @@ class _IndicationTabsState extends State<IndicationTabs> {
             Container(
               width: 40,
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColorLight,
+                color: Theme.of(context).colorScheme.secondaryFixed,
                 border: Border.all(color: Colors.black, width: 0.5),
               ),
               child: IconButton(

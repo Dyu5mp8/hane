@@ -19,6 +19,7 @@ class _EditNameDialogState extends State<EditNameDialog> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _brandNameController = TextEditingController();
   final TextEditingController _categoriesController = TextEditingController();
+  final FocusNode _categoriesFocusNode = FocusNode();
   List<String> _brandNames = [];
   List<String> _categories = [];
   String? _genericName;
@@ -101,222 +102,229 @@ class _EditNameDialogState extends State<EditNameDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: widget.isNewDrug
-              ? const Text('Nytt läkemedel')
-              : const Text('Redigera'),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          leading: null,
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                if (widget.isNewDrug) {
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+            title: widget.isNewDrug
+                ? const Text('Nytt läkemedel')
+                : const Text('Redigera'),
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            leading: null,
+            actions: [
+              TextButton(
+                onPressed: () {
                   Navigator.pop(context);
-                }
-              },
-              child: const Icon(Icons.close),
-            ),
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  if (_brandNameController.text.isNotEmpty ||
-                      _categoriesController.text.isNotEmpty) {
-                    String? forgottenBrandNameText =
-                        _brandNameController.text.isNotEmpty
-                            ? _brandNameController.text
-                            : null;
-                    String? forgottenCategoryText =
-                        _categoriesController.text.isNotEmpty
-                            ? _categoriesController.text
-                            : null;
-
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Ej tillagda ändringar'),
-                            content: Text(
-                                'Ej sparat fält: ${forgottenBrandNameText ?? ''} ${forgottenCategoryText ?? ''}. Spara utan att lägga till de inskrivna fälten?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Avbryt'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  widget.drug.name = _nameController.text;
-                                  widget.drug.brandNames = _brandNames;
-                                  widget.drug.categories = _categories;
-                                  widget.drug.genericName = _genericName;
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Ja'),
-                              ),
-                            ],
-                          );
-                        });
-                  } else {
-                    widget.drug.name = _nameController.text;
-                    widget.drug.brandNames = _brandNames;
-                    widget.drug.categories = _categories;
-                    widget.drug.genericName = _genericName;
-
+                  if (widget.isNewDrug) {
                     Navigator.pop(context);
                   }
-                }
-              },
-              child: const Icon(Icons.check),
-            ),
-          ]),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Name input
-
-                const SizedBox(height: 40),
-                TextFormField(
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: _nameController,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Namn',
-                    border: OutlineInputBorder(),
+                },
+                child: const Icon(Icons.close),
+              ),
+              TextButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    if (_brandNameController.text.isNotEmpty ||
+                        _categoriesController.text.isNotEmpty) {
+                      String? forgottenBrandNameText =
+                          _brandNameController.text.isNotEmpty
+                              ? _brandNameController.text
+                              : null;
+                      String? forgottenCategoryText =
+                          _categoriesController.text.isNotEmpty
+                              ? _categoriesController.text
+                              : null;
+      
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Ej tillagda ändringar'),
+                              content: Text(
+                                  'Ej sparat fält: ${forgottenBrandNameText ?? ''} ${forgottenCategoryText ?? ''}. Spara utan att lägga till de inskrivna fälten?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Avbryt'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    widget.drug.name = _nameController.text;
+                                    widget.drug.brandNames = _brandNames;
+                                    widget.drug.categories = _categories;
+                                    widget.drug.genericName = _genericName;
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Ja'),
+                                ),
+                              ],
+                            );
+                          });
+                    } else {
+                      widget.drug.name = _nameController.text;
+                      widget.drug.brandNames = _brandNames;
+                      widget.drug.categories = _categories;
+                      widget.drug.genericName = _genericName;
+      
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                child: const Icon(Icons.check),
+              ),
+            ]),
+        body: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Name input
+      
+                  const SizedBox(height: 40),
+                  TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: _nameController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Namn',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: val.validateName,
                   ),
-                  validator: val.validateName,
-                ),
-
-                const SizedBox(height: 50),
-
-                TextFormField(
-                  controller: _brandNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Lägg till synonymer',
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        {
-                          _addBrandName();
-                        }
-                      },
+      
+                  const SizedBox(height: 50),
+      
+                  TextFormField(
+                    controller: _brandNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Lägg till synonymer',
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          {
+                            _addBrandName();
+                          }
+                        },
+                      ),
+                    ),
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
+      
+                  const SizedBox(height: 8),
+                  // Display brand names as chips
+                  // Display brand names with an option to select generic name
+      
+                  const Row(
+                    children: [
+                      Text(
+                        'Om det finns ett generiskt namn, markera detta',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+      
+                  SizedBox(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 4,
+                      children: _brandNames
+                          .map((name) => CustomChipWithCheckbox(
+                                label: name,
+                                isSelected: _genericName == name,
+                                onSelected: (selected) {
+                                  setState(() {
+                                    _genericName = selected! ? name : null;
+                                  });
+                                },
+                                onDeleted: () => _removeBrandName(name),
+                              ))
+                          .toList(),
                     ),
                   ),
-                  textCapitalization: TextCapitalization.sentences,
-                ),
-
-                const SizedBox(height: 8),
-                // Display brand names as chips
-                // Display brand names with an option to select generic name
-
-                const Row(
-                  children: [
-                    Text(
-                      'Om det finns ett generiskt namn, markera detta',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                  // Categories input
+                  const SizedBox(height: 19),
+                  TypeAheadField<String>(
+                    focusNode: _categoriesFocusNode,
+                    decorationBuilder: (context, child) => Container(
+                      key: UniqueKey(),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(4),
+                        color: Theme.of(context).colorScheme.surface
+                      ),
+                      child: child,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-
-                SizedBox(
-                  child: Wrap(
+                    hideKeyboardOnDrag: true,
+                    hideOnUnfocus: true,
+                    
+                    hideWithKeyboard: true,
+                    hideOnEmpty: true,
+                    direction: VerticalDirection.up,
+                    hideOnLoading: true,
+                    hideOnError: true,
+                    hideOnSelect: true,
+                    suggestionsCallback: (search) =>
+                        _findSuggestions(search, _suggestedCategories),
+                    builder: (context, controller, focusNode) {
+                      return TextFormField(
+                        controller: controller,
+                        focusNode: focusNode,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: 'Lägg till kategorier',
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              {
+                                _addCategory(suggestion: controller.text);
+                              }
+                            },
+                          ),
+                        ),
+                        textCapitalization: TextCapitalization.sentences,
+                      );
+                    },
+                    itemBuilder: (context, category) {
+                      return ListTile(
+                        dense: true,
+                        title:
+                            Text(category, style: const TextStyle(fontSize: 13)),
+                      
+                      );
+                    },
+                    onSelected: (category) {
+                      _addCategory(suggestion: category);
+                    },
+                  ),
+      
+                  const SizedBox(height: 8),
+                  // Display categories as chips
+      
+                  Wrap(
                     spacing: 8,
                     runSpacing: 4,
-                    children: _brandNames
-                        .map((name) => CustomChipWithCheckbox(
-                              label: name,
-                              isSelected: _genericName == name,
-                              onSelected: (selected) {
-                                setState(() {
-                                  _genericName = selected! ? name : null;
-                                });
-                              },
-                              onDeleted: () => _removeBrandName(name),
+                    children: _categories
+                        .map((category) => CustomChip(
+                              label: category,
+                              onDeleted: () => _removeCategory(category),
                             ))
                         .toList(),
                   ),
-                ),
-                // Categories input
-                const SizedBox(height: 19),
-                TypeAheadField<String>(
-                  decorationBuilder: (context, child) => Container(
-                    key: UniqueKey(),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: child,
-                  ),
-                  hideKeyboardOnDrag: true,
-                  hideOnUnfocus: true,
-                  hideWithKeyboard: true,
-                  hideOnEmpty: true,
-                  direction: VerticalDirection.up,
-                  hideOnLoading: true,
-                  hideOnError: true,
-                  hideOnSelect: true,
-                  suggestionsCallback: (search) =>
-                      _findSuggestions(search, _suggestedCategories),
-                  builder: (context, controller, focusNode) {
-                    return TextFormField(
-                      controller: controller,
-                      focusNode: focusNode,
-                      autofocus: true,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: 'Lägg till kategorier',
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () {
-                            {
-                              _addCategory(suggestion: controller.text);
-                            }
-                          },
-                        ),
-                      ),
-                      textCapitalization: TextCapitalization.sentences,
-                    );
-                  },
-                  itemBuilder: (context, category) {
-                    return ListTile(
-                      dense: true,
-                      title:
-                          Text(category, style: const TextStyle(fontSize: 13)),
-                      tileColor: Colors.white,
-                    );
-                  },
-                  onSelected: (category) {
-                    _addCategory(suggestion: category);
-                  },
-                ),
-
-                const SizedBox(height: 8),
-                // Display categories as chips
-
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: _categories
-                      .map((category) => CustomChip(
-                            label: category,
-                            onDeleted: () => _removeCategory(category),
-                          ))
-                      .toList(),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

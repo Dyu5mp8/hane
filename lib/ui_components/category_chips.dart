@@ -35,15 +35,10 @@ class CategoryChips extends StatelessWidget {
               showCheckmark: false,
               label: Text(
                 "Alla",
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                      fontSize: isWeb ? 14 : 11,
-                      fontWeight: FontWeight.w800,
-                    ),
+               
               ),
               selected: selectedCategory == null,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(isWeb ? 12 : 10),
-              ),
+             
               onSelected: (_) => onCategorySelected(null),
               padding:
                   const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
@@ -56,9 +51,6 @@ class CategoryChips extends StatelessWidget {
               labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
               label: Text(
                 category,
-                style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                      fontSize: isWeb ? 14 : 11,
-                    ),
               ),
               selected: selectedCategory == category,
               onSelected: (selected) => {
@@ -69,9 +61,7 @@ class CategoryChips extends StatelessWidget {
                     if (acceptAll) {onCategorySelected(null)}
                   }
               },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(isWeb ? 12 : 10),
-              ),
+            
               padding:
                   const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
             );
