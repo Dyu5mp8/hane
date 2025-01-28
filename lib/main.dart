@@ -3,6 +3,7 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hane/login/signup.dart';
+import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:hane/splash_screen.dart';
 import 'package:hane/theme_provider.dart';
 import 'firebase_options.dart';
@@ -90,6 +91,10 @@ class _MyAppState extends State<MyApp> {
             providers: [
               ChangeNotifierProvider(
                 create: (_) => DrugListProvider(),
+              ),
+
+              ChangeNotifierProvider(
+                create: (_) => NutritionViewModel()
               ),
               // Other providers...
             ],

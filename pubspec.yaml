@@ -65,6 +65,8 @@ dependencies:
   firebase_ui_firestore: ^1.7.0
   keyboard_actions: ^4.2.0
   syncfusion_flutter_sliders: ^28.1.39
+  syncfusion_flutter_gauges: ^28.1.39
+  sticky_headers: ^0.3.0+2
 
 
 dev_dependencies:
