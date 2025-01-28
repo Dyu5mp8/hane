@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hane/ui_components/blinking_icon.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_parameter.dart';
-import 'package:flutter/material.dart';
-import 'package:hane/ui_components/blinking_icon.dart';
-import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
-import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
-import 'package:hane/modules_feature/modules/dialysis/models/dialysis_parameter.dart';
+
 class ParameterSlider extends StatefulWidget {
   final String label;
   final DialysisParameter Function(DialysisViewModel) parameterSelector;
@@ -92,7 +86,7 @@ class _ParameterSliderState extends State<ParameterSlider> {
                 widget.trailing ?? const SizedBox(),
               ],
             ),
-            const SizedBox(height: 4),
+   
             SfSlider(
               min: parameter.minValue,
               max: parameter.maxValue,
@@ -100,12 +94,18 @@ class _ParameterSliderState extends State<ParameterSlider> {
               interval: widget.interval,
               stepSize: widget.stepSize,
               showTicks: widget.showTicks,
+
               thumbIcon: widget.thumbColor != null
                   ? Container(
+              
+                      
                       decoration: BoxDecoration(
                         color: widget.thumbColor,
                         shape: BoxShape.circle,
+                        
+
                       ),
+                      
                     )
                   : null,
               onChangeEnd: (_) {

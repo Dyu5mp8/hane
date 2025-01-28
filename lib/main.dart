@@ -3,6 +3,8 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hane/login/signup.dart';
+import 'package:hane/modules_feature/modules/dialysis/dialysis_view.dart';
+import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:hane/splash_screen.dart';
 import 'package:hane/theme_provider.dart';
@@ -96,6 +98,9 @@ class _MyAppState extends State<MyApp> {
               ChangeNotifierProvider(
                 create: (_) => NutritionViewModel()
               ),
+
+              ChangeNotifierProvider(
+                create: (_) => DialysisViewModel()),
               // Other providers...
             ],
             child: MaterialApp(

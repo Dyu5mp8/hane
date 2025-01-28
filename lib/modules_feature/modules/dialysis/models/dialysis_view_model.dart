@@ -63,6 +63,7 @@ class DialysisViewModel extends ChangeNotifier {
   // Some fields that remain simple:
   double _hematocritLevel = 0.30; // range [0–1] => 30%
   double _weight = 70.0; // in kg
+  double _length = 170.0; // in cm
   bool _isCitrateLocked = true;
   bool _isUpdating = false; // to prevent circular updates
 
@@ -187,6 +188,26 @@ class DialysisViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+    double get bmi => weight / (patientLength * patientLength / 10000);
+
+  double get patientLength => _length;
+  set patientLength(double val) {
+    if (_length != val) {
+      _length = val;
+      notifyListeners();
+    }
+  }
+
+  double idealWeight() {
+    if (bmi < 25) {
+      return weight;
+    }
+
+    var idealWeight =
+        (patientLength - 100) + 0.25 * (weight - (patientLength - 100));
+
+    return idealWeight;
+  }
 
   double get hematocritLevel => _hematocritLevel;
   set hematocritLevel(double val) {
@@ -219,7 +240,7 @@ class DialysisViewModel extends ChangeNotifier {
             fluidRemovalParam.value) *
         dilutionFactor;
 
-    final denominator = _weight;
+    final denominator = idealWeight();
     if (denominator == 0) return 0.0;
     return numerator / denominator;
   }

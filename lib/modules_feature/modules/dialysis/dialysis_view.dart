@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/dialysis/dialysis_info_view.dart';
+import 'package:hane/modules_feature/modules/dialysis/dialysis_patient_data_widget.dart';
 import 'package:hane/modules_feature/modules/dialysis/dialysis_result.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_preset.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/presets/standard_dialysis_preset_civa.dart';
@@ -112,55 +113,52 @@ class _DialysisViewState extends State<DialysisView> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => DialysisViewModel(),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Dialysberäkning'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () => _showDialysisInfoView(context),
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(title: const Text('Dialysberäkning'),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.info_outline),
+          onPressed: () => _showDialysisInfoView(context),
         ),
-        body: Consumer<DialysisViewModel>(
-          builder: (context, model, child) {
-            final textStyle = Theme.of(context).textTheme.bodyLarge;
-            return Column(
-              children: [
-                Expanded(
-                  child: Stack(
-                    children: [
-                      SingleChildScrollView(
-                        controller: _scrollController,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildWeightHematocritSection(context, model, textStyle),
-                              ElevatedButton(
-                                onPressed: () => _showPresetSelectionDialog(context),
-                                child: Text('Välj startförslag'),
-                              ),
-                              _buildParameterSliders(model),
-                            ],
-                          ),
+      ],
+      ),
+      body: Consumer<DialysisViewModel>(
+        builder: (context, model, child) {
+          final textStyle = Theme.of(context).textTheme.bodyLarge;
+          return Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      controller: _scrollController,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DialysisPatientDataWidget(),
+                            ElevatedButton(
+                              onPressed: () => _showPresetSelectionDialog(context),
+                              child: Text('Välj startförslag'),
+                            ),
+                            _buildParameterSliders(model),
+                          ],
                         ),
                       ),
-                      Positioned(
-                        bottom: 15,
-                        right: 15,
-                        child: ScrollIndicator(scrollController: _scrollController),
-                      ),
-                    ],
-                  ),
+                    ),
+                    Positioned(
+                      bottom: 15,
+                      right: 15,
+                      child: ScrollIndicator(scrollController: _scrollController),
+                    ),
+                  ],
                 ),
-                DialysisResult(),
-              ],
-            );
-          },
-        ),
+              ),
+              DialysisResult(),
+            ],
+          );
+        },
       ),
     );
   }
@@ -197,8 +195,10 @@ class _DialysisViewState extends State<DialysisView> {
   }
 
   Widget _buildParameterSliders(DialysisViewModel model) {
-    return Column(
-      children: [
+    return Consumer<DialysisViewModel>(
+      builder: (context, model, child) {
+      return Column(
+        children: [
         ParameterSlider(
           label: 'Citratnivå',
           parameterSelector: (vm) => vm.citrateParam,
@@ -256,7 +256,9 @@ class _DialysisViewState extends State<DialysisView> {
           showTicks: true,
         ),
         const SizedBox(height: 50),
-      ],
+        ],
+      );
+      },
     );
   }
 
