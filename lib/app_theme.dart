@@ -136,8 +136,8 @@ final ThemeData darkAppTheme = ThemeData(
 
   // Define the default brightness and colors.
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 55, 72, 86),
-    surface: const Color.fromARGB(255, 41, 41, 41),
+    seedColor: const Color.fromARGB(255, 111, 118, 124),
+    surface: const Color.fromARGB(255, 37, 37, 37),
     onSurface: const Color.fromARGB(255, 255, 255, 255),
 tertiaryFixed: const Color.fromARGB(255, 236, 116, 18),
 error: const Color.fromARGB(255, 177, 10, 66),
@@ -197,16 +197,16 @@ error: const Color.fromARGB(255, 177, 10, 66),
     indicatorSize: TabBarIndicatorSize.tab,
     indicator: BoxDecoration(
       borderRadius: BorderRadius.circular(5),
-      color: const Color.fromARGB(255, 131, 82, 40),
+      color: const Color.fromARGB(255, 63, 97, 116),
       border: Border.all(color: Colors.black, width: 0.5),
     ),
   ),
 
   cardTheme: CardTheme(
-    color: const Color.fromARGB(255, 117, 117, 117),
+    color: const Color.fromARGB(255, 42, 53, 70),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12.0),
-
+ 
     ),
   ),
   badgeTheme: BadgeThemeData(
@@ -258,8 +258,8 @@ error: const Color.fromARGB(255, 177, 10, 66),
 
   elevatedButtonTheme: ElevatedButtonThemeData(
   style: ElevatedButton.styleFrom(
-  backgroundColor: Color.fromARGB(255, 0, 79, 104),
-    foregroundColor: Colors.white, // White text
+  backgroundColor: Color.fromARGB(255, 230, 195, 160),
+    foregroundColor: const Color.fromARGB(255, 0, 0, 0), // White text
     elevation: 4,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8),
@@ -269,7 +269,7 @@ error: const Color.fromARGB(255, 177, 10, 66),
 ),
 
   chipTheme: ChipThemeData(
-    backgroundColor: const Color.fromARGB(255, 119, 75, 52),
+    backgroundColor: const Color.fromARGB(255, 41, 71, 88),
     labelStyle: GoogleFonts.rubik(
       fontSize: 12,
       color: Colors.white
