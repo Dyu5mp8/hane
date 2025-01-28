@@ -142,9 +142,13 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   }
 
   List<Step> _buildSteps() {
+    final stepStyle =   StepStyle(
+          color: Theme.of(context).colorScheme.tertiaryFixed);
+        
     // Always start with the strategy picker step.
     List<Step> steps = [
       Step(
+        stepStyle: stepStyle,
         title: const Text('Välj kontext'),
         subtitle: evaluator.strategy == null
             ? null
@@ -191,6 +195,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
               title: Text(section.name.toUpperCase()),
               isActive: _currentStep == stepIndex,
               state: _stepState(stepIndex),
+              stepStyle: stepStyle  ,
               content: Align(
                 alignment: Alignment.centerLeft,
                 child: Form(
@@ -285,14 +290,16 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           textAlign: TextAlign.left,
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.done,
+          
+          
           decoration: InputDecoration(
+            labelStyle: Theme.of(context).textTheme.bodyLarge,
             label: fieldConfig.isRequired
                 ? RichText(
                     text: TextSpan(
                       text: '$label ',
-                      style: const TextStyle(
-                        fontSize: 15,
-                      ),
+                      
+                      style: Theme.of(context).textTheme.bodyLarge,
                       children: [
                         const TextSpan(
                           text: '*',
@@ -436,13 +443,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           : StepState.indexed;
     }
 
-    final stepValid =
-        _stepValidity.length > stepIndex ? _stepValidity[stepIndex] : null;
-    if (stepValid == false) {
-      return StepState.error;
-    } else if (_currentStep > stepIndex) {
-      return StepState.complete;
-    } else if (_currentStep == stepIndex) {
+   if (_currentStep == stepIndex) {
       return StepState.editing;
     } else {
       return StepState.indexed;

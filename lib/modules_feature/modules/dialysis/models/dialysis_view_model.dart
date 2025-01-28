@@ -168,8 +168,9 @@ class DialysisViewModel extends ChangeNotifier {
   // 5) Load preset
   // ---------------------------------------------------------
   void loadDialysispreset(DialysisPreset preset) {
+    setCitrate(3);
     isCitrateLocked = true;
-    preset.setWeight(_weight);
+    preset.setWeight(idealWeight());
     setBloodFlow(preset.suggestedBloodFlow());
     setDialysateFlow(preset.suggestedDialysateFlow());
     setFluidRemoval(preset.suggestedFluidRemoval());

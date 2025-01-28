@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class PatientDataWidget extends StatelessWidget {
+
+  PatientDataWidget({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<NutritionViewModel>();

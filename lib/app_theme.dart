@@ -7,6 +7,9 @@ final mediumFont = GoogleFonts.rubik(fontSize: 14);
 final smallFont = GoogleFonts.rubik(fontSize: 12);
 
 final ThemeData appTheme = ThemeData(
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
+    hoverColor: Colors.transparent,
   useMaterial3: true,
 
   // Define the default brightness and colors.
@@ -118,6 +121,9 @@ final ThemeData appTheme = ThemeData(
 );
 
 final ThemeData darkAppTheme = ThemeData(
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
+    hoverColor: Colors.transparent,
   useMaterial3: true,
 
   // Define the default brightness and colors.

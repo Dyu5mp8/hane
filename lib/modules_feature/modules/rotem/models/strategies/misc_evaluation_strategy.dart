@@ -24,13 +24,36 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     final a10Extem = evaluator.a10Extem;
     final mlExtem = evaluator.mlExtem;
 
-    // 1) PCC/FFP if CT EXTEM above max OR CT INTEM above max
-    if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high ||
+  if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high &&
         configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
-      actions['PCC/FFP'] = [RotemAction(
+      actions['Högt CT EXTEM/INTEM'] = [RotemAction(
         dosage: Dosage(
           administrationRoute: "IV",
-          instruction: "Hög CT INTEM ELLER CT EXTEM => Ge plasma eller PCC",
+          instruction: "Ge plasma",
+          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
+          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+        ),
+      )];
+    }
+
+    // 1) PCC/FFP if CT EXTEM above max OR CT INTEM above max
+    else if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high) {
+      actions['Högt CT EXTEM'] = [RotemAction(
+        dosage: Dosage(
+          administrationRoute: "IV",
+          instruction: "Ge Ocplex",
+          dose: Dose.fromString(amount: 10, unit: "E/kg", ),
+     
+    
+        ),
+      )];
+    }
+
+    else if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
+      actions['Högt CT INTEM'] = [RotemAction(
+         dosage: Dosage(
+          administrationRoute: "IV",
+          instruction: "Ge plasma",
           lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
           higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
         ),
