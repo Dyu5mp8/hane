@@ -258,8 +258,8 @@ error: const Color.fromARGB(255, 177, 10, 66),
 
   elevatedButtonTheme: ElevatedButtonThemeData(
   style: ElevatedButton.styleFrom(
-  backgroundColor: Color.fromARGB(255, 230, 195, 160),
-    foregroundColor: const Color.fromARGB(255, 0, 0, 0), // White text
+  backgroundColor:  const Color.fromARGB(255, 85, 95, 102),
+    foregroundColor: Colors.white, // White text
     elevation: 4,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8),
@@ -269,7 +269,7 @@ error: const Color.fromARGB(255, 177, 10, 66),
 ),
 
   chipTheme: ChipThemeData(
-    backgroundColor: const Color.fromARGB(255, 41, 71, 88),
+    backgroundColor: const Color.fromARGB(255, 170, 81, 56),
     labelStyle: GoogleFonts.rubik(
       fontSize: 12,
       color: Colors.white
