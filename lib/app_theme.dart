@@ -270,13 +270,13 @@ error: const Color.fromARGB(255, 177, 10, 66),
 ),
 
   chipTheme: ChipThemeData(
-    backgroundColor: const Color.fromARGB(255, 75, 45, 32),
+    backgroundColor: const Color.fromARGB(255, 65, 57, 54),
     labelStyle: GoogleFonts.rubik(
       fontSize: kIsWeb ? 14 : 12,
       fontWeight: FontWeight.w400,
                
 
-      color: const Color.fromARGB(255, 255, 255, 255),
+      color: Colors.white,
 
     ),
    shape: RoundedRectangleBorder(

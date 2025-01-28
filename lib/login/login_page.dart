@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hane/login/forgot_screen.dart';
 import 'package:hane/login/logo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hane/login/initializer_widget.dart';
@@ -203,6 +204,35 @@ class _LoginPageState extends State<LoginPage> {
       ],
     );
   }
+
+Widget _forgotAccountLabel () {
+  return InkWell(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ForgotScreen()),
+      );
+    },
+    child: Container(
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.all(15),
+      alignment: Alignment.bottomCenter,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            'Glömt lösenord?',
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            textAlign: TextAlign.center, // Center-align the text
+          ),
+        
+        ],
+      ),
+    ),
+  );
+}
+
+
 Widget _createAccountLabel() {
   return InkWell(
     onTap: () {
@@ -223,16 +253,18 @@ Widget _createAccountLabel() {
             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center, // Center-align the text
           ),
-          const SizedBox(height: 10), // Add space between texts
+
           Text(
             'Registrera ny användare',
             style: TextStyle(
-              color: accentColor,
+              color: Colors.indigo,
               fontSize: 13,
               fontWeight: FontWeight.w600,
+              
             ),
             textAlign: TextAlign.center, // Center-align the text
           ),
+          
         ],
       ),
     ),
@@ -290,6 +322,8 @@ Widget build(BuildContext context) {
                         _submitButton(),
                         const SizedBox(height: 10),
                         _createAccountLabel(),
+                        const SizedBox(height:10),
+                        _forgotAccountLabel(),
                       ],
                     ),
                   ),

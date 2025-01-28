@@ -238,7 +238,7 @@ class _SignUpPageState extends State<SignUpPage> {
               style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Colors.blueAccent),
+                  color:  Colors.indigo,),
             ),
           ],
         ),
