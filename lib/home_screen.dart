@@ -178,6 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
           provider.isReviewer ? 
             _buildPendingReviewListView(pendingReviewDrugs) : 
             _buildModulesListView(),
+          if (provider.isReviewer) ModuleListView(modules: modules)
+        
         ],
       ),
       bottomNavigationBar: provider.isReviewer
@@ -448,7 +450,11 @@ List<Drug> _filterDrugs(List<Drug> drugs) {
               style: const TextStyle(color: Colors.white),
             ),
             child: const Icon(Icons.pending)) : const Icon(Icons.pending),
-          label: 'Väntande granskningar',
+          label: 'Att granska',
+        ),
+         const BottomNavigationBarItem(
+          icon: Icon(Icons.construction),
+          label: 'Verktyg'
         ),
       ],
     );
