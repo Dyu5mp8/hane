@@ -49,6 +49,31 @@ class Dosage with EquatableMixin {
   Dose? get higherLimitDose => _higherLimitDose;
   Dose? get maxDose => _maxDose;
 
+String? getUniformSubstanceUnit() {
+  // Initialize an empty Set to store unique units
+  Set<String> units = {};
+
+  // Helper function to add units if they exist
+  void addUnit(Map<String, String>? unit) {
+    if (unit != null && unit.containsKey('substance')) {
+      units.add(unit['substance']!);
+    }
+  }
+
+  // Add units from each variable
+  addUnit(_dose?.units);
+  addUnit(_lowerLimitDose?.units);
+  addUnit(_higherLimitDose?.units);
+  addUnit(_maxDose?.units);
+  if (units.length == 1) {
+    return units.first;
+  
+  }
+  return null;
+
+}
+
+
   // Setters with notification
   set instruction(String? newInstruction) {
     _instruction = newInstruction;

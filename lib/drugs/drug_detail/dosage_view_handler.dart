@@ -34,17 +34,32 @@ class DosageViewHandler {
     ableToConvert = _ableToConvert();
   }
 
-  bool canConvertConcentration(Dose dose) {
-    if (availableConcentrations != null &&
-        dose.units.containsKey("substance")) {
-      var concentrationSubstanceUnits = availableConcentrations!.map(
-          (c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
-      var concentrationUnitTypes = concentrationSubstanceUnits
-          .map((c) => UnitValidator.getUnitType(c))
-          .toSet();
-      var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!);
+  List<Concentration>? convertableConcentrations () {
+    if (availableConcentrations != null) {
+      String? uniformUnit = dosage.getUniformSubstanceUnit();
+      if (uniformUnit != null) {
+        var convertableConcentrations = availableConcentrations!.where((c) => UnitValidator.getUnitType(c.firstUnit()) == UnitValidator.getUnitType(uniformUnit)).toList();
+        if (convertableConcentrations.isNotEmpty) {
 
-      return concentrationUnitTypes.contains(doseUnitType);
+        return convertableConcentrations;
+      }
+    }
+    return null;
+    
+  }
+  return null;
+  }
+
+  bool canConvertConcentration(Dose dose) {
+      if (availableConcentrations != null &&
+          dose.units.containsKey("substance")) {
+        var concentrationSubstanceUnits = availableConcentrations!.map(
+            (c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
+        var concentrationUnitTypes = concentrationSubstanceUnits
+            .map((c) => UnitValidator.getUnitType(c))
+            .toSet();
+        var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!);
+        return concentrationUnitTypes.contains(doseUnitType);
     }
     return false;
   }

@@ -74,7 +74,7 @@ class DosageSnippetState extends State<DosageSnippet> {
       context: context,
       builder: (BuildContext context) {
         return ConcentrationPicker(
-          concentrations: widget.dosageViewHandler.availableConcentrations!,
+          concentrations: widget.dosageViewHandler.convertableConcentrations()!,
           onConcentrationSet: (newConcentration) {
             HapticFeedback.mediumImpact();
             setState(() {
@@ -100,6 +100,13 @@ class DosageSnippetState extends State<DosageSnippet> {
             },
           );
         });
+  }
+
+  bool shouldShowConcentrationSwitch() {
+       return (widget.dosageViewHandler.convertableConcentrations() !=
+                          null && !widget.dosageViewHandler.ableToConvert.weight) || (widget.dosageViewHandler.convertableConcentrations() != null && widget.dosageViewHandler.conversionWeight != null);
+
+
   }
 
   void _resetWeightConversion() {
@@ -173,7 +180,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                     ],
                   ),
                   if (!widget.editMode &&
-                      widget.dosageViewHandler.ableToConvert.concentration)
+                          shouldShowConcentrationSwitch())
                     Transform.scale(
                       scale: 0.9,
                       child: ConversionSwitch(

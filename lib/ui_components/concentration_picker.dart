@@ -22,12 +22,14 @@ class _ConcentrationPickerState extends State<ConcentrationPicker> {
   @override
   void initState() {
     super.initState();
+  
     _currentConcentration =
         null; // Assuming at least one concentration is available
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return Container(
       padding: const EdgeInsets.all(20),
       width: MediaQuery.sizeOf(context).width,

@@ -50,7 +50,6 @@ class _UserNoteRowState extends State<UserNoteRow> {
     try {
       final value = _controller.text;
       // Update the user notes in the provider
-      print("User notes: $value");
       Provider.of<DrugListProvider>(context, listen: false)
           .addUserNotes(drug!.id!, value);
     } catch (e) {

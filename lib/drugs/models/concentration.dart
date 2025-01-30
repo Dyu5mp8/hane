@@ -55,6 +55,10 @@ class Concentration with EquatableMixin {
     }
   }
 
+  String firstUnit() {
+    return unit.split('/')[0];
+  }
+
   String normalizeFirstdUnit() {
     return unit.replaceAll("mikrog", "μg").split('/')[0];
   }
@@ -92,8 +96,9 @@ class Concentration with EquatableMixin {
     "g": "mass",
     "mL": "volume",
     "L": "volume",
-    "mcg": "mass",
-    "units": "substance",
+    "mikrog": "mass",
+    "ng": "mass",
+
   };
 
   static Map<String, String> getConcentrationsUnitsAsMap(String unitInput) {
