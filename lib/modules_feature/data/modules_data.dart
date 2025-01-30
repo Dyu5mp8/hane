@@ -6,6 +6,7 @@ import 'package:hane/modules_feature/modules/dialysis/dialysis_view.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:hane/modules_feature/modules/rotem/rotem_view.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:provider/provider.dart';
 
 
@@ -18,7 +19,7 @@ List<Module> modules =
       id: 'dialysis',
       name: 'Dialys',
       description: 'Kalkylator för dialys',
-      icon: Icons.calculate,
+      icon: Bootstrap.calculator_fill,
       moduleDetailView: DialysisView(),
 
     ),
@@ -27,7 +28,7 @@ List<Module> modules =
       id: 'rotem',
       name: 'ROTEM',
       description: 'Stöd för tolkning av ROTEM',
-      icon: Icons.bloodtype,
+      icon: Bootstrap.droplet,
       moduleDetailView: RotemWizardScreen()
     ),
 
@@ -35,7 +36,7 @@ List<Module> modules =
       id: 'nutrition',
       name: 'Nutrition',
       description: 'Kalkylator för nutrition IVA',
-      icon: Icons.food_bank,
+      icon: Bootstrap.speedometer,
       moduleDetailView: NutritionView(),
       
     ),
@@ -44,7 +45,7 @@ List<Module> modules =
       id: 'antibiotics',
       name: 'Antibiotika',
       description: 'Antibiotikalista (RAF)',
-      icon: Icons.medication,
+      icon: Bootstrap.list_columns,
       moduleDetailView: AntibioticsListView()
     )
 

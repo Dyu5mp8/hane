@@ -81,9 +81,9 @@ class DrugListRow extends StatelessWidget {
 
   Icon _buildReviewStatusIcon(BuildContext context) {
     final icon = !_drug.hasCompletedReview()
-        ? const Icon(Bootstrap.shield_fill_exclamation,
+        ? const Icon(Bootstrap.exclamation_circle,
             color: Color.fromARGB(255, 183, 125, 49))
-        : const Icon(Bootstrap.shield_fill_check, color: Colors.green);
+        : const Icon(Bootstrap.check_circle_fill, color: Colors.green);
     return icon;
   }
 
