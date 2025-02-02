@@ -6,10 +6,10 @@ import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model
 
 
 class DialysisResult extends StatefulWidget {
-  const DialysisResult({Key? key}) : super(key: key);
+  const DialysisResult({super.key});
 
   @override
-  _DialysisResultState createState() => _DialysisResultState();
+  State<DialysisResult> createState() => _DialysisResultState();
 }
 class _DialysisResultState extends State<DialysisResult> {
   // GlobalKey to access the blinking icon state

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/ui_components/auto_scroll_expansion_tile.dart';
 
-
 class DialysisConsitutentsList extends StatelessWidget {
   const DialysisConsitutentsList({Key? key}) : super(key: key);
 
@@ -105,7 +104,8 @@ class DialysisConsitutentsList extends StatelessWidget {
                                 dense: true,
                                 title: Text(row['label'] as String),
                                 trailing: Text(row['value'] as String),
-                                contentPadding: const EdgeInsets.only(left: 8.0, right: 16.0),
+                                contentPadding: const EdgeInsets.only(
+                                    left: 8.0, right: 16.0),
                               );
                             }).toList(),
                           ),
@@ -117,7 +117,7 @@ class DialysisConsitutentsList extends StatelessWidget {
               ),
             ],
           );
-        }).toList(),
+        }),
       ],
     );
   }

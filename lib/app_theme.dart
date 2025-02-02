@@ -107,6 +107,14 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 
+    badgeTheme: BadgeThemeData(
+    backgroundColor: const Color.fromARGB(255, 181, 71, 16),
+    textStyle: GoogleFonts.rubik(
+      fontSize: 12,
+      color: Colors.black,
+    ),
+  ),
+
  
   cardTheme: CardTheme(
     color: const Color.fromARGB(255, 234, 240, 255),

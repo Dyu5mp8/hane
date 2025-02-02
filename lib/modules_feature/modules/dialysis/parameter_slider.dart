@@ -16,7 +16,7 @@ class ParameterSlider extends StatefulWidget {
   final Widget? trailing;
 
   const ParameterSlider({
-    Key? key,
+    super.key,
     required this.label,
     required this.parameterSelector,
     required this.onChanged,
@@ -25,11 +25,12 @@ class ParameterSlider extends StatefulWidget {
     this.interval,
     this.showTicks = false,
     this.trailing,
-  }) : super(key: key);
+  });
 
   @override
-  _ParameterSliderState createState() => _ParameterSliderState();
+  State<ParameterSlider> createState() => _ParameterSliderState();
 }
+
 class _ParameterSliderState extends State<ParameterSlider> {
   // GlobalKey to access the blinking icon state
   final GlobalKey<BlinkingIconState> _blinkKey = GlobalKey<BlinkingIconState>();
@@ -43,7 +44,7 @@ class _ParameterSliderState extends State<ParameterSlider> {
       builder: (context, model, child) {
         final parameter = widget.parameterSelector(model);
         final textStyle = Theme.of(context).textTheme.bodyLarge;
-        
+
         // Current warning visibility for this parameter
         bool isWarningCurrentlyVisible = parameter.warning != null;
 
@@ -82,35 +83,30 @@ class _ParameterSliderState extends State<ParameterSlider> {
                     ),
                   ),
                 ),
-                Expanded(child: const SizedBox()),
+                const Expanded(child: SizedBox()),
                 widget.trailing ?? const SizedBox(),
               ],
             ),
-   
             SfSlider(
               min: parameter.minValue,
               max: parameter.maxValue,
-              value: parameter.value.clamp(parameter.minValue, parameter.maxValue),
+              value:
+                  parameter.value.clamp(parameter.minValue, parameter.maxValue),
               interval: widget.interval,
               stepSize: widget.stepSize,
               showTicks: widget.showTicks,
-
               thumbIcon: widget.thumbColor != null
                   ? Container(
-              
-                      
                       decoration: BoxDecoration(
                         color: widget.thumbColor,
                         shape: BoxShape.circle,
-                        
-
                       ),
-                      
                     )
                   : null,
               onChangeEnd: (_) {
                 // Check for first-time warning transition upon slider release
-                if (!_wasWarningPreviouslyVisible && isWarningCurrentlyVisible) {
+                if (!_wasWarningPreviouslyVisible &&
+                    isWarningCurrentlyVisible) {
                   _blinkKey.currentState?.restartBlink();
                 }
                 // Update previous warning state after handling
@@ -149,6 +145,7 @@ class _ParameterSliderState extends State<ParameterSlider> {
     );
   }
 }
+
 class CitrateSwitch extends StatelessWidget {
   const CitrateSwitch({super.key});
   @override

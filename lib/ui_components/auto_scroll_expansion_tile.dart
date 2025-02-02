@@ -11,7 +11,8 @@ class AutoScrollExpansionTile extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _AutoScrollExpansionTileState createState() => _AutoScrollExpansionTileState();
+  State<AutoScrollExpansionTile> createState() =>
+      _AutoScrollExpansionTileState();
 }
 
 class _AutoScrollExpansionTileState extends State<AutoScrollExpansionTile> {

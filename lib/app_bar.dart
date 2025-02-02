@@ -69,6 +69,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
       }
     }
 
+    if (widget.selectedIndex == 2 && isAdmin) {
+      return 'Verktyg';
+    }
+
     // Default fallback (if more pages added in the future)
     return '';
   }
