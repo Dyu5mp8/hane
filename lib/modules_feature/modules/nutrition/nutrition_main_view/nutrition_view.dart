@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/day_widget.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/total_protein_scale.dart';
+import 'package:hane/onboarding/nutrition_tutorial.dart';
+import 'package:hane/tutorial.dart';
 import 'package:provider/provider.dart'; // Ensure provider is imported
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_add_views/add_nutrition_view.dart';
@@ -10,7 +12,7 @@ import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutri
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/total_energy_scale_radial.dart';
 
-class NutritionView extends StatelessWidget {
+class NutritionView extends StatelessWidget with Tutorial {
   const NutritionView({Key? key}) : super(key: key);
 
   /// Widget to display when the nutrition list is empty
@@ -69,8 +71,12 @@ class NutritionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    showTutorialScreenIfNew("nutritionTutorial", const NutritionTutorial() , context);
+
     // Accessing the NutritionViewModel from the Provider
     final viewModel = Provider.of<NutritionViewModel>(context, listen: true);
+
 
     return Scaffold(
       appBar: AppBar(title: Text('Nutrition')),

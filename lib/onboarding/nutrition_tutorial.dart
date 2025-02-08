@@ -2,17 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-
-
-
-class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+class NutritionTutorial extends StatefulWidget {
+  const NutritionTutorial({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  State<NutritionTutorial> createState() => _NutritionTutorialState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _NutritionTutorialState extends State<NutritionTutorial> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -21,34 +18,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final pages = [
       _buildOnboardingPage(
         context,
-        image: 'assets/images/welcome.png',
+        image: 'assets/images/nutrition/nutrition1.png',
         imageFit: BoxFit.contain,
         imageHeight: MediaQuery.sizeOf(context).height * 0.5, // Make it responsive
-        title: 'Välkommen!',
-        description: 'Hitta snabbt till det du vill använda',
+        title: 'Nutritionskalkylator',
+        description: 'Denna modul underlättar beräkning av lämplig kalori- och proteinmängd för kritiskt sjuk patient.',
       ),
       _buildOnboardingPage(
         context,
-        image: 'assets/images/milrinone.png',
+        image: 'assets/images/nutrition/nutrition2.png',
         imageHeight: MediaQuery.sizeOf(context).height * 0.6, // Make it responsive
-        title: 'Översikt',
-        description: 'Se allt nödvändigt på en sida',
+        imageFit: BoxFit.fitWidth,
+        title: 'Ställ in patientdata och energikällor',
+        description: 'Ställ in vikt, längd samt vårddygn och välj därefter energikällor.',
       ),
       _buildOnboardingPage(
         context,
-        image: 'assets/images/milrinone_dosage_snippet.png',
-        imageHeight: MediaQuery.sizeOf(context).height * 0.1, // Adjust for smaller images
-        title: 'Doseringsrutan',
-        description: 'Välj indikation och se doseringsförslag.',
+        image: 'assets/images/nutrition/nutrition3.png',
+        imageHeight: MediaQuery.sizeOf(context).height * 0.6, // Adjust for smaller images
+        imageFit: BoxFit.contain, // Adjust for smaller images
+        title: 'Resultat',
+        description: 'Grön zon indikerar lämplig energi- och proteinmängd för patienten. Detta måste dock ställas i relation till klinisk kontext.',
       ),
-      _buildOnboardingPage(
-        context,
-        image: 'assets/images/milrinone_composite.png',
-        imageHeight: MediaQuery.sizeOf(context).height * 0.50,
-        title: 'Omvandla doser snabbt och enkelt',
-        description:
-            'Omvandla doser direkt i rutan. Välj vikt, läkemedelsspädning, tidsenhet eller en kombination',
-      ),
+  
     ];
 
     return Scaffold(
