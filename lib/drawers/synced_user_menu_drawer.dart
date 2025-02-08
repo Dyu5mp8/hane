@@ -5,7 +5,7 @@ class SyncedUserMenuDrawer extends MenuDrawer {
   const SyncedUserMenuDrawer({super.key});
 
   @override List<Widget> buildUserSpecificTiles(BuildContext context) {
-    return [const SyncedModeTile(),
+    return [
     const SendReviewTile()];
   }
 }
