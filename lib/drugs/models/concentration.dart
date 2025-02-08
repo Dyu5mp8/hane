@@ -1,17 +1,19 @@
 import "package:equatable/equatable.dart";
+import "package:hane/drugs/models/units.dart";
 import "package:hane/utils/unit_service.dart";
 import "package:hane/utils/validation_exception.dart";
 
 class Concentration with EquatableMixin {
   final double amount;
-  final String unit;
+  final SubstanceUnit substanceUnit;
+  final DiluentUnit diluentUnit;
   final String? mixingInstructions;
   final bool? isStockSolution;
   final String? aliasUnit;
 
   Concentration({
     required this.amount,
-    required this.unit,
+    required this.substanceUnit
     this.mixingInstructions,
     this.isStockSolution,
     this.aliasUnit,

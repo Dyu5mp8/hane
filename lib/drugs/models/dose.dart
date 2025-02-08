@@ -1,15 +1,39 @@
 import 'package:equatable/equatable.dart';
+import 'package:hane/drugs/models/composite_unit.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/models/concentration.dart';
+import 'package:hane/drugs/models/units.dart';
 import 'package:hane/utils/unit_service.dart';
 import 'package:hane/utils/smart_rounder.dart';
 import 'package:hane/utils/validation_exception.dart';
 
+
+
 class Dose with EquatableMixin {
   final double amount;
-  Map<String, String> units;
+  final SubstanceUnit substanceUnit;
+  final DiluentUnit? diluentUnit;
+  final TimeUnit? timeUnit;
 
-  Dose({required this.amount, required this.units});
+  Dose({required this.amount, required this.substanceUnit, this.diluentUnit, this.timeUnit});
+
+  copyWith({double? amount, SubstanceUnit? substanceUnit, DiluentUnit? diluentUnit, TimeUnit? timeUnit}) {
+    return Dose(
+      amount: amount ?? this.amount,
+      substanceUnit: substanceUnit ?? this.substanceUnit,
+      diluentUnit: diluentUnit ?? this.diluentUnit,
+      timeUnit: timeUnit ?? this.timeUnit,
+    );
+  }
+
+  Dose convertedByWeight(int weight) {
+    double newAmount = amount * weight;
+    return copyWith(amount: newAmount);
+  }
+
+  Dose convertedByConcentration(Concentration concentration) {
+    return Dose(amount: amount, units: units.diluentUnitConverted(diluentUnit));
+  }
 
   // Constructor to create a Dose from a string representation
   Dose.fromString({required double amount, required String unit})
@@ -81,6 +105,10 @@ class Dose with EquatableMixin {
   Map<String, dynamic> toJson() {
     return {'amount': amount, 'unit': units.values.join('/')};
   }
+
+
+
+
 
   // Convert the dose by weight, time, concentration, and adjust scale
   Dose convertedBy(
