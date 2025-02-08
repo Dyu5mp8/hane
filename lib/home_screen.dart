@@ -8,6 +8,7 @@ import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 import 'package:hane/login/user_status.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drawers/drawers.dart';
+import 'package:hane/tutorial.dart';
 import 'package:hane/ui_components/drug_list_row.dart';
 import 'package:hane/modules_feature/module_list_view.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
@@ -21,7 +22,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with Tutorial {
   String _searchQuery = '';
   String? _selectedCategory;
   final TextEditingController _searchController = TextEditingController();
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
-    showTutorialScreenIfNew();
+    showTutorialScreenIfNew('seenTutorial', const OnboardingScreen(), context);
     provider = context.read<DrugListProvider>();
     userMode = provider.userMode ??
         UserMode.syncedMode; //fall back to synced mode
@@ -49,27 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void showTutorialScreenIfNew() async {
-    var db = FirebaseFirestore.instance;
-    bool? seenTutorial = await db
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((value) => value.data()?['seenTutorial']);
-
-    if (mounted && (seenTutorial == null || !seenTutorial)) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-      );
-      db
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .update({
-        'seenTutorial': true,
-      });
-    }
-  }
 
   void _onSearchChanged() {
     if (!mounted) return;
