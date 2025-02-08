@@ -72,7 +72,7 @@ Future<Source?> fetchDocument({
     
         final docRef = sourceCollection.doc();
         source.id = docRef.id;
-        print(source.toJson());
+
         await docRef.set(source.toJson());
         source.id = docRef.id;
       }
