@@ -56,6 +56,18 @@ class InitializerWidget extends StatelessWidget {
     final drugListProvider =
         Provider.of<DrugListProvider>(context, listen: false);
     drugListProvider.user = userId;
+     try {
+      await drugListProvider.initializeProvider();
+      await Future.delayed(const Duration(milliseconds: 300));
+
+    return const DrugListWrapper();
+    } catch (e) {
+      return GenericErrorWidget(errorMessage: e.toString(), onRetry: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      });
+    }
 
  
     try {

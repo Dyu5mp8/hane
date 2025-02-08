@@ -36,13 +36,14 @@ class DrugListProvider with ChangeNotifier {
       else if (idTokenResult.claims?['reviewer'] == true) {
         return UserMode.reviewer;
       }
-      if (await getIsSyncedModeFromFirestore()== null) {
-        return null;
-      }
-      else if (await getIsSyncedModeFromFirestore() == true) {
+      // if (await getIsSyncedModeFromFirestore()== null) {
+      //   return null;
+      // }
+      // else if (await getIsSyncedModeFromFirestore() == true) {
+      //   return UserMode.syncedMode;
+      // } 
+      else {
         return UserMode.syncedMode;
-      } else {
-        return UserMode.customMode;
       }
 
   }
