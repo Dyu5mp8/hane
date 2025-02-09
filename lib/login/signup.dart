@@ -62,17 +62,19 @@ class _SignUpPageState extends State<SignUpPage> {
       ],
     );
   }
-
-  void _onSuccessfulRegistration() {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Du är nu registrerad!"),
-    ));
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => const InitializerWidget(firstLogin: true)),
-    );
-  }
+void _onSuccessfulRegistration() {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text("Du är nu registrerad!")),
+  );
+  
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const InitializerWidget(firstLogin: true),
+    ),
+    (Route<dynamic> route) => false, // Removes all the previous routes
+  );
+}
 
   void _onFailedRegistration(FirebaseAuthException e) {
     String message;
