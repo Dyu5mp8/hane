@@ -19,7 +19,7 @@ class DisclaimerDialog extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Genom att skapa ett konto bekräftar du att du är en legitimerad '
+              'Genom att skapa ett konto bekräftar du att du är legitimerad '
               'hälso- och sjukvårdspersonal och att du förstår och accepterar '
               'detta ansvar.',
             ),
