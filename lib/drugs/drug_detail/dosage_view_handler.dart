@@ -129,7 +129,10 @@ class DosageViewHandler {
     }
   }
 
-  Text showDosage({required bool isOriginalText}) {
+  Text showDosage({required bool isOriginalText, required BuildContext context}) {
+
+    Color doseColor = isOriginalText ? Theme.of(context).colorScheme.primary : const Color.fromARGB(255, 254, 112, 56);
+
     TextSpan buildDosageTextSpan({
       String? conversionInfo,
       required String? instruction,
@@ -146,7 +149,7 @@ class DosageViewHandler {
       );
       final TextSpan doseSpan = TextSpan(
         text: dose != null ? "$dose. " : '',
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.bold, color: doseColor),
       );
 
       TextSpan doseRangeSpan() {
@@ -154,12 +157,13 @@ class DosageViewHandler {
           if (dose != null) {
             return TextSpan(
               text: "($lowerLimitDose - $higherLimitDose). ",
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: doseColor),
+              
             );
           } else {
             return TextSpan(
               text: "$lowerLimitDose. - $higherLimitDose. ",
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold, color: doseColor),
             );
           }
         }
@@ -168,7 +172,7 @@ class DosageViewHandler {
 
       final TextSpan maxDoseSpan = TextSpan(
         text: maxDose != null ? "Maxdos: ${maxDose.scaleDose()}." : '',
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(fontWeight: FontWeight.bold, color: doseColor),
       );
 
       return TextSpan(

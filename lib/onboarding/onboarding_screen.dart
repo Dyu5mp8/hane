@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+
+
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -22,7 +25,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         imageFit: BoxFit.contain,
         imageHeight: MediaQuery.sizeOf(context).height * 0.5, // Make it responsive
         title: 'Välkommen!',
-        description: 'Hitta blixtsnabbt till det du vill använda',
+        description: 'Hitta snabbt till det du vill använda',
       ),
       _buildOnboardingPage(
         context,

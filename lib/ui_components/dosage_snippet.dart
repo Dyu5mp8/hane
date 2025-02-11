@@ -139,7 +139,7 @@ class DosageSnippetState extends State<DosageSnippet> {
             children: [
               Expanded(
                 child:
-                    widget.dosageViewHandler.showDosage(isOriginalText: true),
+                    widget.dosageViewHandler.showDosage(isOriginalText: true, context: context),
               ),
               const SizedBox(width: 8),
               Column(
@@ -158,6 +158,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                               _showWeightSlider(context);
                             } else {
                               _resetWeightConversion();
+                              _resetConcentrationConversion();
                             }
                           },
                         ),
@@ -261,7 +262,7 @@ class DosageSnippetState extends State<DosageSnippet> {
             ],
           ),
           subtitle: _isConversionActive
-              ? widget.dosageViewHandler.showDosage(isOriginalText: false)
+              ? widget.dosageViewHandler.showDosage(isOriginalText: false, context: context)
               : null,
         ),
         if (widget.dosageViewHandler.getAdministrationRoute() != null)
