@@ -35,7 +35,7 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Riastap eller fibryga. Mål är A5 FIBTEM ≥ 10 mm.",
           administrationRoute: "IV",
-          dose: Dose.fromString(amount: 2, unit: "g"),
+          dose: Dose.fromString( 2, "g"),
         ),
       )];
     }
@@ -51,7 +51,7 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Behov av trombocyter",
           administrationRoute: "IV",
-          dose: Dose.fromString(amount: 1, unit: "E"),
+          dose: Dose.fromString( 1, "E"),
         ),
       )];
     }
@@ -68,14 +68,14 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
           Dosage(
             instruction: "Plasma",
             administrationRoute: "IV",
-            lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
-            higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+            lowerLimitDose: Dose.fromString( 10, "ml/kg"),
+            higherLimitDose: Dose.fromString( 15, "ml/kg"),
           ),
       ), RotemAction(dosage:
           Dosage(
             instruction: "Confidex/PCC",
             administrationRoute: "IV",
-            dose: Dose.fromString(amount: 500, unit: "E"),
+            dose: Dose.fromString( 500, "E"),
           ),
       )
 
@@ -93,7 +93,7 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Plasma",
           administrationRoute: "IV",
-          dose: Dose.fromString(amount: 10, unit: "ml/kg"),
+          dose: Dose.fromString( 10, "ml/kg"),
         ),
       )];
     }
@@ -107,8 +107,8 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Cyklokapron",
           administrationRoute: "IV",
-          lowerLimitDose: Dose.fromString(amount: 1, unit: "g"),
-          higherLimitDose: Dose.fromString(amount: 2, unit: "g"),
+          lowerLimitDose: Dose.fromString( 1, "g"),
+          higherLimitDose: Dose.fromString( 2, "g"),
         ),
       )];
     }
@@ -119,7 +119,7 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge protamin",
-          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
+          lowerLimitDose: Dose.fromString( 50, "mg"),
         ),
       )];
     }

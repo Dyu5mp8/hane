@@ -19,7 +19,7 @@ class DosageSnippet extends StatefulWidget {
   final List<Concentration>? availableConcentrations;
 
   DosageSnippet({
-    super.key,
+    Key? key,
     DosageViewHandler? dosageViewHandler,
     Dosage? dosage,
     this.editMode = false,
@@ -29,17 +29,17 @@ class DosageSnippet extends StatefulWidget {
   })  : dosage = dosage ?? dosageViewHandler!.dosage,
         dosageViewHandler = dosageViewHandler ??
             DosageViewHandler(
-              availableConcentrations: availableConcentrations,
-              key,
               dosage: dosage!,
-            );
+              availableConcentrations: availableConcentrations,
+            ),
+        super(key: key);
 
   @override
-  DosageSnippetState createState() => DosageSnippetState();
+  _DosageSnippetState createState() => _DosageSnippetState();
 }
 
-class DosageSnippetState extends State<DosageSnippet> {
-  final double _weightSliderValue = 70;
+class _DosageSnippetState extends State<DosageSnippet> {
+  final double _weightSliderValue = 70.0;
 
   bool get _isConversionActive {
     return widget.dosageViewHandler.conversionWeight != null ||
@@ -70,16 +70,17 @@ class DosageSnippetState extends State<DosageSnippet> {
   }
 
   void _showConcentrationPicker(BuildContext context) {
+    final convertible = widget.dosageViewHandler.convertibleConcentrations;
+    if (convertible == null) return;
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return ConcentrationPicker(
-          concentrations: widget.dosageViewHandler.convertableConcentrations()!,
+          concentrations: convertible,
           onConcentrationSet: (newConcentration) {
             HapticFeedback.mediumImpact();
             setState(() {
-              widget.dosageViewHandler.conversionConcentration =
-                  newConcentration;
+              widget.dosageViewHandler.conversionConcentration = newConcentration;
             });
           },
         );
@@ -89,24 +90,26 @@ class DosageSnippetState extends State<DosageSnippet> {
 
   void _showTimePicker(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return TimePicker(
-            onTimeUnitSet: (newTime) {
-              HapticFeedback.mediumImpact();
-              setState(() {
-                widget.dosageViewHandler.conversionTime = newTime;
-              });
-            },
-          );
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return TimePicker(
+          onTimeUnitSet: (newTime) {
+            HapticFeedback.mediumImpact();
+            setState(() {
+              widget.dosageViewHandler.conversionTime = newTime;
+            });
+          },
+        );
+      },
+    );
   }
 
   bool shouldShowConcentrationSwitch() {
-       return (widget.dosageViewHandler.convertableConcentrations() !=
-                          null && !widget.dosageViewHandler.ableToConvert.weight) || (widget.dosageViewHandler.convertableConcentrations() != null && widget.dosageViewHandler.conversionWeight != null);
-
-
+    // Show the concentration switch if convertible concentrations are available
+    // and either weight conversion is not possible or weight conversion is already active.
+    return widget.dosageViewHandler.convertibleConcentrations != null &&
+           (!widget.dosageViewHandler.ableToConvert.weight ||
+             widget.dosageViewHandler.conversionWeight != null);
   }
 
   void _resetWeightConversion() {
@@ -127,19 +130,28 @@ class DosageSnippetState extends State<DosageSnippet> {
     });
   }
 
+  void _updateDosage(Dosage updatedDosage) {
+    setState(() {
+      widget.dosage = updatedDosage;
+    });
+    widget.onDosageUpdated(updatedDosage);
+  }
+
+  void _deleteDosage() {
+    widget.onDosageDeleted?.call();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         ListTile(
-          contentPadding:
-              const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 0),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           minVerticalPadding: 12,
           title: Row(
             children: [
               Expanded(
-                child:
-                    widget.dosageViewHandler.showDosage(isOriginalText: true),
+                child: widget.dosageViewHandler.showDosage(isOriginalText: true),
               ),
               const SizedBox(width: 8),
               Column(
@@ -153,8 +165,7 @@ class DosageSnippetState extends State<DosageSnippet> {
                           isActive:
                               widget.dosageViewHandler.conversionWeight != null,
                           onPressed: () {
-                            if (widget.dosageViewHandler.conversionWeight ==
-                                null) {
+                            if (widget.dosageViewHandler.conversionWeight == null) {
                               _showWeightSlider(context);
                             } else {
                               _resetWeightConversion();
@@ -169,24 +180,21 @@ class DosageSnippetState extends State<DosageSnippet> {
                           isActive:
                               widget.dosageViewHandler.conversionTime != null,
                           onPressed: () {
-                            if (widget.dosageViewHandler.conversionTime ==
-                                null) {
+                            if (widget.dosageViewHandler.conversionTime == null) {
                               _showTimePicker(context);
                             } else {
                               _resetTimeConversion();
                             }
                           },
-                        )
+                        ),
                     ],
                   ),
-                  if (!widget.editMode &&
-                          shouldShowConcentrationSwitch())
+                  if (!widget.editMode && shouldShowConcentrationSwitch())
                     Transform.scale(
                       scale: 0.9,
                       child: ConversionSwitch(
-                        isActive: (widget.dosageViewHandler
-                                .conversionConcentration !=
-                            null),
+                        isActive:
+                            widget.dosageViewHandler.conversionConcentration != null,
                         onSwitched: (value) {
                           HapticFeedback.mediumImpact();
                           if (value) {
@@ -220,9 +228,8 @@ class DosageSnippetState extends State<DosageSnippet> {
                                     'Är du säker på att du vill radera denna dosering?'),
                                 actions: <Widget>[
                                   TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(dialogContext);
-                                    },
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext),
                                     child: const Text('Avbryt'),
                                   ),
                                   TextButton(
@@ -273,16 +280,5 @@ class DosageSnippetState extends State<DosageSnippet> {
           ),
       ],
     );
-  }
-
-  void _updateDosage(Dosage updatedDosage) {
-    setState(() {
-      widget.dosage = updatedDosage;
-    });
-    widget.onDosageUpdated(updatedDosage);
-  }
-
-  void _deleteDosage() {
-    widget.onDosageDeleted?.call();
   }
 }

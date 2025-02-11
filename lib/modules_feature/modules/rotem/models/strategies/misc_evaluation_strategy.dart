@@ -30,8 +30,8 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge plasma",
-          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
-          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+          lowerLimitDose: Dose.fromString(10, "ml/kg"),
+          higherLimitDose: Dose.fromString(15, "ml/kg"),
         ),
       )];
     }
@@ -42,7 +42,7 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge Ocplex",
-          dose: Dose.fromString(amount: 10, unit: "E/kg", ),
+          dose: Dose.fromString(10,"E/kg", ),
      
     
         ),
@@ -54,8 +54,8 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
          dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge plasma",
-          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
-          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+          lowerLimitDose: Dose.fromString(10, "ml/kg"),
+          higherLimitDose: Dose.fromString(15, "ml/kg"),
         ),
       )];
     }
@@ -70,8 +70,8 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge fibrinogen",
-          lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
-          higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
+          lowerLimitDose: Dose.fromString(2, "g"),
+          higherLimitDose: Dose.fromString(4, "g"),
         ),
       )];
     }
@@ -88,7 +88,7 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge trombocyter",
-          dose: Dose.fromString(amount: 1, unit: "E"),
+          dose: Dose.fromString(1, "E"),
         ),
       )];
     }
@@ -99,7 +99,7 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge tranexamsyra",
-          dose: Dose.fromString(amount: 2, unit: "g"),
+          dose: Dose.fromString(2, "g"),
         ),
       )];
     }
@@ -110,7 +110,7 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge protamin",
-          dose: Dose.fromString(amount: 50, unit: "mg"),
+          dose: Dose.fromString(50, "mg"),
         ),
       )];
     }

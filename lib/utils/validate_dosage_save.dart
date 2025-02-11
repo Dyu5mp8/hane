@@ -30,7 +30,7 @@ String? validateUnitInput(String? value) {
   }
   
   try {
-   Dose.getDoseUnitsAsMap(value);
+
 
   }
   catch (e) {

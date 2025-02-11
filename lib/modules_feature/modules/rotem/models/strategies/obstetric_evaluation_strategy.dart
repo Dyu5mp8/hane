@@ -88,8 +88,8 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Fibrinogen",  
           administrationRoute: "IV",
-          lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
-          higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
+          lowerLimitDose: Dose.fromString(2, "g"),
+          higherLimitDose: Dose.fromString(4, "g"),
         ),
       )];
     }
@@ -103,7 +103,7 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Trombocytkoncentrat",
           administrationRoute: "IV",
-          dose: Dose.fromString(amount: 1, unit: "E"),
+          dose: Dose.fromString(1, "E"),
         ),
       )];
     }
@@ -119,15 +119,15 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Plasma",
           administrationRoute: "IV",
-          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
-          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+          lowerLimitDose: Dose.fromString(10, "ml/kg"),
+          higherLimitDose: Dose.fromString(15, "ml/kg"),
         ),
       ),
       RotemAction(
         dosage: Dosage(
           instruction: "Ocplex/Confidex",
           administrationRoute: "IV",
-          dose: Dose.fromString(amount: 10, unit: "E/kg"),
+          dose: Dose.fromString(10, "E/kg"),
         ),
       ),
       ];
@@ -141,7 +141,7 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Plasma",
           administrationRoute: "IV",
-          dose: Dose.fromString(amount: 10, unit: "ml/kg"),
+          dose: Dose.fromString(10, "ml/kg"),
         ),
       )];
     }
@@ -155,7 +155,7 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           instruction: "Cyklokapron",
           administrationRoute: "IV",
-          dose: Dose.fromString(amount: 20, unit: "mg/kg"),
+          dose: Dose.fromString(20, "mg/kg"),
         ),
       )];
     }
@@ -166,7 +166,7 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
         dosage: Dosage(
           administrationRoute: "IV",
           instruction: "Ge protamin",
-          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
+          lowerLimitDose: Dose.fromString(50, "mg"),
         ),
       )];
     }
