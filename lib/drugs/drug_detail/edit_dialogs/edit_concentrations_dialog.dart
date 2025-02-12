@@ -104,7 +104,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
     setState(() {
       concentrationAmountController.text =
           concentration.amount.toString();
-      selectedUnit = concentration.normalizeFirstdUnit();
+      selectedUnit = concentration.substance.toString();
       isStockSolution = concentration.isStockSolution ?? false;
       mixingInstructionsController.text =
           concentration.mixingInstructions ?? '';
@@ -299,7 +299,7 @@ const SizedBox(height: 12),
                   ),
                   child: ListTile(
                     title: Text(
-                        '${concentration.getPrimaryRepresentation()}${concentration.getSecondaryRepresentation() != null ? ' (${concentration.getSecondaryRepresentation()})' : ''}',
+                        '$concentration${concentration.getSecondaryRepresentation() != null ? ' (${concentration.getSecondaryRepresentation()})' : ''}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: concentration.mixingInstructions != null &&

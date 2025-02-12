@@ -1,3 +1,4 @@
+import 'package:hane/drugs/models/administration_route.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
@@ -28,10 +29,10 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
       actions['Högt CT EXTEM/INTEM'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute  .iv,
           instruction: "Ge plasma",
-          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
-          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+          lowerLimitDose: Dose.fromString(10, "ml/kg"),
+          higherLimitDose: Dose.fromString(15, "ml/kg"),
         ),
       )];
     }
@@ -40,9 +41,9 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     else if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high) {
       actions['Högt CT EXTEM'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute.iv,
           instruction: "Ge Ocplex",
-          dose: Dose.fromString(amount: 10, unit: "E/kg", ),
+          dose: Dose.fromString(10, "E/kg"),
      
     
         ),
@@ -52,10 +53,10 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     else if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
       actions['Högt CT INTEM'] = [RotemAction(
          dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute.iv,
           instruction: "Ge plasma",
-          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
-          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+          lowerLimitDose: Dose.fromString(10, "ml/kg"),
+          higherLimitDose: Dose.fromString(15, "ml/kg"),
         ),
       )];
     }
@@ -68,10 +69,10 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     if (fibtemBelowMin) {
       actions['Fibrinogen'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute.iv,
           instruction: "Ge fibrinogen",
-          lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
-          higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
+          lowerLimitDose: Dose.fromString(2, "g"),
+          higherLimitDose: Dose.fromString(4, "g"),
         ),
       )];
     }
@@ -86,9 +87,9 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     if (extemLow && fibtemOk) {
       actions['Trombocyter'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute.iv,
           instruction: "Ge trombocyter",
-          dose: Dose.fromString(amount: 1, unit: "E"),
+          dose: Dose.fromString(1, "E"),
         ),
       )];
     }
@@ -97,20 +98,20 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     if (configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
       actions['Tranexamsyra'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute.iv,
           instruction: "Ge tranexamsyra",
-          dose: Dose.fromString(amount: 2, unit: "g"),
+          dose: Dose.fromString(2, "g"),
         ),
       )];
     }
 
     // 5) Protamin if CT INTEM > CT HEPTEM
-    if (ctIntem != null && ctHeptem != null && ctIntem/ctHeptem > heptemCutoff) {
+    if (ctIntem != null && ctHeptem != null && ctIntem / ctHeptem > heptemCutoff) {
       actions['Protamin'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute.iv,
           instruction: "Ge protamin",
-          dose: Dose.fromString(amount: 50, unit: "mg"),
+          dose: Dose.fromString(50, "mg"),
         ),
       )];
     }

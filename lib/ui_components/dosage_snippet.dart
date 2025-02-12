@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/ui_components/concentration_picker.dart';
 import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
 import 'package:hane/ui_components/conversion_button.dart';
@@ -9,51 +10,31 @@ import 'package:hane/ui_components/route_text.dart';
 import 'package:hane/ui_components/time_picker.dart';
 import 'package:hane/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/drugs/models/units.dart';
 
 class DosageSnippet extends StatefulWidget {
-  Dosage dosage;
   final bool editMode;
-  final Function(Dosage) onDosageUpdated;
-  final DosageViewHandler dosageViewHandler;
-  final Function()? onDosageDeleted;
+
   final List<Concentration>? availableConcentrations;
 
   DosageSnippet({
-    super.key,
-    DosageViewHandler? dosageViewHandler,
-    Dosage? dosage,
+    Key? key,
     this.editMode = false,
-    required this.onDosageUpdated,
-    this.onDosageDeleted,
     this.availableConcentrations,
-  })  : dosage = dosage ?? dosageViewHandler!.dosage,
-        dosageViewHandler = dosageViewHandler ??
-            DosageViewHandler(
-              availableConcentrations: availableConcentrations,
-              key,
-              dosage: dosage!,
-            );
+  });
 
   @override
-  DosageSnippetState createState() => DosageSnippetState();
+  _DosageSnippetState createState() => _DosageSnippetState();
 }
 
-class DosageSnippetState extends State<DosageSnippet> {
-  final double _weightSliderValue = 70;
-
-  bool get _isConversionActive {
-    return widget.dosageViewHandler.conversionWeight != null ||
-        widget.dosageViewHandler.conversionConcentration != null ||
-        widget.dosageViewHandler.conversionTime != null;
-  }
+class _DosageSnippetState extends State<DosageSnippet> {
+  final double _weightSliderValue = 70.0;
 
   void setConversionWeight(double weight) {
-    setState(() {
-      widget.dosageViewHandler.conversionWeight = weight;
-    });
+    setState(() {});
   }
 
-  void _showWeightSlider(BuildContext context) {
+  void _showWeightSlider(DosageViewHandler dvh) {
     showModalBottomSheet(
       isDismissible: true,
       context: context,
@@ -62,141 +43,192 @@ class DosageSnippetState extends State<DosageSnippet> {
           initialWeight: _weightSliderValue,
           onWeightSet: (newWeight) {
             HapticFeedback.mediumImpact();
-            setConversionWeight(newWeight);
+            dvh.conversionWeight = newWeight;
           },
         );
       },
     );
   }
 
-  void _showConcentrationPicker(BuildContext context) {
+  void _showConcentrationPicker(DosageViewHandler dvh) {
+    final convertible = dvh.convertibleConcentrations;
+    if (convertible == null) return;
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return ConcentrationPicker(
-          concentrations: widget.dosageViewHandler.convertableConcentrations()!,
+          concentrations: convertible,
           onConcentrationSet: (newConcentration) {
             HapticFeedback.mediumImpact();
-            setState(() {
-              widget.dosageViewHandler.conversionConcentration =
-                  newConcentration;
-            });
+            dvh.conversionConcentration = newConcentration;
           },
         );
       },
     );
   }
 
-  void _showTimePicker(BuildContext context) {
+  void _showTimePicker(DosageViewHandler dvh) {
     showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return TimePicker(
-            onTimeUnitSet: (newTime) {
-              HapticFeedback.mediumImpact();
-              setState(() {
-                widget.dosageViewHandler.conversionTime = newTime;
-              });
-            },
+      context: context,
+      builder: (BuildContext modalContext) {
+        return TimePicker(
+          initialTimeUnit: dvh.dose?.timeUnit,
+          onTimeUnitSet: (TimeUnit unit) {
+            HapticFeedback.mediumImpact();
+            dvh.conversionTime = unit;
+          },
+        );
+      },
+    );
+  }
+
+  Text showDosage(
+      {Dose? dose,
+      Dose? lowerLimitDose,
+      Dose? higherLimitDose,
+      Dose? maxDose,
+      String? instruction,
+      String? conversionInfo}) {
+    TextSpan buildDosageTextSpan({
+      String? conversionInfo,
+      String? instruction,
+      Dose? dose,
+      Dose? lowerLimitDose,
+      Dose? higherLimitDose,
+      Dose? maxDose,
+    }) {
+      final instructionSpan = TextSpan(
+        text: (instruction != null && instruction.isNotEmpty)
+            ? "${instruction.trimRight()}${RegExp(r'[.,:]$').hasMatch(instruction) ? '' : ':'} "
+            : '',
+      );
+
+      final doseSpan = TextSpan(
+        text: dose != null ? "$dose. " : '',
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      );
+
+      TextSpan doseRangeSpan() {
+        if (lowerLimitDose != null && higherLimitDose != null) {
+          return TextSpan(
+            text: dose == null
+                ? '$lowerLimitDose - $higherLimitDose. '
+                : "($lowerLimitDose - $higherLimitDose). ",
+            style: const TextStyle(fontWeight: FontWeight.bold),
           );
-        });
-  }
+        }
+        return const TextSpan(text: "");
+      }
 
-  bool shouldShowConcentrationSwitch() {
-       return (widget.dosageViewHandler.convertableConcentrations() !=
-                          null && !widget.dosageViewHandler.ableToConvert.weight) || (widget.dosageViewHandler.convertableConcentrations() != null && widget.dosageViewHandler.conversionWeight != null);
+      final maxDoseSpan = TextSpan(
+        text: maxDose != null ? "Maxdos: $maxDose." : '',
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      );
 
+      return TextSpan(
+        children: [
+          if (conversionInfo != null && conversionInfo.isNotEmpty)
+            TextSpan(
+              text: conversionInfo,
+              style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+            ),
+          instructionSpan,
+          doseSpan,
+          doseRangeSpan(),
+          maxDoseSpan,
+        ],
+      );
+    }
 
-  }
-
-  void _resetWeightConversion() {
-    setState(() {
-      widget.dosageViewHandler.conversionWeight = null;
-    });
-  }
-
-  void _resetConcentrationConversion() {
-    setState(() {
-      widget.dosageViewHandler.conversionConcentration = null;
-    });
-  }
-
-  void _resetTimeConversion() {
-    setState(() {
-      widget.dosageViewHandler.conversionTime = null;
-    });
+    return Text.rich(
+      TextSpan(
+        children: [
+          buildDosageTextSpan(
+            conversionInfo: conversionInfo,
+            instruction: instruction,
+            dose: dose,
+            lowerLimitDose: lowerLimitDose,
+            higherLimitDose: higherLimitDose,
+            maxDose: maxDose,
+          ),
+        ],
+        style: const TextStyle(fontSize: 14),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final dvh = Provider.of<DosageViewHandler>(context, listen: true);
+
     return Stack(
       children: [
         ListTile(
           contentPadding:
-              const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 0),
-          minVerticalPadding: 12,
+              const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 2),
+          
+     
           title: Row(
             children: [
               Expanded(
-                child:
-                    widget.dosageViewHandler.showDosage(isOriginalText: true, context: context),
+                child: showDosage(
+                  dose: dvh.dose,
+                  lowerLimitDose: dvh.lowerLimitDose,
+                  higherLimitDose: dvh.higherLimitDose,
+                  maxDose: dvh.maxDose,
+                  instruction: dvh.dosage.instruction,
+                ),
               ),
               const SizedBox(width: 8),
               Column(
                 children: [
                   Row(
                     children: [
-                      if (!widget.editMode &&
-                          widget.dosageViewHandler.ableToConvert.weight)
+                      if (!widget.editMode && dvh.canConvertWeight())
                         ConversionButton(
                           label: "kg",
-                          isActive:
-                              widget.dosageViewHandler.conversionWeight != null,
+                          isActive: dvh.conversionWeight != null,
                           onPressed: () {
-                            if (widget.dosageViewHandler.conversionWeight ==
-                                null) {
-                              _showWeightSlider(context);
+                            if (dvh.conversionWeight == null) {
+                              _showWeightSlider(dvh);
                             } else {
-                              _resetWeightConversion();
-                              _resetConcentrationConversion();
+                              dvh.conversionWeight = null;
+                              dvh.conversionConcentration = null;
                             }
                           },
                         ),
                       const SizedBox(width: 5),
-                      if (!widget.editMode &&
-                          widget.dosageViewHandler.ableToConvert.time)
+                      if (!widget.editMode && dvh.canConvertTime())
                         ConversionButton(
                           label: "t",
-                          isActive:
-                              widget.dosageViewHandler.conversionTime != null,
+                          isActive: dvh.conversionTime != null,
                           onPressed: () {
-                            if (widget.dosageViewHandler.conversionTime ==
-                                null) {
-                              _showTimePicker(context);
+                            if (dvh.conversionTime == null) {
+                              _showTimePicker(dvh);
                             } else {
-                              _resetTimeConversion();
+                              dvh.conversionTime = null;
                             }
                           },
-                        )
+                        ),
                     ],
                   ),
                   if (!widget.editMode &&
-                          shouldShowConcentrationSwitch())
+                      dvh.canConvertConcentration() &&
+                      (dvh.conversionWeight != null || !dvh.canConvertWeight()))
                     Transform.scale(
                       scale: 0.9,
                       child: ConversionSwitch(
-                        isActive: (widget.dosageViewHandler
-                                .conversionConcentration !=
-                            null),
+                        isActive: dvh.conversionConcentration != null,
                         onSwitched: (value) {
+                          print("Switched to $value");
                           HapticFeedback.mediumImpact();
                           if (value) {
-                            _showConcentrationPicker(context);
+                            _showConcentrationPicker(dvh);
                           } else {
-                            _resetConcentrationConversion();
+                            dvh.conversionConcentration = null;
                           }
                         },
-                        unit: widget.dosageViewHandler.getCommonUnitSymbol(),
+                        unit: dvh.dosage.getSubstanceUnit().toString(),
                       ),
                     ),
                 ],
@@ -221,14 +253,13 @@ class DosageSnippetState extends State<DosageSnippet> {
                                     'Är du säker på att du vill radera denna dosering?'),
                                 actions: <Widget>[
                                   TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(dialogContext);
-                                    },
+                                    onPressed: () =>
+                                        Navigator.pop(dialogContext),
                                     child: const Text('Avbryt'),
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      _deleteDosage();
+                                      dvh.deleteDosage();
                                       Navigator.pop(dialogContext);
                                     },
                                     child: const Text('Radera',
@@ -247,43 +278,36 @@ class DosageSnippetState extends State<DosageSnippet> {
                             context: context,
                             builder: (dialogContext) {
                               return EditDosageDialog(
-                                dosage: widget.dosage,
+                                dosage: dvh.dosage,
                                 onSave: (updatedDosage) {
-                                  _updateDosage(updatedDosage);
+                                  dvh.onDosageUpdated(updatedDosage);
                                 },
                               );
                             },
                           );
                         },
-                      ),
+                      )
                     ],
                   ),
                 ),
             ],
           ),
-          subtitle: _isConversionActive
-              ? widget.dosageViewHandler.showDosage(isOriginalText: false, context: context)
+          subtitle: dvh.conversionActive
+              ? showDosage(
+                  dose: dvh.dose,
+                  lowerLimitDose: dvh.lowerLimitDose,
+                  higherLimitDose: dvh.higherLimitDose,
+                  maxDose: dvh.maxDose,
+                  conversionInfo: dvh.conversionInfo())
               : null,
         ),
-        if (widget.dosageViewHandler.getAdministrationRoute() != null)
+        if (dvh.dosage.administrationRoute != null)
           Positioned(
             top: 8,
             left: 16,
-            child: RouteText(
-                route: widget.dosageViewHandler.getAdministrationRoute()!),
+            child: RouteText(route: dvh.dosage.administrationRoute!),
           ),
       ],
     );
-  }
-
-  void _updateDosage(Dosage updatedDosage) {
-    setState(() {
-      widget.dosage = updatedDosage;
-    });
-    widget.onDosageUpdated(updatedDosage);
-  }
-
-  void _deleteDosage() {
-    widget.onDosageDeleted?.call();
   }
 }

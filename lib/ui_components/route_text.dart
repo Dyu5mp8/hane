@@ -1,29 +1,11 @@
 import "package:flutter/material.dart";
 import "package:hane/drugs/drug_detail/dosage_view_handler.dart";
 import "package:icons_plus/icons_plus.dart";
+import "package:hane/drugs/models/administration_route.dart";
 
 class RouteText extends StatelessWidget {
   final AdministrationRoute route;
   const RouteText({super.key, required this.route});
-
-  String routeText() {
-    switch (route) {
-      case AdministrationRoute.po:
-        return "Oralt";
-      case AdministrationRoute.iv:
-        return "Intravenöst";
-      case AdministrationRoute.im:
-        return "Intramuskulärt";
-      case AdministrationRoute.sc:
-        return "Subkutant";
-      case AdministrationRoute.inh:
-        return "Inhalation";
-      case AdministrationRoute.nasal:
-        return "Nasalt";
-      default:
-        return "Annat";
-    }
-  }
 
   Icon? routeIcon({required double iconSize}) {
     switch (route) {
@@ -49,7 +31,7 @@ class RouteText extends StatelessWidget {
       children: [
         if (routeIcon(iconSize: 12) != null) routeIcon(iconSize: 14)!,
         const SizedBox(width: 5),
-        Text(routeText(), style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(route.name, style: const TextStyle(fontWeight: FontWeight.bold)),
       ],
     );
   }

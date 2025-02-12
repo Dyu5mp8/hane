@@ -8,7 +8,8 @@ String? validateConcentrationUnit(String? value) {
   if (value == null || value.isEmpty) {
     return ValidationException("Ange en giltig enhet").toString();
   }
-  try {Concentration.getConcentrationsUnitsAsMap(value);
+  try {
+  
   }
   catch (e) {
     return e.toString();

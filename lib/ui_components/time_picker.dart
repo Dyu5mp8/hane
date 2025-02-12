@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
+import 'package:hane/drugs/models/units.dart';
 
 class TimePicker extends StatefulWidget {
-  final Function(String) onTimeUnitSet;
 
-  const TimePicker({super.key, required this.onTimeUnitSet});
+  final Function(TimeUnit) onTimeUnitSet;
+  final TimeUnit? initialTimeUnit;
 
+  const TimePicker({
+    Key? key,
+    required this.onTimeUnitSet,
+    required this.initialTimeUnit,
+  }) : super(key: key);
+  
   @override
   State<TimePicker> createState() => _TimePickerState();
 }
 
 class _TimePickerState extends State<TimePicker> {
-  String? _currentTimeUnit;
+  TimeUnit? _currentTimeUnit;
 
-  final List<String> timeUnits = ["min", "h", "d"];
+  final List<TimeUnit> timeUnits = TimeUnit.values;
 
   @override
   void initState() {
@@ -22,6 +31,7 @@ class _TimePickerState extends State<TimePicker> {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: const EdgeInsets.all(20),
       width: MediaQuery.sizeOf(context).width,
@@ -35,21 +45,22 @@ class _TimePickerState extends State<TimePicker> {
           const SizedBox(height: 20),
           
           // Time Unit Segmented Button
-          SegmentedButton<String>(
+          SegmentedButton<TimeUnit>(
             showSelectedIcon: false,
             emptySelectionAllowed: true, // Allow no selection
-            segments: timeUnits.map((String value) {
-              return ButtonSegment<String>(
-                value: value,
-                label: Text(value),
+            segments: timeUnits.map((TimeUnit unit) {
+              return ButtonSegment<TimeUnit>(
+                value: unit,
+                label: Text(unit.toString()),
               );
             }).toList(),
             selected: _currentTimeUnit == null ? {} : {_currentTimeUnit!},
             onSelectionChanged: (newSelection) {
-              setState(() {
-                widget.onTimeUnitSet(newSelection.first);
+       
+              if (newSelection.isNotEmpty) {
+                widget.onTimeUnitSet(newSelection.first);  
                 Navigator.pop(context);
-              });
+              }
             },
           ),
           const SizedBox(height: 20),

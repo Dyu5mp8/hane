@@ -1,4 +1,5 @@
 import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
+import 'package:hane/drugs/models/administration_route.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
@@ -34,8 +35,8 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
       actions['Lågt fibrinogen'] = [RotemAction(
         dosage: Dosage(
           instruction: "Riastap eller fibryga. Mål är A5 FIBTEM ≥ 10 mm.",
-          administrationRoute: "IV",
-          dose: Dose.fromString(amount: 2, unit: "g"),
+          administrationRoute: AdministrationRoute.iv,
+          dose: Dose.fromString(2, "g"),
         ),
       )];
     }
@@ -50,8 +51,8 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
       actions['Trombocyter'] = [RotemAction(
         dosage: Dosage(
           instruction: "Behov av trombocyter",
-          administrationRoute: "IV",
-          dose: Dose.fromString(amount: 1, unit: "E"),
+          administrationRoute: AdministrationRoute.iv,
+          dose: Dose.fromString( 1, "E"),
         ),
       )];
     }
@@ -67,15 +68,15 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
    
           Dosage(
             instruction: "Plasma",
-            administrationRoute: "IV",
-            lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
-            higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+            administrationRoute: AdministrationRoute.iv,
+            lowerLimitDose: Dose.fromString( 10, "ml/kg"),
+            higherLimitDose: Dose.fromString( 15, "ml/kg"),
           ),
       ), RotemAction(dosage:
           Dosage(
             instruction: "Confidex/PCC",
-            administrationRoute: "IV",
-            dose: Dose.fromString(amount: 500, unit: "E"),
+            administrationRoute: AdministrationRoute.iv,
+            dose: Dose.fromString(500, "E"),
           ),
       )
 
@@ -92,8 +93,8 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
       actions['CT INTEM > 280 s'] = [RotemAction(
         dosage: Dosage(
           instruction: "Plasma",
-          administrationRoute: "IV",
-          dose: Dose.fromString(amount: 10, unit: "ml/kg"),
+          administrationRoute: AdministrationRoute.iv,  
+          dose: Dose.fromString(10, "ml/kg"),
         ),
       )];
     }
@@ -106,9 +107,9 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
       actions['ML EXTEM > 85% eller LI30 EXTEM > 50%'] = [RotemAction(
         dosage: Dosage(
           instruction: "Cyklokapron",
-          administrationRoute: "IV",
-          lowerLimitDose: Dose.fromString(amount: 1, unit: "g"),
-          higherLimitDose: Dose.fromString(amount: 2, unit: "g"),
+          administrationRoute: AdministrationRoute.iv,
+          lowerLimitDose: Dose.fromString(1, "g"),
+          higherLimitDose: Dose.fromString(2, "g"),
         ),
       )];
     }
@@ -117,9 +118,9 @@ class LiverFailureEvaluationStrategy extends RotemEvaluationStrategy {
     if (ctIntem != null && ctHeptem != null && ctIntem/ctHeptem > heptemCutoff) {
       actions['Protamin'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute.iv,
           instruction: "Ge protamin",
-          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
+          lowerLimitDose: Dose.fromString( 50, "mg"),
         ),
       )];
     }

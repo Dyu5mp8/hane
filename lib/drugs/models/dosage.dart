@@ -1,9 +1,12 @@
+import 'package:hane/drugs/models/administration_route.dart';
 import 'package:hane/drugs/models/dose.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hane/drugs/models/units.dart';
+
 
 class Dosage with EquatableMixin {
   String? _instruction;
-  String? _administrationRoute;
+  AdministrationRoute? _administrationRoute;
   Dose? _dose;
   Dose? _lowerLimitDose;
   Dose? _higherLimitDose;
@@ -11,7 +14,7 @@ class Dosage with EquatableMixin {
 
   Dosage({
     String? instruction,
-    String? administrationRoute,
+    AdministrationRoute? administrationRoute,
     Dose? dose,
     Dose? lowerLimitDose,
     Dose? higherLimitDose,
@@ -43,35 +46,16 @@ class Dosage with EquatableMixin {
 
   // Getters
   String? get instruction => _instruction;
-  String? get administrationRoute => _administrationRoute;
+  AdministrationRoute? get administrationRoute => _administrationRoute;
   Dose? get dose => _dose;
   Dose? get lowerLimitDose => _lowerLimitDose;
   Dose? get higherLimitDose => _higherLimitDose;
   Dose? get maxDose => _maxDose;
 
-String? getUniformSubstanceUnit() {
-  // Initialize an empty Set to store unique units
-  Set<String> units = {};
-
-  // Helper function to add units if they exist
-  void addUnit(Map<String, String>? unit) {
-    if (unit != null && unit.containsKey('substance')) {
-      units.add(unit['substance']!);
-    }
+  SubstanceUnit? getSubstanceUnit () {
+    
+    return _dose?.substanceUnit ?? _lowerLimitDose?.substanceUnit ?? _higherLimitDose?.substanceUnit ?? _maxDose?.substanceUnit;  
   }
-
-  // Add units from each variable
-  addUnit(_dose?.units);
-  addUnit(_lowerLimitDose?.units);
-  addUnit(_higherLimitDose?.units);
-  addUnit(_maxDose?.units);
-  if (units.length == 1) {
-    return units.first;
-  
-  }
-  return null;
-
-}
 
 
   // Setters with notification
@@ -79,7 +63,7 @@ String? getUniformSubstanceUnit() {
     _instruction = newInstruction;
   }
 
-  set administrationRoute(String? newRoute) {
+  set administrationRoute(AdministrationRoute? newRoute) {
     _administrationRoute = newRoute;
   }
 
@@ -103,7 +87,7 @@ String? getUniformSubstanceUnit() {
   Map<String, dynamic> toJson() {
     return {
       'instruction': _instruction,
-      'administration_route': _administrationRoute,
+      'administration_route': _administrationRoute?.name,
       'dose': _dose?.toJson(),
       'lower_limit_dose': _lowerLimitDose?.toJson(),
       'higher_limit_dose': _higherLimitDose?.toJson(),
@@ -115,7 +99,7 @@ String? getUniformSubstanceUnit() {
   factory Dosage.fromFirestore(Map<String, dynamic> map) {
     return Dosage(
       instruction: map['instruction'] as String?,
-      administrationRoute: map['administration_route'] as String?,
+      administrationRoute: AdministrationRoute.fromString(map['administration_route'] as String?),
       dose: map['dose'] != null
           ? Dose.fromFirestore(map['dose'] as Map<String, dynamic>)
           : null,

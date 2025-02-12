@@ -1,316 +1,163 @@
-import "package:flutter/material.dart";
-import "package:hane/drugs/models/drug.dart";
-import "package:hane/utils/unit_service.dart";
-import "package:hane/utils/smart_rounder.dart";
-import "package:flutter/foundation.dart";
+import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
+import 'package:hane/drugs/models/administration_route.dart';
+import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/utils/unit_service.dart';
+import 'package:hane/utils/smart_rounder.dart';
+import 'package:flutter/foundation.dart';
+import 'package:hane/drugs/models/units.dart';
 
-enum AdministrationRoute {
-  po,
-  iv,
-  im,
-  sc,
-  rect,
-  inh,
-  nasal,
-  other,
-}
-
-class DosageViewHandler {
+class DosageViewHandler extends ChangeNotifier {
   Dosage dosage;
-  double? conversionWeight;
-  String? conversionTime;
-  Concentration? conversionConcentration;
+  double? _conversionWeight;
+  TimeUnit? _conversionTime;
+  Concentration? _conversionConcentration;
   List<Concentration>? availableConcentrations;
-  late ({bool weight, bool time, bool concentration}) ableToConvert;
 
-  DosageViewHandler(
-    Key? key, {
+  Function()? onDosageDeleted;
+  final Function(Dosage) onDosageUpdated;
+
+  DosageViewHandler({
+    Key? key,
     required this.dosage,
-    this.conversionWeight,
-    this.conversionTime,
-    this.conversionConcentration,
+    double? conversionWeight,
+    TimeUnit? conversionTime,
+    Concentration? conversionConcentration,
     this.availableConcentrations,
-  }) {
-    ableToConvert = _ableToConvert();
+    this.onDosageDeleted,
+    required this.onDosageUpdated,
+  })  : _conversionWeight = conversionWeight,
+        _conversionTime = conversionTime,
+        _conversionConcentration = conversionConcentration;
+
+  double? get conversionWeight => _conversionWeight;
+  TimeUnit? get conversionTime => _conversionTime;
+  Concentration? get conversionConcentration => _conversionConcentration;
+
+  set conversionWeight(double? value) {
+    _conversionWeight = value;
+    notifyListeners();
   }
 
-  List<Concentration>? convertableConcentrations () {
-    if (availableConcentrations != null) {
-      String? uniformUnit = dosage.getUniformSubstanceUnit();
-      if (uniformUnit != null) {
-        var convertableConcentrations = availableConcentrations!.where((c) => UnitValidator.getUnitType(c.firstUnit()) == UnitValidator.getUnitType(uniformUnit)).toList();
-        if (convertableConcentrations.isNotEmpty) {
+  set conversionTime(TimeUnit? value) {
+    _conversionTime = value;
+    notifyListeners();
+  }
 
-        return convertableConcentrations;
-      }
+  set conversionConcentration(Concentration? value) {
+    _conversionConcentration = value;
+    notifyListeners();
+  }
+
+  get conversionActive =>
+      conversionWeight != null ||
+      conversionTime != null ||
+      conversionConcentration != null;
+
+  /// Returns a list of concentrations that can be used for conversion,
+  /// filtering by the unit type of the dose’s substance unit.
+  List<Concentration>? get convertibleConcentrations {
+    final SubstanceUnit? doseSubstanceUnit = dosage.getSubstanceUnit();
+    if (doseSubstanceUnit != null && availableConcentrations != null) {
+      final filtered = availableConcentrations!
+          .where((c) => c.substance.unitType == doseSubstanceUnit.unitType)
+          .toList();
+      return filtered.isNotEmpty ? filtered : null;
     }
     return null;
-    
-  }
-  return null;
   }
 
-  bool canConvertConcentration(Dose dose) {
-      if (availableConcentrations != null &&
-          dose.units.containsKey("substance")) {
-        var concentrationSubstanceUnits = availableConcentrations!.map(
-            (c) => UnitParser.getConcentrationsUnitsAsMap(c.unit)["substance"]);
-        var concentrationUnitTypes = concentrationSubstanceUnits
-            .map((c) => UnitValidator.getUnitType(c))
-            .toSet();
-        var doseUnitType = UnitValidator.getUnitType(dose.units["substance"]!);
-        return concentrationUnitTypes.contains(doseUnitType);
+  void deleteDosage() {
+    onDosageDeleted?.call();
+  }
+
+  void updateDosage(Dosage updatedDosage) {
+    onDosageUpdated(updatedDosage);
+  }
+
+  /// Checks if the given dose can be converted via concentration.
+  bool canConvertConcentration() {
+    final doseUnitType = dosage.getSubstanceUnit();
+    return availableConcentrations
+            ?.any((c) => c.substance.unitType == doseUnitType?.unitType) ??
+        false;
+  }
+
+  /// Returns true if the dose has a non-null time unit.
+  bool canConvertTime() =>
+      dosage.dose?.timeUnit != null ||
+      dosage.lowerLimitDose?.timeUnit != null ||
+      dosage.higherLimitDose?.timeUnit != null ||
+      dosage.maxDose?.timeUnit != null;
+
+  /// Returns true if the dose has a non-null weight unit.
+  bool canConvertWeight() =>
+      dosage.dose?.weightUnit != null ||
+      dosage.lowerLimitDose?.weightUnit != null ||
+      dosage.higherLimitDose?.weightUnit != null ||
+      dosage.maxDose?.weightUnit != null;
+
+  Dose? scaleAndRound(Dose? dose) {
+    return dose?.scaleAmount(threshold: 0.1).roundAmount();
+  }
+
+  Dose? originalDose(Dose? dose) {
+    return scaleAndRound(dose);
+  }
+
+  Dose? convertedDose(Dose? dose) {
+    var displayDose = dose;
+
+    displayDose = displayDose
+        ?.convertByWeight(conversionWeight?.toInt())
+        .convertByConcentration(conversionConcentration)
+        .convertByTime(conversionTime);
+
+    if (maxDose != null &&
+        displayDose != null &&
+        displayDose.unitEquals(maxDose!)) {
+      displayDose = displayDose < maxDose! ? displayDose : maxDose;
     }
-    return false;
+    displayDose = scaleAndRound(displayDose);
+
+    return displayDose;
   }
 
-  void setNewDosage(Dosage dosage) {
-    this.dosage = dosage;
-  }
+  Dose? get dose => convertedDose(dosage.dose);
+  Dose? get lowerLimitDose => convertedDose(dosage.lowerLimitDose);
+  Dose? get higherLimitDose => convertedDose(dosage.higherLimitDose);
+  Dose? get maxDose => dosage.maxDose
+      ?.convertByWeight(conversionWeight?.toInt())
+      .convertByTime(conversionTime)
+      .convertByConcentration(conversionConcentration)
+      .scaleAmount()
+      .roundAmount();
 
-  bool canConvertTime(Dose dose) {
-    return dose.units.containsKey("time");
-  }
+  Dose? get startDose => originalDose(dosage.dose);
+  Dose? get startLowerLimitDose => originalDose(dosage.lowerLimitDose);
+  Dose? get startHigherLimitDose => originalDose(dosage.higherLimitDose);
+  Dose? get startMaxDose => originalDose(dosage.maxDose);
 
-  bool canConvertWeight(Dose dose) {
-    return dose.units.containsKey("patientWeight");
-  }
+  String conversionInfo() {
+    final weightConversionInfo = conversionWeight != null
+        ? "vikt ${smartRound(conversionWeight!).toString()} kg"
+        : null;
+    final concentrationConversionInfo = conversionConcentration != null
+        ? "styrka ${conversionConcentration.toString()}"
+        : null;
+    final timeConversionInfo = conversionTime != null
+        ? "tidsenhet ${conversionTime.toString()}"
+        : null;
 
-  ({bool weight, bool time, bool concentration}) _ableToConvert() {
-    int weightConversions = 0;
-    int timeConversions = 0;
-    int concentrationConversions = 0;
-
-    List<Dose?> doseList = [
-      dosage.dose,
-      dosage.lowerLimitDose,
-      dosage.higherLimitDose,
-      dosage.maxDose,
+    final conversionParts = [
+      if (weightConversionInfo != null) weightConversionInfo,
+      if (concentrationConversionInfo != null) concentrationConversionInfo,
+      if (timeConversionInfo != null) timeConversionInfo,
     ];
+    final conversionInfo = conversionParts.isNotEmpty
+        ? "Beräknat på ${conversionParts.join(', ')}:\n"
+        : "";
 
-    for (Dose? dose in doseList) {
-      if (dose != null) {
-        if (canConvertTime(dose)) {
-          timeConversions++;
-        }
-
-        if (canConvertWeight(dose)) {
-          weightConversions++;
-        }
-
-        if (canConvertConcentration(dose)) {
-          concentrationConversions++;
-        }
-      }
-    }
-    return (
-      weight: weightConversions > 0,
-      time: timeConversions > 0,
-      concentration: concentrationConversions > 0
-    );
-  }
-
-  AdministrationRoute? getAdministrationRoute() {
-    switch (dosage.administrationRoute) {
-      case "PO":
-        return AdministrationRoute.po;
-      case "IV":
-        return AdministrationRoute.iv;
-      case "IM":
-        return AdministrationRoute.im;
-      case "SC":
-        return AdministrationRoute.sc;
-      case "Nasalt":
-        return AdministrationRoute.nasal;
-      case "Inh":
-        return AdministrationRoute.inh;
-      default:
-        return AdministrationRoute.other;
-    }
-  }
-
-  Text showDosage({required bool isOriginalText, required BuildContext context}) {
-
-    Color doseColor = isOriginalText ? Theme.of(context).colorScheme.primary : const Color.fromARGB(255, 254, 112, 56);
-
-    TextSpan buildDosageTextSpan({
-      String? conversionInfo,
-      required String? instruction,
-      required Dose? dose,
-      required Dose? lowerLimitDose,
-      required Dose? higherLimitDose,
-      required Dose? maxDose,
-      required bool shouldConvertDoses,
-    }) {
-      final TextSpan instructionSpan = TextSpan(
-        text: instruction != null && instruction.isNotEmpty
-            ? "${instruction.trimRight()}${RegExp(r'[.,:]$').hasMatch(instruction) ? '' : ':'} "
-            : '',
-      );
-      final TextSpan doseSpan = TextSpan(
-        text: dose != null ? "$dose. " : '',
-        style: TextStyle(fontWeight: FontWeight.bold, color: doseColor),
-      );
-
-      TextSpan doseRangeSpan() {
-        if (lowerLimitDose != null && higherLimitDose != null) {
-          if (dose != null) {
-            return TextSpan(
-              text: "($lowerLimitDose - $higherLimitDose). ",
-              style: TextStyle(fontWeight: FontWeight.bold, color: doseColor),
-              
-            );
-          } else {
-            return TextSpan(
-              text: "$lowerLimitDose. - $higherLimitDose. ",
-              style: TextStyle(fontWeight: FontWeight.bold, color: doseColor),
-            );
-          }
-        }
-        return const TextSpan(text: "");
-      }
-
-      final TextSpan maxDoseSpan = TextSpan(
-        text: maxDose != null ? "Maxdos: ${maxDose.scaleDose()}." : '',
-        style: TextStyle(fontWeight: FontWeight.bold, color: doseColor),
-      );
-
-      return TextSpan(
-        children: [
-          if (conversionInfo != null && conversionInfo.isNotEmpty)
-            TextSpan(
-              text: conversionInfo,
-              style: const TextStyle(
-                  fontSize: 14,
-            
-                  fontStyle: FontStyle.italic),
-            ),
-          instructionSpan,
-          doseSpan,
-          doseRangeSpan(),
-          maxDoseSpan,
-        ],
-      );
-    }
-
-    if (isOriginalText) {
-      return Text.rich(
-        TextSpan(
-          text: '',
-          children: [
-            buildDosageTextSpan(
-              conversionInfo: '',
-              instruction: dosage.instruction,
-              dose: dosage.dose,
-              lowerLimitDose: dosage.lowerLimitDose,
-              higherLimitDose: dosage.higherLimitDose,
-              maxDose: dosage.maxDose,
-              shouldConvertDoses: false,
-            ),
-          ],
-          style: const TextStyle(fontSize: 14),
-        ),
-      );
-    } else {
-      bool shouldConvertDoses = conversionWeight != null ||
-          conversionTime != null ||
-          conversionConcentration != null;
-
-      Dose? convertIfNeeded(Dose? dose) {
-        if (dose == null) return null;
-        return shouldConvertDoses
-            ? dose.convertedBy(
-                convertWeight: canConvertWeight(dose) ? conversionWeight : null,
-                convertTime: canConvertTime(dose) ? conversionTime : null,
-                convertConcentration: canConvertConcentration(dose)
-                    ? conversionConcentration
-                    : null,
-              )
-            : dose;
-      }
-
-      Map<String, String> unitsExcludingWeight(Map<String, String> units) {
-        return Map.from(units)..remove('patientWeight');
-      }
-
-      Dose? maxDose = convertIfNeeded(dosage.maxDose);
-
-      Dose? clampDoseIfExceedsMax(Dose? dose) {
-        if (dose != null && maxDose != null) {
-          var maxDoseUnits = unitsExcludingWeight(maxDose.units);
-          // Use setEquals to compare the key sets
-          if (setEquals(dose.units.keys.toSet(), maxDoseUnits.keys.toSet())) {
-            if (dose.compareTo(maxDose) > 0) {
-              // Return maxDose if dose exceeds maxDose
-              return maxDose;
-            } else {
-              return dose;
-            }
-          } else {
-            return dose;
-          }
-        }
-        return dose;
-      }
-
-      Dose? dose = clampDoseIfExceedsMax(convertIfNeeded(dosage.dose));
-      Dose? lowerLimitDose =
-          clampDoseIfExceedsMax(convertIfNeeded(dosage.lowerLimitDose));
-      Dose? higherLimitDose =
-          clampDoseIfExceedsMax(convertIfNeeded(dosage.higherLimitDose));
-
-      // check for maxdose, and if the units match the converted higherLimitDose it will clamp the higherLimitDose to the maxDose
-
-      String? weightConversionInfo = conversionWeight != null
-          ? "vikt ${smartRound(conversionWeight!).toString()} kg"
-          : null;
-
-      String? concentrationConversionInfo = conversionConcentration != null
-          ? "styrka ${conversionConcentration.toString()}"
-          : null;
-
-      String? timeConversionInfo = conversionTime != null
-          ? "tidsenhet ${conversionTime.toString()}"
-          : null;
-
-      List<String> conversionParts = [
-        if (weightConversionInfo != null) weightConversionInfo,
-        if (concentrationConversionInfo != null) concentrationConversionInfo,
-        if (timeConversionInfo != null) timeConversionInfo,
-      ];
-
-      String conversionInfo = conversionParts.isNotEmpty
-          ? "Beräknat på ${conversionParts.join(', ')}:\n"
-          : "";
-
-
-      return Text.rich(
-        TextSpan(
-          children: [
-            buildDosageTextSpan(
-              conversionInfo: conversionInfo,
-              instruction: "",
-              dose: dose,
-              lowerLimitDose: lowerLimitDose,
-              higherLimitDose: higherLimitDose,
-              maxDose: maxDose,
-              shouldConvertDoses: shouldConvertDoses,
-            ),
-          ],
-          style: const TextStyle(fontSize: 14),
-        ),
-      );
-    }
-  }
-
-  String? getCommonUnitSymbol() {
-    if (dosage.dose != null) {
-      return dosage.dose!.substanceUnitString();
-    } else if (dosage.lowerLimitDose != null) {
-      return dosage.lowerLimitDose!.substanceUnitString();
-    } else if (dosage.higherLimitDose != null) {
-      return dosage.higherLimitDose!.substanceUnitString();
-    }
-    return null;
+    return conversionInfo;
   }
 }

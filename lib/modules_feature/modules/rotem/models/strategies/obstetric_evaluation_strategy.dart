@@ -1,8 +1,10 @@
+import 'package:hane/drugs/models/administration_route.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/modules_feature/modules/rotem/models/field_config.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
+
 
 class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
   @override
@@ -87,9 +89,9 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
       actions['Låg A5 FIBTEM'] = [RotemAction(
         dosage: Dosage(
           instruction: "Fibrinogen",  
-          administrationRoute: "IV",
-          lowerLimitDose: Dose.fromString(amount: 2, unit: "g"),
-          higherLimitDose: Dose.fromString(amount: 4, unit: "g"),
+          administrationRoute: AdministrationRoute.iv,
+          lowerLimitDose: Dose.fromString(2, "g"),
+          higherLimitDose: Dose.fromString(4, "g"),
         ),
       )];
     }
@@ -102,8 +104,8 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
       actions['Normal A5 FIBTEM samt låg A5 EXTEM'] = [RotemAction(
         dosage: Dosage(
           instruction: "Trombocytkoncentrat",
-          administrationRoute: "IV",
-          dose: Dose.fromString(amount: 1, unit: "E"),
+          administrationRoute: AdministrationRoute.iv,  
+          dose: Dose.fromString(1, "E"),
         ),
       )];
     }
@@ -118,16 +120,16 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
       RotemAction(
         dosage: Dosage(
           instruction: "Plasma",
-          administrationRoute: "IV",
-          lowerLimitDose: Dose.fromString(amount: 10, unit: "ml/kg"),
-          higherLimitDose: Dose.fromString(amount: 15, unit: "ml/kg"),
+          administrationRoute: AdministrationRoute.iv,
+          lowerLimitDose: Dose.fromString(10, "ml/kg"),
+          higherLimitDose: Dose.fromString(15, "ml/kg"),
         ),
       ),
       RotemAction(
         dosage: Dosage(
           instruction: "Ocplex/Confidex",
-          administrationRoute: "IV",
-          dose: Dose.fromString(amount: 10, unit: "E/kg"),
+          administrationRoute: AdministrationRoute.iv,
+          dose: Dose.fromString(10, "E/kg"),
         ),
       ),
       ];
@@ -140,8 +142,8 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
       actions['Förlängd CT INTEM'] = [RotemAction(
         dosage: Dosage(
           instruction: "Plasma",
-          administrationRoute: "IV",
-          dose: Dose.fromString(amount: 10, unit: "ml/kg"),
+          administrationRoute: AdministrationRoute.iv,  
+          dose: Dose.fromString(10, "ml/kg"),
         ),
       )];
     }
@@ -154,8 +156,8 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
       actions['CT FIBTEM > 600 s eller ML EXTEM > 10%'] = [RotemAction(
         dosage: Dosage(
           instruction: "Cyklokapron",
-          administrationRoute: "IV",
-          dose: Dose.fromString(amount: 20, unit: "mg/kg"),
+          administrationRoute: AdministrationRoute.iv,
+          dose: Dose.fromString(20, "mg/kg"),
         ),
       )];
     }
@@ -164,9 +166,9 @@ class ObstetricEvaluationStrategy extends RotemEvaluationStrategy {
     if (ctIntem != null && ctHeptem != null && ctIntem/ctHeptem > heptemCutoff) {
       actions['Protamin'] = [RotemAction(
         dosage: Dosage(
-          administrationRoute: "IV",
+          administrationRoute: AdministrationRoute.iv,
           instruction: "Ge protamin",
-          lowerLimitDose: Dose.fromString(amount: 50, unit: "mg"),
+          lowerLimitDose: Dose.fromString(50, "mg"),
         ),
       )];
     }

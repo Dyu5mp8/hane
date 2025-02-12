@@ -32,7 +32,7 @@ class ConcentrationColumn extends StatelessWidget {
         ...concentrations.map((conc) => Row(
     children: [
 Text(
-  "${conc.isStockSolution == true ? '● ' : ''}${conc.toString()}",
+  "${conc.isStockSolution == true ? '● ' : ''}${conc.getSecondaryRepresentation() ?? conc}",
   style: TextStyle(
     color: (conc.mixingInstructions?.isEmpty ?? true) ? null : Colors.blue,
   ),

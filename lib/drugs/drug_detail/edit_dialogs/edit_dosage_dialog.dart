@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
-
-import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/utils/unit_parser.dart';
-import 'package:hane/utils/unit_validator.dart';
-
+import 'package:hane/drugs/models/administration_route.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:auto_size_text_field/auto_size_text_field.dart';
+
+import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/drugs/models/units.dart';
+import 'package:hane/utils/unit_parser.dart';
+import 'package:hane/utils/unit_validator.dart';
 
 class EditDosageDialog extends StatefulWidget {
   final Dosage dosage;
   final Function(Dosage) onSave; // Callback to notify parent
 
-  const EditDosageDialog(
-      {super.key, required this.dosage, required this.onSave});
+  const EditDosageDialog({
+    Key? key,
+    required this.dosage,
+    required this.onSave,
+  }) : super(key: key);
 
   @override
   State<EditDosageDialog> createState() => _EditDosageDialogState();
@@ -21,6 +25,7 @@ class EditDosageDialog extends StatefulWidget {
 class _EditDosageDialogState extends State<EditDosageDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  // Controllers for text fields
   late TextEditingController instructionController;
   late TextEditingController administrationRouteController;
   late TextEditingController doseAmountController;
@@ -28,25 +33,30 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
   late TextEditingController higherLimitDoseAmountController;
   late TextEditingController maxDoseAmountController;
 
+  // Dropdown selections for units
   late String selectedNumeratorUnit;
-  late String selectedDenominatorUnit1;
-  late String selectedDenominatorUnit2;
+  late String selectedDenomUnit1;
+  late String selectedDenomUnit2;
 
-  List<String> numeratorUnits = [];
-  List<String> denominatorUnits1 = [];
-  List<String> denominatorUnits2 = [];
+  // Lists for dropdown options
+  late List<String> numeratorUnits;
+  late List<String> denominatorUnits1;
+  late List<String> denominatorUnits2;
 
-  Map<String, String> unitDisplayMap = {};
+  // Map for displaying unit names (optional – can be used to customize labels)
+  late Map<String, String> unitDisplayMap;
 
-  String? errorMessage; // Variable to hold error message
+  String? errorMessage;
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize text controllers using values from the passed-in dosage
     instructionController =
         TextEditingController(text: widget.dosage.instruction ?? "");
     administrationRouteController =
-        TextEditingController(text: widget.dosage.administrationRoute ?? "");
+        TextEditingController(text: widget.dosage.administrationRoute?.name ?? "");
     doseAmountController = TextEditingController(
         text: widget.dosage.dose?.amount.toString() ?? "");
     lowerLimitDoseAmountController = TextEditingController(
@@ -56,55 +66,54 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     maxDoseAmountController = TextEditingController(
         text: widget.dosage.maxDose?.amount.toString() ?? "");
 
-    // Populate units lists using UnitValidator
-    Set<String> numeratorUnitsSet = {'-'};
-    numeratorUnitsSet.addAll(UnitValidator.validSubstanceUnits().keys);
-    numeratorUnits = numeratorUnitsSet.toList();
+    // Build numerator units from all available substance units.
+    // We also include a placeholder '-' value.
+    final numSet = <String>{'-'};
+    numSet.addAll(SubstanceUnit.allUnits.map((unit) => unit.toString()));
+    numeratorUnits = numSet.toList();
 
-    Set<String> denominatorUnits1Set = {'-', "kg"};
-    denominatorUnits1 = denominatorUnits1Set.toList();
+    // For denominator units we use the WeightUnit and TimeUnit enums.
+    // (These lists can be easily updated if additional denominator unit types are needed.)
+    denominatorUnits1 = {'-', ...WeightUnit.values.map((e) => e.toString())}.toList();
+    denominatorUnits2 = {'-', ...TimeUnit.values.map((e) => e.toString())}.toList();
 
-    Set<String> denominatorUnits2Set = {'-'};
-    denominatorUnits2Set.addAll(UnitValidator.validTimeUnits().keys);
-    denominatorUnits2 = denominatorUnits2Set.toList();
-
-    // Create unit display map
+    // Optionally, build a unit display map if you need to customize labels.
     unitDisplayMap = {
-      'mikrog': 'μg',
-      // Add other mappings if needed
+      for (var unit in SubstanceUnit.allUnits) unit.toString(): unit.toString()
     };
 
-    // Parse the unit string from the dosage
-    String? unitString = widget.dosage.dose?.unitString() ??
-        widget.dosage.lowerLimitDose?.unitString() ??
-        widget.dosage.higherLimitDose?.unitString();
+    // Get the currently stored unit string from the dosage.
+    String? unitString = widget.dosage.dose?.unitString ??
+        widget.dosage.lowerLimitDose?.unitString ??
+        widget.dosage.higherLimitDose?.unitString;
+    final parts = unitString?.split('/') ?? [];
 
-    List<String> unitParts = unitString?.split('/') ?? [];
-
-    // Set default units if not present
-    selectedNumeratorUnit =
-        unitParts.isNotEmpty ? unitParts[0] : numeratorUnits.first;
-    selectedDenominatorUnit1 = (unitParts.length > 1 && unitParts[1].isNotEmpty)
-        ? unitParts[1]
+    // Set default selections from the parsed unit string, if available.
+    selectedNumeratorUnit = parts.isNotEmpty ? parts[0] : numeratorUnits.first;
+    selectedDenomUnit1 = parts.length > 1 && parts[1].isNotEmpty
+        ? parts[1]
         : denominatorUnits1.first;
-    selectedDenominatorUnit2 = (unitParts.length > 2 && unitParts[2].isNotEmpty)
-        ? unitParts[2]
+    selectedDenomUnit2 = parts.length > 2 && parts[2].isNotEmpty
+        ? parts[2]
         : denominatorUnits2.first;
 
-    // Ensure units are valid
+    // Ensure the currently selected units are in the dropdown lists.
     if (!numeratorUnits.contains(selectedNumeratorUnit)) {
       numeratorUnits.add(selectedNumeratorUnit);
     }
-    if (!denominatorUnits1.contains(selectedDenominatorUnit1)) {
-      denominatorUnits1.add(selectedDenominatorUnit1);
+    if (!denominatorUnits1.contains(selectedDenomUnit1)) {
+      denominatorUnits1.add(selectedDenomUnit1);
     }
-    if (!denominatorUnits2.contains(selectedDenominatorUnit2)) {
-      denominatorUnits2.add(selectedDenominatorUnit2);
+    if (!denominatorUnits2.contains(selectedDenomUnit2)) {
+      denominatorUnits2.add(selectedDenomUnit2);
     }
   }
 
-  InputDecoration customInputDecoration(
-      {String? labelText, String? suffixText, String? prefixText}) {
+  InputDecoration customInputDecoration({
+    String? labelText,
+    String? suffixText,
+    String? prefixText,
+  }) {
     return InputDecoration(
       isDense: true,
       labelText: labelText,
@@ -133,28 +142,70 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     );
   }
 
+  /// Builds a dropdown for unit selection.
+  Widget buildDropdownButtonFormField({
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Expanded(
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<String>(
+          value: value,
+          isExpanded: true,
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          items: items
+              .map((unit) => DropdownMenuItem<String>(
+                    value: unit,
+                    child: Text(
+                      unitDisplayMap[unit] ?? unit,
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ))
+              .toList(),
+          onChanged: onChanged,
+          menuMaxHeight: 300,
+        ),
+      ),
+    );
+  }
+
+  /// Builds the complete unit string from the selected dropdown values.
+  String getUnitString() {
+    final units = <String>[];
+    if (selectedNumeratorUnit != '-') units.add(selectedNumeratorUnit);
+    if (selectedDenomUnit1 != '-') units.add(selectedDenomUnit1);
+    if (selectedDenomUnit2 != '-') units.add(selectedDenomUnit2);
+    return units.join('/');
+  }
+
+  /// Creates a Dose from the provided amount text and currently selected unit string.
+  Dose? _createDose(String amountText) {
+    if (amountText.isEmpty || getUnitString().isEmpty) return null;
+    final normalizedAmount = UnitParser.normalizeDouble(amountText);
+    return Dose.fromString(normalizedAmount, getUnitString());
+  }
+
   void _saveForm() {
     setState(() {
-      errorMessage = null; // Reset error message
+      errorMessage = null; // Reset error message.
     });
 
-    // Check if fields are filled
-    bool isDoseAmountFilled = doseAmountController.text.isNotEmpty;
+    // Perform validations.
+    bool isDoseFilled = doseAmountController.text.isNotEmpty;
     bool isFromAndToFilled = lowerLimitDoseAmountController.text.isNotEmpty &&
         higherLimitDoseAmountController.text.isNotEmpty;
-    bool isFromAndToNotBothFilled =
-        lowerLimitDoseAmountController.text.isNotEmpty &&
-                higherLimitDoseAmountController.text.isEmpty ||
-            lowerLimitDoseAmountController.text.isEmpty &&
-                higherLimitDoseAmountController.text.isNotEmpty;
     bool isInstructionFilled = instructionController.text.isNotEmpty;
-
     bool isMaxDoseFilled = maxDoseAmountController.text.isNotEmpty;
-    bool isUnitFilled =
-        selectedNumeratorUnit != '-' && selectedNumeratorUnit.isNotEmpty;
+    bool isUnitFilled = selectedNumeratorUnit != '-' && selectedNumeratorUnit.isNotEmpty;
 
-    // Rule 1: You must have either a valid dose or a valid instruction.
-    if (!isDoseAmountFilled && !isFromAndToFilled && !isInstructionFilled) {
+    if (!isDoseFilled && !isFromAndToFilled && !isInstructionFilled) {
       setState(() {
         errorMessage =
             'Du måste fylla i antingen dos eller både från och till doser. Alternativt skriv endast i instruktionsfältet.';
@@ -162,11 +213,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       return;
     }
 
-    // Rule 2: If a dose is filled, it must be valid.
-    if (isDoseAmountFilled) {
-      double? doseAmount =
-          double.tryParse(doseAmountController.text.replaceAll(",", "."));
-      if (doseAmount == null) {
+    if (isDoseFilled) {
+      if (double.tryParse(doseAmountController.text.replaceAll(",", ".")) == null) {
         setState(() {
           errorMessage = 'Dosmängden måste vara ett giltigt nummer.';
         });
@@ -174,19 +222,18 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       }
     }
 
-    // Rule 3: If from/to dose is filled, both must be valid.
-    if (isFromAndToNotBothFilled) {
+    if ((lowerLimitDoseAmountController.text.isNotEmpty) ^
+        (higherLimitDoseAmountController.text.isNotEmpty)) {
       setState(() {
         errorMessage = 'Du måste fylla i både från och till doser.';
       });
       return;
     }
 
-    if (isFromAndToFilled) {
-      double? lowerLimit = double.tryParse(
-          lowerLimitDoseAmountController.text.replaceAll(",", "."));
-      double? higherLimit = double.tryParse(
-          higherLimitDoseAmountController.text.replaceAll(",", "."));
+    if (lowerLimitDoseAmountController.text.isNotEmpty &&
+        higherLimitDoseAmountController.text.isNotEmpty) {
+      final lowerLimit = double.tryParse(lowerLimitDoseAmountController.text.replaceAll(",", "."));
+      final higherLimit = double.tryParse(higherLimitDoseAmountController.text.replaceAll(",", "."));
       if (lowerLimit == null || higherLimit == null) {
         setState(() {
           errorMessage = 'Från och till doserna måste vara giltiga nummer.';
@@ -201,116 +248,41 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       }
     }
 
-    // Rule 4: If an instruction is filled and no dose is provided, units should not be filled
-    if (isInstructionFilled &&
-        !isDoseAmountFilled &&
-        !isFromAndToFilled &&
-        isUnitFilled) {
+    if (isInstructionFilled && !isDoseFilled && !isFromAndToFilled && isUnitFilled) {
       setState(() {
         errorMessage = 'Du kan inte välja en enhet utan att fylla i dosen.';
       });
       return;
     }
 
-    // Rule 5: Ensure a valid unit is selected if any dose value is provided
-    if ((isDoseAmountFilled || isFromAndToFilled) &&
-        (selectedNumeratorUnit == '-' || selectedNumeratorUnit.isEmpty)) {
-      setState(() {
-        errorMessage =
-            'Du måste välja en primär enhet för doseringen om dos anges.';
-      });
-      return;
-    }
-
     Dose? maxDose;
-
     if (isMaxDoseFilled) {
-      Dose? tempDose = _createDose(maxDoseAmountController.text);
-      Map<String, String>? units = tempDose!.units;
-      units.removeWhere((key, value) => key == 'patientWeight');
-      maxDose = Dose(amount: tempDose.amount, units: units);
+      final tempDose = _createDose(maxDoseAmountController.text);
+      if (tempDose != null) {
+        // Here you might remove weight-specific keys if needed.
+        maxDose = tempDose;
+      }
     }
 
-    // If all validations pass, proceed to create the dosage object
-    var updatedDosage = Dosage(
+    // Create the updated Dosage using our improved models.
+    final updatedDosage = Dosage(
       instruction: instructionController.text,
-      administrationRoute: administrationRouteController.text,
+      administrationRoute: AdministrationRoute.fromString(administrationRouteController.text),
       dose: _createDose(doseAmountController.text),
       lowerLimitDose: _createDose(lowerLimitDoseAmountController.text),
       higherLimitDose: _createDose(higherLimitDoseAmountController.text),
       maxDose: maxDose,
     );
 
-    // Pass updated dosage back to the parent via the onSave callback
+    // Pass the updated dosage back to the parent.
     widget.onSave(updatedDosage);
-
-    // Close the dialog
     Navigator.pop(context);
-  }
-
-  Dose? _createDose(String amount) {
-    String unit = getUnitString();
-    if (amount.isEmpty || unit.isEmpty) return null;
-    double normalizedAmount = UnitParser.normalizeDouble(amount);
-
-    return Dose.fromString(amount: normalizedAmount, unit: unit);
-  }
-
-  String getUnitString() {
-    List<String> units = [];
-    if (selectedNumeratorUnit != '-') {
-      units.add(selectedNumeratorUnit);
-    }
-    if (selectedDenominatorUnit1 != '-') {
-      units.add(selectedDenominatorUnit1);
-    }
-    if (selectedDenominatorUnit2 != '-') {
-      units.add(selectedDenominatorUnit2);
-    }
-    return units.join('/');
-  }
-
-  String getUnitDisplayName(String unit) {
-    return unitDisplayMap[unit] ?? unit;
-  }
-
-  Widget buildDropdownButtonFormField({
-    required String value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-  }) {
-    return Expanded(
-      child: DropdownButtonHideUnderline(
-        child: DropdownButtonFormField<String>(
-          value: value,
-          isExpanded: true,
-          decoration: InputDecoration(
-            isDense: true,
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          ),
-          items: items.map((String unit) {
-            return DropdownMenuItem<String>(
-              value: unit,
-              child: Text(
-                getUnitDisplayName(unit),
-                style: const TextStyle(fontSize: 12),
-              ),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          menuMaxHeight: 300,
-        ),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    const TextStyle labelTextStyle = TextStyle(fontSize: 15);
-    const TextStyle errorTextStyle =
-        TextStyle(color: Color.fromARGB(255, 127, 11, 0));
+    const labelTextStyle = TextStyle(fontSize: 15);
+    const errorTextStyle = TextStyle(color: Color.fromARGB(255, 127, 11, 0));
 
     return AlertDialog(
       title: const Text("Redigera dosering"),
@@ -322,8 +294,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Allmänt",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Allmänt", style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 const Text("Administrationsväg"),
                 const SizedBox(height: 8),
@@ -331,16 +302,11 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                   spacing: 5.0,
                   runSpacing: -5,
                   children: [
-                    _labelChip("PO",
-                        icon: const Icon(FontAwesome.pills_solid, size: 11)),
-                    _labelChip("IV",
-                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("IM",
-                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("SC",
-                        icon: const Icon(FontAwesome.syringe_solid, size: 11)),
-                    _labelChip("Inh",
-                        icon: const Icon(FontAwesome.lungs_solid, size: 11)),
+                    _labelChip("PO", icon: const Icon(FontAwesome.pills_solid, size: 11)),
+                    _labelChip("IV", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("IM", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("SC", icon: const Icon(FontAwesome.syringe_solid, size: 11)),
+                    _labelChip("Inh", icon: const Icon(FontAwesome.lungs_solid, size: 11)),
                     _labelChip("Annat"),
                   ],
                 ),
@@ -357,12 +323,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                   TextSpan(
                     text: "Enhet",
                     style: TextStyle(fontWeight: FontWeight.bold),
-                    children: [
-                      TextSpan(
-                        text: ' *',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ],
+                    children: [TextSpan(text: ' *', style: TextStyle(color: Colors.red))],
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -381,11 +342,11 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                     const Text("/"),
                     const SizedBox(width: 8),
                     buildDropdownButtonFormField(
-                      value: selectedDenominatorUnit1,
+                      value: selectedDenomUnit1,
                       items: denominatorUnits1,
                       onChanged: (String? newValue) {
                         setState(() {
-                          selectedDenominatorUnit1 = newValue!;
+                          selectedDenomUnit1 = newValue!;
                         });
                       },
                     ),
@@ -393,25 +354,23 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                     const Text("/"),
                     const SizedBox(width: 8),
                     buildDropdownButtonFormField(
-                      value: selectedDenominatorUnit2,
+                      value: selectedDenomUnit2,
                       items: denominatorUnits2,
                       onChanged: (String? newValue) {
                         setState(() {
-                          selectedDenominatorUnit2 = newValue!;
+                          selectedDenomUnit2 = newValue!;
                         });
                       },
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text("Dosering och intervall",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Dosering och intervall", style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      flex: 1,
                       child: AutoSizeTextField(
                         controller: doseAmountController,
                         decoration: customInputDecoration(),
@@ -419,20 +378,14 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                       ),
                     ),
                     const SizedBox(width: 16),
                     const Text("(", style: TextStyle(fontSize: 18)),
                     const SizedBox(width: 8),
                     Expanded(
-                      flex: 1,
                       child: AutoSizeTextField(
                         controller: lowerLimitDoseAmountController,
                         decoration: customInputDecoration(),
@@ -440,20 +393,14 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                       ),
                     ),
                     const SizedBox(width: 8),
                     const Text("-", style: TextStyle(fontSize: 18)),
                     const SizedBox(width: 8),
                     Expanded(
-                      flex: 1,
                       child: AutoSizeTextField(
                         controller: higherLimitDoseAmountController,
                         decoration: customInputDecoration(),
@@ -461,13 +408,8 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -488,26 +430,17 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
                         minFontSize: 12,
                         maxLines: 1,
                         maxLength: 5,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        buildCounter: (context, {required int currentLength, required bool isFocused, required int? maxLength}) => null,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(getUnitString().replaceAll("/kg", ""),
-                        style: labelTextStyle),
+                    Text(getUnitString().replaceAll("/kg", ""), style: labelTextStyle),
                   ],
                 ),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 16),
-                  Text(
-                    errorMessage!,
-                    style: errorTextStyle,
-                  ),
+                  Text(errorMessage!, style: errorTextStyle),
                 ],
               ],
             ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 
 import 'package:hane/ui_components/dosage_snippet.dart';
 import 'package:hane/ui_components/scroll_indicator.dart';
@@ -12,7 +14,8 @@ class DosageList extends StatefulWidget {
   final bool editMode;
   final Drug drug;
 
-  const DosageList({super.key, 
+  const DosageList({
+    super.key,
     required this.dosages,
     required this.editMode,
     required this.drug,
@@ -26,8 +29,8 @@ class _DosageListState extends State<DosageList> {
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [ReorderableListView.builder(
+    return Stack(children: [
+      ReorderableListView.builder(
         scrollController: _scrollController,
         buildDefaultDragHandles: false,
         onReorder: (int oldIndex, int newIndex) {
@@ -38,7 +41,7 @@ class _DosageListState extends State<DosageList> {
           final movedDosage = widget.dosages.removeAt(oldIndex);
           widget.dosages.insert(newIndex, movedDosage);
           HapticFeedback.mediumImpact();
-      
+
           // Optionally update the parent Drug if needed, e.g.,
           widget.drug.updateDrug();
         },
@@ -46,8 +49,8 @@ class _DosageListState extends State<DosageList> {
         itemCount: widget.dosages.length,
         itemBuilder: (context, index) {
           return Container(
-            key: ValueKey(
-                widget.dosages[index].hashCode), // Unique key for the entire row
+            key: ValueKey(widget
+                .dosages[index].hashCode), // Unique key for the entire row
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceBright,
               borderRadius: BorderRadius.circular(12.0),
@@ -61,7 +64,6 @@ class _DosageListState extends State<DosageList> {
               ],
               border: Border.all(
                 color: Theme.of(context).colorScheme.onSurface,
-              
                 width: 0.1,
               ),
             ),
@@ -77,27 +79,31 @@ class _DosageListState extends State<DosageList> {
                         child: Icon(Icons.drag_handle, color: Colors.grey)),
                   ),
                 Expanded(
-                  child: DosageSnippet(
-                    key: ValueKey(
-                        widget.dosages[index].hashCode), // Use DosageSnippet key
-                    editMode: widget.editMode,
-                    onDosageDeleted: () {
-                      setState(() {
-                        widget.dosages.removeAt(index);
-                        widget.drug.updateDrug();
-                      });
-                 
-                    },
-                    availableConcentrations: widget.drug.concentrations,
-                    dosage: widget.dosages[index],
-                    onDosageUpdated: (updatedDosage) {
-                      setState(() {
-                        widget.dosages[index] = updatedDosage;
-                        widget.drug.updateDrug();
-      
-                      });
-                   
-                    },
+                  child: ChangeNotifierProvider(
+    create: (_) => DosageViewHandler(
+                
+                      dosage: widget.dosages[index],
+                      availableConcentrations: widget.drug.concentrations,
+                      onDosageDeleted: () {
+                        setState(() {
+                          widget.dosages.removeAt(index);
+                          widget.drug.updateDrug();
+                        });
+                      },
+                      onDosageUpdated: (updatedDosage) {
+                        setState(() {
+                          widget.dosages[index] = updatedDosage;
+                          widget.drug.updateDrug();
+                        });
+                      },
+                    ),
+                    child: DosageSnippet(
+                      key: ValueKey(widget
+                          .dosages[index].hashCode), // Use DosageSnippet key
+                      editMode: widget.editMode,
+    
+
+                    ),
                   ),
                 ),
               ],
@@ -106,11 +112,10 @@ class _DosageListState extends State<DosageList> {
         },
       ),
       Positioned(
-                bottom: 15,
-                right: 15,
-                child: ScrollIndicator(scrollController: _scrollController)),
-      ]
-    );
+          bottom: 15,
+          right: 15,
+          child: ScrollIndicator(scrollController: _scrollController)),
+    ]);
 
     // Floating action button for editing the indication
   }

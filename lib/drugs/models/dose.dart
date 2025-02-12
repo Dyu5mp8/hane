@@ -1,259 +1,239 @@
 import 'package:equatable/equatable.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/drugs/models/concentration.dart';
-import 'package:hane/utils/unit_service.dart';
+import 'package:hane/drugs/models/units.dart';
 import 'package:hane/utils/smart_rounder.dart';
-import 'package:hane/utils/validation_exception.dart';
 
-class Dose with EquatableMixin {
+class Dose extends Equatable {
   final double amount;
-  Map<String, String> units;
+  final SubstanceUnit substanceUnit;
+  final WeightUnit? weightUnit;
+  final TimeUnit? timeUnit;
 
-  Dose({required this.amount, required this.units});
+  const Dose({
+    required this.amount,
+    required this.substanceUnit,
+    this.weightUnit,
+    this.timeUnit,
+  });
 
-  // Constructor to create a Dose from a string representation
-  Dose.fromString({required double amount, required String unit})
-      : amount = amount,
-        units = getDoseUnitsAsMap(unit.replaceAll("μg", "mikrog"));
-
-  // Get the unit string representation
-  String unitString() {
-    var joinedUnits = units.values.join('/');
-    var visuallyModifiedUnits = joinedUnits.replaceAll("mikrog", "μg");
-
-    return visuallyModifiedUnits;
-  }
-
-  String substanceUnitString() {
-    if (units.containsKey("substance")) {
-      var unit = units["substance"]!.replaceAll("mikrog", "μg");
-      return unit;
+  /// Creates a new Dose with the given fields replaced.
+  Dose copyWith({
+    double? amount,
+    SubstanceUnit? substanceUnit,
+    WeightUnit? weightUnit,
+    TimeUnit? timeUnit,
+  }) {
+    final newAmount = amount ?? this.amount;
+    if (newAmount <= 0) {
+      throw ArgumentError("Dose amount must be greater than 0");
     }
-
-    return "";
+    return Dose(
+      amount: newAmount,
+      substanceUnit: substanceUnit ?? this.substanceUnit,
+      weightUnit: weightUnit ?? this.weightUnit,
+      timeUnit: timeUnit ?? this.timeUnit,
+    );
   }
-
-  @override
-  List<Object?> get props => [amount, units];
 
   @override
   String toString() {
-    return "${smartRound(amount)} ${unitString()}";
+    Dose scaledDose = scaleAmount();
+    return ("${scaledDose.amount} ${scaledDose.unitString}"); 
   }
 
-  // Get the dose units as a map
-  static Map<String, String> getDoseUnitsAsMap(String unitInput) {
-    Map validUnits = UnitValidator.validUnits;
-
-    Map<String, String> unitMap = {};
-
-    List<String> parts = unitInput.split('/');
-    if (parts.length > 3) {
-      throw ValidationException("Måste vara max 3 enheter (t.ex. mg/kg/h)");
+   bool operator <(Dose other) {
+    // Check that the substance units come from the same implementation.
+    if (substanceUnit.unitType != other.substanceUnit.unitType) {
+      throw Exception(
+          "Cannot compare doses with different substance unit implementations.");
     }
-    if (!UnitValidator.isSubstanceUnit(parts[0])) {
-      throw ValidationException(
-          " [${parts[0]}], bör vara ${UnitValidator.validSubstanceUnits().keys.join(", ")}");
-    } else {
-      unitMap["substance"] = parts[0];
+
+    // If weight units are present, they must be identical.
+    if (weightUnit != other.weightUnit) {
+      throw Exception(
+          "Cannot compare doses with different weight units (or one is null and the other is not).");
     }
-    for (final part in parts.sublist(1)) {
-      if (validUnits.keys.contains((part))) {
-        unitMap[validUnits[part]] = part;
-      } else {
-        throw ValidationException("$part inte en giltig enhet");
+    // Both doses must either have a time unit or not.
+    if ((timeUnit == null) != (other.timeUnit == null)) {
+      throw Exception(
+          "Cannot compare doses when one dose has a time unit and the other does not.");
+    }
+    // Convert this dose’s substance amount to the other’s substance unit.
+    // (For example, mg to g: amount_in_g = amount_in_mg * (g.factor / mg.factor)).
+    double convertedAmount =
+        amount * substanceUnit.conversionFactor(other.substanceUnit);
+
+    // If both doses have a time unit, convert the rate.
+    // The conversion is analogous to Dose.convertByTime:
+    // newAmount = amount * (this.timeUnit.factor / other.timeUnit.factor)
+    if (timeUnit != null && other.timeUnit != null) {
+      convertedAmount *= (timeUnit!.factor / other.timeUnit!.factor);
+    }
+    // Now, other.amount is already expressed in its own substance (and time) unit.
+    // We compare the converted amount of this dose with the raw amount of the other.
+    return convertedAmount < other.amount;
+  }
+
+
+
+
+  /// Define the > operator in terms of <.
+  bool operator >(Dose other) => other < this;
+
+  bool unitEquals(Dose other) {
+    return substanceUnit.unitType == other.substanceUnit.unitType &&
+        weightUnit == other.weightUnit &&
+        timeUnit == other.timeUnit;
+  }
+
+  
+
+  /// Converts the dose by applying a weight factor.
+  Dose convertByWeight(int? weight) {
+    if (weight == null || weightUnit == null ) return this;
+    final newAmount = amount * weight;
+    return Dose(
+      amount: newAmount,
+      substanceUnit: substanceUnit,
+      weightUnit: null,
+      timeUnit: timeUnit,
+    );
+  }
+
+  /// Converts the dose by a concentration.
+  Dose convertByConcentration(Concentration? concentration) {
+    if (concentration == null) return this; 
+    final convFactor = substanceUnit.conversionFactor(concentration.substance);
+    final newAmount = (amount / concentration.amount) * convFactor;
+    final volumeUnit = concentration.diluent.volumeFromDiluent();
+    return Dose(
+      amount: newAmount,
+      substanceUnit: volumeUnit,
+      weightUnit: weightUnit,
+      timeUnit: timeUnit,
+    );
+  }
+
+  /// Converts the dose to a new time unit.
+  Dose convertByTime(TimeUnit? targetUnit) {
+    if (timeUnit == null || targetUnit == null) return this;
+    final factor = targetUnit.factor / timeUnit!.factor;
+    final newAmount = amount / factor;
+    return Dose(
+      amount: newAmount,
+      substanceUnit: substanceUnit,
+      weightUnit: weightUnit,
+      timeUnit: targetUnit,
+    );
+  }
+
+  /// Scales the dose by trying to find a candidate unit such that
+  /// `amount * conversionFactor(candidate)` comes close to [threshold].
+  Dose scaleAmount({double threshold = 0.5}) {
+    final newUnitCandidate = substanceUnit.findCandidateByIdealFactor(amount, threshold);
+    if (newUnitCandidate == null) return this;
+    final newAmount = amount * substanceUnit.conversionFactor(newUnitCandidate);
+    return Dose(
+      amount: newAmount,
+      substanceUnit: newUnitCandidate,
+      weightUnit: weightUnit,
+      timeUnit: timeUnit,
+    );
+  }
+
+  Dose roundAmount() {
+    final newAmount = smartRound(amount) as double  ;
+    return copyWith(amount: newAmount);
+  }
+
+  /// Returns a string representation of the dose units.
+  String get unitString {
+    var unitStr = substanceUnit.toString();
+    if (weightUnit != null) unitStr += '/${weightUnit.toString()}';
+    if (timeUnit != null) unitStr += '/${timeUnit.toString()}';
+    return unitStr;
+  }
+
+  /// Creates a Dose from a dose string.
+  ///
+  /// The string can have one to three parts separated by '/'.
+  /// 1. One part: Only substance unit.
+  /// 2. Two parts: Either substance and weight OR substance and time.
+  /// 3. Three parts: Substance, weight, and time.
+  ///
+  /// Throws an [ArgumentError] if the string is invalid.
+  factory Dose.fromString(double amount, String doseStr) {
+    final parts = doseStr.split('/').map((s) => s.trim()).toList();
+    if (parts.isEmpty || parts.length > 3) {
+      throw ArgumentError("Invalid dose string: $doseStr");
+    }
+
+    try {
+      final SubstanceUnit substance = SubstanceUnit.fromString(parts[0]);
+      WeightUnit? weight;
+      TimeUnit? time;
+
+      if (parts.length == 1) {
+        // Only substance provided.
+        return Dose(
+          amount: amount,
+          substanceUnit: substance,
+        );
+      } else if (parts.length == 2) {
+        // Try parsing second part as WeightUnit first.
+        try {
+          weight = WeightUnit.fromString(parts[1]);
+          return Dose(
+            amount: amount,
+            substanceUnit: substance,
+            weightUnit: weight,
+          );
+        } catch (e) {
+          // If that fails, try parsing as TimeUnit.
+          try {
+            time = TimeUnit.fromString(parts[1]);
+            return Dose(
+              amount: amount,
+              substanceUnit: substance,
+              timeUnit: time,
+            );
+          } catch (e2) {
+            throw ArgumentError(
+                "Invalid dose string: $doseStr. Cannot parse '${parts[1]}' as WeightUnit or TimeUnit.");
+          }
+        }
+      } else if (parts.length == 3) {
+        // Expect second part as WeightUnit and third as TimeUnit.
+        weight = WeightUnit.fromString(parts[1]);
+        time = TimeUnit.fromString(parts[2]);
+        return Dose(
+          amount: amount,
+          substanceUnit: substance,
+          weightUnit: weight,
+          timeUnit: time,
+        );
       }
+      throw ArgumentError("Invalid dose string: $doseStr");
+    } catch (e) {
+      throw ArgumentError("Invalid dose string: $doseStr. Error: $e");
     }
-
-    return unitMap;
   }
 
-  // Factory constructor to create a Dose from a Map
+  /// Creates a Dose from a Firestore map.
   factory Dose.fromFirestore(Map<String, dynamic> map) {
-    num amount = map['amount'] as num;
-    return Dose.fromString(
-      amount: amount.toDouble(),
-      unit: map['unit'] as String,
-    );
+    final num amt = map['amount'] as num;
+    final String unitStr = map['unit'] as String;
+    return Dose.fromString(amt.toDouble(), unitStr);
   }
 
-  // Convert a Dose instance to a Map
+  /// Converts the Dose to a JSON map.
   Map<String, dynamic> toJson() {
-    return {'amount': amount, 'unit': units.values.join('/')};
+    return {
+      'amount': amount,
+      'unit': unitString,
+    };
   }
 
-  // Convert the dose by weight, time, concentration, and adjust scale
-  Dose convertedBy(
-      {double? convertWeight,
-      String? convertTime,
-      Concentration? convertConcentration,
-      bool adjustScale = true}) {
-    Map<String, String> fromUnits = Map.from(units);
-    double value = amount;
-
-    if (convertWeight != null && fromUnits.containsKey("patientWeight")) {
-      var result = _convertedByWeight(value, fromUnits, convertWeight);
-      value = result.$1;
-      fromUnits = result.$2;
-    }
-
-    if (convertTime != null && fromUnits.containsKey("time")) {
-      var result = _convertedByTime(value, fromUnits, convertTime);
-      value = result.$1;
-      fromUnits = result.$2;
-    }
-
-    if (convertConcentration != null) {
-      var result =
-          _convertedByConcentration(value, fromUnits, convertConcentration);
-      value = result.$1;
-      fromUnits = result.$2 as Map<String, String>;
-
-      return Dose(amount: value, units: fromUnits);
-    }
-
-    if (adjustScale) {
-      var result = _scaledDose(Dose(amount: value, units: fromUnits));
-      return result;
-    }
-
-    return Dose(amount: value, units: fromUnits);
-  }
-
-  // Convert the dose by weight
-  _convertedByWeight(double value, Map fromUnits, double conversionWeight) {
-    final newValue = value * conversionWeight;
-
-    fromUnits.remove("patientWeight");
-    final newUnits = fromUnits;
-
-    return (newValue, newUnits);
-  }
-
-  // Convert the dose by time
-  _convertedByTime(double value, Map fromUnits, String toUnit) {
-    Map<String, double> validTimeUnits = {"h": 1, "min": 60, "d": 1 / 24};
-
-    if (!validTimeUnits.containsKey(fromUnits["time"]) ||
-        !validTimeUnits.containsKey(toUnit)) {
-      Exception("$fromUnits is not an valid unit");
-    }
-    if (validTimeUnits[fromUnits["time"]] == null ||
-        validTimeUnits[toUnit] == null) {
-      throw Exception("$fromUnits or $toUnit is not a valid unit");
-    }
-
-    double factor =
-        validTimeUnits[fromUnits["time"]]! / validTimeUnits[toUnit]!;
-    var newValue = value * factor;
-    var newUnits = fromUnits;
-    newUnits["time"] = toUnit;
-
-    return (newValue, newUnits);
-  }
-
-  // Convert the dose by concentration
-  (double, Map) _convertedByConcentration(
-      double value, Map fromUnits, Concentration concentration) {
-    final concentrationUnitMap =
-        UnitParser.getConcentrationsUnitsAsMap(concentration.unit);
-    double substanceConversionFactor = UnitParser.getUnitConversionFactor(
-        fromUnit: concentrationUnitMap["substance"],
-        toUnit: fromUnits["substance"]);
-
-    var newValue = value / concentration.amount * substanceConversionFactor;
-
-    fromUnits["substance"] = concentrationUnitMap["volume"];
-    var newUnits = fromUnits;
-
-    return (newValue, newUnits);
-  }
-
-  Dose scaleDose() {
-    return _scaledDose(this);
-  }
-
-  Dose _scaledDose(Dose fromDose) {
-    String? substanceUnit = fromDose.units["substance"];
-
-    // Check if the substance unit is valid
-    if (substanceUnit == null || !UnitValidator.isValidUnit(substanceUnit)) {
-      return fromDose;
-    }
-
-    // Get the unit type
-    String unitType = UnitValidator.getUnitType(substanceUnit);
-
-    // Define units list based on unit type
-    List<String> units;
-
-    if (unitType == "mass") {
-      units = ["g", "mg", "mikrog", "ng"];
-    } else if (unitType == "unitunit") {
-      units = ["E", "mE"];
-    } else {
-      // For other unit types, no scaling
-      return fromDose;
-    }
-
-    if (!units.contains(substanceUnit)) {
-      return fromDose;
-    }
-
-    int currentIndex = units.indexOf(substanceUnit);
-    int newIndex = currentIndex +
-        _conversionStep(fromDose.amount, minimum: 0.5, maximum: 1000);
-
-    // Ensure the new index is within bounds
-    if (newIndex < 0) {
-      newIndex = 0; // Can't scale below the smallest unit
-    } else if (newIndex >= units.length) {
-      newIndex = units.length - 1; // Can't scale above the largest unit
-    }
-
-    // Adjust the dose value according to the units changing
-    double newValue = fromDose.amount;
-    if (newIndex > currentIndex) {
-      for (int i = currentIndex; i < newIndex; i++) {
-        newValue *= 1000; // Scaling down
-      }
-    } else if (newIndex < currentIndex) {
-      for (int i = currentIndex; i > newIndex; i--) {
-        newValue /= 1000; // Scaling up
-      }
-    }
-
-    Map<String, String> newUnits = Map.from(fromDose.units);
-    newUnits["substance"] = units[newIndex];
-
-    return Dose(amount: newValue, units: newUnits);
-  }
-
-  // Calculate the conversion step for scaling the dose
-  int _conversionStep(double amount,
-      {double minimum = 0.1, double maximum = 1000}) {
-    int count = 0;
-    if (amount <= 0) return count;
-    var conversionAmount = amount;
-
-    while (conversionAmount < minimum) {
-      conversionAmount = conversionAmount * 1000;
-      count = count + 1;
-    }
-
-    while (conversionAmount > maximum) {
-      conversionAmount = conversionAmount / 1000;
-      count = count - 1;
-    }
-    return count;
-  }
-
-  int compareTo(Dose other) {
-    dynamic conversionFactor = UnitParser.getUnitConversionFactor(
-      fromUnit: units["substance"]!,
-      toUnit: other.units["substance"]!,
-    );
-    double convertedAmount = amount / conversionFactor;
-    return convertedAmount.compareTo(other.amount);
-  }
+  @override
+  List<Object?> get props => [amount, substanceUnit, weightUnit, timeUnit];
 }
