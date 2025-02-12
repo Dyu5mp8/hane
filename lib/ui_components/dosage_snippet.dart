@@ -96,12 +96,21 @@ class _DosageSnippetState extends State<DosageSnippet> {
       Dose? lowerLimitDose,
       Dose? higherLimitDose,
       Dose? maxDose,
+      BuildContext context,
     }) {
       final instructionSpan = TextSpan(
         text: (instruction != null && instruction.isNotEmpty)
             ? "${instruction.trimRight()}${RegExp(r'[.,:]$').hasMatch(instruction) ? '' : ':'} "
             : '',
       );
+
+      Color? activeColor() {
+         Theme.of(context).colorScheme.primary;
+      }
+
+      Color inactiveColor() {
+        Theme.of(context).colorScheme.(0.6);
+      }
 
       final doseSpan = TextSpan(
         text: dose != null ? "$dose. " : '',
