@@ -24,7 +24,7 @@ class Dose extends Equatable {
     TimeUnit? timeUnit,
   }) {
     final newAmount = amount ?? this.amount;
-    if (newAmount <= 0) {
+    if (newAmount < 0) {
       throw ArgumentError("Dose amount must be greater than 0");
     }
     return Dose(
