@@ -82,13 +82,29 @@ class _DosageSnippetState extends State<DosageSnippet> {
     );
   }
 
+    Color? activeColor() {
+
+        return const Color.fromARGB(255, 254, 112, 56);
+      }
+
+  Color? inactiveColor() {
+
+        return Theme.of(context).colorScheme.primary;
+      }
+
+    
+
+      
+    
+
   Text showDosage(
       {Dose? dose,
       Dose? lowerLimitDose,
       Dose? higherLimitDose,
       Dose? maxDose,
       String? instruction,
-      String? conversionInfo}) {
+      String? conversionInfo,
+      Color? doseColor = Colors.black}) {
     TextSpan buildDosageTextSpan({
       String? conversionInfo,
       String? instruction,
@@ -96,7 +112,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
       Dose? lowerLimitDose,
       Dose? higherLimitDose,
       Dose? maxDose,
-      BuildContext context,
+     
     }) {
       final instructionSpan = TextSpan(
         text: (instruction != null && instruction.isNotEmpty)
@@ -104,17 +120,13 @@ class _DosageSnippetState extends State<DosageSnippet> {
             : '',
       );
 
-      Color? activeColor() {
-         Theme.of(context).colorScheme.primary;
-      }
+    
 
-      Color inactiveColor() {
-        Theme.of(context).colorScheme.(0.6);
-      }
 
+      final doseStyle = TextStyle(color: doseColor, fontWeight: FontWeight.bold);
       final doseSpan = TextSpan(
         text: dose != null ? "$dose. " : '',
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: doseStyle,
       );
 
       TextSpan doseRangeSpan() {
@@ -123,7 +135,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
             text: dose == null
                 ? '$lowerLimitDose - $higherLimitDose. '
                 : "($lowerLimitDose - $higherLimitDose). ",
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: doseStyle,
           );
         }
         return const TextSpan(text: "");
@@ -131,7 +143,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
 
       final maxDoseSpan = TextSpan(
         text: maxDose != null ? "Maxdos: $maxDose." : '',
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: doseStyle,
       );
 
       return TextSpan(
@@ -174,18 +186,19 @@ class _DosageSnippetState extends State<DosageSnippet> {
       children: [
         ListTile(
           contentPadding:
-              const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 2),
+              const EdgeInsets.only(left: 10, right: 10, top: 18, bottom: 2),
           
      
           title: Row(
             children: [
               Expanded(
                 child: showDosage(
-                  dose: dvh.dose,
-                  lowerLimitDose: dvh.lowerLimitDose,
-                  higherLimitDose: dvh.higherLimitDose,
-                  maxDose: dvh.maxDose,
+                  dose: dvh.startDose,
+                  lowerLimitDose: dvh.startLowerLimitDose,
+                  higherLimitDose: dvh.startHigherLimitDose,
+                  maxDose: dvh.startMaxDose,
                   instruction: dvh.dosage.instruction,
+                  doseColor: inactiveColor(),
                 ),
               ),
               const SizedBox(width: 8),
@@ -307,7 +320,9 @@ class _DosageSnippetState extends State<DosageSnippet> {
                   lowerLimitDose: dvh.lowerLimitDose,
                   higherLimitDose: dvh.higherLimitDose,
                   maxDose: dvh.maxDose,
-                  conversionInfo: dvh.conversionInfo())
+                  conversionInfo: dvh.conversionInfo(),
+                  doseColor: activeColor(),
+                 )  
               : null,
         ),
         if (dvh.dosage.administrationRoute != null)
