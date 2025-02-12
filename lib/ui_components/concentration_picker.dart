@@ -45,7 +45,7 @@ class _ConcentrationPickerState extends State<ConcentrationPicker> {
               segments: widget.concentrations.map((Concentration conc) {
                 return ButtonSegment<Concentration>(
                   value: conc,
-                  label: Text(conc.toString()),
+                  label: Text(conc.getSecondaryRepresentation() ?? conc.toString()),
                 );
               }).toList(),
               selected: _currentConcentration == null

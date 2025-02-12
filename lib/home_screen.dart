@@ -282,6 +282,9 @@ class _HomeScreenState extends State<HomeScreen> with Tutorial {
             if (!mounted) {
               return; // Add this line to check if the widget is still mounted
             }
+            if (_selectedCategory != null ){
+              _selectedCategory = null;
+            }
             _searchQuery = value; // Update the search query as the user types
           });
         },
@@ -339,6 +342,7 @@ class _HomeScreenState extends State<HomeScreen> with Tutorial {
                   selected: _selectedCategory == category,
                   onSelected: (bool selected) {
                     setState(() {
+                      _searchController.clear();
                       _selectedCategory = selected ? category : null;
                     });
                   },

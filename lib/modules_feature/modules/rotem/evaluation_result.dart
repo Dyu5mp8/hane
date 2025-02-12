@@ -64,7 +64,7 @@ final String strategyName;
                       const SizedBox(height: 8),
                       // List all associated dosages, with "ELLER" in between
                       for (int i = 0; i < entry.value.length; i++) ...[
-                        Provider(
+                        ChangeNotifierProvider(
                           create: (_) => DosageViewHandler(
                             dosage: entry.value[i].dosage,
                             availableConcentrations: entry.value[i].availableConcentrations,
