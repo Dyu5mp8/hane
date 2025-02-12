@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/ui_components/dosage_snippet.dart';
+
 
 class EvaluationResult extends StatelessWidget {
 final Map<String, List<RotemAction>> actions;
@@ -61,10 +64,18 @@ final String strategyName;
                       const SizedBox(height: 8),
                       // List all associated dosages, with "ELLER" in between
                       for (int i = 0; i < entry.value.length; i++) ...[
-                        DosageSnippet(
-                          dosage: entry.value[i].dosage,
-                          onDosageUpdated: (_) {},
-                          availableConcentrations: entry.value[i].availableConcentrations,
+                        Provider(
+                          create: (_) => DosageViewHandler(
+                            dosage: entry.value[i].dosage,
+                            availableConcentrations: entry.value[i].availableConcentrations,
+                            onDosageDeleted: () {},
+                            onDosageUpdated: (updatedDosage) {
+                            },
+                                                  
+                          ),
+                          child: DosageSnippet(
+                           
+                          ),
                         ),
                         if (i < entry.value.length - 1)
                           Padding(

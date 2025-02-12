@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/models/administration_route.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:auto_size_text_field/auto_size_text_field.dart';
 
@@ -55,7 +56,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     instructionController =
         TextEditingController(text: widget.dosage.instruction ?? "");
     administrationRouteController =
-        TextEditingController(text: widget.dosage.administrationRoute ?? "");
+        TextEditingController(text: widget.dosage.administrationRoute?.name ?? "");
     doseAmountController = TextEditingController(
         text: widget.dosage.dose?.amount.toString() ?? "");
     lowerLimitDoseAmountController = TextEditingController(
@@ -266,7 +267,7 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     // Create the updated Dosage using our improved models.
     final updatedDosage = Dosage(
       instruction: instructionController.text,
-      administrationRoute: administrationRouteController.text,
+      administrationRoute: AdministrationRoute.fromString(administrationRouteController.text),
       dose: _createDose(doseAmountController.text),
       lowerLimitDose: _createDose(lowerLimitDoseAmountController.text),
       higherLimitDose: _createDose(higherLimitDoseAmountController.text),

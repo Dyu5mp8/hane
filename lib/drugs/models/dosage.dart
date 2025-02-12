@@ -54,7 +54,7 @@ class Dosage with EquatableMixin {
 
   SubstanceUnit? getSubstanceUnit () {
     
-    return _dose?.substanceUnit;
+    return _dose?.substanceUnit ?? _lowerLimitDose?.substanceUnit ?? _higherLimitDose?.substanceUnit ?? _maxDose?.substanceUnit;  
   }
 
 

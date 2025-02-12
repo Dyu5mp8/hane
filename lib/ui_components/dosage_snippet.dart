@@ -10,21 +10,18 @@ import 'package:hane/ui_components/route_text.dart';
 import 'package:hane/ui_components/time_picker.dart';
 import 'package:hane/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/drugs/models/units.dart';
 
 class DosageSnippet extends StatefulWidget {
   final bool editMode;
-  final Function(Dosage) onDosageUpdated;
-  final Function()? onDosageDeleted;
+
   final List<Concentration>? availableConcentrations;
 
   DosageSnippet({
     Key? key,
     this.editMode = false,
-    required this.onDosageUpdated,
-    this.onDosageDeleted,
     this.availableConcentrations,
-  })
-
+  });
 
   @override
   _DosageSnippetState createState() => _DosageSnippetState();
@@ -34,9 +31,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
   final double _weightSliderValue = 70.0;
 
   void setConversionWeight(double weight) {
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   void _showWeightSlider(DosageViewHandler dvh) {
@@ -65,7 +60,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
           concentrations: convertible,
           onConcentrationSet: (newConcentration) {
             HapticFeedback.mediumImpact();
-              dvh.conversionConcentration = newConcentration;
+            dvh.conversionConcentration = newConcentration;
           },
         );
       },
@@ -73,61 +68,140 @@ class _DosageSnippetState extends State<DosageSnippet> {
   }
 
   void _showTimePicker(DosageViewHandler dvh) {
-  
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext modalContext) {
         return TimePicker(
-          onTimeUnitSet: (newTime) {
+          initialTimeUnit: dvh.dose?.timeUnit,
+          onTimeUnitSet: (TimeUnit unit) {
             HapticFeedback.mediumImpact();
-            dvh.conversionTime = newTime;
+            dvh.conversionTime = unit;
           },
         );
       },
     );
   }
 
+  Text showDosage(
+      {Dose? dose,
+      Dose? lowerLimitDose,
+      Dose? higherLimitDose,
+      Dose? maxDose,
+      String? instruction,
+      String? conversionInfo}) {
+    TextSpan buildDosageTextSpan({
+      String? conversionInfo,
+      String? instruction,
+      Dose? dose,
+      Dose? lowerLimitDose,
+      Dose? higherLimitDose,
+      Dose? maxDose,
+    }) {
+      final instructionSpan = TextSpan(
+        text: (instruction != null && instruction.isNotEmpty)
+            ? "${instruction.trimRight()}${RegExp(r'[.,:]$').hasMatch(instruction) ? '' : ':'} "
+            : '',
+      );
+
+      final doseSpan = TextSpan(
+        text: dose != null ? "$dose. " : '',
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      );
+
+      TextSpan doseRangeSpan() {
+        if (lowerLimitDose != null && higherLimitDose != null) {
+          return TextSpan(
+            text: dose == null
+                ? '$lowerLimitDose - $higherLimitDose. '
+                : "($lowerLimitDose - $higherLimitDose). ",
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          );
+        }
+        return const TextSpan(text: "");
+      }
+
+      final maxDoseSpan = TextSpan(
+        text: maxDose != null ? "Maxdos: $maxDose." : '',
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      );
+
+      return TextSpan(
+        children: [
+          if (conversionInfo != null && conversionInfo.isNotEmpty)
+            TextSpan(
+              text: conversionInfo,
+              style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+            ),
+          instructionSpan,
+          doseSpan,
+          doseRangeSpan(),
+          maxDoseSpan,
+        ],
+      );
+    }
+
+    return Text.rich(
+      TextSpan(
+        children: [
+          buildDosageTextSpan(
+            conversionInfo: conversionInfo,
+            instruction: instruction,
+            dose: dose,
+            lowerLimitDose: lowerLimitDose,
+            higherLimitDose: higherLimitDose,
+            maxDose: maxDose,
+          ),
+        ],
+        style: const TextStyle(fontSize: 14),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dvh = Provider.of<DosageViewHandler>(context, listen: true);
 
-    final dvh = Provider.of<DosageViewHandler>(context);
-    
     return Stack(
       children: [
         ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-          minVerticalPadding: 12,
+          contentPadding:
+              const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 2),
+          
+     
           title: Row(
             children: [
               Expanded(
-                child: dvh.showDosage(isOriginalText: true),
+                child: showDosage(
+                  dose: dvh.dose,
+                  lowerLimitDose: dvh.lowerLimitDose,
+                  higherLimitDose: dvh.higherLimitDose,
+                  maxDose: dvh.maxDose,
+                  instruction: dvh.dosage.instruction,
+                ),
               ),
               const SizedBox(width: 8),
               Column(
                 children: [
                   Row(
                     children: [
-                      if (!widget.editMode &&
-                          dvh.canConvertWeight())
+                      if (!widget.editMode && dvh.canConvertWeight())
                         ConversionButton(
                           label: "kg",
-                          isActive:
-                              dvh.conversionWeight != null,
+                          isActive: dvh.conversionWeight != null,
                           onPressed: () {
                             if (dvh.conversionWeight == null) {
                               _showWeightSlider(dvh);
                             } else {
                               dvh.conversionWeight = null;
+                              dvh.conversionConcentration = null;
                             }
                           },
                         ),
                       const SizedBox(width: 5),
-                      if (!widget.editMode &&
-                          dvh.canConvertTime())
+                      if (!widget.editMode && dvh.canConvertTime())
                         ConversionButton(
                           label: "t",
-                          isActive:
-                              dvh.conversionTime != null,
+                          isActive: dvh.conversionTime != null,
                           onPressed: () {
                             if (dvh.conversionTime == null) {
                               _showTimePicker(dvh);
@@ -138,13 +212,15 @@ class _DosageSnippetState extends State<DosageSnippet> {
                         ),
                     ],
                   ),
-                  if (!widget.editMode && dvh.canConvertConcentration())
+                  if (!widget.editMode &&
+                      dvh.canConvertConcentration() &&
+                      (dvh.conversionWeight != null || !dvh.canConvertWeight()))
                     Transform.scale(
                       scale: 0.9,
                       child: ConversionSwitch(
-                        isActive:
-                            dvh.conversionConcentration != null,
+                        isActive: dvh.conversionConcentration != null,
                         onSwitched: (value) {
+                          print("Switched to $value");
                           HapticFeedback.mediumImpact();
                           if (value) {
                             _showConcentrationPicker(dvh);
@@ -152,7 +228,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
                             dvh.conversionConcentration = null;
                           }
                         },
-                        unit: dvh.getCommonUnitSymbol()
+                        unit: dvh.dosage.getSubstanceUnit().toString(),
                       ),
                     ),
                 ],
@@ -183,7 +259,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      _deleteDosage();
+                                      dvh.deleteDosage();
                                       Navigator.pop(dialogContext);
                                     },
                                     child: const Text('Radera',
@@ -202,28 +278,34 @@ class _DosageSnippetState extends State<DosageSnippet> {
                             context: context,
                             builder: (dialogContext) {
                               return EditDosageDialog(
-                              
+                                dosage: dvh.dosage,
+                                onSave: (updatedDosage) {
+                                  dvh.onDosageUpdated(updatedDosage);
                                 },
                               );
                             },
                           );
                         },
-                      ),
+                      )
                     ],
                   ),
                 ),
             ],
           ),
-          subtitle: _isConversionActive
-              ? widget.dosageViewHandler.showDosage(isOriginalText: false)
+          subtitle: dvh.conversionActive
+              ? showDosage(
+                  dose: dvh.dose,
+                  lowerLimitDose: dvh.lowerLimitDose,
+                  higherLimitDose: dvh.higherLimitDose,
+                  maxDose: dvh.maxDose,
+                  conversionInfo: dvh.conversionInfo())
               : null,
         ),
-        if (widget.dosageViewHandler.getAdministrationRoute() != null)
+        if (dvh.dosage.administrationRoute != null)
           Positioned(
             top: 8,
             left: 16,
-            child: RouteText(
-                route: widget.dosageViewHandler.getAdministrationRoute()!),
+            child: RouteText(route: dvh.dosage.administrationRoute!),
           ),
       ],
     );

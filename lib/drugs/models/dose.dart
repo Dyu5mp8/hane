@@ -80,6 +80,12 @@ class Dose extends Equatable {
   /// Define the > operator in terms of <.
   bool operator >(Dose other) => other < this;
 
+  bool unitEquals(Dose other) {
+    return substanceUnit.unitType == other.substanceUnit.unitType &&
+        weightUnit == other.weightUnit &&
+        timeUnit == other.timeUnit;
+  }
+
   
 
   /// Converts the dose by applying a weight factor.

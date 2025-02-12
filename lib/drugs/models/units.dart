@@ -14,10 +14,12 @@ abstract class SubstanceUnit with CandidateFinderMixin {
       case 'l':    return VolumeUnit.l;
       case 'mg':   return MassUnit.mg;
       case 'g':    return MassUnit.g;
-      case 'ng':   return MassUnit.ng;
       case 'μg':
       case 'microg':
       case 'mikrog': return MassUnit.microg;
+      case 'E':    return UnitUnit.E;
+      case 'FE':   return UnitUnit.E;
+      case 'mE':   return UnitUnit.mE;
       default: throw Exception('Felaktig enhet: $unit');
     }
   }
@@ -142,10 +144,49 @@ enum VolumeUnit with CandidateFinderMixin implements SubstanceUnit {
   String toString() => name;
 }
 
+enum UnitUnit with CandidateFinderMixin implements SubstanceUnit {
+  E(1),
+  mE(1000),;
+
+
+  @override
+  double conversionFactor(SubstanceUnit unit) {
+    if (unit is UnitUnit) {
+      return unit.factor / factor;
+    }
+    throw Exception("Incompatible unit type for UnitUnit conversion");
+  }
+
+  @override
+  final double factor;
+
+  const UnitUnit(this.factor);
+
+  @override
+  List<SubstanceUnit> get candidates =>  UnitUnit.values;
+
+  @override
+  String get unitType => 'unit';
+
+  @override
+  String toString() => name;
+
+  static UnitUnit fromString(String unit) {
+    switch (unit) {
+      case 'E':
+        return UnitUnit.E;
+      case 'FE':
+        return UnitUnit.E;
+      default:
+        throw Exception('Felaktig enhet: $unit');
+    }
+  }
+}
+
+
 enum MassUnit with CandidateFinderMixin implements SubstanceUnit {
   mg(1000),
   g(1),
-  ng(1000000000),
   microg(1000000);
 
   @override
