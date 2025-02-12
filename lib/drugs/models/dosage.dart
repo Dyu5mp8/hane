@@ -1,10 +1,12 @@
+import 'package:hane/drugs/models/administration_route.dart';
 import 'package:hane/drugs/models/dose.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hane/drugs/models/units.dart';
 
+
 class Dosage with EquatableMixin {
   String? _instruction;
-  String? _administrationRoute;
+  AdministrationRoute? _administrationRoute;
   Dose? _dose;
   Dose? _lowerLimitDose;
   Dose? _higherLimitDose;
@@ -12,7 +14,7 @@ class Dosage with EquatableMixin {
 
   Dosage({
     String? instruction,
-    String? administrationRoute,
+    AdministrationRoute? administrationRoute,
     Dose? dose,
     Dose? lowerLimitDose,
     Dose? higherLimitDose,
@@ -44,7 +46,7 @@ class Dosage with EquatableMixin {
 
   // Getters
   String? get instruction => _instruction;
-  String? get administrationRoute => _administrationRoute;
+  AdministrationRoute? get administrationRoute => _administrationRoute;
   Dose? get dose => _dose;
   Dose? get lowerLimitDose => _lowerLimitDose;
   Dose? get higherLimitDose => _higherLimitDose;
@@ -61,7 +63,7 @@ class Dosage with EquatableMixin {
     _instruction = newInstruction;
   }
 
-  set administrationRoute(String? newRoute) {
+  set administrationRoute(AdministrationRoute? newRoute) {
     _administrationRoute = newRoute;
   }
 
@@ -85,7 +87,7 @@ class Dosage with EquatableMixin {
   Map<String, dynamic> toJson() {
     return {
       'instruction': _instruction,
-      'administration_route': _administrationRoute,
+      'administration_route': _administrationRoute?.name,
       'dose': _dose?.toJson(),
       'lower_limit_dose': _lowerLimitDose?.toJson(),
       'higher_limit_dose': _higherLimitDose?.toJson(),
@@ -97,7 +99,7 @@ class Dosage with EquatableMixin {
   factory Dosage.fromFirestore(Map<String, dynamic> map) {
     return Dosage(
       instruction: map['instruction'] as String?,
-      administrationRoute: map['administration_route'] as String?,
+      administrationRoute: AdministrationRoute.fromString(map['administration_route'] as String?),
       dose: map['dose'] != null
           ? Dose.fromFirestore(map['dose'] as Map<String, dynamic>)
           : null,

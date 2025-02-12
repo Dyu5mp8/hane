@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 
 import 'package:hane/ui_components/dosage_snippet.dart';
 import 'package:hane/ui_components/scroll_indicator.dart';
@@ -77,27 +79,50 @@ class _DosageListState extends State<DosageList> {
                         child: Icon(Icons.drag_handle, color: Colors.grey)),
                   ),
                 Expanded(
-                  child: DosageSnippet(
-                    key: ValueKey(
-                        widget.dosages[index].hashCode), // Use DosageSnippet key
-                    editMode: widget.editMode,
-                    onDosageDeleted: () {
-                      setState(() {
-                        widget.dosages.removeAt(index);
-                        widget.drug.updateDrug();
-                      });
-                 
-                    },
-                    availableConcentrations: widget.drug.concentrations,
-                    dosage: widget.dosages[index],
-                    onDosageUpdated: (updatedDosage) {
-                      setState(() {
-                        widget.dosages[index] = updatedDosage;
-                        widget.drug.updateDrug();
-      
-                      });
-                   
-                    },
+                  child: Provider(
+                    create: (_) => DosageViewHandler(
+                      
+                      dosage: widget.dosages[index],
+                      availableConcentrations: widget.drug.concentrations,
+
+                       onDosageDeleted: () {
+                        setState(() {
+                          widget.dosages.removeAt(index);
+                          widget.drug.updateDrug();
+                        });
+                                     
+                      },
+        
+                      onDosageUpdated: (updatedDosage) {
+                        setState(() {
+                          widget.dosages[index] = updatedDosage;
+                          widget.drug.updateDrug();
+                          
+                        });
+                     
+                      },
+                    ),
+                    child: DosageSnippet(
+                      key: ValueKey(
+                          widget.dosages[index].hashCode), // Use DosageSnippet key
+                      editMode: widget.editMode,
+                      onDosageDeleted: () {
+                        setState(() {
+                          widget.dosages.removeAt(index);
+                          widget.drug.updateDrug();
+                        });
+                                     
+                      },
+        
+                      onDosageUpdated: (updatedDosage) {
+                        setState(() {
+                          widget.dosages[index] = updatedDosage;
+                          widget.drug.updateDrug();
+                          
+                        });
+                     
+                      },
+                    ),
                   ),
                 ),
               ],

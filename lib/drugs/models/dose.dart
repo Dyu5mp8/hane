@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/models/units.dart';
+import 'package:hane/utils/smart_rounder.dart';
 
 class Dose extends Equatable {
   final double amount;
@@ -40,9 +41,50 @@ class Dose extends Equatable {
     return ("${scaledDose.amount} ${scaledDose.unitString}"); 
   }
 
+   bool operator <(Dose other) {
+    // Check that the substance units come from the same implementation.
+    if (substanceUnit.unitType != other.substanceUnit.unitType) {
+      throw Exception(
+          "Cannot compare doses with different substance unit implementations.");
+    }
+
+    // If weight units are present, they must be identical.
+    if (weightUnit != other.weightUnit) {
+      throw Exception(
+          "Cannot compare doses with different weight units (or one is null and the other is not).");
+    }
+    // Both doses must either have a time unit or not.
+    if ((timeUnit == null) != (other.timeUnit == null)) {
+      throw Exception(
+          "Cannot compare doses when one dose has a time unit and the other does not.");
+    }
+    // Convert this dose’s substance amount to the other’s substance unit.
+    // (For example, mg to g: amount_in_g = amount_in_mg * (g.factor / mg.factor)).
+    double convertedAmount =
+        amount * substanceUnit.conversionFactor(other.substanceUnit);
+
+    // If both doses have a time unit, convert the rate.
+    // The conversion is analogous to Dose.convertByTime:
+    // newAmount = amount * (this.timeUnit.factor / other.timeUnit.factor)
+    if (timeUnit != null && other.timeUnit != null) {
+      convertedAmount *= (timeUnit!.factor / other.timeUnit!.factor);
+    }
+    // Now, other.amount is already expressed in its own substance (and time) unit.
+    // We compare the converted amount of this dose with the raw amount of the other.
+    return convertedAmount < other.amount;
+  }
+
+
+
+
+  /// Define the > operator in terms of <.
+  bool operator >(Dose other) => other < this;
+
+  
+
   /// Converts the dose by applying a weight factor.
-  Dose convertByWeight(int weight) {
-    if (weightUnit == null) return this;
+  Dose convertByWeight(int? weight) {
+    if (weight == null || weightUnit == null ) return this;
     final newAmount = amount * weight;
     return Dose(
       amount: newAmount,
@@ -53,7 +95,8 @@ class Dose extends Equatable {
   }
 
   /// Converts the dose by a concentration.
-  Dose convertByConcentration(Concentration concentration) {
+  Dose convertByConcentration(Concentration? concentration) {
+    if (concentration == null) return this; 
     final convFactor = substanceUnit.conversionFactor(concentration.substance);
     final newAmount = (amount / concentration.amount) * convFactor;
     final volumeUnit = concentration.diluent.volumeFromDiluent();
@@ -66,8 +109,8 @@ class Dose extends Equatable {
   }
 
   /// Converts the dose to a new time unit.
-  Dose convertByTime(TimeUnit targetUnit) {
-    if (timeUnit == null) return this;
+  Dose convertByTime(TimeUnit? targetUnit) {
+    if (timeUnit == null || targetUnit == null) return this;
     final factor = targetUnit.factor / timeUnit!.factor;
     final newAmount = amount / factor;
     return Dose(
@@ -90,6 +133,11 @@ class Dose extends Equatable {
       weightUnit: weightUnit,
       timeUnit: timeUnit,
     );
+  }
+
+  Dose roundAmount() {
+    final newAmount = smartRound(amount) as double  ;
+    return copyWith(amount: newAmount);
   }
 
   /// Returns a string representation of the dose units.

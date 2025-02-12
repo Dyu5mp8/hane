@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/ui_components/concentration_picker.dart';
 import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
 import 'package:hane/ui_components/conversion_button.dart';
@@ -11,28 +12,19 @@ import 'package:hane/ui_components/weight_slider.dart';
 import 'package:hane/drugs/models/drug.dart';
 
 class DosageSnippet extends StatefulWidget {
-  Dosage dosage;
   final bool editMode;
   final Function(Dosage) onDosageUpdated;
-  final DosageViewHandler dosageViewHandler;
   final Function()? onDosageDeleted;
   final List<Concentration>? availableConcentrations;
 
   DosageSnippet({
     Key? key,
-    DosageViewHandler? dosageViewHandler,
-    Dosage? dosage,
     this.editMode = false,
     required this.onDosageUpdated,
     this.onDosageDeleted,
     this.availableConcentrations,
-  })  : dosage = dosage ?? dosageViewHandler!.dosage,
-        dosageViewHandler = dosageViewHandler ??
-            DosageViewHandler(
-              dosage: dosage!,
-              availableConcentrations: availableConcentrations,
-            ),
-        super(key: key);
+  })
+
 
   @override
   _DosageSnippetState createState() => _DosageSnippetState();
@@ -41,19 +33,13 @@ class DosageSnippet extends StatefulWidget {
 class _DosageSnippetState extends State<DosageSnippet> {
   final double _weightSliderValue = 70.0;
 
-  bool get _isConversionActive {
-    return widget.dosageViewHandler.conversionWeight != null ||
-        widget.dosageViewHandler.conversionConcentration != null ||
-        widget.dosageViewHandler.conversionTime != null;
-  }
-
   void setConversionWeight(double weight) {
     setState(() {
-      widget.dosageViewHandler.conversionWeight = weight;
+
     });
   }
 
-  void _showWeightSlider(BuildContext context) {
+  void _showWeightSlider(DosageViewHandler dvh) {
     showModalBottomSheet(
       isDismissible: true,
       context: context,
@@ -62,15 +48,15 @@ class _DosageSnippetState extends State<DosageSnippet> {
           initialWeight: _weightSliderValue,
           onWeightSet: (newWeight) {
             HapticFeedback.mediumImpact();
-            setConversionWeight(newWeight);
+            dvh.conversionWeight = newWeight;
           },
         );
       },
     );
   }
 
-  void _showConcentrationPicker(BuildContext context) {
-    final convertible = widget.dosageViewHandler.convertibleConcentrations;
+  void _showConcentrationPicker(DosageViewHandler dvh) {
+    final convertible = dvh.convertibleConcentrations;
     if (convertible == null) return;
     showModalBottomSheet(
       context: context,
@@ -79,70 +65,33 @@ class _DosageSnippetState extends State<DosageSnippet> {
           concentrations: convertible,
           onConcentrationSet: (newConcentration) {
             HapticFeedback.mediumImpact();
-            setState(() {
-              widget.dosageViewHandler.conversionConcentration = newConcentration;
-            });
+              dvh.conversionConcentration = newConcentration;
           },
         );
       },
     );
   }
 
-  void _showTimePicker(BuildContext context) {
+  void _showTimePicker(DosageViewHandler dvh) {
+  
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return TimePicker(
           onTimeUnitSet: (newTime) {
             HapticFeedback.mediumImpact();
-            setState(() {
-              widget.dosageViewHandler.conversionTime = newTime;
-            });
+            dvh.conversionTime = newTime;
           },
         );
       },
     );
   }
 
-  bool shouldShowConcentrationSwitch() {
-    // Show the concentration switch if convertible concentrations are available
-    // and either weight conversion is not possible or weight conversion is already active.
-    return widget.dosageViewHandler.convertibleConcentrations != null &&
-           (!widget.dosageViewHandler.ableToConvert.weight ||
-             widget.dosageViewHandler.conversionWeight != null);
-  }
-
-  void _resetWeightConversion() {
-    setState(() {
-      widget.dosageViewHandler.conversionWeight = null;
-    });
-  }
-
-  void _resetConcentrationConversion() {
-    setState(() {
-      widget.dosageViewHandler.conversionConcentration = null;
-    });
-  }
-
-  void _resetTimeConversion() {
-    setState(() {
-      widget.dosageViewHandler.conversionTime = null;
-    });
-  }
-
-  void _updateDosage(Dosage updatedDosage) {
-    setState(() {
-      widget.dosage = updatedDosage;
-    });
-    widget.onDosageUpdated(updatedDosage);
-  }
-
-  void _deleteDosage() {
-    widget.onDosageDeleted?.call();
-  }
-
   @override
   Widget build(BuildContext context) {
+
+    final dvh = Provider.of<DosageViewHandler>(context);
+    
     return Stack(
       children: [
         ListTile(
@@ -151,7 +100,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
           title: Row(
             children: [
               Expanded(
-                child: widget.dosageViewHandler.showDosage(isOriginalText: true),
+                child: dvh.showDosage(isOriginalText: true),
               ),
               const SizedBox(width: 8),
               Column(
@@ -159,51 +108,51 @@ class _DosageSnippetState extends State<DosageSnippet> {
                   Row(
                     children: [
                       if (!widget.editMode &&
-                          widget.dosageViewHandler.ableToConvert.weight)
+                          dvh.canConvertWeight())
                         ConversionButton(
                           label: "kg",
                           isActive:
-                              widget.dosageViewHandler.conversionWeight != null,
+                              dvh.conversionWeight != null,
                           onPressed: () {
-                            if (widget.dosageViewHandler.conversionWeight == null) {
-                              _showWeightSlider(context);
+                            if (dvh.conversionWeight == null) {
+                              _showWeightSlider(dvh);
                             } else {
-                              _resetWeightConversion();
+                              dvh.conversionWeight = null;
                             }
                           },
                         ),
                       const SizedBox(width: 5),
                       if (!widget.editMode &&
-                          widget.dosageViewHandler.ableToConvert.time)
+                          dvh.canConvertTime())
                         ConversionButton(
                           label: "t",
                           isActive:
-                              widget.dosageViewHandler.conversionTime != null,
+                              dvh.conversionTime != null,
                           onPressed: () {
-                            if (widget.dosageViewHandler.conversionTime == null) {
-                              _showTimePicker(context);
+                            if (dvh.conversionTime == null) {
+                              _showTimePicker(dvh);
                             } else {
-                              _resetTimeConversion();
+                              dvh.conversionTime = null;
                             }
                           },
                         ),
                     ],
                   ),
-                  if (!widget.editMode && shouldShowConcentrationSwitch())
+                  if (!widget.editMode && dvh.canConvertConcentration())
                     Transform.scale(
                       scale: 0.9,
                       child: ConversionSwitch(
                         isActive:
-                            widget.dosageViewHandler.conversionConcentration != null,
+                            dvh.conversionConcentration != null,
                         onSwitched: (value) {
                           HapticFeedback.mediumImpact();
                           if (value) {
-                            _showConcentrationPicker(context);
+                            _showConcentrationPicker(dvh);
                           } else {
-                            _resetConcentrationConversion();
+                            dvh.conversionConcentration = null;
                           }
                         },
-                        unit: widget.dosageViewHandler.getCommonUnitSymbol(),
+                        unit: dvh.getCommonUnitSymbol()
                       ),
                     ),
                 ],
@@ -253,9 +202,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
                             context: context,
                             builder: (dialogContext) {
                               return EditDosageDialog(
-                                dosage: widget.dosage,
-                                onSave: (updatedDosage) {
-                                  _updateDosage(updatedDosage);
+                              
                                 },
                               );
                             },
