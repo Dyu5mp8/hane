@@ -100,7 +100,7 @@ class Dose extends Equatable {
     );
   }
 
-  /// Converts the dose by a concentration.
+  /// Converts the dose by a concentration and returns the same dose if the concentration is not provided.
   Dose convertByConcentration(Concentration? concentration) {
     if (concentration == null) return this; 
     final convFactor = substanceUnit.conversionFactor(concentration.substance);
@@ -114,7 +114,7 @@ class Dose extends Equatable {
     );
   }
 
-  /// Converts the dose to a new time unit.
+  /// Converts the dose to a new time unit and returns the same dose if no TimeUnit is provided.
   Dose convertByTime(TimeUnit? targetUnit) {
     if (timeUnit == null || targetUnit == null) return this;
     final factor = targetUnit.factor / timeUnit!.factor;

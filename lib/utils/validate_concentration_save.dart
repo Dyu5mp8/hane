@@ -1,5 +1,6 @@
 import "package:hane/drugs/models/concentration.dart";
 import "package:hane/drugs/models/drug.dart";
+import "package:hane/drugs/models/units.dart";
 
 import "package:hane/utils/validation_exception.dart";
 
@@ -9,6 +10,10 @@ String? validateConcentrationUnit(String? value) {
     return ValidationException("Ange en giltig enhet").toString();
   }
   try {
+    SubstanceUnit.fromString(value);
+  }
+  catch (e) {
+    return e.toString();
   
   }
   catch (e) {

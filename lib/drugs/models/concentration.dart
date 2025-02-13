@@ -1,9 +1,7 @@
 import "package:equatable/equatable.dart";
 import "package:hane/drugs/models/units.dart";
-import "package:hane/utils/unit_service.dart";
-import "package:hane/utils/validation_exception.dart";
 
-class Concentration {
+class Concentration extends Equatable {
   final double amount;
   final SubstanceUnit substance;
   final DiluentUnit diluent;

@@ -114,4 +114,5 @@ class Dosage with EquatableMixin {
           : null,
     );
   }
+
 }

@@ -182,136 +182,148 @@ class _DosageSnippetState extends State<DosageSnippet> {
   Widget build(BuildContext context) {
     final dvh = Provider.of<DosageViewHandler>(context, listen: true);
 
-    return Stack(
-      children: [
-        ListTile(
+       return ListTile(
           contentPadding:
-              const EdgeInsets.only(left: 10, right: 10, top: 18, bottom: 2),
+              const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 4),
           
      
-          title: Row(
+          title: Column(
+            spacing: 5,
             children: [
-              Expanded(
-                child: showDosage(
-                  dose: dvh.startDose,
-                  lowerLimitDose: dvh.startLowerLimitDose,
-                  higherLimitDose: dvh.startHigherLimitDose,
-                  maxDose: dvh.startMaxDose,
-                  instruction: dvh.dosage.instruction,
-                  doseColor: inactiveColor(),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Column(
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
+
+                  if (dvh.dosage.administrationRoute != null)
+                    RouteText(route: dvh.dosage.administrationRoute!),
+                ],
+                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: showDosage(
+                      dose: dvh.startDose,
+                      lowerLimitDose: dvh.startLowerLimitDose,
+                      higherLimitDose: dvh.startHigherLimitDose,
+                      maxDose: dvh.startMaxDose,
+                      instruction: dvh.dosage.instruction,
+                      doseColor: inactiveColor(),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
                     children: [
-                      if (!widget.editMode && dvh.canConvertWeight())
-                        ConversionButton(
-                          label: "kg",
-                          isActive: dvh.conversionWeight != null,
-                          onPressed: () {
-                            if (dvh.conversionWeight == null) {
-                              _showWeightSlider(dvh);
-                            } else {
-                              dvh.conversionWeight = null;
-                              dvh.conversionConcentration = null;
-                            }
-                          },
-                        ),
-                      const SizedBox(width: 5),
-                      if (!widget.editMode && dvh.canConvertTime())
-                        ConversionButton(
-                          label: "t",
-                          isActive: dvh.conversionTime != null,
-                          onPressed: () {
-                            if (dvh.conversionTime == null) {
-                              _showTimePicker(dvh);
-                            } else {
-                              dvh.conversionTime = null;
-                            }
-                          },
+                      Row(
+                        children: [
+                          if (!widget.editMode && dvh.canConvertWeight())
+                            ConversionButton(
+                              label: "kg",
+                              isActive: dvh.conversionWeight != null,
+                              onPressed: () {
+                                if (dvh.conversionWeight == null) {
+                                  _showWeightSlider(dvh);
+                                } else {
+                                  dvh.conversionWeight = null;
+                                  dvh.conversionConcentration = null;
+                                }
+                              },
+                            ),
+                          const SizedBox(width: 5),
+                          if (!widget.editMode && dvh.canConvertTime())
+                            ConversionButton(
+                              label: "t",
+                              isActive: dvh.conversionTime != null,
+                              onPressed: () {
+                                if (dvh.conversionTime == null) {
+                                  _showTimePicker(dvh);
+                                } else {
+                                  dvh.conversionTime = null;
+                                }
+                              },
+                            ),
+                        ],
+                      ),
+                      if (!widget.editMode &&
+                          dvh.canConvertConcentration() &&
+                          (dvh.conversionWeight != null || !dvh.canConvertWeight()))
+                        Transform.scale(
+                          scale: 0.9,
+                          child: ConversionSwitch(
+                            isActive: dvh.conversionConcentration != null,
+                            onSwitched: (value) {
+                              print("Switched to $value");
+                              HapticFeedback.mediumImpact();
+                              if (value) {
+                                _showConcentrationPicker(dvh);
+                              } else {
+                                dvh.conversionConcentration = null;
+                              }
+                            },
+                            unit: dvh.dosage.getSubstanceUnit().toString(),
+                          ),
                         ),
                     ],
                   ),
-                  if (!widget.editMode &&
-                      dvh.canConvertConcentration() &&
-                      (dvh.conversionWeight != null || !dvh.canConvertWeight()))
-                    Transform.scale(
-                      scale: 0.9,
-                      child: ConversionSwitch(
-                        isActive: dvh.conversionConcentration != null,
-                        onSwitched: (value) {
-                          print("Switched to $value");
-                          HapticFeedback.mediumImpact();
-                          if (value) {
-                            _showConcentrationPicker(dvh);
-                          } else {
-                            dvh.conversionConcentration = null;
-                          }
-                        },
-                        unit: dvh.dosage.getSubstanceUnit().toString(),
+                  if (widget.editMode)
+                    SizedBox(
+                      width: 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(Icons.delete,
+                                color: Color.fromARGB(255, 255, 99, 8)),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (dialogContext) {
+                                  return AlertDialog(
+                                    title: const Text('Radera'),
+                                    content: const Text(
+                                        'Är du säker på att du vill radera denna dosering?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(dialogContext),
+                                        child: const Text('Avbryt'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          dvh.deleteDosage();
+                                          Navigator.pop(dialogContext);
+                                        },
+                                        child: const Text('Radera',
+                                            style: TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (dialogContext) {
+                                  return EditDosageDialog(
+                                    dosage: dvh.dosage,
+                                    onSave: (updatedDosage) {
+                                      dvh.onDosageUpdated(updatedDosage);
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          )
+                        ],
                       ),
                     ),
                 ],
               ),
-              if (widget.editMode)
-                SizedBox(
-                  width: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.delete,
-                            color: Color.fromARGB(255, 255, 99, 8)),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (dialogContext) {
-                              return AlertDialog(
-                                title: const Text('Radera'),
-                                content: const Text(
-                                    'Är du säker på att du vill radera denna dosering?'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(dialogContext),
-                                    child: const Text('Avbryt'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      dvh.deleteDosage();
-                                      Navigator.pop(dialogContext);
-                                    },
-                                    child: const Text('Radera',
-                                        style: TextStyle(color: Colors.red)),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (dialogContext) {
-                              return EditDosageDialog(
-                                dosage: dvh.dosage,
-                                onSave: (updatedDosage) {
-                                  dvh.onDosageUpdated(updatedDosage);
-                                },
-                              );
-                            },
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                ),
             ],
           ),
           subtitle: dvh.conversionActive
@@ -324,14 +336,14 @@ class _DosageSnippetState extends State<DosageSnippet> {
                   doseColor: activeColor(),
                  )  
               : null,
-        ),
-        if (dvh.dosage.administrationRoute != null)
-          Positioned(
-            top: 8,
-            left: 16,
-            child: RouteText(route: dvh.dosage.administrationRoute!),
-          ),
-      ],
-    );
+        );
   }
+  
 }
+
+// //       if (dvh.dosage.administrationRoute != null)
+//           Positioned(
+//             top: 8,
+//             left: 16,
+//             child: RouteText(route: dvh.dosage.administrationRoute!),
+//           ),

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
-import 'package:hane/drugs/models/administration_route.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/utils/unit_service.dart';
 import 'package:hane/utils/smart_rounder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hane/drugs/models/units.dart';
@@ -122,10 +119,19 @@ class DosageViewHandler extends ChangeNotifier {
 
     return displayDose;
   }
+ 
+// these are the original doses
+  Dose? get startDose => originalDose(dosage.dose);
+  Dose? get startLowerLimitDose => originalDose(dosage.lowerLimitDose);
+  Dose? get startHigherLimitDose => originalDose(dosage.higherLimitDose);
+  Dose? get startMaxDose => originalDose(dosage.maxDose);
 
+// these are the converted doses
   Dose? get dose => convertedDose(dosage.dose);
   Dose? get lowerLimitDose => convertedDose(dosage.lowerLimitDose);
   Dose? get higherLimitDose => convertedDose(dosage.higherLimitDose);
+  
+  // The max dose cant be converted using the same logic as the above, as it leads to stack overflow.
   Dose? get maxDose => dosage.maxDose
       ?.convertByWeight(conversionWeight?.toInt())
       .convertByTime(conversionTime)
@@ -133,11 +139,7 @@ class DosageViewHandler extends ChangeNotifier {
       .scaleAmount()
       .roundAmount();
 
-  Dose? get startDose => originalDose(dosage.dose);
-  Dose? get startLowerLimitDose => originalDose(dosage.lowerLimitDose);
-  Dose? get startHigherLimitDose => originalDose(dosage.higherLimitDose);
-  Dose? get startMaxDose => originalDose(dosage.maxDose);
-
+  /// This returns a string with the conversion information.
   String conversionInfo() {
     final weightConversionInfo = conversionWeight != null
         ? "vikt ${smartRound(conversionWeight!).toString()} kg"
