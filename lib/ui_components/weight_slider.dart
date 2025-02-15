@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:syncfusion_flutter_sliders/sliders.dart";
 
 
 
@@ -38,7 +39,7 @@ class _WeightSliderState extends State<WeightSlider> {
           Text("${_currentWeight.toStringAsFixed(0)} kg", style: const TextStyle(fontSize: 18)),
           const SizedBox(height: 10),
          
-          Slider(
+          SfSlider(
             value: _currentWeight,
      
             min: 40,
