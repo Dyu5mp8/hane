@@ -220,38 +220,89 @@ class _SyncedModeTileState extends State<SyncedModeTile> {
   }
 }
 
-  class ThemeModeTile extends StatefulWidget {
-  const ThemeModeTile({super.key});
+class ThemeModeTile extends StatefulWidget {
+  const ThemeModeTile({Key? key}) : super(key: key);
 
   @override
-  State<ThemeModeTile> createState() => _ThemeModeTileState();
-
+  _ThemeModeTileState createState() => _ThemeModeTileState();
 }
 
-class _ThemeModeTileState extends State<ThemeModeTile> {  
+class _ThemeModeTileState extends State<ThemeModeTile> {
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    String currentThemeLabel;
+    switch (themeProvider.themeMode) {
+      case AppThemeMode.dark:
+        currentThemeLabel = 'Mörkt tema';
+        break;
+      case AppThemeMode.system:
+        currentThemeLabel = 'Systemtema';
+        break;
+      case AppThemeMode.light:
+        currentThemeLabel = 'Ljust tema';
+    }
+
     return ListTile(
       leading: const Icon(Icons.brightness_4),
-      title: const Text('Mörkt tema'),
-      trailing: Switch(
-        value: Provider.of<ThemeProvider>(context).isDarkMode,
-        onChanged: (value) {
-          if (value) {
-            Provider.of<ThemeProvider>(context, listen: false).setDarkMode();
-          } else {
-            Provider.of<ThemeProvider>(context, listen: false).setLightMode();
-          }
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(value
-                  ? 'Ändrat: Mörkt tema aktiverat'
-                  : 'Ändrat: Ljust tema aktiverat'),
-            ),
-          );
-        },
-      ),
+      title: const Text('Välj tema'),
+      subtitle: Text(currentThemeLabel),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Välj tema', style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                      leading: Icon(Icons.brightness_5_rounded),
+                      title: const Text('Ljust tema'),
+                      onTap: () {
+                        themeProvider.setLightMode();
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Ändrat: Ljust tema aktiverat'),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.brightness_3_rounded),
+                      title: const Text('Mörkt tema'),
+                      onTap: () {
+                        themeProvider.setDarkMode();
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Ändrat: Mörkt tema aktiverat'),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.brightness_auto_rounded),
+                      title: const Text('Systemtema'),
+                      onTap: () {
+                        themeProvider.setSystemTheme();
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Ändrat: Systemtema aktiverat'),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
