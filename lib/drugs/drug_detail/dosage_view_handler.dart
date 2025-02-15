@@ -132,12 +132,10 @@ class DosageViewHandler extends ChangeNotifier {
   Dose? get higherLimitDose => convertedDose(dosage.higherLimitDose);
   
   // The max dose cant be converted using the same logic as the above, as it leads to stack overflow.
-  Dose? get maxDose => dosage.maxDose
+  Dose? get maxDose => scaleAndRound(dosage.maxDose
       ?.convertByWeight(conversionWeight?.toInt())
       .convertByTime(conversionTime)
-      .convertByConcentration(conversionConcentration)
-      .scaleAmount()
-      .roundAmount();
+      .convertByConcentration(conversionConcentration));
 
   /// This returns a string with the conversion information.
   String conversionInfo() {
