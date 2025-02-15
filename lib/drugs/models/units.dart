@@ -1,6 +1,12 @@
 
 // --- SubstanceUnit Interface ---
-abstract class SubstanceUnit with CandidateFinderMixin {
+abstract class Unit {
+
+
+
+}
+
+abstract class SubstanceUnit with CandidateFinderMixin implements Unit {
   double conversionFactor(SubstanceUnit unit);
   double get factor;
 
@@ -98,7 +104,7 @@ enum MolarUnit with CandidateFinderMixin implements SubstanceUnit {
   @override
   String toString() => name;
 }
-enum WeightUnit
+enum WeightUnit implements Unit
 {
  kg;
 
@@ -214,7 +220,7 @@ enum MassUnit with CandidateFinderMixin implements SubstanceUnit {
   }
 }
 
-enum DiluentUnit {
+enum DiluentUnit implements Unit {
   ml(factor: 1000, volumeUnit: VolumeUnit.ml),
   l(factor: 1, volumeUnit: VolumeUnit.l);
 
@@ -244,7 +250,7 @@ enum DiluentUnit {
   VolumeUnit volumeFromDiluent() => volumeUnit;
 }
 
-enum TimeUnit {
+enum TimeUnit implements Unit {
 
 
   h(factor: 24),

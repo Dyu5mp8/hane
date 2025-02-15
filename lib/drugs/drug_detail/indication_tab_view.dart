@@ -66,7 +66,6 @@ class IndicationTabView extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     DosageList(
-                      drug: drug,
                       dosages: indication.dosages!,
                       editMode: editMode,
                     ),

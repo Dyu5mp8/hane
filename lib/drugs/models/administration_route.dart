@@ -3,13 +3,13 @@ enum AdministrationRoute {
   iv,
   im,
   sc,
-  rect,
   inh,
+  rect,
+
   nasal,
   other;
 
   static AdministrationRoute? fromString(String? value) {
-  
     if (value == null) return null;
     switch (value.toLowerCase()) {
       case "po":
@@ -27,8 +27,6 @@ enum AdministrationRoute {
       default:
         return AdministrationRoute.other;
     }
-
-
   }
 
   @override

@@ -12,13 +12,13 @@ import 'package:flutter/services.dart';
 class DosageList extends StatefulWidget {
   final List<Dosage> dosages;
   final bool editMode;
-  final Drug drug;
+
 
   const DosageList({
     super.key,
     required this.dosages,
     required this.editMode,
-    required this.drug,
+
   });
 
   @override
@@ -29,6 +29,9 @@ class _DosageListState extends State<DosageList> {
   final _scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
+
+    final drug = Provider.of<Drug>(context, listen: false);
+
     return Stack(children: [
       ReorderableListView.builder(
         scrollController: _scrollController,
@@ -43,7 +46,7 @@ class _DosageListState extends State<DosageList> {
           HapticFeedback.mediumImpact();
 
           // Optionally update the parent Drug if needed, e.g.,
-          widget.drug.updateDrug();
+          drug.updateDrug();
         },
         padding: const EdgeInsets.all(1),
         itemCount: widget.dosages.length,
@@ -80,29 +83,34 @@ class _DosageListState extends State<DosageList> {
                   ),
                 Expanded(
                   child: ChangeNotifierProvider(
-    create: (_) => DosageViewHandler(
-                
+                    create: (_) => DosageViewHandler(
                       dosage: widget.dosages[index],
-                      availableConcentrations: widget.drug.concentrations,
+                      availableConcentrations:
+                          drug.concentrations, // initial concentrations
                       onDosageDeleted: () {
                         setState(() {
                           widget.dosages.removeAt(index);
-                          widget.drug.updateDrug();
+                          drug.updateDrug();
                         });
                       },
                       onDosageUpdated: (updatedDosage) {
                         setState(() {
                           widget.dosages[index] = updatedDosage;
-                          widget.drug.updateDrug();
+                          drug.updateDrug();
                         });
                       },
                     ),
-                    child: DosageSnippet(
-                      key: ValueKey(widget
-                          .dosages[index].hashCode), // Use DosageSnippet key
-                      editMode: widget.editMode,
-    
-
+                    child: Consumer<Drug>(
+                      builder: (context, updatedDrug, child) {
+                        // Update availableConcentrations in the DosageViewHandler whenever the drug changes
+                        Provider.of<DosageViewHandler>(context, listen: false)
+                                .availableConcentrations =
+                            updatedDrug.concentrations;
+                        return DosageSnippet(
+                          key: ValueKey(widget.dosages[index].hashCode),
+                          editMode: widget.editMode,
+                        );
+                      },
                     ),
                   ),
                 ),

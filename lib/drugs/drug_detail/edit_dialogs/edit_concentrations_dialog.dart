@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/ui_components/custom_chip_with_radio.dart';
-import 'package:hane/utils/unit_parser.dart';
+import 'package:hane/drugs/models/units.dart';
 import 'package:hane/utils/validate_concentration_save.dart' as val;
-import 'package:hane/utils/unit_validator.dart';
 
 class EditConcentrationsDialog extends StatefulWidget {
   final Drug drug;
@@ -27,8 +26,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
   List<Concentration> concentrations = [];
 
   // List of units for the dropdown
-  List<String> units = UnitValidator.validConcentrationDenominatorUnits().keys.toList();
-  String? selectedUnit;
+  SubstanceUnit? selectedUnit;
   int? editingIndex;
 
   @override
@@ -47,18 +45,14 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
     }
   }
 
-  List<String> unitsToSymbols(List<String> units) {
-    return units.map((unit) {
-      return unit == 'mikrog' ? 'μg' : unit;
-    }).toList();
-  }
-
   void addOrUpdateConcentration() {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        final newConcentration = Concentration.fromString(
-          amount: UnitParser.normalizeDouble(concentrationAmountController.text),
-          unit: '$selectedUnit/ml',
+        final newConcentration = Concentration(
+          amount: double.parse(
+              concentrationAmountController.text.replaceAll(',', '.')),
+          substance: selectedUnit!,
+          diluent: DiluentUnit.ml,
           mixingInstructions: mixingInstructionsController.text,
           aliasUnit: aliasUnitController.text,
           isStockSolution: isStockSolution,
@@ -71,6 +65,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
           // Add new concentration
           concentrations.add(newConcentration);
         }
+
+        widget.drug.concentrations = concentrations;
 
         // Clear form fields
         concentrationAmountController.clear();
@@ -87,8 +83,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
     setState(() {
       concentrations.remove(concentration);
       // Reset editing if the removed concentration was being edited
-      if (editingIndex != null &&
-          concentrations.length <= editingIndex!) {
+      if (editingIndex != null && concentrations.length <= editingIndex!) {
         editingIndex = null;
         isStockSolution = false;
         concentrationAmountController.clear();
@@ -102,9 +97,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
   void editConcentration(int index) {
     final concentration = concentrations[index];
     setState(() {
-      concentrationAmountController.text =
-          concentration.amount.toString();
-      selectedUnit = concentration.substance.toString();
+      concentrationAmountController.text = concentration.amount.toString();
+      selectedUnit = concentration.substance;
       isStockSolution = concentration.isStockSolution ?? false;
       mixingInstructionsController.text =
           concentration.mixingInstructions ?? '';
@@ -115,7 +109,6 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Redigera koncentrationer'),
@@ -162,76 +155,88 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                   child: Column(
                     children: <Widget>[
                       // Concentration Amount and Unit Inputs
-                     Row(
-  children: [
-    // Concentration Amount Input
-    Expanded(
-      flex: 3,
-      child: TextFormField(
-        controller: concentrationAmountController,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          labelText: 'Värde',
-          hintText: 't.ex. 10',
-          hintStyle: TextStyle(fontSize: 14, color: Color.fromARGB(139, 158, 158, 158)),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          errorMaxLines: 2,
-        ),
-        validator: val.validateConcentrationAmount,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      ),
-    ),
-    const SizedBox(width: 12),
-    // Concentration Unit Dropdown
-    Expanded(
-      flex: 2,
-      child: DropdownButtonFormField<String>(
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-        
-          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12), // Adjusted padding to fit content
-          labelText: 'Enhet',
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          errorMaxLines: 2,
-          suffixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0), // Ensures /ml suffix fits better
-          suffixText: '/ml',
+                      Row(
+                        children: [
+                          // Concentration Amount Input
+                          Expanded(
+                            flex: 3,
+                            child: TextFormField(
+                              controller: concentrationAmountController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
+                                labelText: 'Värde',
+                                hintText: 't.ex. 10',
+                                hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Color.fromARGB(139, 158, 158, 158)),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                errorMaxLines: 2,
+                              ),
+                              validator: val.validateConcentrationAmount,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // Concentration Unit Dropdown
+                          Expanded(
+                            flex: 2,
+                            child: DropdownButtonFormField<SubstanceUnit>(
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
 
-        ),
-        value: selectedUnit,
-        items: unitsToSymbols(units).map((String unit) {
-          return DropdownMenuItem<String>(
-            value: unit,
-            child: Text(unit),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            selectedUnit = newValue;
-          });
-        },
-        validator: (value) {
-          val.validateConcentrationUnit(value);
-          return null;
-          
-        },
-      ),
-    ),
-  ],
-),
-const SizedBox(height: 12),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10,
+                                    horizontal:
+                                        12), // Adjusted padding to fit content
+                                labelText: 'Enhet',
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                errorMaxLines: 2,
+                                suffixIconConstraints: BoxConstraints(
+                                    minWidth: 0,
+                                    minHeight:
+                                        0), // Ensures /ml suffix fits better
+                                suffixText: '/ml',
+                              ),
+                              value: selectedUnit,
+                              items: SubstanceUnit.allUnits.map((unit) {
+                                return DropdownMenuItem<SubstanceUnit>(
+                                  value: unit,
+                                  child: Text(unit.toString()),
+                                );
+                              }).toList(),
+                              onChanged: (SubstanceUnit? newValue) {
+                                setState(() {
+                                  selectedUnit = newValue;
+                                });
+                              },
+                              validator: val.validateConcentrationUnit,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
                       // Mixing Instructions Input
                       TextFormField(
                         controller: mixingInstructionsController,
                         decoration: InputDecoration(
                           labelText: 'Blandningsinstruktioner',
-                          hintStyle: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
-                          hintText: '(valfritt) T.ex.  "Nipruss 60 mg + Glukos 50 mg/ml 60 ml i ljusskyddad spruta ger 1mg/ml."',
+                          hintStyle: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.2)),
+                          hintText:
+                              '(valfritt) T.ex.  "Nipruss 60 mg + Glukos 50 mg/ml 60 ml i ljusskyddad spruta ger 1mg/ml."',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           errorMaxLines: 2,
                           border: const OutlineInputBorder(),
-
-         
                         ),
                         maxLines: 3,
                       ),
@@ -241,7 +246,12 @@ const SizedBox(height: 12),
                         controller: aliasUnitController,
                         decoration: InputDecoration(
                           labelText: 'Alternativ benämning',
-                          hintStyle: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                          hintStyle: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.2)),
                           hintText: '(valfritt) T.ex. "3%", "1:1000" etc',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           errorMaxLines: 2,
@@ -252,22 +262,38 @@ const SizedBox(height: 12),
                       // Add or Save Button
                       Row(
                         children: [
-                          Checkbox(value: isStockSolution, onChanged: (value) {
-                            setState(() {
-                              isStockSolution = value ?? false;
-                            });
-                          }),
+                          Checkbox(
+                              value: isStockSolution,
+                              onChanged: (value) {
+                                setState(() {
+                                  isStockSolution = value ?? false;
+                                });
+                              }),
                           const Text('Stamlösning'),
                           Expanded(child: SizedBox()),
-                          ElevatedButton.icon(
-                            icon: Icon(
-                              editingIndex != null ? Icons.save : Icons.add,
-                            ),
-                                             
-                            label: Text(
-                              editingIndex != null ? 'Spara ändringar' : 'Lägg till',
-                            ),
-                            onPressed: addOrUpdateConcentration,
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Row(
+                                  children: [
+                                    Icon(
+                                      editingIndex != null
+                                          ? Icons.save
+                                          : Icons.add,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      editingIndex != null
+                                          ? 'Spara ändringar'
+                                          : 'Lägg till',
+                                    ),
+                                  ],
+                                ),
+                                onPressed: addOrUpdateConcentration,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -299,12 +325,15 @@ const SizedBox(height: 12),
                   ),
                   child: ListTile(
                     title: Text(
-                        '$concentration${concentration.getSecondaryRepresentation() != null ? ' (${concentration.getSecondaryRepresentation()})' : ''}',
+                      '$concentration${concentration.getSecondaryRepresentation() != null ? ' (${concentration.getSecondaryRepresentation()})' : ''}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: concentration.mixingInstructions != null &&
                             concentration.mixingInstructions!.isNotEmpty
-                        ? Text(concentration.mixingInstructions!, style: Theme.of(context).textTheme.bodyMedium,)
+                        ? Text(
+                            concentration.mixingInstructions!,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          )
                         : null,
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),

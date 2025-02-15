@@ -15,12 +15,9 @@ import 'package:hane/drugs/models/units.dart';
 class DosageSnippet extends StatefulWidget {
   final bool editMode;
 
-  final List<Concentration>? availableConcentrations;
-
   DosageSnippet({
     Key? key,
     this.editMode = false,
-    this.availableConcentrations,
   });
 
   @override
@@ -252,7 +249,6 @@ class _DosageSnippetState extends State<DosageSnippet> {
                           child: ConversionSwitch(
                             isActive: dvh.conversionConcentration != null,
                             onSwitched: (value) {
-                              print("Switched to $value");
                               HapticFeedback.mediumImpact();
                               if (value) {
                                 _showConcentrationPicker(dvh);
@@ -306,6 +302,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
                           IconButton(
                             icon: const Icon(Icons.edit, color: Colors.blue),
                             onPressed: () {
+                              
                               showDialog(
                                 context: context,
                                 builder: (dialogContext) {

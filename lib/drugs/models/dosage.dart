@@ -57,6 +57,14 @@ class Dosage with EquatableMixin {
     return _dose?.substanceUnit ?? _lowerLimitDose?.substanceUnit ?? _higherLimitDose?.substanceUnit ?? _maxDose?.substanceUnit;  
   }
 
+  WeightUnit? getWeightUnit () {
+    return _dose?.weightUnit ?? _lowerLimitDose?.weightUnit ?? _higherLimitDose?.weightUnit ?? _maxDose?.weightUnit;
+  }
+
+  TimeUnit? getTimeUnit () {
+    return _dose?.timeUnit ?? _lowerLimitDose?.timeUnit ?? _higherLimitDose?.timeUnit ?? _maxDose?.timeUnit;
+  } 
+
 
   // Setters with notification
   set instruction(String? newInstruction) {

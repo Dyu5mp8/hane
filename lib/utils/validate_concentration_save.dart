@@ -5,19 +5,10 @@ import "package:hane/drugs/models/units.dart";
 import "package:hane/utils/validation_exception.dart";
 
 
-String? validateConcentrationUnit(String? value) {
-  if (value == null || value.isEmpty) {
-    return ValidationException("Ange en giltig enhet").toString();
-  }
-  try {
-    SubstanceUnit.fromString(value);
-  }
-  catch (e) {
-    return e.toString();
-  
-  }
-  catch (e) {
-    return e.toString();
+String? validateConcentrationUnit(SubstanceUnit? value) {
+  if (value == null) {
+    print("Ange en giltig substansenhet");
+    return "Ange en giltig substansenhet";
   }
 
   return null;

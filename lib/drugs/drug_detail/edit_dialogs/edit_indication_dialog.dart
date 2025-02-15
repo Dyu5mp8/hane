@@ -189,7 +189,7 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                         height: 300, // Provide a fixed height for the list
                         child: DosageList(
                           dosages: _tempDosages,
-                          drug: widget.drug,
+
                           editMode: true,
                         ),
                       ),
