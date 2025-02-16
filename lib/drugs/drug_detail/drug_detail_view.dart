@@ -12,6 +12,7 @@ import 'package:hane/drugs/drug_detail/indication_box.dart';
 import 'package:hane/drugs/drug_detail/overview/overview_box.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
+import 'package:hane/ui_components/review_button.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class DrugDetailView extends StatefulWidget {
@@ -60,7 +61,7 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         title: Text(_editableDrug.name ?? 'Drug Details'),
         centerTitle: true,
         actions: [
-          if (!editMode && drugListProvider.isReviewer) const ReviewButton(),
+          if (!editMode && drugListProvider.isReviewer && _editableDrug.getReviewStatus(drugListProvider.user!) != ReviewStatus.notReviewed) const CheckReviewButton(),
           if (drugListProvider.isReviewer && !editMode)
             const ChatButton(),
           if (!_editableDrug.changedByUser && !editMode) const InfoButton(),
@@ -123,20 +124,14 @@ class BackButton extends StatelessWidget {
   }
 }
 
-class ReviewButton extends StatelessWidget {
-  const ReviewButton({super.key});
+class CheckReviewButton extends StatelessWidget {
+  const CheckReviewButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     final drug = Provider.of<Drug>(context, listen: true);
-    final icon = !drug.hasCompletedReview()
-        ? const Icon(
-            Bootstrap.shield_fill_exclamation,
-            color: Color.fromARGB(255, 183, 125, 49),
-            size: 20,
-          )
-        : const Icon(Bootstrap.shield_fill_check,
-            color: Colors.green, size: 20);
+    final status = drug.getReviewStatus(FirebaseAuth.instance.currentUser!.uid);
+    final icon = ReviewButton(status);
 
     return IconButton(
       icon: icon,

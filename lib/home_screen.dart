@@ -67,9 +67,9 @@ class _HomeScreenState extends State<HomeScreen> with Tutorial {
       case UserMode.syncedMode:
         return const SyncedUserMenuDrawer();
       case UserMode.customMode:
-        return CustomUserMenuDrawer();
+        return const CustomUserMenuDrawer();
       default:
-        return CustomUserMenuDrawer();
+        return const CustomUserMenuDrawer();
     }
   }
 
@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> with Tutorial {
     if (provider.isReviewer) {
       pendingReviewDrugs = drugs.where((drug) {
    
-        return drug.isPendingUserReview(currentUserUID!);
+        return drug.getReviewStatus(currentUserUID!) == ReviewStatus.waitingOnUser;
       }).toList();
     }
 
@@ -318,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> with Tutorial {
                 visualDensity: VisualDensity.compact,
                 side: BorderSide.none,
                 showCheckmark: false,
-                label: Text("Alla"),
+                label: const Text("Alla"),
    
                 selected: _selectedCategory == null,
               

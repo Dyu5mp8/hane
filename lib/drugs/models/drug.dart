@@ -216,18 +216,21 @@ class Drug extends ChangeNotifier with EquatableMixin {
     notifyListeners();
   }
 
-  bool isPendingUserReview(String reviewerUID) {
-    final shouldReviewKeys = _shouldReviewUIDs?.keys.toSet() ?? {};
+  ReviewStatus getReviewStatus(String reviewerUID) {
+
+        final shouldReviewKeys = _shouldReviewUIDs?.keys.toSet() ?? {};
     final hasReviewedKeys = _hasReviewedUIDs?.keys.toSet() ?? {};
     final remainingReviewers = shouldReviewKeys.difference(hasReviewedKeys);
-    return remainingReviewers.contains(reviewerUID);
-  }
 
-  bool hasCompletedReview() {
-    return setEquals(
-        _hasReviewedUIDs?.keys.toSet(), _shouldReviewUIDs?.keys.toSet());
+    if (remainingReviewers.contains(reviewerUID)) {
+      return ReviewStatus.waitingOnUser;
+    } else if (shouldReviewKeys.isNotEmpty && setEquals(shouldReviewKeys, hasReviewedKeys)) {
+      return ReviewStatus.allAccepted;
+    } else if (hasReviewedKeys.contains(reviewerUID)) {
+      return ReviewStatus.userAccepted;
+    }
+    return ReviewStatus.notReviewed;
   }
-
 //Called when drug is updated and needs to be reviewed again
   void clearhasReviewedUIDs() {
     _hasReviewedUIDs = {};
@@ -427,3 +430,5 @@ class Drug extends ChangeNotifier with EquatableMixin {
     );
   }
 }
+
+enum ReviewStatus {waitingOnUser, userAccepted, allAccepted, notReviewed}

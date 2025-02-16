@@ -1,9 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
+import 'package:hane/ui_components/review_button.dart'; 
 import 'package:icons_plus/icons_plus.dart';
 
 class DrugListRow extends StatelessWidget {
@@ -47,11 +49,10 @@ class DrugListRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (provider.isAdmin || provider.isReviewer)
-                if (_drug.shouldReviewUIDs != null &&
-                    _drug.shouldReviewUIDs!.isNotEmpty)
-                  _buildReviewStatusIcon(context),
-                  const SizedBox(width: 5),
-                if (_drug.hasUnreadMessages) _buildNewMessageChip(context),
+                if (_drug.getReviewStatus(provider.user!) != ReviewStatus.notReviewed)
+                  ReviewButton(_drug.getReviewStatus(provider.user!)), 
+              const SizedBox(width: 5),
+              if (_drug.hasUnreadMessages) _buildNewMessageChip(context),
             ],
           ),
           onTap: () {
@@ -79,13 +80,8 @@ class DrugListRow extends StatelessWidget {
     }
   }
 
-  Icon _buildReviewStatusIcon(BuildContext context) {
-    final icon = !_drug.hasCompletedReview()
-        ? const Icon(Bootstrap.exclamation_circle,
-            color: Color.fromARGB(255, 183, 125, 49))
-        : const Icon(Bootstrap.check_circle_fill, color: Colors.green);
-    return icon;
-  }
+
+
 
   Chip _buildNewMessageChip(BuildContext context) {
     return Chip(
