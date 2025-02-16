@@ -6,6 +6,7 @@ enum AppThemeMode { light, dark, system }
 
 
 class ThemeProvider extends ChangeNotifier with WidgetsBindingObserver {
+  
   AppThemeMode _themeMode = AppThemeMode.light;
 
     @override
@@ -34,10 +35,9 @@ class ThemeProvider extends ChangeNotifier with WidgetsBindingObserver {
       case AppThemeMode.dark:
         return darkAppTheme;
       case AppThemeMode.system:
-        final brightness = WidgetsBinding.instance.window.platformBrightness;
+        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
         return brightness == Brightness.dark ? darkAppTheme : appTheme;
       case AppThemeMode.light:
-      default:
         return appTheme;
     }
   }
