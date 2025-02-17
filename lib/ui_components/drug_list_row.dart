@@ -35,7 +35,7 @@ class DrugListRow extends StatelessWidget {
           leading: Container(
             width: 5,
             color: _drug.changedByUser
-                ? Theme.of(context).primaryColor
+                ? Theme.of(context).colorScheme.primary
                 : Colors.transparent,
           ),
           title: Text(

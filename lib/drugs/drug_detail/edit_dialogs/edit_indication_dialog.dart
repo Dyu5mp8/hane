@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/ui_components/dosage_list.dart';
 import 'package:hane/drugs/drug_detail/edit_dialogs/edit_dosage_dialog.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/utils/validate_drug_save.dart' as val;
 
 class EditIndicationDialog extends StatefulWidget {
-  final Drug drug;
   final Indication indication;
   final bool withDosages;
   final bool isNewIndication;
-  final Function()? onSave;
+
 
   const EditIndicationDialog(
       {super.key,
       required this.indication,
-      required this.drug,
       this.withDosages = false,
       this.isNewIndication = false,
-      this.onSave});
+    });
 
   @override
   State<EditIndicationDialog> createState() => _EditIndicationDialogState();
@@ -51,23 +50,26 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
     super.dispose();
   }
 
-  void saveIndication() {
+  void saveIndication(BuildContext context) {
     if (_formKey.currentState!.validate()) {
+
+      Drug drug = context.read<Drug>();
       widget.indication.name = _nameController.text;
       widget.indication.notes = _notesController.text;
       widget.indication.dosages = _tempDosages;
 
       if (widget.isNewIndication) {
-        widget.drug.indications?.add(widget.indication);
+        drug.indications?.add(widget.indication);
       }
 
-      widget.drug.updateDrug();
+      drug.updateDrug();
       Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Drug drug = context.watch<Drug>();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.indication.name),
@@ -96,8 +98,8 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                       ),
                       TextButton(
                         onPressed: () {
-                          widget.drug.indications?.remove(widget.indication);
-                          widget.drug.updateDrug();
+                          drug.indications?.remove(widget.indication);
+                          drug.updateDrug();
                           Navigator.pop(context);
                           Navigator.pop(context);
                         },
@@ -115,7 +117,7 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                saveIndication();
+                saveIndication(context);
               }
             },
           ),

@@ -26,12 +26,14 @@ class AddIndicationButton extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => EditIndicationDialog(
-                    withDosages: true,
-                    isNewIndication: true,
-                    indication: Indication(isPediatric: false, name: '', notes: ''),
-                    drug: drug,
-             ) ));
+                builder: (context) => ChangeNotifierProvider<Drug>.value(
+                  value: drug,
+                  child: EditIndicationDialog(
+                      withDosages: true,
+                      isNewIndication: true,
+                      indication: Indication(isPediatric: false, name: '', notes: ''),
+                               ),
+                ) ));
       },
       child: const Row(
         mainAxisSize: MainAxisSize.min,

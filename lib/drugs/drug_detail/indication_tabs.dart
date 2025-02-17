@@ -45,11 +45,13 @@ class _IndicationTabsState extends State<IndicationTabs> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditIndicationDialog(
-                        indication: newIndication,
-                        drug: drug,
-                        withDosages: true,
-                        isNewIndication: true,
+                      builder: (context) =>ChangeNotifierProvider<Drug>.value(
+                        value: drug,
+                        child: EditIndicationDialog(
+                          indication: newIndication,
+                          withDosages: true,
+                          isNewIndication: true,
+                        ),
                       ),
                     ),
                   );
@@ -125,3 +127,5 @@ class _IndicationTabsState extends State<IndicationTabs> {
     );
   }
 }
+
+

@@ -26,6 +26,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+
   bool get canEdit {
     return (widget.userMode == UserMode.isAdmin ||
         widget.userMode == UserMode.customMode);
@@ -33,7 +34,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    bool isAdmin = Provider.of<DrugListProvider>(context, listen: true).isAdmin;
+
+    var dlp = Provider.of<DrugListProvider>(context, listen: true);
+
+    bool isAdmin = dlp.isAdmin;
+    bool canEdit = dlp.userMode == UserMode.isAdmin || dlp.userMode == UserMode.customMode;
 
     String titleText = _getAppBarTitle(isAdmin);
     Widget adminMessage = _getAdminMessage(isAdmin);

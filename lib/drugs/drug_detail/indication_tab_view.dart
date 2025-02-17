@@ -77,12 +77,16 @@ class IndicationTabView extends StatelessWidget {
                         child: FloatingActionButton.extended(
                           onPressed: () {
                             Navigator.push(
+                              
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditIndicationDialog(
-                                  indication: indication,
-                                  drug: drug,
-                                  withDosages: true,
+                                
+                                builder: (context) => ChangeNotifierProvider<Drug>.value(
+                                  value: drug,
+                                  child: EditIndicationDialog(
+                                    indication: indication,
+                                    withDosages: true,
+                                  ),
                                 ),
                               ),
                             );
