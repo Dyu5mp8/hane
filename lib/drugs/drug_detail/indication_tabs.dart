@@ -160,8 +160,9 @@ class _IndicationTabsState extends State<IndicationTabs> {
       tabBarWidget = TabBar(
         controller: _parentTabController,
         tabAlignment: TabAlignment.start,
+        indicatorSize: TabBarIndicatorSize.tab,
         isScrollable: true,
-indicatorColor: Colors.transparent,
+               unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),  
 
         onTap: (index) => _scrollToTab(index),
         tabs: indications.asMap().entries.map((entry) {
@@ -189,10 +190,10 @@ indicatorColor: Colors.transparent,
           if (editMode)
             Container(
               width: 40,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondaryFixed,
-                border: Border.all(color: Colors.black, width: 0.5),
-              ),
+             decoration: BoxDecoration(
+        color: Theme.of(context)
+            .canvasColor, // Set a solid, non-transparent background color
+      ),
               child: IconButton(
                 onPressed: () {
                   final newIndication =

@@ -74,10 +74,11 @@ final ThemeData appTheme = ThemeData(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
     ),
   ),
-
-  tabBarTheme: TabBarTheme(
-
-    labelColor: Color.fromARGB(255, 0, 0, 0),
+tabBarTheme: TabBarTheme(
+    unselectedLabelStyle: const TextStyle(
+      color: Color.fromARGB(255, 251, 196, 151),
+    ),
+    labelColor: Color.fromARGB(255, 218, 178, 171),
     indicatorSize: TabBarIndicatorSize.tab,
     indicator: BoxDecoration(
       borderRadius: BorderRadius.circular(5),
