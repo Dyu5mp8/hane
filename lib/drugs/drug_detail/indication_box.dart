@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/indication_tab_view.dart';
 import 'package:hane/drugs/drug_detail/indication_tabs.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
+import 'package:provider/provider.dart';
 
 class IndicationBox extends StatelessWidget {
   const IndicationBox({super.key});
