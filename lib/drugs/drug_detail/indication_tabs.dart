@@ -12,17 +12,117 @@ class IndicationTabs extends StatefulWidget {
 }
 
 class _IndicationTabsState extends State<IndicationTabs> {
+  double _scrollPosition = 0.0;
+  bool _moreLeft = false;
+  bool _moreRight = false;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen for changes on our scroll controller.
+    _scrollController.addListener(_updateScrollMetrics);
+
+    // After the first frame, update the metrics if the controller is attached.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _updateScrollMetrics();
+        print("Finished building view, scroll position: $_scrollPosition");
+        print("More to scroll: left: $_moreLeft, right: $_moreRight");
+      } else {
+        print("No clients attached to _scrollController yet.");
+      }
+    });
+  }
+
+  void _updateScrollMetrics() {
+    if (_scrollController.hasClients) {
+      final pos = _scrollController.position;
+      setState(() {
+        _scrollPosition = pos.pixels;
+        _moreLeft = pos.pixels > pos.minScrollExtent;
+        _moreRight = pos.pixels < pos.maxScrollExtent;
+      });
+      print("More to scroll: left: $_moreLeft, right: $_moreRight");
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_updateScrollMetrics);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final editMode = context.watch<EditModeProvider>().editMode;
     Drug drug = context.watch<Drug>();
     final List<Indication> indications = drug.indications ?? [];
 
+    // Build the tab bar widget based on the edit mode.
+    Widget tabBarWidget = editMode
+        ? ReorderableTabBar(
+            buildDefaultDragHandles: false,
+            unselectedLabelStyle: const TextStyle(
+              color: Color.fromARGB(255, 61, 61, 61),
+            ),
+            labelColor: Theme.of(context).colorScheme.onSurface,
+            isScrollable: true,
+            indicatorSize: TabBarIndicatorSize.tab,
+            tabBorderRadius: BorderRadius.circular(5),
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: Theme.of(context).primaryColor,
+            ),
+            tabs: indications.map((indication) {
+              return Tab(
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(0),
+                      child: Transform.scale(
+                        scaleX: 0.6,
+                        origin: const Offset(-10, 0),
+                        child: const Icon(
+                          Icons.drag_handle,
+                          size: 30,
+                        ),
+                      ),
+                    ),
+                    Text(indication.name)
+                  ],
+                ),
+              );
+            }).toList(),
+            onReorder: (int oldIndex, int newIndex) {
+              if (oldIndex != newIndex) {
+                setState(() {
+                  Indication temp = indications.removeAt(oldIndex);
+                  indications.insert(newIndex, temp);
+                  drug.indications = indications;
+                  drug.updateDrug();
+                });
+              }
+            },
+          )
+        : TabBar(
+            tabAlignment: TabAlignment.start,
+            isScrollable: true,
+            indicatorSize: TabBarIndicatorSize.tab,
+            labelColor: Theme.of(context).colorScheme.onSurface,
+            unselectedLabelColor:
+                Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            tabs: indications
+                .map((indication) => Tab(text: indication.name))
+                .toList(),
+          );
+
     return Container(
       height: 30,
       decoration: BoxDecoration(
-        color: Theme.of(context)
-            .canvasColor, // Set a solid, non-transparent background color
+        color: Theme.of(context).canvasColor, 
+        border: Border.symmetric(vertical: BorderSide(color: Colors.black, width: 0.5)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,11 +141,10 @@ class _IndicationTabsState extends State<IndicationTabs> {
                     name: '',
                     notes: '',
                   );
-
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>ChangeNotifierProvider<Drug>.value(
+                      builder: (context) => ChangeNotifierProvider<Drug>.value(
                         value: drug,
                         child: EditIndicationDialog(
                           indication: newIndication,
@@ -59,73 +158,66 @@ class _IndicationTabsState extends State<IndicationTabs> {
                 icon: const Icon(Icons.add_circle_outline_sharp),
                 iconSize: 25,
                 color: Colors.black,
-                
                 padding: EdgeInsets.zero,
               ),
             ),
           Flexible(
-            child: editMode
-                ? ReorderableTabBar(
-                    buildDefaultDragHandles: false,
-                    unselectedLabelStyle: const TextStyle(
-                      color: Color.fromARGB(255, 61, 61, 61),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  child: tabBarWidget,
+                ),
+                // Left gradient overlay
+                if (_moreLeft)
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 40,
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Theme.of(context).canvasColor,
+                              Theme.of(context).canvasColor.withOpacity(0),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                    labelColor: Theme.of(context).colorScheme.onSurface,
-                    isScrollable: true,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    tabBorderRadius: BorderRadius.circular(5),
-                    indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Theme.of(context).primaryColor,
-                     
-                    ),
-                    tabs: indications
-                        .map((indication) => Tab(
-                                child: Row(children: [
-                              Padding(
-                                padding: const EdgeInsets.all(0),
-                                child: Transform.scale(
-                                    scaleX: 0.6,
-                                    origin: const Offset(-10, 0),
-                                    child: const Icon(
-                                      Icons.drag_handle,
-                                      size: 30,
-                                    )),
-                              ),
-                              Text(indication.name)
-                            ])))
-                        .toList(),
-                    onReorder: (int oldIndex, int newIndex) {
-                      // Fix reordering logic
-                      if (oldIndex != newIndex) {
-                        setState(() {
-                          Indication temp = indications.removeAt(oldIndex);
-                          indications.insert(newIndex, temp);
-
-                          // Update the indications list in the drug object
-                          drug.indications = indications;
-                          drug.updateDrug(); // Update the drug with the reordered list
-                        });
-                      }
-                    },
-                  )
-                : TabBar(
-                    tabAlignment: TabAlignment.start,
-      
-                    isScrollable: true,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelColor: Theme.of(context).colorScheme.onSurface,
-                    unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),  
-              
-                    tabs: indications
-                        .map((indication) => Tab(text: indication.name))
-                        .toList(),
                   ),
+                // Right gradient overlay
+                if (_moreRight)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 40,
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerRight,
+                            end: Alignment.centerLeft,
+                            colors: [
+                              Theme.of(context).canvasColor,
+                              Theme.of(context).canvasColor.withOpacity(0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 }
-
-
