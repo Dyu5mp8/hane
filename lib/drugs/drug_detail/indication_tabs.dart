@@ -159,10 +159,9 @@ class _IndicationTabsState extends State<IndicationTabs> {
     } else {
       tabBarWidget = TabBar(
         controller: _parentTabController,
+        dividerColor: Colors.transparent,
         tabAlignment: TabAlignment.start,
-        indicatorSize: TabBarIndicatorSize.tab,
         isScrollable: true,
-               unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),  
 
         onTap: (index) => _scrollToTab(index),
         tabs: indications.asMap().entries.map((entry) {
