@@ -2,8 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/models/units.dart';
 import 'package:hane/extensions/round_dose.dart';
-import 'package:hane/utils/smart_rounder.dart';
-import 'dart:math'; 
+
 
 class Dose extends Equatable {
   final double amount;
