@@ -186,7 +186,7 @@ final ThemeData darkAppTheme = ThemeData(
     unselectedLabelStyle: const TextStyle(
       color: Color.fromARGB(255, 155, 155, 155),
     ),
-    labelColor: Color.fromARGB(255, 163, 54, 11),
+    labelColor: Colors.white,
     indicatorSize: TabBarIndicatorSize.tab,
     indicator: BoxDecoration(
       borderRadius: BorderRadius.circular(5),

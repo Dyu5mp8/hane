@@ -16,6 +16,12 @@ class IndicationTabView extends StatelessWidget {
     final editMode = context.watch<EditModeProvider>().editMode;
     final provider = context.read<DrugListProvider  >();
 
+
+
+
+
+
+
     if ((drug.indications == null|| drug.indications!.isEmpty) && (provider.userMode != UserMode.syncedMode)) {
       return Column(
         mainAxisSize:
@@ -43,23 +49,7 @@ class IndicationTabView extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Name and Notes section
-            if (indication.notes != null && indication.notes!.isNotEmpty)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 16,
-                ),
-     
-                child: Text(
-                  indication.notes != null ? "Kommentar: ${indication.notes!}" : '',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ),
-            // Dosages section
+        
             if (indication.dosages != null)
               Expanded(
                 child: Stack(
@@ -68,6 +58,7 @@ class IndicationTabView extends StatelessWidget {
                     DosageList(
                       dosages: indication.dosages!,
                       editMode: editMode,
+                      instruction: indication.notes,
                     ),
                     // Floating action button for editing the indication
                     if (editMode)
