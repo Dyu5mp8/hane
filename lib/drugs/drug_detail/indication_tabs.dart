@@ -3,7 +3,6 @@ import 'package:hane/drugs/drug_detail/edit_dialogs/edit_indication_dialog.dart'
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:reorderable_tabbar/reorderable_tabbar.dart';
-import 'package:provider/provider.dart';
 
 class IndicationTabs extends StatefulWidget {
   const IndicationTabs({super.key});
@@ -18,7 +17,7 @@ class _IndicationTabsState extends State<IndicationTabs> {
   bool _moreRight = false;
   final ScrollController _scrollController = ScrollController();
 
-  // Instead of creating our own TabController, we use the parent's one.
+  // We use the parent's TabController.
   TabController? _parentTabController;
   List<GlobalKey> _tabKeys = [];
 
@@ -37,12 +36,14 @@ class _IndicationTabsState extends State<IndicationTabs> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Obtain the parent's TabController from the DefaultTabController.
+    // Obtain the parent's TabController from DefaultTabController.
     final controller = DefaultTabController.of(context);
     if (controller != _parentTabController) {
       _parentTabController?.removeListener(_handleTabChange);
+      _parentTabController?.animation?.removeListener(_handleTabAnimationChange);
       _parentTabController = controller;
-      _parentTabController?.addListener(_handleTabChange);
+
+      _parentTabController?.animation?.addListener(_handleTabAnimationChange);
     }
 
     // Get indications list from the Drug provider.
@@ -55,22 +56,34 @@ class _IndicationTabsState extends State<IndicationTabs> {
     }
   }
 
+  // Called when the controller's animation updates.
+  void _handleTabAnimationChange() {
+
+    if (_parentTabController != null) {
+      // Use the animation's value to compute an effective index.
+      // Rounding means as soon as the animation starts, we pick up the new target.
+      final effectiveIndex = _parentTabController!.animation!.value.round();
+      _scrollToTab(effectiveIndex);
+    }
+  }
+
+  // Also keep our previous listener (which triggers when the index settles).
   void _handleTabChange() {
-    // When the parent's TabController index changes (and is settled),
-    // scroll the selected tab into view.
-    if (_parentTabController != null && !_parentTabController!.indexIsChanging) {
+ 
+    if (_parentTabController != null) {
       _scrollToTab(_parentTabController!.index);
     }
   }
 
   void _scrollToTab(int index) {
+
     if (index < _tabKeys.length) {
       final keyContext = _tabKeys[index].currentContext;
       if (keyContext != null) {
         Scrollable.ensureVisible(
           keyContext,
           duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
+          curve: Curves.decelerate,
           alignment: 0.5,
         );
       }
@@ -87,15 +100,14 @@ class _IndicationTabsState extends State<IndicationTabs> {
       });
     }
   }
-
   @override
   void dispose() {
     _scrollController.removeListener(_updateScrollMetrics);
     _scrollController.dispose();
     _parentTabController?.removeListener(_handleTabChange);
+    _parentTabController?.animation?.removeListener(_handleTabAnimationChange);
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     final editMode = context.watch<EditModeProvider>().editMode;
@@ -214,7 +226,7 @@ class _IndicationTabsState extends State<IndicationTabs> {
                 },
                 icon: const Icon(Icons.add_circle_outline_sharp),
                 iconSize: 25,
-                color: Colors.black,
+                
                 padding: EdgeInsets.zero,
               ),
             ),
