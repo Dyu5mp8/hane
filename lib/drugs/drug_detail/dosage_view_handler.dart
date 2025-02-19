@@ -115,7 +115,6 @@ class DosageViewHandler extends ChangeNotifier {
         displayDose.unitEquals(maxDose!)) {
       displayDose = displayDose < maxDose! ? displayDose : maxDose;
     }
-    displayDose = displayDose?.scaleAmount(threshold: 0.1);
 
 
     return displayDose;
@@ -136,8 +135,7 @@ class DosageViewHandler extends ChangeNotifier {
   Dose? get maxDose => dosage.maxDose
       ?.convertByWeight(conversionWeight?.toInt())
       .convertByTime(conversionTime)
-      .convertByConcentration(conversionConcentration)
-      .scaleAmount(threshold: 0.1);
+      .convertByConcentration(conversionConcentration);
 
   /// This returns a string with the conversion information.
   String conversionInfo() {

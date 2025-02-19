@@ -44,7 +44,7 @@ class Dose extends Equatable {
   String toString() {
    
     if (converted) {
-      Dose scaledDose = scaleAmount();
+      Dose scaledDose = scaleAmount(threshold: 0.5);
       return ("${scaledDose.amount.doseAmountRepresentation(rounded: true)} ${scaledDose.unitString}"); 
     }
     return ("${amount.doseAmountRepresentation(rounded:false)} $unitString"); 
