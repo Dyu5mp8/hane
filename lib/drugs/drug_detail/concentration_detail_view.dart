@@ -23,7 +23,7 @@ class ConcentrationDetailView extends StatelessWidget {
                     title: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        "${concentration} ${(concentration.isStockSolution ?? false) ? " (Stamlösning)" : ""}",
+                        "$concentration ${(concentration.isStockSolution ?? false) ? " (Stamlösning)" : ""}",
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,

@@ -3,6 +3,8 @@ import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutri
 import 'package:provider/provider.dart';
 
 class DayWidget extends StatelessWidget {
+  const DayWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<NutritionViewModel>();
@@ -37,7 +39,7 @@ class DayWidget extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () => vm.setNewDay(vm.day + 1),
-            child: Icon(Icons.arrow_upward_rounded, size: 20),
+            child: const Icon(Icons.arrow_upward_rounded, size: 20),
           ),
 
           // Use vertical spacing instead of horizontal
@@ -56,7 +58,7 @@ class DayWidget extends StatelessWidget {
                 vm.setNewDay(vm.day - 1);
               }
             },
-            child: Icon(Icons.arrow_downward_rounded, size: 20),
+            child: const Icon(Icons.arrow_downward_rounded, size: 20),
           ),
         ],
       ),

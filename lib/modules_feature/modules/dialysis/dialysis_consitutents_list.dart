@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hane/ui_components/auto_scroll_expansion_tile.dart';
 
 class DialysisConsitutentsList extends StatelessWidget {
-  const DialysisConsitutentsList({Key? key}) : super(key: key);
+  const DialysisConsitutentsList({super.key});
 
   @override
   Widget build(BuildContext context) {

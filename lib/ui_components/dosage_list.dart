@@ -31,11 +31,13 @@ class _DosageListState extends State<DosageList> {
   @override
   String? instruction;
 
+  @override
   void initState() {
     super.initState();
     instruction = widget.instruction;
   }
 
+  @override
   Widget build(BuildContext context) {
     final drug = Provider.of<Drug>(context, listen: false);
 

@@ -24,10 +24,10 @@ class UserFeedback {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['master'] = this.masterUID;
-    data['feedback'] = this.feedback;
-    data['timestamp'] = this.timestamp;
-    data['userId'] = this.userId;
+    data['master'] = masterUID;
+    data['feedback'] = feedback;
+    data['timestamp'] = timestamp;
+    data['userId'] = userId;
     return data;
   }
 }

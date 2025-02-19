@@ -2,6 +2,7 @@
 abstract class Unit {}
 
 abstract class SubstanceUnit with CandidateFinderMixin implements Unit {
+  @override
   double conversionFactor(SubstanceUnit unit);
   double get factor;
 

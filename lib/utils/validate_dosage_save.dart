@@ -1,4 +1,3 @@
-import "package:hane/drugs/models/drug.dart";
 
 String? validateTextInput(String? value) {
   if (value == null || value.isEmpty) {

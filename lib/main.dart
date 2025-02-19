@@ -3,7 +3,6 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hane/login/signup.dart';
-import 'package:hane/modules_feature/modules/dialysis/dialysis_view.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:hane/splash_screen.dart';
@@ -45,7 +44,7 @@ class _MyAppState extends State<MyApp> {
       final results = await Future.wait([
         Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
         // Ensures a minimum of 3 seconds
-        Future.delayed(Duration(seconds: 1)),
+        Future.delayed(const Duration(seconds: 1)),
       ]);
 
       // Extract the FirebaseApp from the results (first item in the list)

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/scale_zone.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 

@@ -226,7 +226,7 @@ class _SyncedModeTileState extends State<SyncedModeTile> {
 }
 
 class ThemeModeTile extends StatefulWidget {
-  const ThemeModeTile({Key? key}) : super(key: key);
+  const ThemeModeTile({super.key});
 
   @override
   _ThemeModeTileState createState() => _ThemeModeTileState();
@@ -268,7 +268,7 @@ class _ThemeModeTileState extends State<ThemeModeTile> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ListTile(
-                      leading: Icon(Icons.brightness_5_rounded),
+                      leading: const Icon(Icons.brightness_5_rounded),
                       title: const Text('Ljust tema'),
                       onTap: () {
                         themeProvider.setLightMode();
@@ -281,7 +281,7 @@ class _ThemeModeTileState extends State<ThemeModeTile> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.brightness_3_rounded),
+                      leading: const Icon(Icons.brightness_3_rounded),
                       title: const Text('Mörkt tema'),
                       onTap: () {
                         themeProvider.setDarkMode();
@@ -294,7 +294,7 @@ class _ThemeModeTileState extends State<ThemeModeTile> {
                       },
                     ),
                     ListTile(
-                      leading: Icon(Icons.brightness_auto_rounded),
+                      leading: const Icon(Icons.brightness_auto_rounded),
                       title: const Text('Systemtema'),
                       onTap: () {
                         themeProvider.setSystemTheme();
@@ -344,8 +344,9 @@ class SendReviewTileState extends State<SendReviewTile> {
                         .sendFeedback(feedback)
                         .timeout(const Duration(seconds: 5));
 
-                    if (!context.mounted)
+                    if (!context.mounted) {
                       return; // Check if the widget is still in the tree
+                    }
 
                     // Show success message
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -356,8 +357,9 @@ class SendReviewTileState extends State<SendReviewTile> {
                       ),
                     );
                   } catch (e) {
-                    if (!context.mounted)
+                    if (!context.mounted) {
                       return; // Check if the widget is still in the tree
+                    }
 
                     // Show error message if something goes wrong
                     ScaffoldMessenger.of(context).showSnackBar(

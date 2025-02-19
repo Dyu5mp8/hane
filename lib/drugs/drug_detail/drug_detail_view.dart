@@ -218,7 +218,7 @@ class EditModeButton extends StatelessWidget {
             // Conditionally show delete button only when in edit mode
             if (editMode)
               IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.delete,
                   color: Color.fromARGB(255, 255, 99, 8),
                 ),
@@ -268,7 +268,7 @@ class EditModeButton extends StatelessWidget {
                 return IconButton(
                   icon:
                       editMode
-                          ? Text("Spara", style: TextStyle(fontSize: 16))
+                          ? const Text("Spara", style: TextStyle(fontSize: 16))
                           : const Icon(Icons.edit_note_sharp, size: 30),
                   onPressed: () async {
                     HapticFeedback.lightImpact();

@@ -11,14 +11,14 @@ class CountBadge extends StatelessWidget {
   final TextStyle? badgeTextStyle;
 
   const CountBadge({
-    Key? key,
+    super.key,
     required this.futureCount,
     required this.child,
     this.loadingWidget,
     this.errorWidget,
     this.badgeColor,
     this.badgeTextStyle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

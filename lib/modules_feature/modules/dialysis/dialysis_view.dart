@@ -109,7 +109,7 @@ class _DialysisViewState extends State<DialysisView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            DialysisPatientDataWidget(),
+                            const DialysisPatientDataWidget(),
                             ElevatedButton(
                               onPressed:
                                   () => _showPresetSelectionDialog(context),

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
-import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/drugs/models/units.dart';
 
 class TimePicker extends StatefulWidget {
@@ -8,10 +6,10 @@ class TimePicker extends StatefulWidget {
   final TimeUnit? initialTimeUnit;
 
   const TimePicker({
-    Key? key,
+    super.key,
     required this.onTimeUnitSet,
     required this.initialTimeUnit,
-  }) : super(key: key);
+  });
 
   @override
   State<TimePicker> createState() => _TimePickerState();

@@ -11,7 +11,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 class NutritionSnippet extends StatelessWidget {
   final Nutrition nutrition;
 
-  const NutritionSnippet({Key? key, required this.nutrition}) : super(key: key);
+  const NutritionSnippet({super.key, required this.nutrition});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class NutritionSnippet extends StatelessWidget {
 class InfusionTile extends StatelessWidget {
   final Continuous infusion;
 
-  const InfusionTile({Key? key, required this.infusion}) : super(key: key);
+  const InfusionTile({super.key, required this.infusion});
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +117,7 @@ class InfusionTile extends StatelessWidget {
 class IntermittentTile extends StatelessWidget {
   final Intermittent nutrition;
 
-  const IntermittentTile({Key? key, required this.nutrition}) : super(key: key);
+  const IntermittentTile({super.key, required this.nutrition});
 
   @override
   Widget build(BuildContext context) {

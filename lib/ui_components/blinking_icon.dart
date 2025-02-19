@@ -5,10 +5,10 @@ class BlinkingIcon extends StatefulWidget {
   final Duration duration;
 
   const BlinkingIcon({
-    Key? key,
+    super.key,
     required this.child,
     this.duration = const Duration(milliseconds: 100),
-  }) : super(key: key);
+  });
 
   @override
   BlinkingIconState createState() => BlinkingIconState();

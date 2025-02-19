@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
-import 'package:hane/drugs/ui_components/custom_chip_with_radio.dart';
 import 'package:hane/drugs/models/units.dart';
 import 'package:hane/utils/validate_concentration_save.dart' as val;
 
@@ -281,7 +280,7 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                             },
                           ),
                           const Text('Stamlösning'),
-                          Expanded(child: SizedBox()),
+                          const Expanded(child: SizedBox()),
                           Row(
                             children: [
                               IconButton(

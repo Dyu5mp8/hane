@@ -9,13 +9,13 @@ class CategoryChips extends StatelessWidget {
   final TextStyle? style;
 
   const CategoryChips({
-    Key? key,
+    super.key,
     required this.categories,
     required this.selectedCategory,
     required this.onCategorySelected,
     this.acceptAll = true,
     this.style,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class CategoryChips extends StatelessWidget {
               visualDensity: VisualDensity.compact,
               side: BorderSide.none,
               showCheckmark: false,
-              label: Text("Alla"),
+              label: const Text("Alla"),
               selected: selectedCategory == null,
 
               onSelected: (_) => onCategorySelected(null),

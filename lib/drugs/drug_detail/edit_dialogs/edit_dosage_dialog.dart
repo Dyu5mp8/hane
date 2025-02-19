@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/administration_route.dart';
 import 'package:hane/ui_components/route_icons.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:auto_size_text_field/auto_size_text_field.dart';
 
 import 'package:hane/drugs/models/drug.dart';
@@ -11,8 +10,7 @@ class EditDosageDialog extends StatefulWidget {
   final Dosage dosage;
   final Function(Dosage) onSave; // Callback to notify parent
 
-  const EditDosageDialog({Key? key, required this.dosage, required this.onSave})
-    : super(key: key);
+  const EditDosageDialog({super.key, required this.dosage, required this.onSave});
 
   @override
   State<EditDosageDialog> createState() => _EditDosageDialogState();

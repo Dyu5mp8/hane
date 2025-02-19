@@ -18,7 +18,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: const Center(
+      body: Center(
         // Replace with your custom design, logo, and animations.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

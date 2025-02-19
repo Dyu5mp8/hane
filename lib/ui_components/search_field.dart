@@ -8,12 +8,12 @@ class SearchField extends StatelessWidget {
   final ValueChanged<String>? onSubmitted;
 
   const SearchField({
-    Key? key,
+    super.key,
     required this.controller,
     this.placeholder = 'Search...',
     this.onChanged,
     this.onSubmitted,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

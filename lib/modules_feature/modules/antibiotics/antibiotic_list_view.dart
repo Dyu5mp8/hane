@@ -5,7 +5,7 @@ import 'package:hane/ui_components/category_chips.dart';
 import 'package:hane/ui_components/search_field.dart'; // import reusable category chips widget
 
 class AntibioticsListView extends StatefulWidget {
-  const AntibioticsListView({Key? key}) : super(key: key);
+  const AntibioticsListView({super.key});
 
   @override
   _AntibioticsListViewState createState() => _AntibioticsListViewState();

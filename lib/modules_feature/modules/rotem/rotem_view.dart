@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/rotem/evaluation_result.dart';
@@ -24,7 +23,7 @@ class RotemWizardScreen extends StatefulWidget {
 class _RotemWizardScreenState extends State<RotemWizardScreen> {
   int _currentStep = 0;
   int _totalSteps = 1; // Initially one step.
-  List<FocusNode> _focusNodes = [];
+  final List<FocusNode> _focusNodes = [];
   final Map<RotemField, FocusNode> _fieldFocusNodes = {};
   final List<RotemEvaluationStrategy> _allStrategies = [
     MiscEvaluationStrategy(),
@@ -301,8 +300,8 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
                         text: '$label ',
 
                         style: Theme.of(context).textTheme.bodyLarge,
-                        children: [
-                          const TextSpan(
+                        children: const [
+                          TextSpan(
                             text: '*',
                             style: TextStyle(color: Colors.red, fontSize: 20),
                           ),
@@ -475,10 +474,8 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
                       final currentContext = node.context;
                       if (currentContext != null) {
                         final formState = Form.of(currentContext);
-                        if (formState != null) {
-                          formState.save();
-                        }
-                      }
+                        formState.save();
+                                            }
                     },
                     child: Row(
                       children: [

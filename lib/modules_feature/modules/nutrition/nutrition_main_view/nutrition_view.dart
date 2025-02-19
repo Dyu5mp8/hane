@@ -13,11 +13,11 @@ import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutri
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/total_energy_scale_radial.dart';
 
 class NutritionView extends StatelessWidget with Tutorial {
-  const NutritionView({Key? key}) : super(key: key);
+  const NutritionView({super.key});
 
   /// Widget to display when the nutrition list is empty
   Widget emptyListPlaceholder() {
-    return Center(
+    return const Center(
       child: Text(
         'Lägg till nutritionskällor med plussymbolen nedan',
         style: TextStyle(fontSize: 20),
@@ -34,11 +34,11 @@ class NutritionView extends StatelessWidget with Tutorial {
         ...vm.allNutritions
             .map(
               (nutrition) => Column(
-                children: [NutritionSnippet(nutrition: nutrition), Divider()],
+                children: [NutritionSnippet(nutrition: nutrition), const Divider()],
               ),
             )
-            .toList(),
-        SizedBox(height: 20), // Spacing between the list and the energy scale
+            ,
+        const SizedBox(height: 20), // Spacing between the list and the energy scale
         Stack(
           children: [
             // Displaying the energy scale
@@ -47,20 +47,20 @@ class NutritionView extends StatelessWidget with Tutorial {
               top: 40,
               left: 40,
               child: Container(
-                padding: EdgeInsets.all(6),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceBright,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   "Vårddygn ${vm.day}",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 30,
         ), // Spacing between the energy scale and the bottom of the screen
 
@@ -81,12 +81,12 @@ class NutritionView extends StatelessWidget with Tutorial {
     final viewModel = Provider.of<NutritionViewModel>(context, listen: true);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Nutrition')),
+      appBar: AppBar(title: const Text('Nutrition')),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         children: [
           // Displaying patient data PatientDataWidget(),
-          Row(
+          const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Expanded(
@@ -97,12 +97,12 @@ class NutritionView extends StatelessWidget with Tutorial {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 10),
+                padding: EdgeInsets.only(right: 10),
                 child: SizedBox(height: 140, width: 50, child: DayWidget()),
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ), // Spacing between patient data and nutrition content
           // Conditional rendering based on whether the nutrition list is empty
@@ -115,9 +115,9 @@ class NutritionView extends StatelessWidget with Tutorial {
         onPressed: () {
           Navigator.of(
             context,
-          ).push(MaterialPageRoute(builder: (context) => AddNutritionView()));
+          ).push(MaterialPageRoute(builder: (context) => const AddNutritionView()));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

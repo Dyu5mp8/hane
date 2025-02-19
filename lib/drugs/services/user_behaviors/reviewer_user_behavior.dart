@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:hane/drugs/services/user_behaviors/user_behavior.dart";
 import 'package:rxdart/rxdart.dart';

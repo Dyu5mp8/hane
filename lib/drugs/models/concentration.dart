@@ -9,7 +9,7 @@ class Concentration extends Equatable {
   final bool? isStockSolution;
   final String? aliasUnit;
 
-  Concentration({
+  const Concentration({
     required this.amount,
     required this.substance,
     required this.diluent,

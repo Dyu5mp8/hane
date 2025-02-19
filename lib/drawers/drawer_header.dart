@@ -11,7 +11,7 @@ class CustomDrawerHeader extends StatelessWidget {
 
     return DrawerHeader(
       decoration: BoxDecoration(
-        color: Color.fromRGBO(204, 225, 237, 1),
+        color: const Color.fromRGBO(204, 225, 237, 1),
         border: Border(
           bottom: BorderSide(
             color: Theme.of(context).colorScheme.onSecondaryContainer,
@@ -54,7 +54,7 @@ class CustomDrawerHeader extends StatelessWidget {
                 ),
               ),
           const SizedBox(height: 16),
-          Logo(size: 20),
+          const Logo(size: 20),
           const SizedBox(height: 4),
           Text(
             user != null ? 'Inloggad som ${user.email!}' : 'Inte inloggad',

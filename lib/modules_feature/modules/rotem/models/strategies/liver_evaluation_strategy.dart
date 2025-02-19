@@ -1,4 +1,3 @@
-import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
 import 'package:hane/drugs/models/administration_route.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluation_strategy.dart';

@@ -7,7 +7,7 @@ import 'package:sticky_headers/sticky_headers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' hide Source;
 
 class AdminNutritionListview extends StatefulWidget {
-  const AdminNutritionListview({Key? key}) : super(key: key);
+  const AdminNutritionListview({super.key});
 
   @override
   _AdminNutritionListviewState createState() => _AdminNutritionListviewState();
@@ -91,11 +91,11 @@ class _AdminNutritionListviewState extends State<AdminNutritionListview> {
           // Navigate to NutritionAdmin to add a new source
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AdminNutritionEditview()),
+            MaterialPageRoute(builder: (context) => const AdminNutritionEditview()),
           );
         },
-        child: const Icon(Icons.add),
         tooltip: 'Lägg till Nutrition',
+        child: const Icon(Icons.add),
       ),
     );
   }

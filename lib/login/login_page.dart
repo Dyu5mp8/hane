@@ -229,10 +229,10 @@ class _LoginPageState extends State<LoginPage> {
         margin: const EdgeInsets.symmetric(vertical: 20),
         padding: const EdgeInsets.all(15),
         alignment: Alignment.bottomCenter,
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
+            Text(
               'Glömt lösenord?',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
               textAlign: TextAlign.center, // Center-align the text
@@ -255,10 +255,10 @@ class _LoginPageState extends State<LoginPage> {
         margin: const EdgeInsets.symmetric(vertical: 20),
         padding: const EdgeInsets.all(15),
         alignment: Alignment.bottomCenter,
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
+            Text(
               'Inget konto ännu?',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
               textAlign: TextAlign.center, // Center-align the text

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class PatientDataWidget extends StatelessWidget {
-  PatientDataWidget({Key? key}) : super(key: key);
+  const PatientDataWidget({super.key});
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<NutritionViewModel>();
@@ -137,7 +137,7 @@ class PatientDataWidget extends StatelessWidget {
     String lengthText,
     String idealWeightText,
   ) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     // Controllers
     final TextEditingController weightController = TextEditingController(
@@ -157,7 +157,7 @@ class PatientDataWidget extends StatelessWidget {
 
     // Save form method
     void saveForm() {
-      if (_formKey.currentState?.validate() ?? false) {
+      if (formKey.currentState?.validate() ?? false) {
         final double newWeight = double.parse(weightController.text.trim());
         final double newLength = double.parse(lengthController.text.trim());
         final int newDay = int.parse(dayController.text.trim());
@@ -252,7 +252,7 @@ class PatientDataWidget extends StatelessWidget {
             title: const Text('Redigera patientdata'),
             content: SingleChildScrollView(
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -327,7 +327,7 @@ class PatientDataWidget extends StatelessWidget {
                 child: const Text('Avbryt'),
                 onPressed: () => Navigator.of(dialogContext).pop(),
               ),
-              ElevatedButton(child: const Text('Spara'), onPressed: saveForm),
+              ElevatedButton(onPressed: saveForm, child: const Text('Spara')),
             ],
           ),
         );

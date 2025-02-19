@@ -80,7 +80,7 @@ mixin SourceFirestoreHandler {
     } catch (e) {
       print('Error adding document: $e');
     }
-    return null;
+    return;
   }
 
   /// Delete a document by its ID

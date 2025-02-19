@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 
 class ReadFeedbackView extends StatelessWidget {
+  const ReadFeedbackView({super.key});
+
   @override
   Widget build(BuildContext context) {
     final query =

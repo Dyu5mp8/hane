@@ -5,10 +5,10 @@ class AutoScrollExpansionTile extends StatefulWidget {
   final List<Widget> children;
 
   const AutoScrollExpansionTile({
-    Key? key,
+    super.key,
     required this.title,
     required this.children,
-  }) : super(key: key);
+  });
 
   @override
   State<AutoScrollExpansionTile> createState() =>

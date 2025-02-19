@@ -15,7 +15,7 @@ import 'package:hane/drugs/models/units.dart';
 class DosageSnippet extends StatefulWidget {
   final bool editMode;
 
-  DosageSnippet({Key? key, this.editMode = false});
+  const DosageSnippet({super.key,  this.editMode = false});
 
   @override
   _DosageSnippetState createState() => _DosageSnippetState();

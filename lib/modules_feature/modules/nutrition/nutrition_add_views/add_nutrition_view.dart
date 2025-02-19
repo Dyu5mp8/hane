@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart' hide Source;
 import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/continuous.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/intermittent.dart';
-import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source_type.dart';
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutrition_view_model.dart';
@@ -11,7 +9,7 @@ import 'package:hane/modules_feature/modules/nutrition/data/source_firestore_han
 import 'package:sticky_headers/sticky_headers.dart';
 
 class AddNutritionView extends StatefulWidget {
-  const AddNutritionView({Key? key}) : super(key: key);
+  const AddNutritionView({super.key});
 
   @override
   _AddNutritionViewState createState() => _AddNutritionViewState();
@@ -159,7 +157,7 @@ class _AddNutritionViewState extends State<AddNutritionView>
 class SourceCard extends StatelessWidget {
   final Source source;
 
-  const SourceCard({Key? key, required this.source}) : super(key: key);
+  const SourceCard({super.key, required this.source});
 
   void _handleAddNutrition(NutritionViewModel vm) {
     if (source is IntermittentSource) {

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hane/drawers/menu_drawer.dart';
 import 'package:hane/drugs/models/drug.dart';
@@ -6,7 +5,6 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/drawers/read_feedback_view.dart';
 import 'package:hane/drugs/ui_components/count_badge.dart';
 import 'package:hane/modules_feature/modules/nutrition/admin/admin_nutrition_listview.dart';
-import 'package:hane/modules_feature/modules/nutrition/admin/admin_nutrition_editview.dart';
 
 class AdminMenuDrawer extends MenuDrawer {
   const AdminMenuDrawer({super.key});
@@ -67,7 +65,7 @@ class AdminMenuDrawer extends MenuDrawer {
         onTap: () {
           Navigator.pop(context);
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => AdminNutritionListview()),
+            MaterialPageRoute(builder: (context) => const AdminNutritionListview()),
           );
         },
       ),
@@ -86,7 +84,7 @@ class AdminMenuDrawer extends MenuDrawer {
             ).markFeedbackAsRead();
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ReadFeedbackView()),
+              MaterialPageRoute(builder: (context) => const ReadFeedbackView()),
             );
           }
         },

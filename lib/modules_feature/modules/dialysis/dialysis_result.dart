@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/ui_components/blinking_icon.dart';
 import 'package:provider/provider.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
 
 class DialysisResult extends StatefulWidget {

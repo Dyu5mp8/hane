@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:icons_plus/icons_plus.dart';
 

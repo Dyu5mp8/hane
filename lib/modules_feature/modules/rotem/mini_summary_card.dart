@@ -114,8 +114,9 @@ class MiniSummaryCard extends StatelessWidget {
       final secondLines =
           (secondSection != null) ? linesBySection[secondSection] ?? [] : [];
 
-      if (firstLines.isEmpty && (secondLines.isEmpty || secondSection == null))
+      if (firstLines.isEmpty && (secondLines.isEmpty || secondSection == null)) {
         continue;
+      }
 
       quadrantRows.add(
         Row(

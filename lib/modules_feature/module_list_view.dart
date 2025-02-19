@@ -5,7 +5,7 @@ import 'package:hane/modules_feature/models/module.dart';
 class ModuleListView extends StatelessWidget {
   final List<Module> modules;
 
-  ModuleListView({required this.modules});
+  const ModuleListView({super.key, required this.modules});
 
   @override
   Widget build(BuildContext context) {

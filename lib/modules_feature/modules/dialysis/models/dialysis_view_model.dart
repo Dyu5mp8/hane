@@ -260,10 +260,12 @@ class DialysisViewModel extends ChangeNotifier {
   }
 
   String? get doseWarning {
-    if (dose < 20.0)
+    if (dose < 20.0) {
       return 'Låg dialysdos. Kontrollera att patienten är väldialyserad.';
-    if (dose > 35.0)
+    }
+    if (dose > 35.0) {
       return 'Hög dialysdos. Kontrollera att patienten inte överdialyseras. Patienter med sepsis och/eller leversvikt kan behöva betydligt högre doser.';
+    }
     return null;
   }
 

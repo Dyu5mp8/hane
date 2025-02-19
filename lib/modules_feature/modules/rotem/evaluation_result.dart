@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hane/drugs/drug_detail/dosage_view_handler.dart';
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
-import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/ui_components/dosage_snippet.dart';
 
 class EvaluationResult extends StatelessWidget {
@@ -10,10 +9,10 @@ class EvaluationResult extends StatelessWidget {
   final String strategyName;
 
   const EvaluationResult({
-    Key? key,
+    super.key,
     this.strategyName = 'Fel: klinisk kontext okänd',
     required this.actions,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,7 @@ class EvaluationResult extends StatelessWidget {
             const Divider(thickness: 1),
             const SizedBox(height: 8),
             Text(
-              'Vald klinisk kontext: ${strategyName}',
+              'Vald klinisk kontext: $strategyName',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
@@ -77,13 +76,13 @@ class EvaluationResult extends StatelessWidget {
                                 onDosageDeleted: () {},
                                 onDosageUpdated: (updatedDosage) {},
                               ),
-                          child: DosageSnippet(),
+                          child: const DosageSnippet(),
                         ),
                         if (i < entry.value.length - 1)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 4),
                             child: Row(
-                              children: const [
+                              children: [
                                 Expanded(child: Divider()),
                                 Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 4),

@@ -271,11 +271,6 @@ class _IndicationTabsState extends State<IndicationTabs> {
                     width: 40,
                     child: IgnorePointer(
                       child: Container(
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.grey,
-                          size: 20,
-                        ),
                         padding: const EdgeInsets.only(right: 0),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -286,6 +281,11 @@ class _IndicationTabsState extends State<IndicationTabs> {
                               Theme.of(context).canvasColor.withOpacity(0),
                             ],
                           ),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.grey,
+                          size: 20,
                         ),
                       ),
                     ),

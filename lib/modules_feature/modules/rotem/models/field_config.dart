@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 
 typedef FieldValidator = String? Function(String? value);

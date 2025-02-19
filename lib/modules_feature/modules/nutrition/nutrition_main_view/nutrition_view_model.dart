@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/continuous.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/intermittent.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
@@ -165,13 +164,14 @@ class NutritionViewModel extends ChangeNotifier {
     ScaleZone? highYellow;
     ScaleZone? highRed;
 
-    if (day < 4)
+    if (day < 4) {
       lowYellow = ScaleZone(
         weight: idealWeight(),
         minPerWeight: 0,
         maxPerWeight: 4,
         color: ScaleZoneColor.yellow,
       );
+    }
     green = ScaleZone(
       weight: idealWeight(),
       minPerWeight: 4,

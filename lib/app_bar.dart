@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/login/user_status.dart';
-import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final int selectedIndex;
@@ -10,12 +9,12 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Widget Function() searchFieldBuilder;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
     required this.userMode,
     required this.onAddDrugPressed,
     required this.searchFieldBuilder,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();

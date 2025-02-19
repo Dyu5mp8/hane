@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'package:hane/drugs/drug_detail/edit_mode_provider.dart';
@@ -6,7 +5,6 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/drug_detail/drug_detail_view.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:hane/ui_components/review_button.dart';
-import 'package:icons_plus/icons_plus.dart';
 
 class DrugListRow extends StatelessWidget {
   final Drug _drug;

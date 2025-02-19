@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hane/modules_feature/modules/nutrition/data/source_firestore_handler.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source_type.dart';
@@ -136,7 +135,7 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview>
         _resetForm();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Nutrition sparad framgångsrikt!')),
+            const SnackBar(content: Text('Nutrition sparad framgångsrikt!')),
           );
         }
       }
@@ -248,8 +247,9 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview>
 
       validator: (value) {
         if (value == null || value.isEmpty) return 'Ange $label';
-        if (double.tryParse(value.replaceAll(",", ".")) == null)
+        if (double.tryParse(value.replaceAll(",", ".")) == null) {
           return 'Ange ett giltigt tal';
+        }
         return null;
       },
     );
@@ -294,7 +294,7 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview>
                               Navigator.pop(context);
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
+                                const SnackBar(
                                   content: Text('Nutritionskälla borttagen'),
                                 ),
                               );

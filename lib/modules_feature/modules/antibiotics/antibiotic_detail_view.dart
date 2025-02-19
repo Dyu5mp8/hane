@@ -4,8 +4,7 @@ import 'package:hane/modules_feature/modules/antibiotics/models/antibiotic.dart'
 class AntibioticDetailView extends StatefulWidget {
   final Antibiotic antibiotic;
 
-  const AntibioticDetailView({Key? key, required this.antibiotic})
-    : super(key: key);
+  const AntibioticDetailView({super.key, required this.antibiotic});
 
   @override
   _AntibioticDetailViewState createState() => _AntibioticDetailViewState();
@@ -86,15 +85,14 @@ class DetailExpansionTile extends StatelessWidget {
   final String title;
   final String? content;
 
-  const DetailExpansionTile({Key? key, required this.title, this.content})
-    : super(key: key);
+  const DetailExpansionTile({super.key, required this.title, this.content});
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
       title: Text(title),
 
-      leading: Icon(Icons.info_outline),
+      leading: const Icon(Icons.info_outline),
       children: [
         ListTile(
           title: Text(

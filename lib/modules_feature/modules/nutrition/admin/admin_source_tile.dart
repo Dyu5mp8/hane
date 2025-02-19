@@ -5,7 +5,7 @@ import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 class AdminSourceTile extends StatelessWidget {
   final Source source;
 
-  AdminSourceTile({required this.source});
+  const AdminSourceTile({super.key, required this.source});
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +30,14 @@ class AdminSourceTile extends StatelessWidget {
                     source.name,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   ...source.displayContents
                       .map((string) => Text(string))
-                      .toList(),
+                      ,
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios),
+            const Icon(Icons.arrow_forward_ios),
           ],
         ),
       ),

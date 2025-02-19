@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class DialysisPatientDataWidget extends StatelessWidget {
-  DialysisPatientDataWidget({Key? key}) : super(key: key);
+  const DialysisPatientDataWidget({super.key});
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<DialysisViewModel>();
@@ -19,7 +19,7 @@ class DialysisPatientDataWidget extends StatelessWidget {
         (vm.idealWeight() > 0) ? vm.idealWeight().toStringAsFixed(0) : 'N/A';
     final String hematocritText =
         (vm.hematocritLevel > 0)
-            ? "${(vm.hematocritLevel * 100).toStringAsFixed(0)}"
+            ? (vm.hematocritLevel * 100).toStringAsFixed(0)
             : 'N/A';
 
     /// You can adapt these text styles to your theme or dark mode needs.
@@ -105,7 +105,7 @@ class DialysisPatientDataWidget extends StatelessWidget {
     String idealWeightText,
     String hematocritText,
   ) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     // Controllers
     final TextEditingController weightController = TextEditingController(
@@ -125,7 +125,7 @@ class DialysisPatientDataWidget extends StatelessWidget {
 
     // Save form method
     void saveForm() {
-      if (_formKey.currentState?.validate() ?? false) {
+      if (formKey.currentState?.validate() ?? false) {
         final double newWeight = double.parse(weightController.text.trim());
         final double newLength = double.parse(lengthController.text.trim());
         final double newHematocrit = double.parse(
@@ -222,7 +222,7 @@ class DialysisPatientDataWidget extends StatelessWidget {
             title: const Text('Redigera patientdata'),
             content: SingleChildScrollView(
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -299,7 +299,7 @@ class DialysisPatientDataWidget extends StatelessWidget {
                 child: const Text('Avbryt'),
                 onPressed: () => Navigator.of(dialogContext).pop(),
               ),
-              ElevatedButton(child: const Text('Spara'), onPressed: saveForm),
+              ElevatedButton(onPressed: saveForm, child: const Text('Spara')),
             ],
           ),
         );

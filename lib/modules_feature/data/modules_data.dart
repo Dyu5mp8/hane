@@ -11,7 +11,7 @@ List<Module> modules = [
     name: 'Dialys',
     description: 'Kalkylator för dialys',
     icon: Bootstrap.calculator_fill,
-    moduleDetailView: DialysisView(),
+    moduleDetailView: const DialysisView(),
   ),
   Module(
     id: 'rotem',
