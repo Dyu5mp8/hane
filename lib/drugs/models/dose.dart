@@ -1,19 +1,23 @@
 import 'package:equatable/equatable.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/models/units.dart';
+import 'package:hane/extensions/round_dose.dart';
 import 'package:hane/utils/smart_rounder.dart';
+import 'dart:math'; 
 
 class Dose extends Equatable {
   final double amount;
   final SubstanceUnit substanceUnit;
   final WeightUnit? weightUnit;
   final TimeUnit? timeUnit;
+  final bool converted;
 
   const Dose({
     required this.amount,
     required this.substanceUnit,
     this.weightUnit,
     this.timeUnit,
+    this.converted = false,
   });
 
   /// Creates a new Dose with the given fields replaced.
@@ -22,6 +26,7 @@ class Dose extends Equatable {
     SubstanceUnit? substanceUnit,
     WeightUnit? weightUnit,
     TimeUnit? timeUnit,
+    bool converted = false,
   }) {
     final newAmount = amount ?? this.amount;
     if (newAmount < 0) {
@@ -32,13 +37,18 @@ class Dose extends Equatable {
       substanceUnit: substanceUnit ?? this.substanceUnit,
       weightUnit: weightUnit ?? this.weightUnit,
       timeUnit: timeUnit ?? this.timeUnit,
+      converted: converted,
     );
   }
 
   @override
   String toString() {
-    Dose scaledDose = scaleAmount();
-    return ("${scaledDose.amount} ${scaledDose.unitString}"); 
+   
+    if (converted) {
+      Dose scaledDose = scaleAmount();
+      return ("${scaledDose.amount.doseAmountRepresentation(rounded: true)} ${scaledDose.unitString}"); 
+    }
+    return ("${amount.doseAmountRepresentation(rounded:false)} $unitString"); 
   }
 
    bool operator <(Dose other) {
@@ -97,12 +107,14 @@ class Dose extends Equatable {
       substanceUnit: substanceUnit,
       weightUnit: null,
       timeUnit: timeUnit,
+      converted: true
     );
   }
 
   /// Converts the dose by a concentration and returns the same dose if the concentration is not provided.
   Dose convertByConcentration(Concentration? concentration) {
     if (concentration == null) return this; 
+
     final convFactor = substanceUnit.conversionFactor(concentration.substance);
     final newAmount = (amount / concentration.amount) * convFactor;
     final volumeUnit = concentration.diluent.volumeFromDiluent();
@@ -111,6 +123,7 @@ class Dose extends Equatable {
       substanceUnit: volumeUnit,
       weightUnit: weightUnit,
       timeUnit: timeUnit,
+      converted: true,
     );
   }
 
@@ -124,6 +137,7 @@ class Dose extends Equatable {
       substanceUnit: substanceUnit,
       weightUnit: weightUnit,
       timeUnit: targetUnit,
+      converted: true,
     );
   }
 
@@ -138,13 +152,10 @@ class Dose extends Equatable {
       substanceUnit: newUnitCandidate,
       weightUnit: weightUnit,
       timeUnit: timeUnit,
+      converted: converted,
     );
   }
 
-  Dose roundAmount() {
-    final newAmount = smartRound(amount) as double  ;
-    return copyWith(amount: newAmount);
-  }
 
   /// Returns a string representation of the dose units.
   String get unitString {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hane/drugs/models/drug.dart';
+import 'package:hane/extensions/round_dose.dart';
 import 'package:hane/utils/smart_rounder.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hane/drugs/models/units.dart';
@@ -94,12 +95,10 @@ class DosageViewHandler extends ChangeNotifier {
       dosage.higherLimitDose?.weightUnit != null ||
       dosage.maxDose?.weightUnit != null;
 
-  Dose? scaleAndRound(Dose? dose) {
-    return dose?.scaleAmount(threshold: 0.1).roundAmount();
-  }
+
 
   Dose? originalDose(Dose? dose) {
-    return scaleAndRound(dose);
+    return dose;
   }
 
   Dose? convertedDose(Dose? dose) {
@@ -110,12 +109,15 @@ class DosageViewHandler extends ChangeNotifier {
         .convertByConcentration(conversionConcentration)
         .convertByTime(conversionTime);
 
+
+
     if (maxDose != null &&
         displayDose != null &&
         displayDose.unitEquals(maxDose!)) {
       displayDose = displayDose < maxDose! ? displayDose : maxDose;
     }
-    displayDose = scaleAndRound(displayDose);
+    displayDose = displayDose?.scaleAmount(threshold: 0.1);
+
 
     return displayDose;
   }
@@ -132,15 +134,16 @@ class DosageViewHandler extends ChangeNotifier {
   Dose? get higherLimitDose => convertedDose(dosage.higherLimitDose);
   
   // The max dose cant be converted using the same logic as the above, as it leads to stack overflow.
-  Dose? get maxDose => scaleAndRound(dosage.maxDose
+  Dose? get maxDose => dosage.maxDose
       ?.convertByWeight(conversionWeight?.toInt())
       .convertByTime(conversionTime)
-      .convertByConcentration(conversionConcentration));
+      .convertByConcentration(conversionConcentration)
+      .scaleAmount(threshold: 0.1);
 
   /// This returns a string with the conversion information.
   String conversionInfo() {
     final weightConversionInfo = conversionWeight != null
-        ? "vikt ${smartRound(conversionWeight!).toString()} kg"
+        ? "vikt ${conversionWeight?.weightRound(rounded: true)} kg"
         : null;
     final concentrationConversionInfo = conversionConcentration != null
         ? "styrka ${conversionConcentration.toString()}"

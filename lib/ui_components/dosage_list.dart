@@ -12,13 +12,17 @@ import 'package:flutter/services.dart';
 class DosageList extends StatefulWidget {
   final List<Dosage> dosages;
   final bool editMode;
+  final String? instruction;
 
 
   const DosageList({
     super.key,
     required this.dosages,
     required this.editMode,
+    
 
+    
+    this.instruction,
   });
 
   @override
@@ -28,12 +32,36 @@ class DosageList extends StatefulWidget {
 class _DosageListState extends State<DosageList> {
   final _scrollController = ScrollController();
   @override
+
+
+  String? instruction;
+
+  void initState() {
+    super.initState();
+    instruction = widget.instruction;
+  }
   Widget build(BuildContext context) {
 
     final drug = Provider.of<Drug>(context, listen: false);
 
     return Stack(children: [
       ReorderableListView.builder(
+        header: (instruction != null && instruction!.isNotEmpty)
+            ? Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 8,
+                ),
+     
+                child: Text(
+                  "Kommentar: ${instruction!}",
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              )
+            : null,
         scrollController: _scrollController,
         buildDefaultDragHandles: false,
         onReorder: (int oldIndex, int newIndex) {
