@@ -20,27 +20,33 @@ class _NutritionTutorialState extends State<NutritionTutorial> {
         context,
         image: 'assets/images/nutrition/nutrition1.png',
         imageFit: BoxFit.contain,
-        imageHeight: MediaQuery.sizeOf(context).height * 0.5, // Make it responsive
+        imageHeight:
+            MediaQuery.sizeOf(context).height * 0.5, // Make it responsive
         title: 'Nutritionskalkylator',
-        description: 'Denna modul underlättar beräkning av lämplig kalori- och proteinmängd för kritiskt sjuk patient.',
+        description:
+            'Denna modul underlättar beräkning av lämplig kalori- och proteinmängd för kritiskt sjuk patient.',
       ),
       _buildOnboardingPage(
         context,
         image: 'assets/images/nutrition/nutrition2.png',
-        imageHeight: MediaQuery.sizeOf(context).height * 0.6, // Make it responsive
+        imageHeight:
+            MediaQuery.sizeOf(context).height * 0.6, // Make it responsive
         imageFit: BoxFit.fitWidth,
         title: 'Ställ in patientdata och energikällor',
-        description: 'Ställ in vikt, längd samt vårddygn och välj därefter energikällor.',
+        description:
+            'Ställ in vikt, längd samt vårddygn och välj därefter energikällor.',
       ),
       _buildOnboardingPage(
         context,
         image: 'assets/images/nutrition/nutrition3.png',
-        imageHeight: MediaQuery.sizeOf(context).height * 0.6, // Adjust for smaller images
+        imageHeight:
+            MediaQuery.sizeOf(context).height *
+            0.6, // Adjust for smaller images
         imageFit: BoxFit.contain, // Adjust for smaller images
         title: 'Resultat',
-        description: 'Grön zon indikerar lämplig energi- och proteinmängd för patienten. Detta måste dock ställas i relation till klinisk kontext.',
+        description:
+            'Grön zon indikerar lämplig energi- och proteinmängd för patienten. Detta måste dock ställas i relation till klinisk kontext.',
       ),
-  
     ];
 
     return Scaffold(
@@ -88,39 +94,45 @@ class _NutritionTutorialState extends State<NutritionTutorial> {
                   ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                        
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          backgroundColor: const Color.fromARGB(255, 236, 159, 117),
-                          foregroundColor: Colors.black,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        child: const Text('Vi kör!', style: TextStyle(fontSize: 18)),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          236,
+                          159,
+                          117,
+                        ),
+                        foregroundColor: Colors.black,
                       ),
+                      child: const Text(
+                        'Vi kör!',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
                   )
                   : (kIsWeb
                       ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(), // Placeholder for alignment
-                            IconButton(
-                              icon: const Icon(Icons.arrow_forward_rounded),
-                              onPressed: () {
-                                _pageController.nextPage(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              },
-                              iconSize: 36,
-                            ),
-                          ],
-                        )
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(), // Placeholder for alignment
+                          IconButton(
+                            icon: const Icon(Icons.arrow_forward_rounded),
+                            onPressed: () {
+                              _pageController.nextPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                            iconSize: 36,
+                          ),
+                        ],
+                      )
                       : const SizedBox()),
-             
             ],
           ),
         ),
@@ -145,10 +157,7 @@ class _NutritionTutorialState extends State<NutritionTutorial> {
             const SizedBox(height: 16),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),

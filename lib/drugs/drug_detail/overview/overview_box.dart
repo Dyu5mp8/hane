@@ -36,12 +36,18 @@ class _OverviewBoxState extends State<OverviewBox> {
 
   @override
   Widget build(BuildContext context) {
-    bool shouldShowUserNotes = (provider.userMode == UserMode.syncedMode || provider.userMode == UserMode.reviewer);
+    bool shouldShowUserNotes =
+        (provider.userMode == UserMode.syncedMode ||
+            provider.userMode == UserMode.reviewer);
 
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface, width: 0.5)
+        border: Border(
+          bottom: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 0.5,
+          ),
         ),
       ),
       child: ConstrainedBox(
@@ -65,9 +71,10 @@ class _OverviewBoxState extends State<OverviewBox> {
             ),
             // Include the ScrollIndicator widget
             Positioned(
-                bottom: 15,
-                right: 15,
-                child: ScrollIndicator(scrollController: _scrollController)),
+              bottom: 15,
+              right: 15,
+              child: ScrollIndicator(scrollController: _scrollController),
+            ),
           ],
         ),
       ),

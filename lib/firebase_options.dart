@@ -72,5 +72,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'hane-73789.appspot.com',
     iosBundleId: 'com.example.hane',
   );
-
 }

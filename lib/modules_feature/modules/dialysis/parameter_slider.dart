@@ -90,19 +90,22 @@ class _ParameterSliderState extends State<ParameterSlider> {
             SfSlider(
               min: parameter.minValue,
               max: parameter.maxValue,
-              value:
-                  parameter.value.clamp(parameter.minValue, parameter.maxValue),
+              value: parameter.value.clamp(
+                parameter.minValue,
+                parameter.maxValue,
+              ),
               interval: widget.interval,
               stepSize: widget.stepSize,
               showTicks: widget.showTicks,
-              thumbIcon: widget.thumbColor != null
-                  ? Container(
-                      decoration: BoxDecoration(
-                        color: widget.thumbColor,
-                        shape: BoxShape.circle,
-                      ),
-                    )
-                  : null,
+              thumbIcon:
+                  widget.thumbColor != null
+                      ? Container(
+                        decoration: BoxDecoration(
+                          color: widget.thumbColor,
+                          shape: BoxShape.circle,
+                        ),
+                      )
+                      : null,
               onChangeEnd: (_) {
                 // Check for first-time warning transition upon slider release
                 if (!_wasWarningPreviouslyVisible &&

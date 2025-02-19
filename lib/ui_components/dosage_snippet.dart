@@ -15,10 +15,7 @@ import 'package:hane/drugs/models/units.dart';
 class DosageSnippet extends StatefulWidget {
   final bool editMode;
 
-  DosageSnippet({
-    Key? key,
-    this.editMode = false,
-  });
+  DosageSnippet({Key? key, this.editMode = false});
 
   @override
   _DosageSnippetState createState() => _DosageSnippetState();
@@ -87,14 +84,15 @@ class _DosageSnippetState extends State<DosageSnippet> {
     return Theme.of(context).colorScheme.primary;
   }
 
-  Text showDosage(
-      {Dose? dose,
-      Dose? lowerLimitDose,
-      Dose? higherLimitDose,
-      Dose? maxDose,
-      String? instruction,
-      String? conversionInfo,
-      Color? doseColor = Colors.black}) {
+  Text showDosage({
+    Dose? dose,
+    Dose? lowerLimitDose,
+    Dose? higherLimitDose,
+    Dose? maxDose,
+    String? instruction,
+    String? conversionInfo,
+    Color? doseColor = Colors.black,
+  }) {
     TextSpan buildDosageTextSpan({
       String? conversionInfo,
       String? instruction,
@@ -104,13 +102,16 @@ class _DosageSnippetState extends State<DosageSnippet> {
       Dose? maxDose,
     }) {
       final instructionSpan = TextSpan(
-        text: (instruction != null && instruction.isNotEmpty)
-            ? "${instruction.trimRight()}${RegExp(r'[.,:]$').hasMatch(instruction) ? '' : ':'} "
-            : '',
+        text:
+            (instruction != null && instruction.isNotEmpty)
+                ? "${instruction.trimRight()}${RegExp(r'[.,:]$').hasMatch(instruction) ? '' : ':'} "
+                : '',
       );
 
-      final doseStyle =
-          TextStyle(color: doseColor, fontWeight: FontWeight.bold);
+      final doseStyle = TextStyle(
+        color: doseColor,
+        fontWeight: FontWeight.bold,
+      );
       final doseSpan = TextSpan(
         text: dose != null ? "$dose. " : '',
         style: doseStyle,
@@ -119,9 +120,10 @@ class _DosageSnippetState extends State<DosageSnippet> {
       TextSpan doseRangeSpan() {
         if (lowerLimitDose != null && higherLimitDose != null) {
           return TextSpan(
-            text: dose == null
-                ? '$lowerLimitDose - $higherLimitDose. '
-                : "($lowerLimitDose - $higherLimitDose). ",
+            text:
+                dose == null
+                    ? '$lowerLimitDose - $higherLimitDose. '
+                    : "($lowerLimitDose - $higherLimitDose). ",
             style: doseStyle,
           );
         }
@@ -170,8 +172,12 @@ class _DosageSnippetState extends State<DosageSnippet> {
     final dvh = Provider.of<DosageViewHandler>(context, listen: true);
 
     return ListTile(
-      contentPadding:
-          const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 4),
+      contentPadding: const EdgeInsets.only(
+        left: 10,
+        right: 10,
+        top: 0,
+        bottom: 4,
+      ),
       title: Column(
         spacing: 5,
         children: [
@@ -255,8 +261,10 @@ class _DosageSnippetState extends State<DosageSnippet> {
                     children: [
                       IconButton(
                         padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.delete,
-                            color: Color.fromARGB(255, 255, 99, 8)),
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Color.fromARGB(255, 255, 99, 8),
+                        ),
                         onPressed: () {
                           showDialog(
                             context: context,
@@ -264,11 +272,12 @@ class _DosageSnippetState extends State<DosageSnippet> {
                               return AlertDialog(
                                 title: const Text('Radera'),
                                 content: const Text(
-                                    'Är du säker på att du vill radera denna dosering?'),
+                                  'Är du säker på att du vill radera denna dosering?',
+                                ),
                                 actions: <Widget>[
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(dialogContext),
+                                    onPressed:
+                                        () => Navigator.pop(dialogContext),
                                     child: const Text('Avbryt'),
                                   ),
                                   TextButton(
@@ -276,8 +285,10 @@ class _DosageSnippetState extends State<DosageSnippet> {
                                       dvh.deleteDosage();
                                       Navigator.pop(dialogContext);
                                     },
-                                    child: const Text('Radera',
-                                        style: TextStyle(color: Colors.red)),
+                                    child: const Text(
+                                      'Radera',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   ),
                                 ],
                               );
@@ -300,7 +311,7 @@ class _DosageSnippetState extends State<DosageSnippet> {
                             },
                           );
                         },
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -308,16 +319,17 @@ class _DosageSnippetState extends State<DosageSnippet> {
           ),
         ],
       ),
-      subtitle: dvh.conversionActive
-          ? showDosage(
-              dose: dvh.dose,
-              lowerLimitDose: dvh.lowerLimitDose,
-              higherLimitDose: dvh.higherLimitDose,
-              maxDose: dvh.maxDose,
-              conversionInfo: dvh.conversionInfo(),
-              doseColor: activeColor(),
-            )
-          : null,
+      subtitle:
+          dvh.conversionActive
+              ? showDosage(
+                dose: dvh.dose,
+                lowerLimitDose: dvh.lowerLimitDose,
+                higherLimitDose: dvh.higherLimitDose,
+                maxDose: dvh.maxDose,
+                conversionInfo: dvh.conversionInfo(),
+                doseColor: activeColor(),
+              )
+              : null,
     );
   }
 }

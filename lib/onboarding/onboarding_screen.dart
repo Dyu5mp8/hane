@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
-
-
-
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -23,21 +20,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         context,
         image: 'assets/images/welcome.png',
         imageFit: BoxFit.contain,
-        imageHeight: MediaQuery.sizeOf(context).height * 0.5, // Make it responsive
+        imageHeight:
+            MediaQuery.sizeOf(context).height * 0.5, // Make it responsive
         title: 'Välkommen!',
         description: 'Hitta snabbt till det du vill använda',
       ),
       _buildOnboardingPage(
         context,
         image: 'assets/images/milrinone.png',
-        imageHeight: MediaQuery.sizeOf(context).height * 0.6, // Make it responsive
+        imageHeight:
+            MediaQuery.sizeOf(context).height * 0.6, // Make it responsive
         title: 'Översikt',
         description: 'Se allt nödvändigt på en sida',
       ),
       _buildOnboardingPage(
         context,
         image: 'assets/images/milrinone_dosage_snippet.png',
-        imageHeight: MediaQuery.sizeOf(context).height * 0.1, // Adjust for smaller images
+        imageHeight:
+            MediaQuery.sizeOf(context).height *
+            0.1, // Adjust for smaller images
         title: 'Doseringsrutan',
         description: 'Välj indikation och se doseringsförslag.',
       ),
@@ -96,39 +97,45 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        style: ElevatedButton.styleFrom(
-                        
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          backgroundColor: const Color.fromARGB(255, 236, 159, 117),
-                          foregroundColor: Colors.black,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        child: const Text('Vi kör!', style: TextStyle(fontSize: 18)),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          236,
+                          159,
+                          117,
+                        ),
+                        foregroundColor: Colors.black,
                       ),
+                      child: const Text(
+                        'Vi kör!',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
                   )
                   : (kIsWeb
                       ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const SizedBox(), // Placeholder for alignment
-                            IconButton(
-                              icon: const Icon(Icons.arrow_forward_rounded),
-                              onPressed: () {
-                                _pageController.nextPage(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                );
-                              },
-                              iconSize: 36,
-                            ),
-                          ],
-                        )
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(), // Placeholder for alignment
+                          IconButton(
+                            icon: const Icon(Icons.arrow_forward_rounded),
+                            onPressed: () {
+                              _pageController.nextPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                            iconSize: 36,
+                          ),
+                        ],
+                      )
                       : const SizedBox()),
-             
             ],
           ),
         ),
@@ -153,10 +160,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 16),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),

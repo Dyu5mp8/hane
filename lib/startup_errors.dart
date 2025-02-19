@@ -77,11 +77,7 @@ class AuthErrorWidget extends StatelessWidget {
   final String errorDetails;
   final VoidCallback? onRetry;
 
-  const AuthErrorWidget({
-    super.key,
-    required this.errorDetails,
-    this.onRetry,
-  });
+  const AuthErrorWidget({super.key, required this.errorDetails, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +93,7 @@ class AuthErrorWidget extends StatelessWidget {
 class NetworkErrorWidget extends StatelessWidget {
   final VoidCallback? onRetry;
 
-  const NetworkErrorWidget({
-    super.key,
-    this.onRetry,
-  });
+  const NetworkErrorWidget({super.key, this.onRetry});
 
   @override
   Widget build(BuildContext context) {

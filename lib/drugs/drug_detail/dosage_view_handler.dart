@@ -23,9 +23,9 @@ class DosageViewHandler extends ChangeNotifier {
     this.availableConcentrations,
     this.onDosageDeleted,
     required this.onDosageUpdated,
-  })  : _conversionWeight = conversionWeight,
-        _conversionTime = conversionTime,
-        _conversionConcentration = conversionConcentration;
+  }) : _conversionWeight = conversionWeight,
+       _conversionTime = conversionTime,
+       _conversionConcentration = conversionConcentration;
 
   double? get conversionWeight => _conversionWeight;
   TimeUnit? get conversionTime => _conversionTime;
@@ -56,9 +56,10 @@ class DosageViewHandler extends ChangeNotifier {
   List<Concentration>? get convertibleConcentrations {
     final SubstanceUnit? doseSubstanceUnit = dosage.getSubstanceUnit();
     if (doseSubstanceUnit != null && availableConcentrations != null) {
-      final filtered = availableConcentrations!
-          .where((c) => c.substance.unitType == doseSubstanceUnit.unitType)
-          .toList();
+      final filtered =
+          availableConcentrations!
+              .where((c) => c.substance.unitType == doseSubstanceUnit.unitType)
+              .toList();
       return filtered.isNotEmpty ? filtered : null;
     }
     return null;
@@ -75,8 +76,9 @@ class DosageViewHandler extends ChangeNotifier {
   /// Checks if the given dose can be converted via concentration.
   bool canConvertConcentration() {
     final doseUnitType = dosage.getSubstanceUnit();
-    return availableConcentrations
-            ?.any((c) => c.substance.unitType == doseUnitType?.unitType) ??
+    return availableConcentrations?.any(
+          (c) => c.substance.unitType == doseUnitType?.unitType,
+        ) ??
         false;
   }
 
@@ -94,8 +96,6 @@ class DosageViewHandler extends ChangeNotifier {
       dosage.higherLimitDose?.weightUnit != null ||
       dosage.maxDose?.weightUnit != null;
 
-
-
   Dose? originalDose(Dose? dose) {
     return dose;
   }
@@ -108,29 +108,26 @@ class DosageViewHandler extends ChangeNotifier {
         .convertByConcentration(conversionConcentration)
         .convertByTime(conversionTime);
 
-
-
     if (maxDose != null &&
         displayDose != null &&
         displayDose.unitEquals(maxDose!)) {
       displayDose = displayDose < maxDose! ? displayDose : maxDose;
     }
 
-
     return displayDose;
   }
- 
-// these are the original doses
+
+  // these are the original doses
   Dose? get startDose => originalDose(dosage.dose);
   Dose? get startLowerLimitDose => originalDose(dosage.lowerLimitDose);
   Dose? get startHigherLimitDose => originalDose(dosage.higherLimitDose);
   Dose? get startMaxDose => originalDose(dosage.maxDose);
 
-// these are the converted doses
+  // these are the converted doses
   Dose? get dose => convertedDose(dosage.dose);
   Dose? get lowerLimitDose => convertedDose(dosage.lowerLimitDose);
   Dose? get higherLimitDose => convertedDose(dosage.higherLimitDose);
-  
+
   // The max dose cant be converted using the same logic as the above, as it leads to stack overflow.
   Dose? get maxDose => dosage.maxDose
       ?.convertByWeight(conversionWeight?.toInt())
@@ -139,24 +136,28 @@ class DosageViewHandler extends ChangeNotifier {
 
   /// This returns a string with the conversion information.
   String conversionInfo() {
-    final weightConversionInfo = conversionWeight != null
-        ? "vikt ${conversionWeight?.weightRound(rounded: true)} kg"
-        : null;
-    final concentrationConversionInfo = conversionConcentration != null
-        ? "styrka ${conversionConcentration.toString()}"
-        : null;
-    final timeConversionInfo = conversionTime != null
-        ? "tidsenhet ${conversionTime.toString()}"
-        : null;
+    final weightConversionInfo =
+        conversionWeight != null
+            ? "vikt ${conversionWeight?.weightRound(rounded: true)} kg"
+            : null;
+    final concentrationConversionInfo =
+        conversionConcentration != null
+            ? "styrka ${conversionConcentration.toString()}"
+            : null;
+    final timeConversionInfo =
+        conversionTime != null
+            ? "tidsenhet ${conversionTime.toString()}"
+            : null;
 
     final conversionParts = [
       if (weightConversionInfo != null) weightConversionInfo,
       if (concentrationConversionInfo != null) concentrationConversionInfo,
       if (timeConversionInfo != null) timeConversionInfo,
     ];
-    final conversionInfo = conversionParts.isNotEmpty
-        ? "Beräknat på ${conversionParts.join(', ')}:\n"
-        : "";
+    final conversionInfo =
+        conversionParts.isNotEmpty
+            ? "Beräknat på ${conversionParts.join(', ')}:\n"
+            : "";
 
     return conversionInfo;
   }

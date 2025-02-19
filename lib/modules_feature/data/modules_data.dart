@@ -14,11 +14,12 @@ List<Module> modules = [
     moduleDetailView: DialysisView(),
   ),
   Module(
-      id: 'rotem',
-      name: 'ROTEM',
-      description: 'Stöd för tolkning av ROTEM',
-      icon: Bootstrap.droplet,
-      moduleDetailView: const RotemWizardScreen()),
+    id: 'rotem',
+    name: 'ROTEM',
+    description: 'Stöd för tolkning av ROTEM',
+    icon: Bootstrap.droplet,
+    moduleDetailView: const RotemWizardScreen(),
+  ),
   Module(
     id: 'nutrition',
     name: 'Nutrition',
@@ -27,9 +28,10 @@ List<Module> modules = [
     moduleDetailView: const NutritionView(),
   ),
   Module(
-      id: 'antibiotics',
-      name: 'Antibiotika',
-      description: 'Antibiotikalista (RAF)',
-      icon: Bootstrap.list_columns,
-      moduleDetailView: const AntibioticsListView())
+    id: 'antibiotics',
+    name: 'Antibiotika',
+    description: 'Antibiotikalista (RAF)',
+    icon: Bootstrap.list_columns,
+    moduleDetailView: const AntibioticsListView(),
+  ),
 ];

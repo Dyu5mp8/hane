@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hane/login/initializer_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hane/app_theme.dart'; 
+import 'package:hane/app_theme.dart';
 
 class PreferenceSelectionScreen extends StatelessWidget {
   final String user;
@@ -15,20 +15,18 @@ class PreferenceSelectionScreen extends StatelessWidget {
     await localPrefs.setString('preferSyncedMode', preferSynced.toString());
 
     // Store preference in Firestore
-    final prefs = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user);
+    final prefs = FirebaseFirestore.instance.collection('users').doc(user);
 
     await prefs.set({
       'preferSyncedMode': preferSynced,
     }, SetOptions(merge: true));
 
     // Re-initialize the app after setting preference
-    if(context.mounted) {
+    if (context.mounted) {
       Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const InitializerWidget()),
-    );
+        context,
+        MaterialPageRoute(builder: (context) => const InitializerWidget()),
+      );
     }
   }
 
@@ -73,7 +71,8 @@ class PreferenceSelectionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildModeCard(BuildContext context, {
+  Widget _buildModeCard(
+    BuildContext context, {
     required String title,
     required String description,
     required String buttonText,
@@ -81,7 +80,6 @@ class PreferenceSelectionScreen extends StatelessWidget {
     required IconData icon,
     required Color cardColor,
     required Color buttonColor,
-  
   }) {
     ThemeData theme = appTheme;
     return Card(
@@ -89,7 +87,9 @@ class PreferenceSelectionScreen extends StatelessWidget {
       elevation: 4,
       color: cardColor,
       child: Padding(
-        padding: const EdgeInsets.all(20.0), // Increased padding for better spacing
+        padding: const EdgeInsets.all(
+          20.0,
+        ), // Increased padding for better spacing
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -101,8 +101,8 @@ class PreferenceSelectionScreen extends StatelessWidget {
                   child: Text(
                     title,
                     style: theme.textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -111,9 +111,9 @@ class PreferenceSelectionScreen extends StatelessWidget {
             Text(
               description,
               style: theme.textTheme.headlineLarge?.copyWith(
-                    fontSize: 16,
-                    height: 1.4,
-                  ),
+                fontSize: 16,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 20),
             Center(
@@ -123,9 +123,12 @@ class PreferenceSelectionScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  backgroundColor: buttonColor, // Use buttonColor for better contrast
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  backgroundColor:
+                      buttonColor, // Use buttonColor for better contrast
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
                   textStyle: const TextStyle(fontSize: 16),
                 ),
                 child: Text(buttonText, style: theme.textTheme.headlineMedium),

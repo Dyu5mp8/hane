@@ -32,35 +32,35 @@ class CustomDrawerHeader extends StatelessWidget {
         children: [
           user != null
               ? CircleAvatar(
-                  radius: 28,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.onSecondaryContainer,
-                  child: Text(
-                    user.email![0].toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                    ),
-                  ),
-                )
-              : CircleAvatar(
-                  radius: 28,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.onPrimaryContainer,
-                  child: Icon(
-                    Icons.person,
-                    size: 28,
+                radius: 28,
+                backgroundColor:
+                    Theme.of(context).colorScheme.onSecondaryContainer,
+                child: Text(
+                  user.email![0].toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 24,
                     color: Theme.of(context).colorScheme.primaryContainer,
                   ),
                 ),
+              )
+              : CircleAvatar(
+                radius: 28,
+                backgroundColor:
+                    Theme.of(context).colorScheme.onPrimaryContainer,
+                child: Icon(
+                  Icons.person,
+                  size: 28,
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                ),
+              ),
           const SizedBox(height: 16),
           Logo(size: 20),
           const SizedBox(height: 4),
           Text(
             user != null ? 'Inloggad som ${user.email!}' : 'Inte inloggad',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                ),
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
+            ),
           ),
         ],
       ),

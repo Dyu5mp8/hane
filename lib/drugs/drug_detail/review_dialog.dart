@@ -33,10 +33,15 @@ class _ReviewDialogState extends State<ReviewDialog> {
     // Update the drug's reviewerUIDs
     widget.drug.hasReviewedUIDs = acceptedReviewers;
     // Save changes using the DrugListProvider or appropriate method
-    final drugListProvider =
-        Provider.of<DrugListProvider>(context, listen: false);
-    
-    await drugListProvider.updateHasReviewed(widget.drug.id!, acceptedReviewers);
+    final drugListProvider = Provider.of<DrugListProvider>(
+      context,
+      listen: false,
+    );
+
+    await drugListProvider.updateHasReviewed(
+      widget.drug.id!,
+      acceptedReviewers,
+    );
   }
 
   String formatTimestamp(String timestamp) {
@@ -54,30 +59,30 @@ class _ReviewDialogState extends State<ReviewDialog> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChangeLog(
-          drug: widget.drug,
-          onChanged: _onChangeLogChanged,
-        ),
+        builder:
+            (context) =>
+                ChangeLog(drug: widget.drug, onChanged: _onChangeLogChanged),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-
     final latestChangeNote = widget.drug.latestReviewChangeNotes();
 
     return AlertDialog(
-      title: Row(children: [
-        const Text('Granskning'),
-        const Expanded(child: SizedBox()),
-        TextButton(
-          onPressed: () {
-            _navigateToChangeLog(context);
-          },
-          child: const Text('Ändringshistorik'),
-        ),
-      ]),
+      title: Row(
+        children: [
+          const Text('Granskning'),
+          const Expanded(child: SizedBox()),
+          TextButton(
+            onPressed: () {
+              _navigateToChangeLog(context);
+            },
+            child: const Text('Ändringshistorik'),
+          ),
+        ],
+      ),
       content: SizedBox(
         width: double.maxFinite,
         child: Column(
@@ -90,11 +95,14 @@ class _ReviewDialogState extends State<ReviewDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Senaste ändring att granska:',
-                        style: Theme.of(context).textTheme.headlineLarge),
+                    Text(
+                      'Senaste ändring att granska:',
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
                     const SizedBox(height: 8),
                     Text(
-                        'Kommentar: ${latestChangeNote['comment'] ?? 'Ingen ändringskommentar'}'),
+                      'Kommentar: ${latestChangeNote['comment'] ?? 'Ingen ändringskommentar'}',
+                    ),
                     Text(
                       'Tidpunkt: ${formatTimestamp(latestChangeNote['timestamp'])}\nAnvändare: ${latestChangeNote['user']}',
                     ),
@@ -102,35 +110,43 @@ class _ReviewDialogState extends State<ReviewDialog> {
                 ),
               ),
             const Divider(),
-            Text('Granskare:',
-                style: Theme.of(context).textTheme.headlineLarge),
+            Text(
+              'Granskare:',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
             const SizedBox(height: 8),
             Expanded(
               child: ListView(
                 shrinkWrap: true,
-                children: availableReviewers.entries.map((entry) {
-                  final reviewerUID = entry.key;
-                  final reviewerEmail = entry.value;
-                  final isSelected = acceptedReviewers.keys.contains(reviewerUID);
-                  final isCurrentUser = reviewerUID == widget.currentUserUID;
-                  return CheckboxListTile(
-                    value: isSelected,
-                    title: Text(reviewerEmail),
-                    onChanged: isCurrentUser
-                        ? (bool? value) {
-                            setState(() {
-                              if (value == true) {
-                                acceptedReviewers[reviewerUID] = reviewerEmail;
-                              } else {
-                                acceptedReviewers.remove(reviewerUID);
-                              }
-                            });
-                          }
-                        : null, // Disable checkbox for other users
-                    controlAffinity: ListTileControlAffinity.leading,
-                    activeColor: isCurrentUser ? null : Colors.grey,
-                  );
-                }).toList(),
+                children:
+                    availableReviewers.entries.map((entry) {
+                      final reviewerUID = entry.key;
+                      final reviewerEmail = entry.value;
+                      final isSelected = acceptedReviewers.keys.contains(
+                        reviewerUID,
+                      );
+                      final isCurrentUser =
+                          reviewerUID == widget.currentUserUID;
+                      return CheckboxListTile(
+                        value: isSelected,
+                        title: Text(reviewerEmail),
+                        onChanged:
+                            isCurrentUser
+                                ? (bool? value) {
+                                  setState(() {
+                                    if (value == true) {
+                                      acceptedReviewers[reviewerUID] =
+                                          reviewerEmail;
+                                    } else {
+                                      acceptedReviewers.remove(reviewerUID);
+                                    }
+                                  });
+                                }
+                                : null, // Disable checkbox for other users
+                        controlAffinity: ListTileControlAffinity.leading,
+                        activeColor: isCurrentUser ? null : Colors.grey,
+                      );
+                    }).toList(),
               ),
             ),
           ],

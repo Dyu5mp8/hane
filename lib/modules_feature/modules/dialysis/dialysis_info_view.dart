@@ -21,7 +21,7 @@ class DialysisInfoView extends StatelessWidget {
                   return AlertDialog(
                     title: const Text('Om denna modul'),
                     content: const Text(
-                      'Denna modul bygger på hjälpmedlet "Dialysordinationsblad IVA Huddinge (20220625) utformat av Jonatan Grip. Ordination av kontinuerlig dialys kräver kunskap och erfarenhet. Denna modul är endast ett räknehjälpmedel. Varken upphovsmännen eller appskaparen ansvarar för eventuella fel eller skador som kan uppstå vid användning av detta hjälpmedel.', 
+                      'Denna modul bygger på hjälpmedlet "Dialysordinationsblad IVA Huddinge (20220625) utformat av Jonatan Grip. Ordination av kontinuerlig dialys kräver kunskap och erfarenhet. Denna modul är endast ett räknehjälpmedel. Varken upphovsmännen eller appskaparen ansvarar för eventuella fel eller skador som kan uppstå vid användning av detta hjälpmedel.',
                     ),
                     actions: [
                       TextButton(
@@ -34,7 +34,6 @@ class DialysisInfoView extends StatelessWidget {
                   );
                 },
               );
-           
             },
           ),
         ],
@@ -43,7 +42,7 @@ class DialysisInfoView extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          children: [
             Text(
               'Optimal dialysdos på indikation AKI anses vara 20 - 25 ml/kg/h. Hos instabila patienter finns ofta skäl att ha högre dos, särskilt som hänsyn måste tas till down-time pga undersökningar mm. Vid leversvikt används ofta betydligt högre dialysdoser.',
               style: TextStyle(fontSize: 16.0),
@@ -66,9 +65,9 @@ class DialysisInfoView extends StatelessWidget {
               'Kvot >2.5 tyder på citratackumulation. Om behov av kalciumersättning avtar mycket eller helt tyder det på urkalkning. I bägge dessa fall är det lämpligt att byta från citratdialys (se PM).',
               style: TextStyle(fontSize: 16.0),
             ),
-            
+
             SizedBox(height: 20),
-          
+
             DialysisConsitutentsList(),
           ],
         ),

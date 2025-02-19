@@ -12,11 +12,15 @@ class ReviewButton extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (status) {
       case ReviewStatus.waitingOnUser:
-        return const Icon(Bootstrap.exclamation_circle,
-            color: Color.fromARGB(255, 183, 125, 49));
+        return const Icon(
+          Bootstrap.exclamation_circle,
+          color: Color.fromARGB(255, 183, 125, 49),
+        );
       case ReviewStatus.userAccepted:
-        return const Icon(Bootstrap.check_circle_fill,
-            color: Color.fromARGB(255, 183, 125, 49));
+        return const Icon(
+          Bootstrap.check_circle_fill,
+          color: Color.fromARGB(255, 183, 125, 49),
+        );
       case ReviewStatus.allAccepted:
         return const Icon(Bootstrap.check_circle_fill, color: Colors.green);
 

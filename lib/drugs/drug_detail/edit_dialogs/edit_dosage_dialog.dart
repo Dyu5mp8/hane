@@ -11,11 +11,8 @@ class EditDosageDialog extends StatefulWidget {
   final Dosage dosage;
   final Function(Dosage) onSave; // Callback to notify parent
 
-  const EditDosageDialog({
-    Key? key,
-    required this.dosage,
-    required this.onSave,
-  }) : super(key: key);
+  const EditDosageDialog({Key? key, required this.dosage, required this.onSave})
+    : super(key: key);
 
   @override
   State<EditDosageDialog> createState() => _EditDosageDialogState();
@@ -51,16 +48,21 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
     super.initState();
 
     // Initialize text controllers using values from the passed-in dosage.
-    instructionController =
-        TextEditingController(text: widget.dosage.instruction ?? "");
-    doseAmountController =
-        TextEditingController(text: dosage.dose?.amount.toString() ?? "");
+    instructionController = TextEditingController(
+      text: widget.dosage.instruction ?? "",
+    );
+    doseAmountController = TextEditingController(
+      text: dosage.dose?.amount.toString() ?? "",
+    );
     lowerLimitDoseAmountController = TextEditingController(
-        text: dosage.lowerLimitDose?.amount.toString() ?? "");
+      text: dosage.lowerLimitDose?.amount.toString() ?? "",
+    );
     higherLimitDoseAmountController = TextEditingController(
-        text: dosage.higherLimitDose?.amount.toString() ?? "");
-    maxDoseAmountController =
-        TextEditingController(text: dosage.maxDose?.amount.toString() ?? "");
+      text: dosage.higherLimitDose?.amount.toString() ?? "",
+    );
+    maxDoseAmountController = TextEditingController(
+      text: dosage.maxDose?.amount.toString() ?? "",
+    );
 
     substance = dosage.getSubstanceUnit();
     weight = dosage.getWeightUnit();
@@ -109,60 +111,55 @@ class _EditDosageDialogState extends State<EditDosageDialog> {
       },
     );
   }
-/// Builds a dropdown for unit selection with a "-" option for null,
-/// but only if T is not SubstanceUnit.
-Widget buildDropdownButtonFormField<T extends Unit?>({
-  required T? value,
-  required List<T> items,
-  required ValueChanged<T?> onChanged,
-  bool allowNull = true,
-}) {
-  final List<DropdownMenuItem<T?>> menuItems = [];
 
-  if (allowNull) {
-    menuItems.add(
-      DropdownMenuItem<T?>(
-        value: null,
-        child: const Text(
-          '-',
-          style: TextStyle(fontSize: 12),
+  /// Builds a dropdown for unit selection with a "-" option for null,
+  /// but only if T is not SubstanceUnit.
+  Widget buildDropdownButtonFormField<T extends Unit?>({
+    required T? value,
+    required List<T> items,
+    required ValueChanged<T?> onChanged,
+    bool allowNull = true,
+  }) {
+    final List<DropdownMenuItem<T?>> menuItems = [];
+
+    if (allowNull) {
+      menuItems.add(
+        DropdownMenuItem<T?>(
+          value: null,
+          child: const Text('-', style: TextStyle(fontSize: 12)),
+        ),
+      );
+    }
+
+    menuItems.addAll(
+      items.map(
+        (unit) => DropdownMenuItem<T?>(
+          value: unit,
+          child: Text(unit.toString(), style: const TextStyle(fontSize: 12)),
+        ),
+      ),
+    );
+
+    return Expanded(
+      child: DropdownButtonHideUnderline(
+        child: DropdownButtonFormField<T?>(
+          value: value,
+          isExpanded: true,
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 8,
+              horizontal: 12,
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          items: menuItems,
+          onChanged: onChanged,
+          menuMaxHeight: 300,
         ),
       ),
     );
   }
-
-  menuItems.addAll(
-    items.map(
-      (unit) => DropdownMenuItem<T?>(
-        value: unit,
-        child: Text(
-          unit.toString(),
-          style: const TextStyle(fontSize: 12),
-        ),
-      ),
-    ),
-  );
-
-  return Expanded(
-    child: DropdownButtonHideUnderline(
-      child: DropdownButtonFormField<T?>(
-        value: value,
-        isExpanded: true,
-        decoration: InputDecoration(
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        items: menuItems,
-        onChanged: onChanged,
-        menuMaxHeight: 300,
-      ),
-    ),
-  );
-
-}
 
   /// Creates a Dose from the provided [amountText] and the currently selected unit options.
   Dose? _createDose(String amountText) {
@@ -184,7 +181,8 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
 
     // Perform validations.
     bool isDoseFilled = doseAmountController.text.isNotEmpty;
-    bool isFromAndToFilled = lowerLimitDoseAmountController.text.isNotEmpty &&
+    bool isFromAndToFilled =
+        lowerLimitDoseAmountController.text.isNotEmpty &&
         higherLimitDoseAmountController.text.isNotEmpty;
     bool isInstructionFilled = instructionController.text.isNotEmpty;
     bool isMaxDoseFilled = maxDoseAmountController.text.isNotEmpty;
@@ -226,9 +224,11 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
     if (lowerLimitDoseAmountController.text.isNotEmpty &&
         higherLimitDoseAmountController.text.isNotEmpty) {
       final lowerLimit = double.tryParse(
-          lowerLimitDoseAmountController.text.replaceAll(",", "."));
+        lowerLimitDoseAmountController.text.replaceAll(",", "."),
+      );
       final higherLimit = double.tryParse(
-          higherLimitDoseAmountController.text.replaceAll(",", "."));
+        higherLimitDoseAmountController.text.replaceAll(",", "."),
+      );
       if (lowerLimit == null || higherLimit == null) {
         setState(() {
           errorMessage = 'Från och till doserna måste vara giltiga nummer.';
@@ -243,7 +243,10 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
       }
     }
 
-    if (isInstructionFilled && !isDoseFilled && !isFromAndToFilled && isUnitFilled) {
+    if (isInstructionFilled &&
+        !isDoseFilled &&
+        !isFromAndToFilled &&
+        isUnitFilled) {
       setState(() {
         errorMessage = 'Du kan inte välja en enhet utan att fylla i dosen.';
       });
@@ -251,14 +254,18 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
     }
 
     // Create the doses using our helper.
-    Dose? mainDose = isDoseFilled ? _createDose(doseAmountController.text) : null;
-    Dose? lowerDose = lowerLimitDoseAmountController.text.isNotEmpty
-        ? _createDose(lowerLimitDoseAmountController.text)
-        : null;
-    Dose? higherDose = higherLimitDoseAmountController.text.isNotEmpty
-        ? _createDose(higherLimitDoseAmountController.text)
-        : null;
-    Dose? maxDose = isMaxDoseFilled ? _createDose(maxDoseAmountController.text) : null;
+    Dose? mainDose =
+        isDoseFilled ? _createDose(doseAmountController.text) : null;
+    Dose? lowerDose =
+        lowerLimitDoseAmountController.text.isNotEmpty
+            ? _createDose(lowerLimitDoseAmountController.text)
+            : null;
+    Dose? higherDose =
+        higherLimitDoseAmountController.text.isNotEmpty
+            ? _createDose(higherLimitDoseAmountController.text)
+            : null;
+    Dose? maxDose =
+        isMaxDoseFilled ? _createDose(maxDoseAmountController.text) : null;
 
     // Create the updated Dosage.
     final updatedDosage = Dosage(
@@ -290,18 +297,20 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Allmänt",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  "Allmänt",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
                 const Text("Administrationsväg"),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 5.0,
                   runSpacing: 5,
-                  children: AdministrationRoute.values
-                      .map((route) =>
-                          _labelChip(route))
-                      .toList(),
+                  children:
+                      AdministrationRoute.values
+                          .map((route) => _labelChip(route))
+                          .toList(),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -317,8 +326,7 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
                     text: "Enhet",
                     style: TextStyle(fontWeight: FontWeight.bold),
                     children: [
-                      TextSpan(
-                          text: ' *', style: TextStyle(color: Colors.red))
+                      TextSpan(text: ' *', style: TextStyle(color: Colors.red)),
                     ],
                   ),
                 ),
@@ -362,8 +370,10 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text("Dosering och intervall",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text(
+                  "Dosering och intervall",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 8),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -377,12 +387,15 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
                         maxLines: 1,
                         maxLength: 5,
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                          decimal: true,
+                        ),
+                        buildCounter:
+                            (
+                              context, {
+                              required int currentLength,
+                              required bool isFocused,
+                              required int? maxLength,
+                            }) => null,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -397,12 +410,15 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
                         maxLines: 1,
                         maxLength: 5,
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                          decimal: true,
+                        ),
+                        buildCounter:
+                            (
+                              context, {
+                              required int currentLength,
+                              required bool isFocused,
+                              required int? maxLength,
+                            }) => null,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -417,17 +433,22 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
                         maxLines: 1,
                         maxLength: 5,
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                          decimal: true,
+                        ),
+                        buildCounter:
+                            (
+                              context, {
+                              required int currentLength,
+                              required bool isFocused,
+                              required int? maxLength,
+                            }) => null,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(") ${substance != null ? '$substance' : ''}${weight != null ? '/$weight' : ''}${time != null ? '/$time' : ''}", style: labelTextStyle),
-                    
+                    Text(
+                      ") ${substance != null ? '$substance' : ''}${weight != null ? '/$weight' : ''}${time != null ? '/$time' : ''}",
+                      style: labelTextStyle,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -445,17 +466,22 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
                         maxLines: 1,
                         maxLength: 5,
                         keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        buildCounter: (context,
-                                {required int currentLength,
-                                required bool isFocused,
-                                required int? maxLength}) =>
-                            null,
+                          decimal: true,
+                        ),
+                        buildCounter:
+                            (
+                              context, {
+                              required int currentLength,
+                              required bool isFocused,
+                              required int? maxLength,
+                            }) => null,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text("${substance != null ? '$substance' : ''}${time != null ? '/$time' : ''}", style: labelTextStyle),
-                    
+                    Text(
+                      "${substance != null ? '$substance' : ''}${time != null ? '/$time' : ''}",
+                      style: labelTextStyle,
+                    ),
                   ],
                 ),
                 if (errorMessage != null) ...[
@@ -472,10 +498,7 @@ Widget buildDropdownButtonFormField<T extends Unit?>({
           onPressed: () => Navigator.pop(context),
           child: const Text("Avbryt"),
         ),
-        ElevatedButton(
-          onPressed: _saveForm,
-          child: const Text("Spara"),
-        ),
+        ElevatedButton(onPressed: _saveForm, child: const Text("Spara")),
       ],
     );
   }

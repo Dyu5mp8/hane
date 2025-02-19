@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class Module {
   final String id;
   final String name;

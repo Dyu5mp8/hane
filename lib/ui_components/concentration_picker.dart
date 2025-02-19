@@ -22,44 +22,46 @@ class _ConcentrationPickerState extends State<ConcentrationPicker> {
   @override
   void initState() {
     super.initState();
-  
+
     _currentConcentration =
         null; // Assuming at least one concentration is available
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       padding: const EdgeInsets.all(20),
       width: MediaQuery.sizeOf(context).width,
       height: 200,
       child: Column(
         children: [
-          const Text("Välj koncentration",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            "Välj koncentration",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           SegmentedButton<Concentration>(
-              showSelectedIcon: false,
-              emptySelectionAllowed: true,
+            showSelectedIcon: false,
+            emptySelectionAllowed: true,
 
-              segments: widget.concentrations.map((Concentration conc) {
-                return ButtonSegment<Concentration>(
-                  value: conc,
-                  label: Text(conc.getSecondaryRepresentation() ?? conc.toString()),
-                );
-              }).toList(),
-              selected: _currentConcentration == null
-                  ? {}
-                  : {_currentConcentration!},
-              
-              onSelectionChanged: (newSelection) {
-                setState(() {
-                  widget.onConcentrationSet(newSelection.first);
-                });
-                  Navigator.pop(context);
-     
-              }),
-        
+            segments:
+                widget.concentrations.map((Concentration conc) {
+                  return ButtonSegment<Concentration>(
+                    value: conc,
+                    label: Text(
+                      conc.getSecondaryRepresentation() ?? conc.toString(),
+                    ),
+                  );
+                }).toList(),
+            selected:
+                _currentConcentration == null ? {} : {_currentConcentration!},
+
+            onSelectionChanged: (newSelection) {
+              setState(() {
+                widget.onConcentrationSet(newSelection.first);
+              });
+              Navigator.pop(context);
+            },
+          ),
         ],
       ),
     );

@@ -45,14 +45,17 @@ class ReadFeedbackView extends StatelessWidget {
                   // Convert Firestore doc snapshot data into UserFeedback model
                   final feedback = UserFeedback.fromFirestore(doc.data());
 
-                  final formattedDate = DateFormat('yyyy-MM-dd')
-                      .format(feedback.timestamp.toDate());
+                  final formattedDate = DateFormat(
+                    'yyyy-MM-dd',
+                  ).format(feedback.timestamp.toDate());
 
                   return Container(
-                    
                     margin: const EdgeInsets.symmetric(
-                        horizontal: 8.0, vertical: 4.0),
-                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      horizontal: 8.0,
+                      vertical: 4.0,
+                    ),
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -71,14 +74,8 @@ class ReadFeedbackView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Text(
-                                  feedback.userId,
-                    
-                                ),
-                                Text(
-                                  formattedDate,
-                                
-                                ),
+                                Text(feedback.userId),
+                                Text(formattedDate),
                               ],
                             ),
                           ),

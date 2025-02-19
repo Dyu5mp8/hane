@@ -7,7 +7,6 @@ import 'package:hane/login/initializer_widget.dart';
 import 'package:hane/login/signup.dart';
 import 'package:hane/app_theme.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, this.title, this.emailNotVerified});
 
@@ -79,11 +78,13 @@ class _LoginPageState extends State<LoginPage> {
             password: _passwordController.text.trim(),
           );
           await _saveUserEmail();
-          if(mounted) {
+          if (mounted) {
             Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const InitializerWidget()),
-          );
+              context,
+              MaterialPageRoute(
+                builder: (context) => const InitializerWidget(),
+              ),
+            );
           }
         } on FirebaseAuthException catch (e) {
           _onFailedLogin(e);
@@ -91,9 +92,9 @@ class _LoginPageState extends State<LoginPage> {
           // Handle other exceptions
           print('An unexpected error occurred: $e');
           if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Ett oväntat fel inträffade.")),
-          );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Ett oväntat fel inträffade.")),
+            );
           }
         } finally {
           setState(() {
@@ -117,12 +118,13 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
-        child: _isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Text(
-                'Logga in',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
+        child:
+            _isLoading
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text(
+                  'Logga in',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
       ),
     );
   }
@@ -138,14 +140,18 @@ class _LoginPageState extends State<LoginPage> {
 
     String message = errorMessages[e.code] ?? 'Kunde inte logga in.';
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   // Email & Password input field with autofill hints
-  Widget _entryField(String title, TextEditingController controller,
-      {bool isPassword = false, String? autofillHint}) {
+  Widget _entryField(
+    String title,
+    TextEditingController controller, {
+    bool isPassword = false,
+    String? autofillHint,
+  }) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -166,7 +172,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
               fillColor: Color.fromARGB(255, 232, 232, 255),
               filled: true,
-          
             ),
             cursorColor: Theme.of(context).primaryColor,
           ),
@@ -196,144 +201,155 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("E-post", _emailController,
-            autofillHint: AutofillHints.email),
-        _entryField("Lösenord", _passwordController,
-            isPassword: true, autofillHint: AutofillHints.password),
+        _entryField(
+          "E-post",
+          _emailController,
+          autofillHint: AutofillHints.email,
+        ),
+        _entryField(
+          "Lösenord",
+          _passwordController,
+          isPassword: true,
+          autofillHint: AutofillHints.password,
+        ),
         _rememberMeCheckbox(), // Add "Remember Me" checkbox here
       ],
     );
   }
 
-Widget _forgotAccountLabel () {
-  return InkWell(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ForgotScreen()),
-      );
-    },
-    child: Container(
-      margin: const EdgeInsets.symmetric(vertical: 20),
-      padding: const EdgeInsets.all(15),
-      alignment: Alignment.bottomCenter,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            'Glömt lösenord?',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            textAlign: TextAlign.center, // Center-align the text
-          ),
-        
-        ],
-      ),
-    ),
-  );
-}
-
-
-Widget _createAccountLabel() {
-  return InkWell(
-    onTap: () {
-      Navigator.push(
-        context, 
-        MaterialPageRoute(builder: (context) => const SignUpPage()),
-      );
-    },
-    child: Container(
-      margin: const EdgeInsets.symmetric(vertical: 20),
-      padding: const EdgeInsets.all(15),
-      alignment: Alignment.bottomCenter,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            'Inget konto ännu?',
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            textAlign: TextAlign.center, // Center-align the text
-          ),
-
-          Text(
-            'Registrera ny användare',
-            style: TextStyle(
-              color: Colors.indigo,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              
+  Widget _forgotAccountLabel() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ForgotScreen()),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.all(15),
+        alignment: Alignment.bottomCenter,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Glömt lösenord?',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center, // Center-align the text
             ),
-            textAlign: TextAlign.center, // Center-align the text
-          ),
-          
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
- @override
-Widget build(BuildContext context) {
-  final height = MediaQuery.sizeOf(context).height;
+    );
+  }
 
-  return Theme(
-    data: appTheme,
-    child: Scaffold(
-      resizeToAvoidBottomInset: false, // Prevents resizing when the keyboard opens
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Container(
-            height: constraints.maxHeight, // Fixed height to avoid resizing
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    "assets/images/concrete.jpg"), // Set your image path here
-                fit: BoxFit.cover,
+  Widget _createAccountLabel() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SignUpPage()),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.all(15),
+        alignment: Alignment.bottomCenter,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Inget konto ännu?',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center, // Center-align the text
+            ),
+
+            Text(
+              'Registrera ny användare',
+              style: TextStyle(
+                color: Colors.indigo,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
               ),
+              textAlign: TextAlign.center, // Center-align the text
             ),
-            child: Stack(
-              children: <Widget>[
-                // Gradient overlay for smooth fade effect
-                Container(
-                  height: constraints.maxHeight, // Fixed height for gradient
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.center,
-                      colors: [
-                        Colors.transparent, // Start with transparent at the top
-                        Color.fromARGB(
-                            255, 203, 223, 254), // Fade to white at the bottom
-                      ],
-                      stops: [0, 0.8],
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(height: height * .2),
-                        const Logo(),
-                        const SizedBox(height: 50),
-                        _emailPasswordWidget(),
-                        const SizedBox(height: 20),
-                        _submitButton(),
-                        const SizedBox(height: 10),
-                        _createAccountLabel(),
-                        const SizedBox(height:10),
-                        _forgotAccountLabel(),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final height = MediaQuery.sizeOf(context).height;
+
+    return Theme(
+      data: appTheme,
+      child: Scaffold(
+        resizeToAvoidBottomInset:
+            false, // Prevents resizing when the keyboard opens
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return Container(
+              height: constraints.maxHeight, // Fixed height to avoid resizing
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    "assets/images/concrete.jpg",
+                  ), // Set your image path here
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Stack(
+                children: <Widget>[
+                  // Gradient overlay for smooth fade effect
+                  Container(
+                    height: constraints.maxHeight, // Fixed height for gradient
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.center,
+                        colors: [
+                          Colors
+                              .transparent, // Start with transparent at the top
+                          Color.fromARGB(
+                            255,
+                            203,
+                            223,
+                            254,
+                          ), // Fade to white at the bottom
+                        ],
+                        stops: [0, 0.8],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(height: height * .2),
+                          const Logo(),
+                          const SizedBox(height: 50),
+                          _emailPasswordWidget(),
+                          const SizedBox(height: 20),
+                          _submitButton(),
+                          const SizedBox(height: 10),
+                          _createAccountLabel(),
+                          const SizedBox(height: 10),
+                          _forgotAccountLabel(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
 }

@@ -4,13 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:hane/modules_feature/modules/dialysis/models/dialysis_view_model.dart';
 
-
 class DialysisResult extends StatefulWidget {
   const DialysisResult({super.key});
 
   @override
   State<DialysisResult> createState() => _DialysisResultState();
 }
+
 class _DialysisResultState extends State<DialysisResult> {
   // GlobalKey to access the blinking icon state
   final GlobalKey<BlinkingIconState> _blinkKey = GlobalKey<BlinkingIconState>();
@@ -35,21 +35,32 @@ class _DialysisResultState extends State<DialysisResult> {
         _wasWarningPreviouslyVisible = isWarningCurrentlyVisible;
 
         return Container(
-            decoration: BoxDecoration(
-    color: Theme.of(context).cardColor, // Removed opacity for better clarity
-    borderRadius: BorderRadius.circular(50), // Increased border radius for a smoother look
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1), // Softer shadow color
-        offset: const Offset(0, 4), // Increased vertical offset for depth
-        blurRadius: 12, // Increased blur radius for a more diffused shadow
-      ),
-    ],
-    border: Border.all(
-      width: 1,
-      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), // Softer border color
-    ),
-  ),
+          decoration: BoxDecoration(
+            color:
+                Theme.of(
+                  context,
+                ).cardColor, // Removed opacity for better clarity
+            borderRadius: BorderRadius.circular(
+              50,
+            ), // Increased border radius for a smoother look
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1), // Softer shadow color
+                offset: const Offset(
+                  0,
+                  4,
+                ), // Increased vertical offset for depth
+                blurRadius:
+                    12, // Increased blur radius for a more diffused shadow
+              ),
+            ],
+            border: Border.all(
+              width: 1,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withOpacity(0.2), // Softer border color
+            ),
+          ),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 30, top: 10),
             child: Column(
@@ -60,7 +71,9 @@ class _DialysisResultState extends State<DialysisResult> {
                     Text(
                       'Dialysdos (ml/kg/h): ${model.dose.toStringAsFixed(2)}',
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Visibility(
                       visible: isWarningCurrentlyVisible,
@@ -112,8 +125,10 @@ class _DialysisResultState extends State<DialysisResult> {
                 const SizedBox(height: 2),
                 Text(
                   'Filtrationsfraktion: ${(model.filtrationFraction * 100).toStringAsFixed(2)}%',
-                  style:
-                      const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

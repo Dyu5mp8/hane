@@ -5,14 +5,12 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:intl/intl.dart';
 
-
 class ChatMessage {
   final String message;
   final String user;
   final Timestamp timestamp;
   bool isSolved;
   String? id;
-
 
   ChatMessage({
     required this.message,
@@ -32,17 +30,15 @@ class ChatMessage {
     };
   }
 
-factory ChatMessage.fromFirestore(Map<String, dynamic> data, String id) {
- 
-  return ChatMessage(
-    id: id,
-    message: data['message'],
-    user: data['user'],
-    timestamp: data['timestamp'],
-    isSolved: data['isSolved'] ?? false, // Provide a default value if null
-  );
-  
-}
+  factory ChatMessage.fromFirestore(Map<String, dynamic> data, String id) {
+    return ChatMessage(
+      id: id,
+      message: data['message'],
+      user: data['user'],
+      timestamp: data['timestamp'],
+      isSolved: data['isSolved'] ?? false, // Provide a default value if null
+    );
+  }
 }
 
 class DrugChat extends StatefulWidget {
@@ -71,8 +67,10 @@ class _DrugChatState extends State<DrugChat> {
   }
 
   void markAsRead() {
-    Provider.of<DrugListProvider>(context, listen: false)
-        .updateLastReadTimestamp(widget.drug.id!);
+    Provider.of<DrugListProvider>(
+      context,
+      listen: false,
+    ).updateLastReadTimestamp(widget.drug.id!);
 
     widget.drug.markMessagesAsRead();
   }
@@ -85,71 +83,85 @@ class _DrugChatState extends State<DrugChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Diskussion: ${widget.drug.name}',
-        ),
-      ),
+      appBar: AppBar(title: Text('Diskussion: ${widget.drug.name}')),
       body: Column(
         mainAxisAlignment:
             MainAxisAlignment.end, // Aligns children to the bottom
         children: [
           Expanded(
             child: StreamBuilder(
-  stream: Provider.of<DrugListProvider>(context).getChatStream(widget.drug.id!),
-  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    if (!snapshot.hasData) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    if (snapshot.data!.docs.isEmpty) {
-      return const Center(child: Text("Ingen diskussion ännu"));
-    }
+              stream: Provider.of<DrugListProvider>(
+                context,
+              ).getChatStream(widget.drug.id!),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("Ingen diskussion ännu"));
+                }
 
-    // Map documents to ChatMessage instances
-    List<ChatMessage> chatMessages = snapshot.data!.docs
-        .map((doc) => ChatMessage.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
-        .toList();
+                // Map documents to ChatMessage instances
+                List<ChatMessage> chatMessages =
+                    snapshot.data!.docs
+                        .map(
+                          (doc) => ChatMessage.fromFirestore(
+                            doc.data() as Map<String, dynamic>,
+                            doc.id,
+                          ),
+                        )
+                        .toList();
 
-    // Scroll to the bottom when a new message arrives
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+                // Scroll to the bottom when a new message arrives
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) => _scrollToBottom(),
+                );
 
-    return ListView.builder(
-      controller: _scrollController,
-      shrinkWrap: true,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: chatMessages.length,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      reverse: true,
-      itemBuilder: (context, index) {
-        var chatMessage = chatMessages[index];
-        var isCurrentUser = chatMessage.user == FirebaseAuth.instance.currentUser?.email;
+                return ListView.builder(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: chatMessages.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  reverse: true,
+                  itemBuilder: (context, index) {
+                    var chatMessage = chatMessages[index];
+                    var isCurrentUser =
+                        chatMessage.user ==
+                        FirebaseAuth.instance.currentUser?.email;
 
-        return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: GestureDetector(
-                onLongPress: () async {
-                 var provider = Provider.of<DrugListProvider>(context, listen: false);
-                    if (!chatMessage.isSolved) {
-                      chatMessage.isSolved = true;
-                      await provider
-                          .markMessageSolvedStatus(widget.drug.id!, chatMessage);
-                    }
-                    else{
-                      chatMessage.isSolved = false;
-                      await provider
-                          .markMessageSolvedStatus(widget.drug.id!, chatMessage);
-                    }
-                },
-                child: MessageBubble(
-                  chatMessage: chatMessage,
-                  isCurrentUser: isCurrentUser,
-                ),
-              ),
-            );
-      },
-    );
-  },
-),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: GestureDetector(
+                        onLongPress: () async {
+                          var provider = Provider.of<DrugListProvider>(
+                            context,
+                            listen: false,
+                          );
+                          if (!chatMessage.isSolved) {
+                            chatMessage.isSolved = true;
+                            await provider.markMessageSolvedStatus(
+                              widget.drug.id!,
+                              chatMessage,
+                            );
+                          } else {
+                            chatMessage.isSolved = false;
+                            await provider.markMessageSolvedStatus(
+                              widget.drug.id!,
+                              chatMessage,
+                            );
+                          }
+                        },
+                        child: MessageBubble(
+                          chatMessage: chatMessage,
+                          isCurrentUser: isCurrentUser,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -163,6 +175,7 @@ class _DrugChatState extends State<DrugChat> {
     );
   }
 }
+
 class MessageBubble extends StatelessWidget {
   final ChatMessage chatMessage;
   final bool isCurrentUser;
@@ -182,21 +195,22 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String formattedTime = DateFormat('d MMM HH:mm').format(chatMessage.timestamp.toDate());
+    String formattedTime = DateFormat(
+      'd MMM HH:mm',
+    ).format(chatMessage.timestamp.toDate());
 
     return Align(
       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Column(
-        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment:
+            isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           // Message bubble
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (!isCurrentUser)
-                CircleAvatar(
-                  child: Text(chatMessage.user[0].toUpperCase()),
-                ),
+                CircleAvatar(child: Text(chatMessage.user[0].toUpperCase())),
               if (!isCurrentUser) const SizedBox(width: 10),
               Flexible(
                 child: Badge(
@@ -206,14 +220,23 @@ class MessageBubble extends StatelessWidget {
                   child: Opacity(
                     opacity: chatMessage.isSolved ? 0.5 : 1.0,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 16,
+                      ),
                       decoration: BoxDecoration(
                         color: bubbleColor(),
                         borderRadius: BorderRadius.only(
                           topLeft: const Radius.circular(12),
                           topRight: const Radius.circular(12),
-                          bottomLeft: isCurrentUser ? const Radius.circular(12) : Radius.zero,
-                          bottomRight: isCurrentUser ? Radius.zero : const Radius.circular(12),
+                          bottomLeft:
+                              isCurrentUser
+                                  ? const Radius.circular(12)
+                                  : Radius.zero,
+                          bottomRight:
+                              isCurrentUser
+                                  ? Radius.zero
+                                  : const Radius.circular(12),
                         ),
                       ),
                       child: Text(
@@ -221,7 +244,6 @@ class MessageBubble extends StatelessWidget {
                         style: TextStyle(
                           color: isCurrentUser ? Colors.white : Colors.black87,
                           fontSize: 16,
-                          
                         ),
                       ),
                     ),
@@ -230,15 +252,14 @@ class MessageBubble extends StatelessWidget {
               ),
               if (isCurrentUser) const SizedBox(width: 10),
               if (isCurrentUser)
-                CircleAvatar(
-                  child: Text(chatMessage.user[0].toUpperCase()),
-                ),
+                CircleAvatar(child: Text(chatMessage.user[0].toUpperCase())),
             ],
           ),
           const SizedBox(height: 5),
           // User and timestamp below the bubble
           Row(
-            mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment:
+                isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
               Text(
                 chatMessage.user,
@@ -249,7 +270,6 @@ class MessageBubble extends StatelessWidget {
                 formattedTime,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
-              
             ],
           ),
         ],
@@ -263,8 +283,11 @@ class ChatInputField extends StatefulWidget {
   final String drugId;
   final VoidCallback onNewMessage; // Callback when a new message is sent
 
-  const ChatInputField(
-      {super.key, required this.drugId, required this.onNewMessage});
+  const ChatInputField({
+    super.key,
+    required this.drugId,
+    required this.onNewMessage,
+  });
 
   @override
   State<ChatInputField> createState() => _ChatInputFieldState();
@@ -273,33 +296,36 @@ class ChatInputField extends StatefulWidget {
 class _ChatInputFieldState extends State<ChatInputField> {
   final TextEditingController _controller = TextEditingController();
   void _sendMessage() async {
-  var provider = Provider.of<DrugListProvider>(context, listen: false);
-  if (_controller.text.isEmpty) return;
+    var provider = Provider.of<DrugListProvider>(context, listen: false);
+    if (_controller.text.isEmpty) return;
 
-  String messageText = _controller.text;
-  _controller.clear();
+    String messageText = _controller.text;
+    _controller.clear();
 
-  ChatMessage chatMessage = ChatMessage(
-    message: messageText,
-    user: FirebaseAuth.instance.currentUser?.email ?? 'Anonymous',
-    timestamp: Timestamp.now(),
-  );
+    ChatMessage chatMessage = ChatMessage(
+      message: messageText,
+      user: FirebaseAuth.instance.currentUser?.email ?? 'Anonymous',
+      timestamp: Timestamp.now(),
+    );
 
-  try {
-    await provider.sendChatMessage(widget.drugId, chatMessage);
-    widget.onNewMessage();
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kunde inte skicka meddelandet ${e.toString()}')),
-      );
-    }
-  } finally {
-    if (mounted) {
-      FocusScope.of(context).unfocus();
+    try {
+      await provider.sendChatMessage(widget.drugId, chatMessage);
+      widget.onNewMessage();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Kunde inte skicka meddelandet ${e.toString()}'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        FocusScope.of(context).unfocus();
+      }
     }
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -311,9 +337,11 @@ class _ChatInputFieldState extends State<ChatInputField> {
               controller: _controller,
               decoration: InputDecoration(
                 filled: true,
-               
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 20,
+                ),
                 hintText: 'Skicka ett meddelande...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),

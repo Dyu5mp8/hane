@@ -12,7 +12,10 @@ class RouteText extends StatelessWidget {
       children: [
         if (route.icon != null) Icon(route.icon, size: 14),
         const SizedBox(width: 5),
-        Text(route.toString(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+        Text(
+          route.toString(),
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

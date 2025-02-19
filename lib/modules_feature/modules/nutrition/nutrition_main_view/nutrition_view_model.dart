@@ -37,25 +37,19 @@ class NutritionViewModel extends ChangeNotifier {
   }
 
   setNewDay(int newDay) {
-
     day = newDay;
     notifyListeners();
   }
 
   double calculateNeeds() {
-
     if (calorimetricGoal != null) {
       return calorimetricGoal!;
     }
 
-  return calculateNeedBasedOnDay();
-
-    
+    return calculateNeedBasedOnDay();
   }
 
-  List<ScaleZone?> getProteinScaleZones(){
-
-
+  List<ScaleZone?> getProteinScaleZones() {
     ScaleZone? lowRed;
     ScaleZone? lowYellow;
     ScaleZone? green;
@@ -63,69 +57,208 @@ class NutritionViewModel extends ChangeNotifier {
     ScaleZone? highRed;
 
     if (day < 4) {
-      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 0.1, color: ScaleZoneColor.red);
-      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 0.1, maxPerWeight: 0.2, color: ScaleZoneColor.yellow);
-      green = ScaleZone(weight: idealWeight(), minPerWeight: 0.2, maxPerWeight: 1, color: ScaleZoneColor.green);
-      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 1, maxPerWeight: 1.3, color: ScaleZoneColor.yellow);
-      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 1.3, maxPerWeight: 1000, color: ScaleZoneColor.red);
+      lowRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0,
+        maxPerWeight: 0.1,
+        color: ScaleZoneColor.red,
+      );
+      lowYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0.1,
+        maxPerWeight: 0.2,
+        color: ScaleZoneColor.yellow,
+      );
+      green = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0.2,
+        maxPerWeight: 1,
+        color: ScaleZoneColor.green,
+      );
+      highYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 1,
+        maxPerWeight: 1.3,
+        color: ScaleZoneColor.yellow,
+      );
+      highRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 1.3,
+        maxPerWeight: 1000,
+        color: ScaleZoneColor.red,
+      );
     }
 
     if (day >= 4 && day < 7) {
-      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 0.5, color: ScaleZoneColor.red);
-      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 0.5, maxPerWeight: 1, color: ScaleZoneColor.yellow);
-      green = ScaleZone(weight: idealWeight(), minPerWeight: 1, maxPerWeight: 1.3, color: ScaleZoneColor.green);
-      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 1.3, maxPerWeight: 1.6, color: ScaleZoneColor.yellow);
-      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 1.6, maxPerWeight: 1000, color: ScaleZoneColor.red);
+      lowRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0,
+        maxPerWeight: 0.5,
+        color: ScaleZoneColor.red,
+      );
+      lowYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0.5,
+        maxPerWeight: 1,
+        color: ScaleZoneColor.yellow,
+      );
+      green = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 1,
+        maxPerWeight: 1.3,
+        color: ScaleZoneColor.green,
+      );
+      highYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 1.3,
+        maxPerWeight: 1.6,
+        color: ScaleZoneColor.yellow,
+      );
+      highRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 1.6,
+        maxPerWeight: 1000,
+        color: ScaleZoneColor.red,
+      );
     }
 
     if (day >= 7) {
-      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 0.8, color: ScaleZoneColor.red);
-      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 0.8, maxPerWeight: 1.2, color: ScaleZoneColor.yellow);
-      green = ScaleZone(weight: idealWeight(), minPerWeight: 1.2, maxPerWeight: 1.4, color: ScaleZoneColor.green);
-      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 1.4, maxPerWeight: 1.6, color: ScaleZoneColor.yellow);
-      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 1.6, maxPerWeight: 1000, color: ScaleZoneColor.red);
-  }
+      lowRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0,
+        maxPerWeight: 0.8,
+        color: ScaleZoneColor.red,
+      );
+      lowYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0.8,
+        maxPerWeight: 1.2,
+        color: ScaleZoneColor.yellow,
+      );
+      green = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 1.2,
+        maxPerWeight: 1.4,
+        color: ScaleZoneColor.green,
+      );
+      highYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 1.4,
+        maxPerWeight: 1.6,
+        color: ScaleZoneColor.yellow,
+      );
+      highRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 1.6,
+        maxPerWeight: 1000,
+        color: ScaleZoneColor.red,
+      );
+    }
 
     return [lowRed, lowYellow, green, highYellow, highRed];
   }
 
   List<ScaleZone?> getCalorieScaleZones() {
-
     ScaleZone? lowRed;
     ScaleZone? lowYellow;
     ScaleZone? green;
     ScaleZone? highYellow;
     ScaleZone? highRed;
 
-    
     if (day < 4)
-
-   lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 4, color: ScaleZoneColor.yellow);
-   green = ScaleZone(weight: idealWeight(), minPerWeight: 4, maxPerWeight: 14, color: ScaleZoneColor.green);
-   highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 14, maxPerWeight: 20, color: ScaleZoneColor.yellow);
-  highRed = ScaleZone(weight: idealWeight(), minPerWeight: 20, maxPerWeight: 1000, color: ScaleZoneColor.red);
+      lowYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0,
+        maxPerWeight: 4,
+        color: ScaleZoneColor.yellow,
+      );
+    green = ScaleZone(
+      weight: idealWeight(),
+      minPerWeight: 4,
+      maxPerWeight: 14,
+      color: ScaleZoneColor.green,
+    );
+    highYellow = ScaleZone(
+      weight: idealWeight(),
+      minPerWeight: 14,
+      maxPerWeight: 20,
+      color: ScaleZoneColor.yellow,
+    );
+    highRed = ScaleZone(
+      weight: idealWeight(),
+      minPerWeight: 20,
+      maxPerWeight: 1000,
+      color: ScaleZoneColor.red,
+    );
 
     if (day >= 4 && day < 7) {
-      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 10, color: ScaleZoneColor.red);
-      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 10, maxPerWeight: 15, color: ScaleZoneColor.yellow);
-      green = ScaleZone(weight: idealWeight(), minPerWeight: 15, maxPerWeight: 20, color: ScaleZoneColor.green);
-      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 20, maxPerWeight: 25, color: ScaleZoneColor.yellow);
-      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 25, maxPerWeight: 1000, color: ScaleZoneColor.red);
+      lowRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0,
+        maxPerWeight: 10,
+        color: ScaleZoneColor.red,
+      );
+      lowYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 10,
+        maxPerWeight: 15,
+        color: ScaleZoneColor.yellow,
+      );
+      green = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 15,
+        maxPerWeight: 20,
+        color: ScaleZoneColor.green,
+      );
+      highYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 20,
+        maxPerWeight: 25,
+        color: ScaleZoneColor.yellow,
+      );
+      highRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 25,
+        maxPerWeight: 1000,
+        color: ScaleZoneColor.red,
+      );
     }
 
     if (day >= 7) {
-      lowRed = ScaleZone(weight: idealWeight(), minPerWeight: 0, maxPerWeight: 15, color: ScaleZoneColor.red);
-      lowYellow = ScaleZone(weight: idealWeight(), minPerWeight: 15, maxPerWeight: 20, color: ScaleZoneColor.yellow);
-      green = ScaleZone(weight: idealWeight(), minPerWeight: 20, maxPerWeight: 25, color: ScaleZoneColor.green);
-      highYellow = ScaleZone(weight: idealWeight(), minPerWeight: 25, maxPerWeight: 30, color: ScaleZoneColor.yellow);
-      highRed = ScaleZone(weight: idealWeight(), minPerWeight: 30, maxPerWeight: 1000, color: ScaleZoneColor.red);
+      lowRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 0,
+        maxPerWeight: 15,
+        color: ScaleZoneColor.red,
+      );
+      lowYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 15,
+        maxPerWeight: 20,
+        color: ScaleZoneColor.yellow,
+      );
+      green = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 20,
+        maxPerWeight: 25,
+        color: ScaleZoneColor.green,
+      );
+      highYellow = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 25,
+        maxPerWeight: 30,
+        color: ScaleZoneColor.yellow,
+      );
+      highRed = ScaleZone(
+        weight: idealWeight(),
+        minPerWeight: 30,
+        maxPerWeight: 1000,
+        color: ScaleZoneColor.red,
+      );
     }
 
-
     return [lowRed, lowYellow, green, highYellow, highRed];
-
   }
- 
 
   double calculateNeedBasedOnDay() {
     // 25 kcal/kg/day for day 8 and above
@@ -149,12 +282,16 @@ class NutritionViewModel extends ChangeNotifier {
   double totalKcalPerDay() {
     // sum the kcal of all nutritions.
     return allNutritions.fold(
-        0, (acc, nutrition) => acc + nutrition.kcalPerDay());
+      0,
+      (acc, nutrition) => acc + nutrition.kcalPerDay(),
+    );
   }
 
   double totalProteinPerDay() {
     return allNutritions.fold(
-        0, (acc, nutrition) => acc + nutrition.proteinPerDay());
+      0,
+      (acc, nutrition) => acc + nutrition.proteinPerDay(),
+    );
   }
 
   double totalVolumePerDay() {

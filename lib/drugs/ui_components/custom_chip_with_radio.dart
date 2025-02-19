@@ -29,21 +29,24 @@ class CustomChipWithCheckbox extends StatelessWidget {
               duration: const Duration(milliseconds: 150), // Animation duration
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return ScaleTransition(
-                    scale: animation, child: child); // Scale animation
+                  scale: animation,
+                  child: child,
+                ); // Scale animation
               },
               child: Icon(
-                  isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                  key: ValueKey<bool>(isSelected), // Key for AnimatedSwitcher
-                  size: 16, // Adjust the size as needed
-                  color: chipTheme.labelStyle?.color // Customize color
-                  ),
+                isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                key: ValueKey<bool>(isSelected), // Key for AnimatedSwitcher
+                size: 16, // Adjust the size as needed
+                color: chipTheme.labelStyle?.color, // Customize color
+              ),
             ),
             const SizedBox(width: 4), // Space between checkbox icon and label
             Text(
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: chipTheme.labelStyle?.color ??
+                color:
+                    chipTheme.labelStyle?.color ??
                     Colors.white, // Use theme color
               ),
               overflow: TextOverflow.ellipsis,
@@ -54,7 +57,9 @@ class CustomChipWithCheckbox extends StatelessWidget {
         visualDensity: VisualDensity.compact, // Compact the chip's layout
         backgroundColor: chipTheme.backgroundColor, // Use theme color
         padding: const EdgeInsets.symmetric(
-            horizontal: 8, vertical: 2), // Reduced padding
+          horizontal: 8,
+          vertical: 2,
+        ), // Reduced padding
         deleteIcon: Icon(
           Icons.cancel,
           size: 16,
@@ -62,9 +67,7 @@ class CustomChipWithCheckbox extends StatelessWidget {
         ),
         deleteIconColor: Colors.white,
         onDeleted: onDeleted,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         materialTapTargetSize:
             MaterialTapTargetSize.shrinkWrap, // Shrink tap target size
       ),

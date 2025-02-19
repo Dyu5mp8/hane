@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class SubmitFeedbackDialog extends StatefulWidget {
   final void Function(String)? onFeedbackSaved;
 
-  const SubmitFeedbackDialog({Key? key, this.onFeedbackSaved}) : super(key: key);
+  const SubmitFeedbackDialog({Key? key, this.onFeedbackSaved})
+    : super(key: key);
 
   @override
   State<SubmitFeedbackDialog> createState() => _SubmitFeedbackDialogState();

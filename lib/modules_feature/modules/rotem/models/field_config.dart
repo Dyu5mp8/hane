@@ -10,7 +10,7 @@ class FieldConfig {
   final RotemField field;
   final RotemSection section;
   final bool isRequired;
-  
+
   /// If not null, a field value below this is out of range.
   final double? minValue;
 
@@ -32,11 +32,6 @@ class FieldConfig {
     if (maxValue != null && value > maxValue!) return Result.high;
     return Result.normal;
   }
-
 }
 
-enum Result{
-  normal,
-  low,
-  high,
-}
+enum Result { normal, low, high }

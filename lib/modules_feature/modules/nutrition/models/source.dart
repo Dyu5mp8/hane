@@ -127,10 +127,10 @@ class ContinousSource extends Source {
     required double lipidsPerMl,
     this.rateRangeMin = 0,
     this.rateRangeMax = 100,
-  })  : _kcalPerMl = kcalPerMl,
-        _proteinPerMl = proteinPerMl,
-        _lipidsPerMl = lipidsPerMl,
-        super(id); // Pass id to the superclass
+  }) : _kcalPerMl = kcalPerMl,
+       _proteinPerMl = proteinPerMl,
+       _lipidsPerMl = lipidsPerMl,
+       super(id); // Pass id to the superclass
 
   @override
   double get kcalPerMl => _kcalPerMl;

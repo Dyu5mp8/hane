@@ -73,21 +73,23 @@ class MiniSummaryCard extends StatelessWidget {
     // Generate styled text widgets for each section.
     Map<RotemSection, List<Widget>> linesBySection = {};
     fieldsBySection.forEach((section, configs) {
-      final lines = configs.map((config) {
-        final valueStr = inputValues[config.field] ?? '';
-        final valueDouble = double.tryParse(valueStr);
-        final result = (valueDouble != null) ? config.result(valueDouble) : null;
-return Text(
-  '${fieldLabel(config.field)}: $valueStr',
-  style: TextStyle(
-    fontSize: 10,
-    color: (result != null && result != Result.normal)
-        ? Theme.of(context).colorScheme.error
-        : Theme.of(context).textTheme.bodyMedium?.color,
-  ),
-);
-      
-      }).toList();
+      final lines =
+          configs.map((config) {
+            final valueStr = inputValues[config.field] ?? '';
+            final valueDouble = double.tryParse(valueStr);
+            final result =
+                (valueDouble != null) ? config.result(valueDouble) : null;
+            return Text(
+              '${fieldLabel(config.field)}: $valueStr',
+              style: TextStyle(
+                fontSize: 10,
+                color:
+                    (result != null && result != Result.normal)
+                        ? Theme.of(context).colorScheme.error
+                        : Theme.of(context).textTheme.bodyMedium?.color,
+              ),
+            );
+          }).toList();
 
       if (lines.isNotEmpty) {
         linesBySection[section] = lines;
@@ -105,23 +107,36 @@ return Text(
 
     for (int i = 0; i < sectionOrder.length; i += 2) {
       final firstSection = sectionOrder[i];
-      final secondSection = (i + 1 < sectionOrder.length) ? sectionOrder[i + 1] : null;
+      final secondSection =
+          (i + 1 < sectionOrder.length) ? sectionOrder[i + 1] : null;
 
       final firstLines = linesBySection[firstSection] ?? [];
-      final secondLines = (secondSection != null) ? linesBySection[secondSection] ?? [] : [];
+      final secondLines =
+          (secondSection != null) ? linesBySection[secondSection] ?? [] : [];
 
-      if (firstLines.isEmpty && (secondLines.isEmpty || secondSection == null)) continue;
+      if (firstLines.isEmpty && (secondLines.isEmpty || secondSection == null))
+        continue;
 
       quadrantRows.add(
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (firstLines.isNotEmpty)
-              Expanded(child: _buildQuadrantCell(firstSection.name.toUpperCase(), firstLines)),
+              Expanded(
+                child: _buildQuadrantCell(
+                  firstSection.name.toUpperCase(),
+                  firstLines,
+                ),
+              ),
             if (firstLines.isNotEmpty && secondLines.isNotEmpty)
               const SizedBox(width: 8),
             if (secondSection != null && secondLines.isNotEmpty)
-              Expanded(child: _buildQuadrantCell(secondSection.name.toUpperCase(), secondLines as List<Widget>)),
+              Expanded(
+                child: _buildQuadrantCell(
+                  secondSection.name.toUpperCase(),
+                  secondLines as List<Widget>,
+                ),
+              ),
           ],
         ),
       );

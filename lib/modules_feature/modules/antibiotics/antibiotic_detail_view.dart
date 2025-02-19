@@ -4,27 +4,21 @@ import 'package:hane/modules_feature/modules/antibiotics/models/antibiotic.dart'
 class AntibioticDetailView extends StatefulWidget {
   final Antibiotic antibiotic;
 
-  const AntibioticDetailView({
-    Key? key,
-    required this.antibiotic,
-  }) : super(key: key);
+  const AntibioticDetailView({Key? key, required this.antibiotic})
+    : super(key: key);
 
   @override
   _AntibioticDetailViewState createState() => _AntibioticDetailViewState();
 }
 
 class _AntibioticDetailViewState extends State<AntibioticDetailView> {
-  
   @override
   Widget build(BuildContext context) {
     // If some fields can be null, we provide a fallback
     final String name = widget.antibiotic.name ?? 'Unknown Antibiotic';
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(name),
-
-      ),
+      appBar: AppBar(title: Text(name)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -46,7 +40,7 @@ class _AntibioticDetailViewState extends State<AntibioticDetailView> {
     );
   }
 
-  /// Build out the expansion tiles. 
+  /// Build out the expansion tiles.
   /// You can add or remove sections based on what your Antibiotic model includes.
   Widget _buildExpandableSections() {
     return Column(
@@ -54,42 +48,34 @@ class _AntibioticDetailViewState extends State<AntibioticDetailView> {
         DetailExpansionTile(
           title: 'Dosering',
           content: widget.antibiotic.dosage,
-          
         ),
         DetailExpansionTile(
           title: 'Farmakokinetik',
           content: widget.antibiotic.pharmacokinetics,
-          
         ),
         DetailExpansionTile(
           title: 'Biverkningar',
           content: widget.antibiotic.sideEffects,
-          
         ),
         DetailExpansionTile(
           title: 'Farmakodynamik',
           content: widget.antibiotic.pharmacodynamics,
-          
         ),
         DetailExpansionTile(
           title: 'Brytpunkter och mikrobiologisk aktivitet',
           content: widget.antibiotic.activity,
-          
         ),
         DetailExpansionTile(
           title: 'Interaktioner',
           content: widget.antibiotic.interactions,
-          
         ),
         DetailExpansionTile(
           title: 'RAF:s bedömning',
           content: widget.antibiotic.assessment,
-          
         ),
         DetailExpansionTile(
           title: 'Resistensutveckling',
           content: widget.antibiotic.resistance,
-          
         ),
       ],
     );
@@ -100,13 +86,8 @@ class DetailExpansionTile extends StatelessWidget {
   final String title;
   final String? content;
 
-
-  const DetailExpansionTile({
-    Key? key,
-    required this.title,
-    this.content,
-
-  }) : super(key: key);
+  const DetailExpansionTile({Key? key, required this.title, this.content})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +98,9 @@ class DetailExpansionTile extends StatelessWidget {
       children: [
         ListTile(
           title: Text(
-            content?.isNotEmpty == true ? content! : 'Ingen information tillgänglig',
+            content?.isNotEmpty == true
+                ? content!
+                : 'Ingen information tillgänglig',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),

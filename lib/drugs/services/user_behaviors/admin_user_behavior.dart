@@ -8,8 +8,10 @@ class AdminUserBehavior extends UserBehavior {
   @override
   Stream<List<Drug>> getDrugsStream({bool sortByGeneric = false}) {
     var db = FirebaseFirestore.instance;
-    Query<Map<String, dynamic>> drugsCollection =
-        db.collection('users').doc(masterUID).collection('drugs');
+    Query<Map<String, dynamic>> drugsCollection = db
+        .collection('users')
+        .doc(masterUID)
+        .collection('drugs');
 
     // Get current user ID
     String userId = FirebaseAuth.instance.currentUser!.uid;
@@ -28,61 +30,69 @@ class AdminUserBehavior extends UserBehavior {
           userSnapshot.data()?['lastReadTimestamps'] ?? {};
 
       return drugsStream.map((drugsSnapshot) {
-        var drugsList = drugsSnapshot.docs
-            .map((doc) {
-              try {
-                var drugData = doc.data();
+        var drugsList =
+            drugsSnapshot.docs
+                .map((doc) {
+                  try {
+                    var drugData = doc.data();
 
-                var drug = Drug.fromFirestore(drugData);
-                categories.addAll(drug.categories ?? []);
-                drug.id = doc.id;
+                    var drug = Drug.fromFirestore(drugData);
+                    categories.addAll(drug.categories ?? []);
+                    drug.id = doc.id;
 
-                // Get the last message timestamp from the drug data
-                Timestamp? lastMessageTimestamp =
-                    drugData['lastMessageTimestamp'];
+                    // Get the last message timestamp from the drug data
+                    Timestamp? lastMessageTimestamp =
+                        drugData['lastMessageTimestamp'];
 
-                // Get the user's last read timestamp for this drug
-                Timestamp? userLastReadTimestamp = lastReadTimestamps[drug.id];
+                    // Get the user's last read timestamp for this drug
+                    Timestamp? userLastReadTimestamp =
+                        lastReadTimestamps[drug.id];
 
-                // Determine if there are unread messages
-                if (lastMessageTimestamp != null &&
-                    (userLastReadTimestamp == null ||
-                        lastMessageTimestamp.compareTo(userLastReadTimestamp) >
-                            0)) {
-                  drug.hasUnreadMessages = true;
-                } else {
-                  drug.hasUnreadMessages = false;
-                }
+                    // Determine if there are unread messages
+                    if (lastMessageTimestamp != null &&
+                        (userLastReadTimestamp == null ||
+                            lastMessageTimestamp.compareTo(
+                                  userLastReadTimestamp,
+                                ) >
+                                0)) {
+                      drug.hasUnreadMessages = true;
+                    } else {
+                      drug.hasUnreadMessages = false;
+                    }
 
-                return drug;
-              } catch (e) {
-                // Log the error and skip the problematic document
-                print("Error mapping document with ID ${doc.id}: $e");
-                return null;
-              }
-            })
-            .whereType<Drug>()
-            .toList(); // Filter out null values
+                    return drug;
+                  } catch (e) {
+                    // Log the error and skip the problematic document
+                    print("Error mapping document with ID ${doc.id}: $e");
+                    return null;
+                  }
+                })
+                .whereType<Drug>()
+                .toList(); // Filter out null values
 
-        drugsList.sort((a, b) => a
-            .preferredDisplayName(preferGeneric: sortByGeneric)
-            .toLowerCase()
-            .compareTo(b
-                .preferredDisplayName(preferGeneric: sortByGeneric)
-                .toLowerCase()));
+        drugsList.sort(
+          (a, b) => a
+              .preferredDisplayName(preferGeneric: sortByGeneric)
+              .toLowerCase()
+              .compareTo(
+                b
+                    .preferredDisplayName(preferGeneric: sortByGeneric)
+                    .toLowerCase(),
+              ),
+        );
 
         return drugsList;
       });
     });
   }
 
-  
-
   @override
   Future<void> addDrug(Drug drug) async {
     var db = FirebaseFirestore.instance;
-    CollectionReference drugsCollection =
-        db.collection('users').doc(masterUID).collection('drugs');
+    CollectionReference drugsCollection = db
+        .collection('users')
+        .doc(masterUID)
+        .collection('drugs');
 
     try {
       // Mark the drug as changed by the user if not an admin and update the timestamp
@@ -104,8 +114,9 @@ class AdminUserBehavior extends UserBehavior {
       }
 
       // If the drug already has an ID, check if the document exists in Firestore
-      DocumentSnapshot<Map<String,dynamic>> existingDrugSnapshot =
-          await drugsCollection.doc(drug.id).get() as DocumentSnapshot<Map<String,dynamic>>;
+      DocumentSnapshot<Map<String, dynamic>> existingDrugSnapshot =
+          await drugsCollection.doc(drug.id).get()
+              as DocumentSnapshot<Map<String, dynamic>>;
 
       if (existingDrugSnapshot.exists) {
         // If the existing drug is different, update it by merging the changes
@@ -127,8 +138,10 @@ class AdminUserBehavior extends UserBehavior {
   Future<void> deleteDrug(Drug drug) async {
     try {
       var db = FirebaseFirestore.instance;
-      CollectionReference drugsCollection =
-          db.collection('users').doc(masterUID).collection('drugs');
+      CollectionReference drugsCollection = db
+          .collection('users')
+          .doc(masterUID)
+          .collection('drugs');
       if (drug.id != null) {
         await drugsCollection.doc(drug.id).delete();
 
@@ -180,8 +193,7 @@ class AdminUserBehavior extends UserBehavior {
       if (snapshot.exists) {
         // Document exists, update it by removing the key-value pair for the drug ID
         await indexDocRef.update({
-          id: FieldValue
-              .delete() // Remove the key-value pair where the key is the drug ID
+          id: FieldValue.delete(), // Remove the key-value pair where the key is the drug ID
         });
       } else {
         print("Index document does not exist. No need to remove.");

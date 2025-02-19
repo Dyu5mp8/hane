@@ -13,8 +13,7 @@ class AddIndicationButton extends StatelessWidget {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromRGBO(194, 221, 248, 1),
-      
-   
+
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
           side: BorderSide(color: Theme.of(context).primaryColor),
@@ -24,16 +23,23 @@ class AddIndicationButton extends StatelessWidget {
       onPressed: () {
         Provider.of<EditModeProvider>(context, listen: false).setEditMode(true);
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider<Drug>.value(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) => ChangeNotifierProvider<Drug>.value(
                   value: drug,
                   child: EditIndicationDialog(
-                      withDosages: true,
-                      isNewIndication: true,
-                      indication: Indication(isPediatric: false, name: '', notes: ''),
-                               ),
-                ) ));
+                    withDosages: true,
+                    isNewIndication: true,
+                    indication: Indication(
+                      isPediatric: false,
+                      name: '',
+                      notes: '',
+                    ),
+                  ),
+                ),
+          ),
+        );
       },
       child: const Row(
         mainAxisSize: MainAxisSize.min,

@@ -26,7 +26,6 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-
   bool get canEdit {
     return (widget.userMode == UserMode.isAdmin ||
         widget.userMode == UserMode.customMode);
@@ -34,11 +33,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   Widget build(BuildContext context) {
-
     var dlp = Provider.of<DrugListProvider>(context, listen: true);
 
     bool isAdmin = dlp.isAdmin;
-    bool canEdit = dlp.userMode == UserMode.isAdmin || dlp.userMode == UserMode.customMode;
+    bool canEdit =
+        dlp.userMode == UserMode.isAdmin || dlp.userMode == UserMode.customMode;
 
     String titleText = _getAppBarTitle(isAdmin);
     Widget adminMessage = _getAdminMessage(isAdmin);
@@ -49,10 +48,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       forceMaterialTransparency: true,
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(titleText),
-          adminMessage,
-        ],
+        children: [Text(titleText), adminMessage],
       ),
       bottom: bottomWidget,
       actions: actions,
@@ -86,10 +82,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     // If on drugs page (0) or waiting reviews page for admin (1), show admin message if admin
     if ((widget.selectedIndex == 0 || widget.selectedIndex == 1) && isAdmin) {
       return const Padding(
-        padding: EdgeInsets.only(
-          top: 4.0,
-          bottom: 6.0,
-        ),
+        padding: EdgeInsets.only(top: 4.0, bottom: 6.0),
         child: Text(
           'Admin: ÄNDRINGAR SKER I STAMLISTAN',
           style: TextStyle(

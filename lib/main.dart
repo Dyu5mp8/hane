@@ -43,9 +43,7 @@ class _MyAppState extends State<MyApp> {
     try {
       // Begin Firebase initialization and delay concurrently
       final results = await Future.wait([
-        Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
+        Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
         // Ensures a minimum of 3 seconds
         Future.delayed(Duration(seconds: 1)),
       ]);
@@ -90,39 +88,37 @@ class _MyAppState extends State<MyApp> {
         }
 
         return MultiProvider(
-            providers: [
-              ChangeNotifierProvider(
-                create: (_) => DrugListProvider(),
-              ),
+          providers: [
+            ChangeNotifierProvider(create: (_) => DrugListProvider()),
 
-              ChangeNotifierProvider(
-                create: (_) => NutritionViewModel()
-              ),
+            ChangeNotifierProvider(create: (_) => NutritionViewModel()),
 
-              ChangeNotifierProvider(
-                create: (_) => DialysisViewModel()),
-              // Other providers...
-            ],
-            child: MaterialApp(
-              title: 'AnestesiH',
-              debugShowCheckedModeBanner: false,
-              theme: theme,
-              home: homeWidget,
-              builder: (context, child) {
-                // Retrieve the current MediaQuery data
-                final MediaQueryData data = MediaQuery.of(context);
+            ChangeNotifierProvider(create: (_) => DialysisViewModel()),
+            // Other providers...
+          ],
+          child: MaterialApp(
+            title: 'AnestesiH',
+            debugShowCheckedModeBanner: false,
+            theme: theme,
+            home: homeWidget,
+            builder: (context, child) {
+              // Retrieve the current MediaQuery data
+              final MediaQueryData data = MediaQuery.of(context);
 
-                // Clamp the text scale factor to be between 0.8 and 1.2
-                final scale = data.textScaler
-                    .clamp(maxScaleFactor: 1.2, minScaleFactor: 0.8);
+              // Clamp the text scale factor to be between 0.8 and 1.2
+              final scale = data.textScaler.clamp(
+                maxScaleFactor: 1.2,
+                minScaleFactor: 0.8,
+              );
 
-                // Apply the modified MediaQuery data to the app
-                return MediaQuery(
-                  data: data.copyWith(textScaler: scale),
-                  child: child!,
-                );
-              },
-            ));
+              // Apply the modified MediaQuery data to the app
+              return MediaQuery(
+                data: data.copyWith(textScaler: scale),
+                child: child!,
+              );
+            },
+          ),
+        );
       },
     );
   }

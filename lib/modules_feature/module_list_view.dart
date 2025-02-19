@@ -9,27 +9,22 @@ class ModuleListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return ListView.builder(
-        itemCount: modules.length,
-        itemBuilder: (context, index) {
-          final module = modules[index];
-          return ListTile(
-            title: Text(module.name),
-            subtitle: Text(module.description),
-            leading: Icon(module.icon),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => module.moduleDetailView,
-                ),
-              );
-            },
-          );
-        },
-      );
+      itemCount: modules.length,
+      itemBuilder: (context, index) {
+        final module = modules[index];
+        return ListTile(
+          title: Text(module.name),
+          subtitle: Text(module.description),
+          leading: Icon(module.icon),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => module.moduleDetailView),
+            );
+          },
+        );
+      },
+    );
   }
 }

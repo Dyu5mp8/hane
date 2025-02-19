@@ -21,13 +21,14 @@ class _DialysisViewState extends State<DialysisView> {
   final ScrollController _scrollController = ScrollController();
   final List<DialysisPreset> presets = [
     StandardDialysisPreset(weight: 70, label: "Standard (Baxter)"),
-    CivaStandardDialysisPreset(weight: 70, label: "Standard (Civa)")
+    CivaStandardDialysisPreset(weight: 70, label: "Standard (Civa)"),
   ];
   DialysisPreset? selectedPreset;
 
   _showDialysisInfoView(BuildContext context) {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const DialysisInfoView()));
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const DialysisInfoView()));
   }
 
   Future<void> _showPresetSelectionDialog(BuildContext context) async {
@@ -110,8 +111,8 @@ class _DialysisViewState extends State<DialysisView> {
                           children: [
                             DialysisPatientDataWidget(),
                             ElevatedButton(
-                              onPressed: () =>
-                                  _showPresetSelectionDialog(context),
+                              onPressed:
+                                  () => _showPresetSelectionDialog(context),
                               child: const Text('Välj startförslag'),
                             ),
                             _buildParameterSliders(model),
@@ -122,8 +123,9 @@ class _DialysisViewState extends State<DialysisView> {
                     Positioned(
                       bottom: 15,
                       right: 15,
-                      child:
-                          ScrollIndicator(scrollController: _scrollController),
+                      child: ScrollIndicator(
+                        scrollController: _scrollController,
+                      ),
                     ),
                   ],
                 ),

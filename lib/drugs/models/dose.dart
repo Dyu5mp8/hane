@@ -3,7 +3,6 @@ import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/models/units.dart';
 import 'package:hane/extensions/round_dose.dart';
 
-
 class Dose extends Equatable {
   final double amount;
   final SubstanceUnit substanceUnit;
@@ -42,30 +41,32 @@ class Dose extends Equatable {
 
   @override
   String toString() {
-   
     if (converted) {
       Dose scaledDose = scaleAmount(threshold: 0.5);
-      return ("${scaledDose.amount.doseAmountRepresentation(rounded: true)} ${scaledDose.unitString}"); 
+      return ("${scaledDose.amount.doseAmountRepresentation(rounded: true)} ${scaledDose.unitString}");
     }
-    return ("${amount.doseAmountRepresentation(rounded:false)} $unitString"); 
+    return ("${amount.doseAmountRepresentation(rounded: false)} $unitString");
   }
 
-   bool operator <(Dose other) {
+  bool operator <(Dose other) {
     // Check that the substance units come from the same implementation.
     if (substanceUnit.unitType != other.substanceUnit.unitType) {
       throw Exception(
-          "Cannot compare doses with different substance unit implementations.");
+        "Cannot compare doses with different substance unit implementations.",
+      );
     }
 
     // If weight units are present, they must be identical.
     if (weightUnit != other.weightUnit) {
       throw Exception(
-          "Cannot compare doses with different weight units (or one is null and the other is not).");
+        "Cannot compare doses with different weight units (or one is null and the other is not).",
+      );
     }
     // Both doses must either have a time unit or not.
     if ((timeUnit == null) != (other.timeUnit == null)) {
       throw Exception(
-          "Cannot compare doses when one dose has a time unit and the other does not.");
+        "Cannot compare doses when one dose has a time unit and the other does not.",
+      );
     }
     // Convert this dose’s substance amount to the other’s substance unit.
     // (For example, mg to g: amount_in_g = amount_in_mg * (g.factor / mg.factor)).
@@ -83,9 +84,6 @@ class Dose extends Equatable {
     return convertedAmount < other.amount;
   }
 
-
-
-
   /// Define the > operator in terms of <.
   bool operator >(Dose other) => other < this;
 
@@ -95,24 +93,22 @@ class Dose extends Equatable {
         timeUnit == other.timeUnit;
   }
 
-  
-
   /// Converts the dose by applying a weight factor.
   Dose convertByWeight(int? weight) {
-    if (weight == null || weightUnit == null ) return this;
+    if (weight == null || weightUnit == null) return this;
     final newAmount = amount * weight;
     return Dose(
       amount: newAmount,
       substanceUnit: substanceUnit,
       weightUnit: null,
       timeUnit: timeUnit,
-      converted: true
+      converted: true,
     );
   }
 
   /// Converts the dose by a concentration and returns the same dose if the concentration is not provided.
   Dose convertByConcentration(Concentration? concentration) {
-    if (concentration == null) return this; 
+    if (concentration == null) return this;
 
     final convFactor = substanceUnit.conversionFactor(concentration.substance);
     final newAmount = (amount / concentration.amount) * convFactor;
@@ -143,7 +139,10 @@ class Dose extends Equatable {
   /// Scales the dose by trying to find a candidate unit such that
   /// `amount * conversionFactor(candidate)` comes close to [threshold].
   Dose scaleAmount({double threshold = 0.5}) {
-    final newUnitCandidate = substanceUnit.findCandidateByIdealFactor(amount, threshold);
+    final newUnitCandidate = substanceUnit.findCandidateByIdealFactor(
+      amount,
+      threshold,
+    );
     if (newUnitCandidate == null) return this;
     final newAmount = amount * substanceUnit.conversionFactor(newUnitCandidate);
     return Dose(
@@ -154,7 +153,6 @@ class Dose extends Equatable {
       converted: converted,
     );
   }
-
 
   /// Returns a string representation of the dose units.
   String get unitString {
@@ -185,10 +183,7 @@ class Dose extends Equatable {
 
       if (parts.length == 1) {
         // Only substance provided.
-        return Dose(
-          amount: amount,
-          substanceUnit: substance,
-        );
+        return Dose(amount: amount, substanceUnit: substance);
       } else if (parts.length == 2) {
         // Try parsing second part as WeightUnit first.
         try {
@@ -209,7 +204,8 @@ class Dose extends Equatable {
             );
           } catch (e2) {
             throw ArgumentError(
-                "Invalid dose string: $doseStr. Cannot parse '${parts[1]}' as WeightUnit or TimeUnit.");
+              "Invalid dose string: $doseStr. Cannot parse '${parts[1]}' as WeightUnit or TimeUnit.",
+            );
           }
         }
       } else if (parts.length == 3) {
@@ -238,10 +234,7 @@ class Dose extends Equatable {
 
   /// Converts the Dose to a JSON map.
   Map<String, dynamic> toJson() {
-    return {
-      'amount': amount,
-      'unit': unitString,
-    };
+    return {'amount': amount, 'unit': unitString};
   }
 
   @override

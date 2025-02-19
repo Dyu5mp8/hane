@@ -1,8 +1,4 @@
-enum ScaleZoneColor {
-  red,
-  yellow,
-  green
-}
+enum ScaleZoneColor { red, yellow, green }
 
 class ScaleZone {
   final double minPerWeight;
@@ -10,11 +6,13 @@ class ScaleZone {
   final ScaleZoneColor color;
   double weight;
 
-
-  ScaleZone({required this.weight, required this.minPerWeight, required this.maxPerWeight, required this.color});
-
+  ScaleZone({
+    required this.weight,
+    required this.minPerWeight,
+    required this.maxPerWeight,
+    required this.color,
+  });
 
   double get min => minPerWeight * weight;
   double get max => maxPerWeight * weight;
-
 }

@@ -4,10 +4,7 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 class SyncDrugsDialog extends StatefulWidget {
   final Set<String> difference;
 
-  const SyncDrugsDialog({
-    required this.difference,
-    super.key,
-  });
+  const SyncDrugsDialog({required this.difference, super.key});
 
   @override
   State<SyncDrugsDialog> createState() => _SyncDrugsDialogState();
@@ -47,15 +44,18 @@ class _SyncDrugsDialogState extends State<SyncDrugsDialog> {
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () {
-              final checkedItems = selectedItems.entries
-                  .where((entry) => entry.value)
-                  .map((entry) => entry.key)
-                  .toList();
+              final checkedItems =
+                  selectedItems.entries
+                      .where((entry) => entry.value)
+                      .map((entry) => entry.key)
+                      .toList();
 
               // Perform an action with the selected items
               // For example, add selected drugs to the user’s collection
-              Provider.of<DrugListProvider>(context, listen: false)
-                  .addDrugsFromMaster(checkedItems);
+              Provider.of<DrugListProvider>(
+                context,
+                listen: false,
+              ).addDrugsFromMaster(checkedItems);
 
               // Define the snackBarText based on the number of checked items
               var snackBarText = '';
@@ -68,15 +68,13 @@ class _SyncDrugsDialogState extends State<SyncDrugsDialog> {
                 snackBarText = 'Inga läkemedel har lagts till';
               }
 
-// Create the SnackBar with the dynamic text
-              SnackBar snackBar = SnackBar(
-                content: Text(snackBarText),
-              );
+              // Create the SnackBar with the dynamic text
+              SnackBar snackBar = SnackBar(content: Text(snackBarText));
 
-// Show the SnackBar
+              // Show the SnackBar
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-// Close the dialog twice
+              // Close the dialog twice
               Navigator.of(context).pop(); // Close the first dialog
               Navigator.of(context).pop(); // Close the second dialog
             },
@@ -84,8 +82,9 @@ class _SyncDrugsDialogState extends State<SyncDrugsDialog> {
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
-              Navigator.of(context)
-                  .pop(); // Close the dialog without any action
+              Navigator.of(
+                context,
+              ).pop(); // Close the dialog without any action
             },
           ),
         ],

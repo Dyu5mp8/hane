@@ -17,9 +17,7 @@ class _AdminNutritionListviewState extends State<AdminNutritionListview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Lägg till Nutrition"),
-      ),
+      appBar: AppBar(title: const Text("Lägg till Nutrition")),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('nutritions').snapshots(),
         builder: (context, snapshot) {
@@ -28,24 +26,27 @@ class _AdminNutritionListviewState extends State<AdminNutritionListview> {
           } else if (snapshot.hasError) {
             return Center(child: Text("Fel: ${snapshot.error}"));
           } else if (snapshot.hasData) {
-            final sources = snapshot.data!.docs.map((doc) {
-              final data = doc.data();
-              if (data is Map<String, dynamic>) {
-                return Source.fromJson(data, doc.id);
-              } else {
-                throw Exception('Document data is not a Map<String, dynamic>');
-              }
-            }).toList();
+            final sources =
+                snapshot.data!.docs.map((doc) {
+                  final data = doc.data();
+                  if (data is Map<String, dynamic>) {
+                    return Source.fromJson(data, doc.id);
+                  } else {
+                    throw Exception(
+                      'Document data is not a Map<String, dynamic>',
+                    );
+                  }
+                }).toList();
 
             final groupedSources = {
               for (var type in SourceType.values)
                 type: sources.where((s) => s.type == type).toList(),
             };
 
-            final nonEmptyGroupedSources = groupedSources
-                .entries
-                .where((entry) => entry.value.isNotEmpty)
-                .toList();
+            final nonEmptyGroupedSources =
+                groupedSources.entries
+                    .where((entry) => entry.value.isNotEmpty)
+                    .toList();
 
             if (nonEmptyGroupedSources.isEmpty) {
               return const Center(child: Text("Ingen data hittades"));
@@ -66,15 +67,16 @@ class _AdminNutritionListviewState extends State<AdminNutritionListview> {
                     child: Text(
                       type.displayName,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                   content: Column(
-                    children: sources
-                        .map((source) => AdminSourceTile(source: source))
-                        .toList(),
+                    children:
+                        sources
+                            .map((source) => AdminSourceTile(source: source))
+                            .toList(),
                   ),
                 );
               },
@@ -89,9 +91,7 @@ class _AdminNutritionListviewState extends State<AdminNutritionListview> {
           // Navigate to NutritionAdmin to add a new source
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => AdminNutritionEditview(),
-            ),
+            MaterialPageRoute(builder: (context) => AdminNutritionEditview()),
           );
         },
         child: const Icon(Icons.add),

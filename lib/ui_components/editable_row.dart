@@ -43,9 +43,10 @@ class _EditableRowState extends State<EditableRow>
       duration: widget.animationDuration,
       vsync: this,
     );
-    _iconAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _iconAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     if (widget.isEditMode) {
       _controller.repeat(reverse: true);
@@ -77,27 +78,29 @@ class _EditableRowState extends State<EditableRow>
       return const SizedBox.shrink();
     }
 
-    final padding = widget.padding ??
+    final padding =
+        widget.padding ??
         (widget.isEditMode
             ? const EdgeInsets.symmetric(vertical: 4, horizontal: 8)
             : const EdgeInsets.only(top: 8));
 
     return InkWell(
-      onTap: isEditMode
-          ? () {
-              showDialog(
-                context: context,
-                builder: (context) => widget.editDialog,
-              );
-            }
-          : null,
+      onTap:
+          isEditMode
+              ? () {
+                showDialog(
+                  context: context,
+                  builder: (context) => widget.editDialog,
+                );
+              }
+              : null,
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
-          color: isEditMode
-              ? 
-                Theme.of(context).colorScheme.secondaryContainer
-              : Theme.of(context).colorScheme.surface,
+          color:
+              isEditMode
+                  ? Theme.of(context).colorScheme.secondaryContainer
+                  : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
@@ -107,20 +110,21 @@ class _EditableRowState extends State<EditableRow>
               fit: FlexFit.loose,
               child: Text(
                 widget.text?.isNotEmpty == true ? widget.text! : "",
-                style: widget.textStyle?.copyWith(
-                    
-                      fontWeight: widget.isEditMode
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ) ??
-                    Theme.of(context).textTheme.headlineMedium!.copyWith(
-                          color: widget.isEditMode
-                              ? Colors.blue[800]
-                              : Colors.black,
-                          fontWeight: widget.isEditMode
+                style:
+                    widget.textStyle?.copyWith(
+                      fontWeight:
+                          widget.isEditMode
                               ? FontWeight.bold
                               : FontWeight.normal,
-                        ),
+                    ) ??
+                    Theme.of(context).textTheme.headlineMedium!.copyWith(
+                      color:
+                          widget.isEditMode ? Colors.blue[800] : Colors.black,
+                      fontWeight:
+                          widget.isEditMode
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                    ),
               ),
             ),
             if (widget.isEditMode)

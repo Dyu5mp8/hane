@@ -5,14 +5,15 @@ class EditNotesDialog extends StatefulWidget {
   final Drug drug;
   final bool isUserNote;
   final Function()? onUserNotesSaved;
-  const EditNotesDialog(
-      {super.key,
-      required this.drug,
-      required this.isUserNote,
-      this.onUserNotesSaved});
+  const EditNotesDialog({
+    super.key,
+    required this.drug,
+    required this.isUserNote,
+    this.onUserNotesSaved,
+  });
 
   @override
- State<EditNotesDialog> createState() => _EditNotesDialogState();
+  State<EditNotesDialog> createState() => _EditNotesDialogState();
 }
 
 class _EditNotesDialogState extends State<EditNotesDialog> {
@@ -25,9 +26,10 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
   void initState() {
     super.initState();
     // Initialize the controllers with the existing data
-    _notesController.text = widget.isUserNote
-        ? widget.drug.userNotes ?? ''
-        : widget.drug.notes ?? '';
+    _notesController.text =
+        widget.isUserNote
+            ? widget.drug.userNotes ?? ''
+            : widget.drug.notes ?? '';
     _expandedNotesController.text = widget.drug.expandedNotes ?? '';
   }
 
@@ -41,29 +43,32 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(widget.isUserNote ? 'Dina anteckningar' : 'Anteckningar'),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          leading: null,
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Icon(Icons.close)),
-            TextButton(
-                onPressed: () {
-                  if (widget.isUserNote) {
-                    widget.drug.userNotes = _notesController.text;
-                    widget.onUserNotesSaved?.call();
-                  } else {
-                    widget.drug.notes = _notesController.text;
-                    widget.drug.expandedNotes = _expandedNotesController.text;
-                  }
-                  Navigator.pop(context);
-                },
-                child: const Icon(Icons.check)),
-          ]),
+        title: Text(widget.isUserNote ? 'Dina anteckningar' : 'Anteckningar'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        leading: null,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Icon(Icons.close),
+          ),
+          TextButton(
+            onPressed: () {
+              if (widget.isUserNote) {
+                widget.drug.userNotes = _notesController.text;
+                widget.onUserNotesSaved?.call();
+              } else {
+                widget.drug.notes = _notesController.text;
+                widget.drug.expandedNotes = _expandedNotesController.text;
+              }
+              Navigator.pop(context);
+            },
+            child: const Icon(Icons.check),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -73,7 +78,6 @@ class _EditNotesDialogState extends State<EditNotesDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Name input
-
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _notesController,

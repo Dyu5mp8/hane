@@ -48,31 +48,32 @@ class InfusionTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12.0),
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-     
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title and Delete Button Row
           Row(
-  crossAxisAlignment: CrossAxisAlignment.center, // Align vertically centered
-  children: [
-    Expanded(
-      child: Text(
-        source.name,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
-      ),
-    ),
-    IconButton(
-      icon: const Icon(Icons.close),
-      onPressed: () {
-        vm.removeNutrition(infusion);
-      },
-    ),
-  ],
-),
+            crossAxisAlignment:
+                CrossAxisAlignment.center, // Align vertically centered
+            children: [
+              Expanded(
+                child: Text(
+                  source.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  vm.removeNutrition(infusion);
+                },
+              ),
+            ],
+          ),
 
           // Infusion Rate and Kcal per day Row
           Row(
@@ -85,8 +86,10 @@ class InfusionTile extends StatelessWidget {
                     "Infusionstakt: ${infusion.getRate().toStringAsFixed(0)} ml/h",
                     style: const TextStyle(fontSize: 14),
                   ),
-                  Text("Volym per dag: ${infusion.volumePerDay().toStringAsFixed(0)} ml",
-                      style: const TextStyle(fontSize: 14)),
+                  Text(
+                    "Volym per dag: ${infusion.volumePerDay().toStringAsFixed(0)} ml",
+                    style: const TextStyle(fontSize: 14),
+                  ),
                 ],
               ),
               Text(
@@ -104,8 +107,6 @@ class InfusionTile extends StatelessWidget {
             onChanged: (value) {
               vm.updateRate(infusion, value);
             },
-
-    
           ),
         ],
       ),
@@ -124,12 +125,8 @@ class IntermittentTile extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12.0),
-      padding: const EdgeInsets.symmetric(horizontal:16),
-      decoration: BoxDecoration(
-
-        borderRadius: BorderRadius.circular(12.0),
-     
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.0)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -146,37 +143,45 @@ class IntermittentTile extends StatelessWidget {
                   ),
                 ),
               ),
-               Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-                onPressed: () {
-                  viewModel.decreaseQuantity(nutrition);
-                  if (nutrition.quantity == 0) {
-                    viewModel.removeNutrition(nutrition);
-                  }
-                },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle_outline,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      viewModel.decreaseQuantity(nutrition);
+                      if (nutrition.quantity == 0) {
+                        viewModel.removeNutrition(nutrition);
+                      }
+                    },
+                  ),
+                  Text(
+                    '${nutrition.quantity}',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.add_circle_outline,
+                      color: Colors.green,
+                    ),
+                    onPressed: () {
+                      viewModel.increaseQuantity(nutrition);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      viewModel.removeNutrition(nutrition);
+                    },
+                  ),
+                ],
               ),
-              Text(
-                '${nutrition.quantity}',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              IconButton(
-                icon: const Icon(Icons.add_circle_outline, color: Colors.green),
-                onPressed: () {
-                  viewModel.increaseQuantity(nutrition);
-                },
-              ),
-               IconButton(
-      icon: const Icon(Icons.close),
-      onPressed: () {
-        viewModel.removeNutrition(nutrition);
-      },
-    ),
-              
-            ],
-          ),
               // Optional: Add more actions if needed
             ],
           ),
@@ -195,9 +200,8 @@ class IntermittentTile extends StatelessWidget {
               ),
             ],
           ),
-   
+
           // Quantity Control Row
-       
         ],
       ),
     );

@@ -1,10 +1,7 @@
-
-
 import 'package:hane/drugs/services/user_behaviors/behaviors.dart';
 
-class UserFeedback{
-
- String masterUID;
+class UserFeedback {
+  String masterUID;
   String feedback;
   Timestamp timestamp;
   String userId;
@@ -16,9 +13,7 @@ class UserFeedback{
     required this.userId,
   });
 
- 
-
-factory UserFeedback.fromFirestore(Map<String, dynamic> map) {
+  factory UserFeedback.fromFirestore(Map<String, dynamic> map) {
     return UserFeedback(
       masterUID: map['master'] as String,
       feedback: map['feedback'] as String,

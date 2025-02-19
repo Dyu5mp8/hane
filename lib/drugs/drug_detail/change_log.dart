@@ -40,7 +40,10 @@ class _ChangeLogState extends State<ChangeLog> {
               onPressed: () {
                 setState(() {
                   widget.drug.changeNotes = [];
-                  Provider.of<DrugListProvider>(context, listen: false).addDrug(widget.drug);
+                  Provider.of<DrugListProvider>(
+                    context,
+                    listen: false,
+                  ).addDrug(widget.drug);
                   widget.onChanged(); // Call the callback
                 });
                 Navigator.of(context).pop(); // Close the dialog
@@ -56,7 +59,10 @@ class _ChangeLogState extends State<ChangeLog> {
   void _removeChangeNoteAt(int index) {
     setState(() {
       widget.drug.changeNotes?.removeAt(index);
-      Provider.of<DrugListProvider>(context, listen: false).addDrug(widget.drug);
+      Provider.of<DrugListProvider>(
+        context,
+        listen: false,
+      ).addDrug(widget.drug);
       widget.onChanged(); // Call the callback
     });
   }
@@ -102,7 +108,9 @@ class _ChangeLogState extends State<ChangeLog> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: const Text('Bekräfta'),
-                          content: const Text('Är du säker på att du vill radera denna post?'),
+                          content: const Text(
+                            'Är du säker på att du vill radera denna post?',
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () {

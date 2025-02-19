@@ -31,10 +31,7 @@ class ConversionButton extends StatelessWidget {
         visualDensity: VisualDensity.compact,
         icon: Text(
           label,
-          style: GoogleFonts.comfortaa(
-            fontSize: 13,
-            color: Colors.black
-          ),
+          style: GoogleFonts.comfortaa(fontSize: 13, color: Colors.black),
         ),
         onPressed: buttonPressed,
       ),
@@ -45,6 +42,5 @@ class ConversionButton extends StatelessWidget {
     HapticFeedback.selectionClick();
 
     onPressed();
-
   }
 }

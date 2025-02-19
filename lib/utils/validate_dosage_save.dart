@@ -6,7 +6,7 @@ String? validateTextInput(String? value) {
   }
 
   return null;
-} 
+}
 
 String? validateAmountInput(String? value) {
   if (value == null || value.isEmpty) {
@@ -18,8 +18,7 @@ String? validateAmountInput(String? value) {
   try {
     double.parse(s);
     return null;
-  }
-  catch (e) {
+  } catch (e) {
     return 'Ange ett giltigt värde';
   }
 }
@@ -28,15 +27,9 @@ String? validateUnitInput(String? value) {
   if (value == null || value.isEmpty) {
     return null;
   }
-  
-  try {
 
-
-  }
-  catch (e) {
-  
+  try {} catch (e) {
     return 'Felaktig enhet: ${e.toString()}';
   }
   return null;
 }
-

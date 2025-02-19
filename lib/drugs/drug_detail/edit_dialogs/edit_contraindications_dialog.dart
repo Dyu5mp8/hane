@@ -38,28 +38,30 @@ class _EditContraindicationsDialogState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('CAVE'),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          leading: null,
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Icon(Icons.close)),
-            TextButton(
-                onPressed: () {
-                  // Update the drug name with the new value
-                  widget.drug.contraindication =
-                      _contraindicationController.text;
-                  widget.drug.expandedContraindication =
-                      _expandedContraindicationController.text;
+        title: const Text('CAVE'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        leading: null,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Icon(Icons.close),
+          ),
+          TextButton(
+            onPressed: () {
+              // Update the drug name with the new value
+              widget.drug.contraindication = _contraindicationController.text;
+              widget.drug.expandedContraindication =
+                  _expandedContraindicationController.text;
 
-                  Navigator.pop(context);
-                },
-                child: const Icon(Icons.check)),
-          ]),
+              Navigator.pop(context);
+            },
+            child: const Icon(Icons.check),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -70,27 +72,30 @@ class _EditContraindicationsDialogState
               children: [
                 const SizedBox(height: 20), // Name input
                 TextFormField(
-                    controller: _contraindicationController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Varningar och försiktighet',
-                      border: OutlineInputBorder(),
-                    ),
-                    minLines: 3,
-                    maxLines: 10,
-                    maxLength: 200,
-                    maxLengthEnforcement: MaxLengthEnforcement.truncateAfterCompositionEnds,),
+                  controller: _contraindicationController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Varningar och försiktighet',
+                    border: OutlineInputBorder(),
+                  ),
+                  minLines: 3,
+                  maxLines: 10,
+                  maxLength: 200,
+                  maxLengthEnforcement:
+                      MaxLengthEnforcement.truncateAfterCompositionEnds,
+                ),
 
                 const SizedBox(height: 20),
 
                 TextFormField(
-                    controller: _expandedContraindicationController,
-                    decoration: const InputDecoration(
-                      labelText: 'Utökad information',
-                      border: OutlineInputBorder(),
-                    ),
-                    minLines: 3,
-                    maxLines: 10),
+                  controller: _expandedContraindicationController,
+                  decoration: const InputDecoration(
+                    labelText: 'Utökad information',
+                    border: OutlineInputBorder(),
+                  ),
+                  minLines: 3,
+                  maxLines: 10,
+                ),
               ],
             ),
           ),

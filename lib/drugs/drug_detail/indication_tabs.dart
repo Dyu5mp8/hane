@@ -40,7 +40,9 @@ class _IndicationTabsState extends State<IndicationTabs> {
     final controller = DefaultTabController.of(context);
     if (controller != _parentTabController) {
       _parentTabController?.removeListener(_handleTabChange);
-      _parentTabController?.animation?.removeListener(_handleTabAnimationChange);
+      _parentTabController?.animation?.removeListener(
+        _handleTabAnimationChange,
+      );
       _parentTabController = controller;
 
       _parentTabController?.animation?.addListener(_handleTabAnimationChange);
@@ -58,7 +60,6 @@ class _IndicationTabsState extends State<IndicationTabs> {
 
   // Called when the controller's animation updates.
   void _handleTabAnimationChange() {
-
     if (_parentTabController != null) {
       // Use the animation's value to compute an effective index.
       // Rounding means as soon as the animation starts, we pick up the new target.
@@ -69,14 +70,12 @@ class _IndicationTabsState extends State<IndicationTabs> {
 
   // Also keep our previous listener (which triggers when the index settles).
   void _handleTabChange() {
- 
     if (_parentTabController != null) {
       _scrollToTab(_parentTabController!.index);
     }
   }
 
   void _scrollToTab(int index) {
-
     if (index < _tabKeys.length) {
       final keyContext = _tabKeys[index].currentContext;
       if (keyContext != null) {
@@ -100,6 +99,7 @@ class _IndicationTabsState extends State<IndicationTabs> {
       });
     }
   }
+
   @override
   void dispose() {
     _scrollController.removeListener(_updateScrollMetrics);
@@ -108,6 +108,7 @@ class _IndicationTabsState extends State<IndicationTabs> {
     _parentTabController?.animation?.removeListener(_handleTabAnimationChange);
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final editMode = context.watch<EditModeProvider>().editMode;
@@ -134,29 +135,27 @@ class _IndicationTabsState extends State<IndicationTabs> {
         // Adding an onTap callback so that when a tab is chosen,
         // we scroll that tab into view.
         onTap: (index) => _scrollToTab(index),
-        tabs: indications.asMap().entries.map((entry) {
-          final index = entry.key;
-          final indication = entry.value;
-          return Tab(
-            key: _tabKeys[index],
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(0),
-                  child: Transform.scale(
-                    scaleX: 0.6,
-                    origin: const Offset(-10, 0),
-                    child: const Icon(
-                      Icons.drag_handle,
-                      size: 30,
+        tabs:
+            indications.asMap().entries.map((entry) {
+              final index = entry.key;
+              final indication = entry.value;
+              return Tab(
+                key: _tabKeys[index],
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(0),
+                      child: Transform.scale(
+                        scaleX: 0.6,
+                        origin: const Offset(-10, 0),
+                        child: const Icon(Icons.drag_handle, size: 30),
+                      ),
                     ),
-                  ),
+                    Text(indication.name),
+                  ],
                 ),
-                Text(indication.name),
-              ],
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
         onReorder: (int oldIndex, int newIndex) {
           if (oldIndex != newIndex) {
             setState(() {
@@ -176,14 +175,12 @@ class _IndicationTabsState extends State<IndicationTabs> {
         isScrollable: true,
 
         onTap: (index) => _scrollToTab(index),
-        tabs: indications.asMap().entries.map((entry) {
-          final index = entry.key;
-          final indication = entry.value;
-          return Tab(
-            key: _tabKeys[index],
-            text: indication.name,
-          );
-        }).toList(),
+        tabs:
+            indications.asMap().entries.map((entry) {
+              final index = entry.key;
+              final indication = entry.value;
+              return Tab(key: _tabKeys[index], text: indication.name);
+            }).toList(),
       );
     }
 
@@ -201,32 +198,37 @@ class _IndicationTabsState extends State<IndicationTabs> {
           if (editMode)
             Container(
               width: 40,
-             decoration: BoxDecoration(
-        color: Theme.of(context)
-            .canvasColor, // Set a solid, non-transparent background color
-      ),
+              decoration: BoxDecoration(
+                color:
+                    Theme.of(
+                      context,
+                    ).canvasColor, // Set a solid, non-transparent background color
+              ),
               child: IconButton(
                 onPressed: () {
-                  final newIndication =
-                      Indication(isPediatric: false, name: '', notes: '');
+                  final newIndication = Indication(
+                    isPediatric: false,
+                    name: '',
+                    notes: '',
+                  );
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ChangeNotifierProvider<Drug>.value(
-                        value: drug,
-                        child: EditIndicationDialog(
-                          indication: newIndication,
-                          withDosages: true,
-                          isNewIndication: true,
-                        ),
-                      ),
+                      builder:
+                          (context) => ChangeNotifierProvider<Drug>.value(
+                            value: drug,
+                            child: EditIndicationDialog(
+                              indication: newIndication,
+                              withDosages: true,
+                              isNewIndication: true,
+                            ),
+                          ),
                     ),
                   );
                 },
                 icon: const Icon(Icons.add_circle_outline_sharp),
                 iconSize: 25,
-                
+
                 padding: EdgeInsets.zero,
               ),
             ),
@@ -269,7 +271,11 @@ class _IndicationTabsState extends State<IndicationTabs> {
                     width: 40,
                     child: IgnorePointer(
                       child: Container(
-                        child: Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 20),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
                         padding: const EdgeInsets.only(right: 0),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(

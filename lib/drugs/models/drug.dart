@@ -31,88 +31,90 @@ class Drug extends ChangeNotifier with EquatableMixin {
   Map<String, String>? _hasReviewedUIDs = {};
   Map<String, String>? _shouldReviewUIDs = {};
 
-  Drug(
-      {String? id,
-      String? name,
-      bool? changedByUser,
-      String? reviewedBy,
-      List<Map<String, dynamic>>? changeNotes,
-      List<dynamic>? brandNames,
-      String? genericName,
-      List<dynamic>? categories,
-      List<Concentration>? concentrations = const [],
-      String? contraindication = '',
-      String? expandedContraindication = '',
-      List<Indication>? indications,
-      String? notes = '',
-      String? expandedNotes = '',
-      String? userNotes,
-      Timestamp? lastUpdated,
-      Timestamp? lastMessageTimestamp,
-      Map<String, String>? hasReviewedUIDs,
-      Map<String, String>? shouldReviewUIDs})
-      : _name = name ?? '',
-        _changedByUser = changedByUser,
-        _reviewedBy = reviewedBy,
-        _lastUpdated = lastUpdated,
-        _categories = categories,
-        _concentrations = concentrations,
-        _contraindication = contraindication,
-        _expandedContraindication = expandedContraindication,
-        _indications = indications,
-        _notes = notes,
-        _expandedNotes = expandedNotes,
-        _brandNames = brandNames,
-        _genericName = genericName,
-        _changeNotes = changeNotes,
-        _id = id,
-        _userNotes = userNotes,
-        _lastMessageTimestamp = lastMessageTimestamp,
-        _hasReviewedUIDs = hasReviewedUIDs,
-        _shouldReviewUIDs = shouldReviewUIDs;
+  Drug({
+    String? id,
+    String? name,
+    bool? changedByUser,
+    String? reviewedBy,
+    List<Map<String, dynamic>>? changeNotes,
+    List<dynamic>? brandNames,
+    String? genericName,
+    List<dynamic>? categories,
+    List<Concentration>? concentrations = const [],
+    String? contraindication = '',
+    String? expandedContraindication = '',
+    List<Indication>? indications,
+    String? notes = '',
+    String? expandedNotes = '',
+    String? userNotes,
+    Timestamp? lastUpdated,
+    Timestamp? lastMessageTimestamp,
+    Map<String, String>? hasReviewedUIDs,
+    Map<String, String>? shouldReviewUIDs,
+  }) : _name = name ?? '',
+       _changedByUser = changedByUser,
+       _reviewedBy = reviewedBy,
+       _lastUpdated = lastUpdated,
+       _categories = categories,
+       _concentrations = concentrations,
+       _contraindication = contraindication,
+       _expandedContraindication = expandedContraindication,
+       _indications = indications,
+       _notes = notes,
+       _expandedNotes = expandedNotes,
+       _brandNames = brandNames,
+       _genericName = genericName,
+       _changeNotes = changeNotes,
+       _id = id,
+       _userNotes = userNotes,
+       _lastMessageTimestamp = lastMessageTimestamp,
+       _hasReviewedUIDs = hasReviewedUIDs,
+       _shouldReviewUIDs = shouldReviewUIDs;
 
   Drug.from(Drug drug)
-      : _id = drug.id,
-        _name = drug.name,
-        _genericName = drug._genericName,
-        _reviewedBy = drug._reviewedBy,
-        _changedByUser = drug.changedByUser,
-        _lastUpdated = drug.lastUpdated,
-        _categories = drug.categories,
-        _concentrations = drug.concentrations,
-        _contraindication = drug.contraindication,
-        _expandedContraindication = drug._expandedContraindication,
-        _indications = drug._indications != null
-            ? List<Indication>.from(
-                drug._indications!.map((ind) => Indication.from(ind)))
-            : null,
-        _notes = drug.notes,
-        _expandedNotes = drug._expandedNotes,
-        _changeNotes = drug._changeNotes,
-        _userNotes = drug.userNotes,
-        _brandNames = drug.brandNames,
-        _lastMessageTimestamp = drug._lastMessageTimestamp,
-        _hasReviewedUIDs = drug.hasReviewedUIDs,
-        hasUnreadMessages = drug.hasUnreadMessages,
-        _shouldReviewUIDs = drug.shouldReviewUIDs;
+    : _id = drug.id,
+      _name = drug.name,
+      _genericName = drug._genericName,
+      _reviewedBy = drug._reviewedBy,
+      _changedByUser = drug.changedByUser,
+      _lastUpdated = drug.lastUpdated,
+      _categories = drug.categories,
+      _concentrations = drug.concentrations,
+      _contraindication = drug.contraindication,
+      _expandedContraindication = drug._expandedContraindication,
+      _indications =
+          drug._indications != null
+              ? List<Indication>.from(
+                drug._indications!.map((ind) => Indication.from(ind)),
+              )
+              : null,
+      _notes = drug.notes,
+      _expandedNotes = drug._expandedNotes,
+      _changeNotes = drug._changeNotes,
+      _userNotes = drug.userNotes,
+      _brandNames = drug.brandNames,
+      _lastMessageTimestamp = drug._lastMessageTimestamp,
+      _hasReviewedUIDs = drug.hasReviewedUIDs,
+      hasUnreadMessages = drug.hasUnreadMessages,
+      _shouldReviewUIDs = drug.shouldReviewUIDs;
 
   @override
   List<Object?> get props => [
-        _id,
-        _name,
-        _genericName,
-        _reviewedBy,
-        _changedByUser,
-        _lastUpdated,
-        _categories,
-        _concentrations,
-        _contraindication,
-        _expandedContraindication,
-        _indications,
-        _notes,
-        _expandedNotes,
-        _brandNames
-      ];
+    _id,
+    _name,
+    _genericName,
+    _reviewedBy,
+    _changedByUser,
+    _lastUpdated,
+    _categories,
+    _concentrations,
+    _contraindication,
+    _expandedContraindication,
+    _indications,
+    _notes,
+    _expandedNotes,
+    _brandNames,
+  ];
 
   void updateDrug() {
     notifyListeners();
@@ -217,21 +219,22 @@ class Drug extends ChangeNotifier with EquatableMixin {
   }
 
   ReviewStatus getReviewStatus(String reviewerUID) {
-
-        final shouldReviewKeys = _shouldReviewUIDs?.keys.toSet() ?? {};
+    final shouldReviewKeys = _shouldReviewUIDs?.keys.toSet() ?? {};
     final hasReviewedKeys = _hasReviewedUIDs?.keys.toSet() ?? {};
     final remainingReviewers = shouldReviewKeys.difference(hasReviewedKeys);
 
     if (remainingReviewers.contains(reviewerUID)) {
       return ReviewStatus.waitingOnUser;
-    } else if (shouldReviewKeys.isNotEmpty && setEquals(shouldReviewKeys, hasReviewedKeys)) {
+    } else if (shouldReviewKeys.isNotEmpty &&
+        setEquals(shouldReviewKeys, hasReviewedKeys)) {
       return ReviewStatus.allAccepted;
     } else if (hasReviewedKeys.contains(reviewerUID)) {
       return ReviewStatus.userAccepted;
     }
     return ReviewStatus.notReviewed;
   }
-//Called when drug is updated and needs to be reviewed again
+
+  //Called when drug is updated and needs to be reviewed again
   void clearhasReviewedUIDs() {
     _hasReviewedUIDs = {};
     notifyListeners();
@@ -242,11 +245,12 @@ class Drug extends ChangeNotifier with EquatableMixin {
       return null;
     }
     for (var changeNote in _changeNotes!.reversed) {
-    if (changeNote['reviewers'] != null && changeNote['reviewers'].isNotEmpty) {
-      return changeNote;
+      if (changeNote['reviewers'] != null &&
+          changeNote['reviewers'].isNotEmpty) {
+        return changeNote;
+      }
     }
-  }
-  return null;
+    return null;
   }
 
   Map<String, String>? get hasReviewedUIDs => _hasReviewedUIDs;
@@ -408,19 +412,26 @@ class Drug extends ChangeNotifier with EquatableMixin {
       changedByUser: map['changedByUser'] as bool?,
       reviewedBy: map['reviewedBy'] as String?,
       categories: (map['categories'] as List<dynamic>?),
-      concentrations: (map['concentrations'] as List<dynamic>?)
-          ?.map((item) => Concentration.fromMap(item as Map<String, dynamic>))
-          .toList(),
+      concentrations:
+          (map['concentrations'] as List<dynamic>?)
+              ?.map(
+                (item) => Concentration.fromMap(item as Map<String, dynamic>),
+              )
+              .toList(),
       brandNames: (map['brandNames'] as List<dynamic>?),
       contraindication: map['contraindication'] as String?,
-      changeNotes: (map['changeNotes'] as List<dynamic>?)
-          ?.map((item) => Map<String, dynamic>.from(item as Map))
-          .toList(),
+      changeNotes:
+          (map['changeNotes'] as List<dynamic>?)
+              ?.map((item) => Map<String, dynamic>.from(item as Map))
+              .toList(),
       expandedContraindication: map['expandedContraindication'] as String?,
-      indications: (map['indications'] as List?)
-          ?.map(
-              (item) => Indication.fromFirestore(item as Map<String, dynamic>))
-          .toList(),
+      indications:
+          (map['indications'] as List?)
+              ?.map(
+                (item) =>
+                    Indication.fromFirestore(item as Map<String, dynamic>),
+              )
+              .toList(),
       notes: map['notes'] as String?,
       expandedNotes: map['expandedNotes'] as String?,
       lastUpdated: map['lastUpdated'] as Timestamp?,
@@ -431,4 +442,4 @@ class Drug extends ChangeNotifier with EquatableMixin {
   }
 }
 
-enum ReviewStatus {waitingOnUser, userAccepted, allAccepted, notReviewed}
+enum ReviewStatus { waitingOnUser, userAccepted, allAccepted, notReviewed }

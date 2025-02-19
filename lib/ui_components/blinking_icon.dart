@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class BlinkingIcon extends StatefulWidget {
   final Widget child;
   final Duration duration;
@@ -23,10 +24,7 @@ class BlinkingIconState extends State<BlinkingIcon>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _animation = Tween<double>(begin: 1.0, end: 0.0).animate(_controller);
 
@@ -61,9 +59,6 @@ class BlinkingIconState extends State<BlinkingIcon>
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation,
-      child: widget.child,
-    );
+    return FadeTransition(opacity: _animation, child: widget.child);
   }
 }

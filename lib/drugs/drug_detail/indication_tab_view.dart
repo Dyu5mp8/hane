@@ -14,27 +14,24 @@ class IndicationTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     final drug = context.watch<Drug>();
     final editMode = context.watch<EditModeProvider>().editMode;
-    final provider = context.read<DrugListProvider  >();
+    final provider = context.read<DrugListProvider>();
 
-
-
-
-
-
-
-    if ((drug.indications == null|| drug.indications!.isEmpty) && (provider.userMode != UserMode.syncedMode)) {
+    if ((drug.indications == null || drug.indications!.isEmpty) &&
+        (provider.userMode != UserMode.syncedMode)) {
       return Column(
         mainAxisSize:
             MainAxisSize.min, // Shrinks the column to fit its children
         children: [
-          Image.asset('assets/images/confused.png',
-              height: 200, fit: BoxFit.fill),
+          Image.asset(
+            'assets/images/confused.png',
+            height: 200,
+            fit: BoxFit.fill,
+          ),
           Text(
             "Inga indikationer ännu!",
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(color: Colors.grey[800]),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium!.copyWith(color: Colors.grey[800]),
             textAlign: TextAlign.center,
           ),
           const Expanded(child: SizedBox(height: 10)),
@@ -45,53 +42,53 @@ class IndicationTabView extends StatelessWidget {
     }
 
     return TabBarView(
-      children: drug.indications!.map((indication) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-        
-            if (indication.dosages != null)
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    DosageList(
-                      dosages: indication.dosages!,
-                      editMode: editMode,
-                      instruction: indication.notes,
-                    ),
-                    // Floating action button for editing the indication
-                    if (editMode)
-                      Positioned(
-                        bottom: 20,
-                        left: 20,
-                        child: FloatingActionButton.extended(
-                          onPressed: () {
-                            Navigator.push(
-                              
-                              context,
-                              MaterialPageRoute(
-                                
-                                builder: (context) => ChangeNotifierProvider<Drug>.value(
-                                  value: drug,
-                                  child: EditIndicationDialog(
-                                    indication: indication,
-                                    withDosages: true,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.edit_note_sharp),
-                          label: const Text('Redigera indikation'),
+      children:
+          drug.indications!.map((indication) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (indication.dosages != null)
+                  Expanded(
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        DosageList(
+                          dosages: indication.dosages!,
+                          editMode: editMode,
+                          instruction: indication.notes,
                         ),
-                      ),
-                  ],
-                ),
-              ),
-          ],
-        );
-      }).toList(),
+                        // Floating action button for editing the indication
+                        if (editMode)
+                          Positioned(
+                            bottom: 20,
+                            left: 20,
+                            child: FloatingActionButton.extended(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) =>
+                                            ChangeNotifierProvider<Drug>.value(
+                                              value: drug,
+                                              child: EditIndicationDialog(
+                                                indication: indication,
+                                                withDosages: true,
+                                              ),
+                                            ),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.edit_note_sharp),
+                              label: const Text('Redigera indikation'),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+              ],
+            );
+          }).toList(),
     );
   }
 }

@@ -9,10 +9,6 @@ import 'package:hane/startup_errors.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
-
-
-
 class InitializerWidget extends StatelessWidget {
   final bool firstLogin;
 
@@ -28,9 +24,7 @@ class InitializerWidget extends StatelessWidget {
           );
         } else if (snapshot.hasError) {
           return Scaffold(
-            body: Center(
-              child: Text("An error occurred: ${snapshot.error}"),
-            ),
+            body: Center(child: Text("An error occurred: ${snapshot.error}")),
           );
         } else {
           return snapshot.data!;
@@ -53,35 +47,32 @@ class InitializerWidget extends StatelessWidget {
   }
 
   Future<Widget> _getHomeScreen(BuildContext context, String userId) async {
-    final drugListProvider =
-        Provider.of<DrugListProvider>(context, listen: false);
+    final drugListProvider = Provider.of<DrugListProvider>(
+      context,
+      listen: false,
+    );
     drugListProvider.user = userId;
 
- 
     try {
       await drugListProvider.initializeProvider();
       await Future.delayed(const Duration(milliseconds: 300));
 
-
       if (drugListProvider.userMode == null) {
         return PreferenceSelectionScreen(user: userId);
+      } else if (drugListProvider.userMode == UserMode.customMode &&
+          await drugListProvider.getDataStatus() == false) {
+        return DrugInitScreen(user: userId);
+      } else {
+        return const DrugListWrapper();
       }
-
-  
-  
-      else if (drugListProvider.userMode == UserMode.customMode && await drugListProvider.getDataStatus() == false)        {
-
-          return DrugInitScreen(user: userId);
-        }
-        else { return const DrugListWrapper();}
-       
-
     } catch (e) {
-      return GenericErrorWidget(errorMessage: e.toString(), onRetry: () {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-        );
-      }
+      return GenericErrorWidget(
+        errorMessage: e.toString(),
+        onRetry: () {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        },
       );
     }
   }
@@ -89,9 +80,9 @@ class InitializerWidget extends StatelessWidget {
   Future<void> _logUserLogin(String userId) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
     try {
-      await userRef.set({
-        'lastLogin': DateTime.now(),
-      }, SetOptions(merge: true)).timeout(const Duration(seconds: 5));
+      await userRef
+          .set({'lastLogin': DateTime.now()}, SetOptions(merge: true))
+          .timeout(const Duration(seconds: 5));
     } catch (e) {
       print("Failed to log user login: $e");
     }

@@ -24,22 +24,27 @@ class _ConversionSwitchState extends State<ConversionSwitch> {
     return Row(
       children: [
         if (widget.unit != null)
-          Text(widget.unit!,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight:
-                      !widget.isActive ? FontWeight.bold : FontWeight.normal)),
+          Text(
+            widget.unit!,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight:
+                  !widget.isActive ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
         Switch.adaptive(
           value: widget.isActive,
           onChanged: widget.onSwitched,
           activeColor: Theme.of(context).colorScheme.tertiaryFixed,
-          inactiveTrackColor: Theme.of(context).colorScheme.secondaryFixed  ,
+          inactiveTrackColor: Theme.of(context).colorScheme.secondaryFixed,
         ),
-        Text("ml",
-            style: TextStyle(
-                fontSize: 14,
-                fontWeight:
-                    widget.isActive ? FontWeight.bold : FontWeight.normal)),
+        Text(
+          "ml",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: widget.isActive ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
       ],
     );
   }

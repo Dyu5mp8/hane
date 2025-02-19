@@ -10,9 +10,7 @@ class DrugInitScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ny användare?'),
-      ),
+      appBar: AppBar(title: const Text('Ny användare?')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -27,7 +25,9 @@ class DrugInitScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const DrugListWrapper()),
+                  MaterialPageRoute(
+                    builder: (context) => const DrugListWrapper(),
+                  ),
                 );
               },
               icon: Icons.create,
@@ -42,11 +42,16 @@ class DrugInitScreen extends StatelessWidget {
                   'Kopiera över läkemedel från stamlistan för en snabb start. Du kan sedan redigera dem efter behov.',
               buttonText: 'Kopiera från stamlistan',
               onPressed: () async {
-                final drugProvider = Provider.of<DrugListProvider>(context, listen: false);
+                final drugProvider = Provider.of<DrugListProvider>(
+                  context,
+                  listen: false,
+                );
                 await drugProvider.copyMasterToUser();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const DrugListWrapper()),
+                  MaterialPageRoute(
+                    builder: (context) => const DrugListWrapper(),
+                  ),
                 );
               },
               icon: Icons.copy,
@@ -86,8 +91,8 @@ class DrugInitScreen extends StatelessWidget {
                   child: Text(
                     title,
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -95,10 +100,9 @@ class DrugInitScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               description,
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    fontSize: 16,
-                    height: 1.4,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineLarge?.copyWith(fontSize: 16, height: 1.4),
             ),
             const SizedBox(height: 20),
             Center(
@@ -109,10 +113,16 @@ class DrugInitScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   backgroundColor: buttonColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
                   textStyle: const TextStyle(fontSize: 16),
                 ),
-                child: Text(buttonText, style: Theme.of(context).textTheme.headlineMedium),
+                child: Text(
+                  buttonText,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
               ),
             ),
           ],

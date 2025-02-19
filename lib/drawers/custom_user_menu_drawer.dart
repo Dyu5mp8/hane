@@ -6,8 +6,8 @@ import 'package:hane/drugs/services/drug_list_provider.dart';
 class CustomUserMenuDrawer extends MenuDrawer {
   const CustomUserMenuDrawer({super.key});
 
-  @override List<Widget> buildUserSpecificTiles(BuildContext context) {
-    return [const SyncedModeTile(),
-    const SendReviewTile()];
+  @override
+  List<Widget> buildUserSpecificTiles(BuildContext context) {
+    return [const SyncedModeTile(), const SendReviewTile()];
   }
 }

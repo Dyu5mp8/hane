@@ -4,8 +4,6 @@ import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/range
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/scale_zone.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-
-
 class TotalProteinScale extends StatelessWidget with RangeGetter {
   final double requirementValue = 2000; // e.g., fixed nutritional requirement
 
@@ -38,10 +36,13 @@ class TotalProteinScale extends StatelessWidget with RangeGetter {
                   // The box containing the text
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            
+
                     child: Text(
                       "Proteininnehåll ${vm.totalProteinPerDay().toStringAsFixed(0)} g",
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   // A small triangle pointing downwards
@@ -56,7 +57,6 @@ class TotalProteinScale extends StatelessWidget with RangeGetter {
           ),
         ],
         ranges: getLinearGaugeRanges(vm.getProteinScaleZones()),
-
       ),
     );
   }

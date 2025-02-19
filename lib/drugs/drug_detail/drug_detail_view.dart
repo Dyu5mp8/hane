@@ -61,18 +61,19 @@ class _DrugDetailViewState extends State<DrugDetailView> {
         title: Text(_editableDrug.name ?? 'Drug Details'),
         centerTitle: true,
         actions: [
-          if (!editMode && drugListProvider.isReviewer && _editableDrug.getReviewStatus(drugListProvider.user!) != ReviewStatus.notReviewed) const CheckReviewButton(),
-          if (drugListProvider.isReviewer && !editMode)
-            const ChatButton(),
+          if (!editMode &&
+              drugListProvider.isReviewer &&
+              _editableDrug.getReviewStatus(drugListProvider.user!) !=
+                  ReviewStatus.notReviewed)
+            const CheckReviewButton(),
+          if (drugListProvider.isReviewer && !editMode) const ChatButton(),
           if (!_editableDrug.changedByUser && !editMode) const InfoButton(),
           if (_editableDrug.changedByUser ||
               drugListProvider.userMode == UserMode.isAdmin)
             const EditModeButton(),
         ],
       ),
-      body: const Column(
-        children: [OverviewBox(), IndicationBox()],
-      ),
+      body: const Column(children: [OverviewBox(), IndicationBox()]),
     );
   }
 }
@@ -86,8 +87,10 @@ class BackButton extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        final editModeProvider =
-            Provider.of<EditModeProvider>(context, listen: false);
+        final editModeProvider = Provider.of<EditModeProvider>(
+          context,
+          listen: false,
+        );
 
         if (editModeProvider.editMode) {
           showDialog(
@@ -96,7 +99,8 @@ class BackButton extends StatelessWidget {
               return AlertDialog(
                 title: const Text('Ej sparade ändringar'),
                 content: const Text(
-                    'Är du säker på att du vill stänga utan att avsluta redigeringen?'),
+                  'Är du säker på att du vill stänga utan att avsluta redigeringen?',
+                ),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
@@ -140,10 +144,7 @@ class CheckReviewButton extends StatelessWidget {
           context: context,
           builder: (context) {
             final currentUserUID = FirebaseAuth.instance.currentUser?.uid;
-            return ReviewDialog(
-              drug: drug,
-              currentUserUID: currentUserUID,
-            );
+            return ReviewDialog(drug: drug, currentUserUID: currentUserUID);
           },
         );
       },
@@ -158,13 +159,14 @@ class ChatButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final drug = Provider.of<Drug>(context, listen: true);
     return IconButton(
-      icon: drug.hasUnreadMessages
-          ? const Badge(
-              backgroundColor: Colors.red,
-              smallSize: 10,
-              child: Icon(Bootstrap.wechat),
-            )
-          : const Icon(Bootstrap.wechat),
+      icon:
+          drug.hasUnreadMessages
+              ? const Badge(
+                backgroundColor: Colors.red,
+                smallSize: 10,
+                child: Icon(Bootstrap.wechat),
+              )
+              : const Icon(Bootstrap.wechat),
       onPressed: () {
         Navigator.push(
           context,
@@ -180,17 +182,16 @@ class InfoButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Drug drug =
-        Provider.of<Drug>(context, listen: false); // Get the drug object
+    Drug drug = Provider.of<Drug>(
+      context,
+      listen: false,
+    ); // Get the drug object
     return IconButton(
       icon: const Icon(Icons.info_outline),
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ChangeLog(
-              drug: drug,
-              onChanged: () {},
-            ),
+            builder: (context) => ChangeLog(drug: drug, onChanged: () {}),
           ),
         );
       },
@@ -201,14 +202,13 @@ class InfoButton extends StatelessWidget {
 class EditModeButton extends StatelessWidget {
   const EditModeButton({super.key});
 
-
-  
-
   @override
   Widget build(BuildContext context) {
     Drug drug = Provider.of<Drug>(context, listen: false);
-    DrugListProvider provider =
-        Provider.of<DrugListProvider>(context, listen: false);
+    DrugListProvider provider = Provider.of<DrugListProvider>(
+      context,
+      listen: false,
+    );
     return Consumer<EditModeProvider>(
       builder: (context, editModeProvider, child) {
         var editMode = editModeProvider.editMode;
@@ -218,8 +218,10 @@ class EditModeButton extends StatelessWidget {
             // Conditionally show delete button only when in edit mode
             if (editMode)
               IconButton(
-                icon: Icon(Icons.delete,
-                   color: Color.fromARGB(255, 255, 99, 8)),  
+                icon: Icon(
+                  Icons.delete,
+                  color: Color.fromARGB(255, 255, 99, 8),
+                ),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -227,7 +229,8 @@ class EditModeButton extends StatelessWidget {
                       return AlertDialog(
                         title: const Text('Radera'),
                         content: const Text(
-                            'Är du säker på att du vill radera detta läkemedel?'),
+                          'Är du säker på att du vill radera detta läkemedel?',
+                        ),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
@@ -237,16 +240,20 @@ class EditModeButton extends StatelessWidget {
                           ),
                           TextButton(
                             onPressed: () {
-                              Provider.of<DrugListProvider>(context,
-                                      listen: false)
-                                  .deleteDrug(drug);
+                              Provider.of<DrugListProvider>(
+                                context,
+                                listen: false,
+                              ).deleteDrug(drug);
 
                               Navigator.pop(context); // Close dialog
                               Navigator.pop(
-                                  context); // Go back to previous screen
+                                context,
+                              ); // Go back to previous screen
                             },
-                            child: const Text('Radera',
-                                style: TextStyle(color: Colors.red)),
+                            child: const Text(
+                              'Radera',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ],
                       );
@@ -256,81 +263,75 @@ class EditModeButton extends StatelessWidget {
               ),
 
             // Edit/Save button
-            Consumer<Drug>(builder: (context, drug, child) {
-              return IconButton(
-                icon: editMode
-                    ? Text(
-                        "Spara",
-                        style: TextStyle(
-                  
-                            fontSize: 16),
-                      )
-                    : const Icon(Icons.edit_note_sharp, size: 30),
-                onPressed: () async {
-                  
-
-                  HapticFeedback.lightImpact();
-                  if (editMode) {
-                    if (provider.userMode == UserMode.customMode) {
-                      provider.addDrug(drug);
-                    }
-
-                    if (provider.isAdmin){
-                  
-           
-                    if (await provider.checkIfDrugChanged(drug)) {
-
-                      Map<String,String> possibleReviewerUIDs = await provider.getPossibleReviewerUIDs();
-                      if (context.mounted) {
-                        showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CommitDialog(
-                            reviewers: possibleReviewerUIDs,
-                            onCommit: (comment, selectedReviewerUIDs) {
-                              final timestamp =
-                                  DateTime.now().toIso8601String();
-
-                              final changeMap = {
-                                'comment': comment,
-                                'timestamp': timestamp,
-                                'user':
-                                    FirebaseAuth.instance.currentUser!.email,
-                                'reviewers': selectedReviewerUIDs,
-                              };
-
-                              if (changeMap.isNotEmpty) {
-                                drug.changeNotes ??= []; // Initialize if null
-                                drug.changeNotes!.add(changeMap);
-                              }
-                              if (selectedReviewerUIDs.isNotEmpty) {
-                                drug.shouldReviewUIDs = selectedReviewerUIDs;
-                                drug.hasReviewedUIDs = {};
-                              }
-
-                              // Save the drug
-                              provider.addDrug(drug);
-                              editModeProvider.toggleEditMode();
-
-                           
-                            },
-                          );
-                        },
-                      );
+            Consumer<Drug>(
+              builder: (context, drug, child) {
+                return IconButton(
+                  icon:
+                      editMode
+                          ? Text("Spara", style: TextStyle(fontSize: 16))
+                          : const Icon(Icons.edit_note_sharp, size: 30),
+                  onPressed: () async {
+                    HapticFeedback.lightImpact();
+                    if (editMode) {
+                      if (provider.userMode == UserMode.customMode) {
+                        provider.addDrug(drug);
                       }
-                      return;
-                    } 
-                    }
-            editModeProvider.toggleEditMode();
-                  } 
-                  
-                  else {
-                    editModeProvider.toggleEditMode();
-                  }
 
-                },
-              );
-            }),
+                      if (provider.isAdmin) {
+                        if (await provider.checkIfDrugChanged(drug)) {
+                          Map<String, String> possibleReviewerUIDs =
+                              await provider.getPossibleReviewerUIDs();
+                          if (context.mounted) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CommitDialog(
+                                  reviewers: possibleReviewerUIDs,
+                                  onCommit: (comment, selectedReviewerUIDs) {
+                                    final timestamp =
+                                        DateTime.now().toIso8601String();
+
+                                    final changeMap = {
+                                      'comment': comment,
+                                      'timestamp': timestamp,
+                                      'user':
+                                          FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .email,
+                                      'reviewers': selectedReviewerUIDs,
+                                    };
+
+                                    if (changeMap.isNotEmpty) {
+                                      drug.changeNotes ??=
+                                          []; // Initialize if null
+                                      drug.changeNotes!.add(changeMap);
+                                    }
+                                    if (selectedReviewerUIDs.isNotEmpty) {
+                                      drug.shouldReviewUIDs =
+                                          selectedReviewerUIDs;
+                                      drug.hasReviewedUIDs = {};
+                                    }
+
+                                    // Save the drug
+                                    provider.addDrug(drug);
+                                    editModeProvider.toggleEditMode();
+                                  },
+                                );
+                              },
+                            );
+                          }
+                          return;
+                        }
+                      }
+                      editModeProvider.toggleEditMode();
+                    } else {
+                      editModeProvider.toggleEditMode();
+                    }
+                  },
+                );
+              },
+            ),
           ],
         );
       },

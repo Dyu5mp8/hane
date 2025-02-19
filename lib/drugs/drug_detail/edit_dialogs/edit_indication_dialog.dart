@@ -10,13 +10,12 @@ class EditIndicationDialog extends StatefulWidget {
   final bool withDosages;
   final bool isNewIndication;
 
-
-  const EditIndicationDialog(
-      {super.key,
-      required this.indication,
-      this.withDosages = false,
-      this.isNewIndication = false,
-    });
+  const EditIndicationDialog({
+    super.key,
+    required this.indication,
+    this.withDosages = false,
+    this.isNewIndication = false,
+  });
 
   @override
   State<EditIndicationDialog> createState() => _EditIndicationDialogState();
@@ -31,7 +30,8 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
   @override
   void initState() {
     super.initState();
-    _tempDosages = widget.indication.dosages
+    _tempDosages =
+        widget.indication.dosages
             ?.map((dosage) => Dosage.from(dosage))
             .toList() ??
         [];
@@ -52,7 +52,6 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
 
   void saveIndication(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-
       Drug drug = context.read<Drug>();
       widget.indication.name = _nameController.text;
       widget.indication.notes = _notesController.text;
@@ -87,27 +86,30 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text('Vill du ta bort indikationen?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Avbryt'),
+                  builder:
+                      (ctx) => AlertDialog(
+                        title: const Text('Vill du ta bort indikationen?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Avbryt'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              drug.indications?.remove(widget.indication);
+                              drug.updateDrug();
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                            },
+                            child: const Text(
+                              'Ta bort',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
                       ),
-                      TextButton(
-                        onPressed: () {
-                          drug.indications?.remove(widget.indication);
-                          drug.updateDrug();
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Ta bort',
-                            style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                  ),
                 );
               },
               child: const Text('Ta bort', style: TextStyle(color: Colors.red)),
@@ -163,22 +165,25 @@ class _EditIndicationDialogState extends State<EditIndicationDialog> {
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          const Text('Doseringar',
-                              style: TextStyle(fontSize: 18)),
+                          const Text(
+                            'Doseringar',
+                            style: TextStyle(fontSize: 18),
+                          ),
                           const Spacer(),
                           IconButton(
                             onPressed: () {
                               Dosage newDosage = Dosage();
                               showDialog(
                                 context: context,
-                                builder: (context) => EditDosageDialog(
-                                  dosage: newDosage,
-                                  onSave: (dosage) {
-                                    setState(() {
-                                      _tempDosages.add(dosage);
-                                    });
-                                  },
-                                ),
+                                builder:
+                                    (context) => EditDosageDialog(
+                                      dosage: newDosage,
+                                      onSave: (dosage) {
+                                        setState(() {
+                                          _tempDosages.add(dosage);
+                                        });
+                                      },
+                                    ),
                               );
                             },
                             icon: const Icon(Icons.add, size: 22),

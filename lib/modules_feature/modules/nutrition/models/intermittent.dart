@@ -2,16 +2,11 @@ import 'package:hane/modules_feature/modules/nutrition/models/nutrition.dart';
 import 'package:hane/modules_feature/modules/nutrition/models/source.dart';
 
 class Intermittent extends Nutrition {
-  
   final IntermittentSource intermittentSource;
   int quantity;
 
-
-  Intermittent({
-    required this.intermittentSource, this.quantity = 0
-  }) : super(source: intermittentSource);
-
-
+  Intermittent({required this.intermittentSource, this.quantity = 0})
+    : super(source: intermittentSource);
 
   @override
   double kcalPerDay() {
@@ -25,10 +20,10 @@ class Intermittent extends Nutrition {
     return intermittentSource.proteinPerUnit * quantity;
   }
 
-@override
-double volumePerDay() {
-  return (intermittentSource.mlPerUnit) * quantity;
-}
+  @override
+  double volumePerDay() {
+    return (intermittentSource.mlPerUnit) * quantity;
+  }
 
   @override
   double lipidsPerDay() {
@@ -43,7 +38,4 @@ double volumePerDay() {
   void decreaseQuantity() {
     if (quantity > 0) quantity--;
   }
-
-
-
 }

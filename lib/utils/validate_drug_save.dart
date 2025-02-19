@@ -1,4 +1,3 @@
-
 String? validateName(String? value) {
   if (value == null || value.trim().isEmpty) {
     return 'Ange ett giltigt namn';
@@ -6,4 +5,3 @@ String? validateName(String? value) {
 
   return null;
 }
-

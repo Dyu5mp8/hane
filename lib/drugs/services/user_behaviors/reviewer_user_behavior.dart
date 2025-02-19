@@ -14,11 +14,14 @@ class ReviewerUserBehavior extends UserBehavior {
     String userId = FirebaseAuth.instance.currentUser!.uid;
 
     // References to Firestore collections/documents
-    Query<Map<String, dynamic>> drugsCollection =
-        db.collection('users').doc(masterUID).collection('drugs');
+    Query<Map<String, dynamic>> drugsCollection = db
+        .collection('users')
+        .doc(masterUID)
+        .collection('drugs');
 
-    DocumentReference<Map<String, dynamic>> userDocRef =
-        db.collection('users').doc(userId);
+    DocumentReference<Map<String, dynamic>> userDocRef = db
+        .collection('users')
+        .doc(userId);
 
     DocumentReference<Map<String, dynamic>> userNotesDocRef = db
         .collection('users')
@@ -37,76 +40,84 @@ class ReviewerUserBehavior extends UserBehavior {
         userNotesDocRef.snapshots();
 
     // Combine the streams
-    return Rx.combineLatest3(
-      userStream,
-      drugsStream,
-      userNotesStream,
-      (userSnapshot, drugsSnapshot, userNotesSnapshot) {
-        // Handle lastReadTimestamps
-        Map<String, dynamic> lastReadTimestamps =
-            userSnapshot.data()?['lastReadTimestamps'] ?? {};
+    return Rx.combineLatest3(userStream, drugsStream, userNotesStream, (
+      userSnapshot,
+      drugsSnapshot,
+      userNotesSnapshot,
+    ) {
+      // Handle lastReadTimestamps
+      Map<String, dynamic> lastReadTimestamps =
+          userSnapshot.data()?['lastReadTimestamps'] ?? {};
 
-        // Handle userNotesIndex
-        Map<String, dynamic> userNotesIndex = {};
-        if (userNotesSnapshot.exists) {
-          userNotesIndex = userNotesSnapshot.data() ?? {};
-        }
+      // Handle userNotesIndex
+      Map<String, dynamic> userNotesIndex = {};
+      if (userNotesSnapshot.exists) {
+        userNotesIndex = userNotesSnapshot.data() ?? {};
+      }
 
-        var drugsList = drugsSnapshot.docs
-            .map((doc) {
-              try {
-                var drugData = doc.data();
+      var drugsList =
+          drugsSnapshot.docs
+              .map((doc) {
+                try {
+                  var drugData = doc.data();
 
-                var drug = Drug.fromFirestore(drugData);
-                categories.addAll(drug.categories ?? []);
-                drug.id = doc.id;
+                  var drug = Drug.fromFirestore(drugData);
+                  categories.addAll(drug.categories ?? []);
+                  drug.id = doc.id;
 
-                // Get the last message timestamp from the drug data
-                Timestamp? lastMessageTimestamp = drugData['lastMessageTimestamp'];
+                  // Get the last message timestamp from the drug data
+                  Timestamp? lastMessageTimestamp =
+                      drugData['lastMessageTimestamp'];
 
-                // Get the user's last read timestamp for this drug
-                Timestamp? userLastReadTimestamp = lastReadTimestamps[drug.id];
+                  // Get the user's last read timestamp for this drug
+                  Timestamp? userLastReadTimestamp =
+                      lastReadTimestamps[drug.id];
 
-                // Determine if there are unread messages
-                if (lastMessageTimestamp != null &&
-                    (userLastReadTimestamp == null ||
-                        lastMessageTimestamp.compareTo(userLastReadTimestamp) > 0)) {
-                  drug.hasUnreadMessages = true;
-                } else {
-                  drug.hasUnreadMessages = false;
+                  // Determine if there are unread messages
+                  if (lastMessageTimestamp != null &&
+                      (userLastReadTimestamp == null ||
+                          lastMessageTimestamp.compareTo(
+                                userLastReadTimestamp,
+                              ) >
+                              0)) {
+                    drug.hasUnreadMessages = true;
+                  } else {
+                    drug.hasUnreadMessages = false;
+                  }
+
+                  // Set the userNotes from userNotesIndex
+                  if (userNotesIndex.containsKey(drug.id)) {
+                    drug.userNotes = userNotesIndex[drug.id] as String;
+                  }
+
+                  return drug;
+                } catch (e) {
+                  // Log the error and skip the problematic document
+                  print("Error mapping document with ID ${doc.id}: $e");
+                  return null;
                 }
+              })
+              .whereType<Drug>()
+              .toList(); // Filter out null values
 
-                // Set the userNotes from userNotesIndex
-                if (userNotesIndex.containsKey(drug.id)) {
-                  drug.userNotes = userNotesIndex[drug.id] as String;
-                }
-
-                return drug;
-              } catch (e) {
-                // Log the error and skip the problematic document
-                print("Error mapping document with ID ${doc.id}: $e");
-                return null;
-              }
-            })
-            .whereType<Drug>()
-            .toList(); // Filter out null values
-
-        // Sort the drugsList
-        drugsList.sort((a, b) => a
+      // Sort the drugsList
+      drugsList.sort(
+        (a, b) => a
             .preferredDisplayName(preferGeneric: sortByGeneric)
             .toLowerCase()
-            .compareTo(b
-                .preferredDisplayName(preferGeneric: sortByGeneric)
-                .toLowerCase()));
+            .compareTo(
+              b
+                  .preferredDisplayName(preferGeneric: sortByGeneric)
+                  .toLowerCase(),
+            ),
+      );
 
-        return drugsList;
-      },
-    );
+      return drugsList;
+    });
   }
 
-@override
+  @override
   Future<void> addUserNotes(String id, String notes) async {
-
     var db = FirebaseFirestore.instance;
     DocumentReference userNotesDocRef = db
         .collection('users')

@@ -1,8 +1,6 @@
 import "package:flutter/material.dart";
 import "package:syncfusion_flutter_sliders/sliders.dart";
 
-
-
 class WeightSlider extends StatefulWidget {
   final double initialWeight;
   final Function(double) onWeightSet;
@@ -34,23 +32,29 @@ class _WeightSliderState extends State<WeightSlider> {
       height: 240,
       child: Column(
         children: [
-           const Text("Ange vikt", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            "Ange vikt",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 20),
-          Text("${_currentWeight.toStringAsFixed(0)} kg", style: const TextStyle(fontSize: 18)),
+          Text(
+            "${_currentWeight.toStringAsFixed(0)} kg",
+            style: const TextStyle(fontSize: 18),
+          ),
           const SizedBox(height: 10),
-         
+
           SfSlider(
             value: _currentWeight,
-     
+
             min: 40,
-            max: 150,            
+            max: 150,
             onChanged: (value) {
               setState(() {
                 _currentWeight = value.round().toDouble();
               });
             },
           ),
-          
+
           ElevatedButton(
             onPressed: () {
               widget.onWeightSet(_currentWeight);

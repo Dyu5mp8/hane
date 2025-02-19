@@ -6,10 +6,8 @@ class Continuous extends Nutrition {
 
   double mlPerHour;
 
-  Continuous({
-    required this.continuousSource,
-    required this.mlPerHour,
-  }) : super(source: continuousSource);
+  Continuous({required this.continuousSource, required this.mlPerHour})
+    : super(source: continuousSource);
 
   @override
   double kcalPerDay() {
@@ -45,5 +43,4 @@ class Continuous extends Nutrition {
   void updateRate(double mlPerHour) {
     this.mlPerHour = mlPerHour;
   }
-
 }

@@ -5,30 +5,26 @@ import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class PatientDataWidget extends StatelessWidget {
-
   PatientDataWidget({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<NutritionViewModel>();
 
     /// Safely handle null or unexpected values.
-    final String weightText = (vm.patientWeight > 0)
-        ? vm.patientWeight.toStringAsFixed(0)
-        : 'N/A';
-    final String lengthText = (vm.patientLength > 0)
-        ? vm.patientLength.toStringAsFixed(0)
-        : 'N/A';
-    final String idealWeightText = (vm.idealWeight() > 0)
-        ? vm.idealWeight().toStringAsFixed(0)
-        : 'N/A';
+    final String weightText =
+        (vm.patientWeight > 0) ? vm.patientWeight.toStringAsFixed(0) : 'N/A';
+    final String lengthText =
+        (vm.patientLength > 0) ? vm.patientLength.toStringAsFixed(0) : 'N/A';
+    final String idealWeightText =
+        (vm.idealWeight() > 0) ? vm.idealWeight().toStringAsFixed(0) : 'N/A';
 
     /// You can adapt these text styles to your theme or dark mode needs.
-    final titleStyle = Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-        );
-    final subtitleStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-          fontSize: 14,
-        );
+    final titleStyle = Theme.of(
+      context,
+    ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold);
+    final subtitleStyle = Theme.of(
+      context,
+    ).textTheme.bodyMedium?.copyWith(fontSize: 14);
 
     return GestureDetector(
       onTap: () {
@@ -37,21 +33,28 @@ class PatientDataWidget extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(16),
-  decoration: BoxDecoration(
-    color: Theme.of(context).cardColor, // Removed opacity for better clarity
-    borderRadius: BorderRadius.circular(12), // Increased border radius for a smoother look
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1), // Softer shadow color
-        offset: const Offset(0, 4), // Increased vertical offset for depth
-        blurRadius: 12, // Increased blur radius for a more diffused shadow
-      ),
-    ],
-    border: Border.all(
-      width: 1,
-      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), // Softer border color
-    ),
-  ),        child: Row(
+        decoration: BoxDecoration(
+          color:
+              Theme.of(context).cardColor, // Removed opacity for better clarity
+          borderRadius: BorderRadius.circular(
+            12,
+          ), // Increased border radius for a smoother look
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1), // Softer shadow color
+              offset: const Offset(0, 4), // Increased vertical offset for depth
+              blurRadius:
+                  12, // Increased blur radius for a more diffused shadow
+            ),
+          ],
+          border: Border.all(
+            width: 1,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withOpacity(0.2), // Softer border color
+          ),
+        ),
+        child: Row(
           children: [
             Icon(
               Icons.person,
@@ -64,63 +67,61 @@ class PatientDataWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 2,
               children: [
-                Text(
-                  'Ordinationsvikt: $idealWeightText kg',
-                  style: titleStyle,
+                Text('Ordinationsvikt: $idealWeightText kg', style: titleStyle),
+                Text('Vikt: $weightText kg', style: subtitleStyle),
+                Text('Längd: $lengthText cm', style: subtitleStyle),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Static Text
+                    Text('Vårddygn: ', style: subtitleStyle),
+                    // AnimatedSwitcher for Dynamic Text
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder: (
+                        Widget child,
+                        Animation<double> animation,
+                      ) {
+                        // Combine Fade, Scale, and Slide Transitions
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(
+                              0.0,
+                              0.5,
+                            ), // Start slightly below
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeInOut,
+                            ),
+                          ),
+                          child: FadeTransition(
+                            opacity: animation,
+                            child: ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        '${vm.day}',
+                        key: ValueKey<int>(
+                          vm.day,
+                        ), // Unique Key based on vm.day
+                        style: subtitleStyle, // Optional styling
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  'Vikt: $weightText kg',
-                  style: subtitleStyle,
-                ),
-                Text(
-                  'Längd: $lengthText cm',
-                  style: subtitleStyle,
-                ),
-               Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Static Text
-            Text(
-              'Vårddygn: ',
-              style: subtitleStyle,
-            ),
-            // AnimatedSwitcher for Dynamic Text
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-    // Combine Fade, Scale, and Slide Transitions
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(0.0, 0.5), // Start slightly below
-        end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeInOut,
-      )),
-      child: FadeTransition(
-        opacity: animation,
-        child: ScaleTransition(
-          scale: animation,
-          child: child,
-        ),
-      ),
-    );
-  },
-              child: Text(
-                '${vm.day}',
-                key: ValueKey<int>(vm.day), // Unique Key based on vm.day
-                style: subtitleStyle// Optional styling
-              ),
-            ),
-          ],
-        ),
               ],
             ),
             const Spacer(),
             const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-         
+
               semanticLabel: 'Gå till detaljer',
             ),
           ],
@@ -139,12 +140,15 @@ class PatientDataWidget extends StatelessWidget {
     final _formKey = GlobalKey<FormState>();
 
     // Controllers
-    final TextEditingController weightController =
-        TextEditingController(text: weightText != 'N/A' ? weightText : '');
-    final TextEditingController lengthController =
-        TextEditingController(text: lengthText != 'N/A' ? lengthText : '');
-    final TextEditingController dayController =
-        TextEditingController(text: vm.day.toString());
+    final TextEditingController weightController = TextEditingController(
+      text: weightText != 'N/A' ? weightText : '',
+    );
+    final TextEditingController lengthController = TextEditingController(
+      text: lengthText != 'N/A' ? lengthText : '',
+    );
+    final TextEditingController dayController = TextEditingController(
+      text: vm.day.toString(),
+    );
 
     // FocusNodes for KeyboardActions
     final FocusNode weightFocus = FocusNode();
@@ -173,10 +177,11 @@ class PatientDataWidget extends StatelessWidget {
       builder: (BuildContext dialogContext) {
         return KeyboardActions(
           config: KeyboardActionsConfig(
-              keyboardActionsPlatform: !kIsWeb 
-        ? KeyboardActionsPlatform.ALL 
-        : KeyboardActionsPlatform.IOS,
-    keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
+            keyboardActionsPlatform:
+                !kIsWeb
+                    ? KeyboardActionsPlatform.ALL
+                    : KeyboardActionsPlatform.IOS,
+            keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
             actions: [
               KeyboardActionsItem(
                 focusNode: weightFocus,
@@ -184,14 +189,17 @@ class PatientDataWidget extends StatelessWidget {
                   (node) {
                     return GestureDetector(
                       onTap: () => node.nextFocus(),
-                       child: Row(
-                children: [
-                  Text("Nästa", style: Theme.of(context).textTheme.bodyLarge),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward),
-                   const SizedBox(width: 8),
-                ],
-              ),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Nästa",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
                     );
                   },
                 ],
@@ -203,13 +211,16 @@ class PatientDataWidget extends StatelessWidget {
                     return GestureDetector(
                       onTap: () => node.nextFocus(),
                       child: Row(
-                children: [
-                  Text("Nästa", style: Theme.of(context).textTheme.bodyLarge),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward),
-                   const SizedBox(width: 8),
-                ],
-              ),
+                        children: [
+                          Text(
+                            "Nästa",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.arrow_forward),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
                     );
                   },
                 ],
@@ -220,14 +231,17 @@ class PatientDataWidget extends StatelessWidget {
                   (node) {
                     return GestureDetector(
                       onTap: saveForm,
-                     child: Row(
-                children: [
-                  Text("Klar", style: Theme.of(context).textTheme.bodyLarge),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.check),
-                  const SizedBox(width: 8),
-                ],
-              ),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Klar",
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.check),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
                     );
                   },
                 ],
@@ -313,10 +327,7 @@ class PatientDataWidget extends StatelessWidget {
                 child: const Text('Avbryt'),
                 onPressed: () => Navigator.of(dialogContext).pop(),
               ),
-              ElevatedButton(
-                child: const Text('Spara'),
-                onPressed: saveForm,
-              ),
+              ElevatedButton(child: const Text('Spara'), onPressed: saveForm),
             ],
           ),
         );

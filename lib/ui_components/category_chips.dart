@@ -33,15 +33,14 @@ class CategoryChips extends StatelessWidget {
               visualDensity: VisualDensity.compact,
               side: BorderSide.none,
               showCheckmark: false,
-              label: Text(
-                "Alla",
-               
-              ),
+              label: Text("Alla"),
               selected: selectedCategory == null,
-             
+
               onSelected: (_) => onCategorySelected(null),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 6.0,
+                vertical: 4.0,
+              ),
             ),
           ...categories.map((dynamic category) {
             return ChoiceChip(
@@ -49,21 +48,22 @@ class CategoryChips extends StatelessWidget {
               side: BorderSide.none,
               showCheckmark: false,
               labelPadding: const EdgeInsets.symmetric(horizontal: 2.0),
-              label: Text(
-                category,
-              ),
+              label: Text(category),
               selected: selectedCategory == category,
-              onSelected: (selected) => {
-                if (selected)
-                  {onCategorySelected(category)}
-                else
-                  {
-                    if (acceptAll) {onCategorySelected(null)}
-                  }
-              },
-            
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+              onSelected:
+                  (selected) => {
+                    if (selected)
+                      {onCategorySelected(category)}
+                    else
+                      {
+                        if (acceptAll) {onCategorySelected(null)},
+                      },
+                  },
+
+              padding: const EdgeInsets.symmetric(
+                horizontal: 6.0,
+                vertical: 4.0,
+              ),
             );
           }),
         ],

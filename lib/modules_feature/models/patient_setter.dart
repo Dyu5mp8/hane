@@ -1,4 +1,1 @@
-abstract class PatientSetter {
-
-
-}
+abstract class PatientSetter {}

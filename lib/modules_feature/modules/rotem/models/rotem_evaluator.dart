@@ -29,7 +29,7 @@ class RotemEvaluator {
   double? li30Extem;
   RotemEvaluationStrategy? _strategy;
 
-  RotemEvaluator({ 
+  RotemEvaluator({
     this.ctExtem,
     this.ctIntem,
     this.a10Fibtem,
@@ -40,7 +40,6 @@ class RotemEvaluator {
     this.ctHeptem,
     this.ctFibtem,
     this.li30Extem,
-
   });
 
   RotemEvaluationStrategy? get strategy => _strategy;
@@ -74,11 +73,10 @@ class RotemEvaluator {
     li30Extem = double.tryParse(inputValues[RotemField.li30Extem] ?? '');
     ctIntem = double.tryParse(inputValues[RotemField.ctIntem] ?? '');
     ctHeptem = double.tryParse(inputValues[RotemField.ctHeptem] ?? '');
-    
   }
 
   Map<String, List<RotemAction>> evaluate() {
-    if(strategy == null) {
+    if (strategy == null) {
       throw Exception('Strategy must be set before evaluation.');
     }
     return strategy!.evaluate(this);

@@ -80,10 +80,9 @@ class DialysisConsitutentsList extends StatelessWidget {
       children: [
         Text(
           "Innehåll dialysvätskor",
-          style: Theme.of(context)
-              .textTheme
-              .headlineLarge
-              ?.copyWith(decoration: TextDecoration.underline),
+          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+            decoration: TextDecoration.underline,
+          ),
         ),
         ...dialysisData.map((group) {
           return AutoScrollExpansionTile(
@@ -92,27 +91,31 @@ class DialysisConsitutentsList extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Column(
-                  children: (group['children'] as List).map((solution) {
-                    return AutoScrollExpansionTile(
-                      title: Text(solution['title'] as String),
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Column(
-                            children: (solution['rows'] as List).map((row) {
-                              return ListTile(
-                                dense: true,
-                                title: Text(row['label'] as String),
-                                trailing: Text(row['value'] as String),
-                                contentPadding: const EdgeInsets.only(
-                                    left: 8.0, right: 16.0),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                  children:
+                      (group['children'] as List).map((solution) {
+                        return AutoScrollExpansionTile(
+                          title: Text(solution['title'] as String),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Column(
+                                children:
+                                    (solution['rows'] as List).map((row) {
+                                      return ListTile(
+                                        dense: true,
+                                        title: Text(row['label'] as String),
+                                        trailing: Text(row['value'] as String),
+                                        contentPadding: const EdgeInsets.only(
+                                          left: 8.0,
+                                          right: 16.0,
+                                        ),
+                                      );
+                                    }).toList(),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
                 ),
               ),
             ],

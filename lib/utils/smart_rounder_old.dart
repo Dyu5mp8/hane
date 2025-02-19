@@ -13,9 +13,10 @@ num smartRound(double value) {
 
     var dec = str.substring(decimalIndex, str.length);
     var decDouble = double.parse(dec);
-    var decModified = intPart < 1
-        ? decDouble.toStringAsPrecision(3)
-        : decDouble.toStringAsPrecision(3 - intString.length);
+    var decModified =
+        intPart < 1
+            ? decDouble.toStringAsPrecision(3)
+            : decDouble.toStringAsPrecision(3 - intString.length);
 
     var doublePart = double.parse(decModified);
 

@@ -8,15 +8,11 @@ import 'package:hane/drugs/ui_components/count_badge.dart';
 import 'package:hane/modules_feature/modules/nutrition/admin/admin_nutrition_listview.dart';
 import 'package:hane/modules_feature/modules/nutrition/admin/admin_nutrition_editview.dart';
 
-
 class AdminMenuDrawer extends MenuDrawer {
-  const AdminMenuDrawer({
-    super.key,
-  });
+  const AdminMenuDrawer({super.key});
 
   @override
   List<Widget> buildUserSpecificTiles(BuildContext context) {
-
     var provider = Provider.of<DrugListProvider>(context, listen: false);
     return [
       ListTile(
@@ -24,9 +20,9 @@ class AdminMenuDrawer extends MenuDrawer {
         title: const Text('Markera alla meddelanden som lästa'),
         onTap: () {
           Navigator.pop(context);
-          provider
-              .markEveryMessageAsRead(
-                  Provider.of<List<Drug>>(context, listen: false));
+          provider.markEveryMessageAsRead(
+            Provider.of<List<Drug>>(context, listen: false),
+          );
         },
       ),
       ListTile(
@@ -34,30 +30,33 @@ class AdminMenuDrawer extends MenuDrawer {
         title: const Text('Markera alla läkemedel som granskade'),
         onTap: () {
           showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Bekräfta'),
-            content: const Text('Är du säker på att du vill markera alla läkemedel som granskade?'),
-            actions: <Widget>[
-          TextButton(
-            child: const Text('Avbryt'),
-            onPressed: () {
-              Navigator.of(context).pop();
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Bekräfta'),
+                content: const Text(
+                  'Är du säker på att du vill markera alla läkemedel som granskade?',
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Avbryt'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Bekräfta'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.pop(context);
+                      provider.markEveryDrugAsReviewed(
+                        Provider.of<List<Drug>>(context, listen: false),
+                      );
+                    },
+                  ),
+                ],
+              );
             },
-          ),
-          TextButton(
-            child: const Text('Bekräfta'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pop(context);
-              provider.markEveryDrugAsReviewed(
-              Provider.of<List<Drug>>(context, listen: false));
-            },
-          ),
-            ],
-          );
-        },
           );
         },
       ),
@@ -67,24 +66,27 @@ class AdminMenuDrawer extends MenuDrawer {
         title: const Text('Redigera i nutritionsmodulen'),
         onTap: () {
           Navigator.pop(context);
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AdminNutritionListview()
-          ));
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => AdminNutritionListview()),
+          );
         },
       ),
 
       ListTile(
-       leading: CountBadge(futureCount: provider.getUserFeedbackCount() , child: const Icon(Icons.feedback_rounded)),
+        leading: CountBadge(
+          futureCount: provider.getUserFeedbackCount(),
+          child: const Icon(Icons.feedback_rounded),
+        ),
         title: const Text('Läs feedback'),
         onTap: () async {
           if (context.mounted) {
-            Provider.of<DrugListProvider>(context, listen: false)
-                .markFeedbackAsRead();
+            Provider.of<DrugListProvider>(
+              context,
+              listen: false,
+            ).markFeedbackAsRead();
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => ReadFeedbackView(),
-              ),
+              MaterialPageRoute(builder: (context) => ReadFeedbackView()),
             );
           }
         },

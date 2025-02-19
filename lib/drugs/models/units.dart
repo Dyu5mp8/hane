@@ -1,10 +1,5 @@
-
 // --- SubstanceUnit Interface ---
-abstract class Unit {
-
-
-
-}
+abstract class Unit {}
 
 abstract class SubstanceUnit with CandidateFinderMixin implements Unit {
   double conversionFactor(SubstanceUnit unit);
@@ -14,29 +9,40 @@ abstract class SubstanceUnit with CandidateFinderMixin implements Unit {
 
   static SubstanceUnit fromString(String unit) {
     switch (unit) {
-      case 'mmol': return MolarUnit.mmol;
-      case 'mol':  return MolarUnit.mol;
-      case 'ml':   return VolumeUnit.ml;
-      case 'l':    return VolumeUnit.l;
-      case 'mg':   return MassUnit.mg;
-      case 'g':    return MassUnit.g;
+      case 'mmol':
+        return MolarUnit.mmol;
+      case 'mol':
+        return MolarUnit.mol;
+      case 'ml':
+        return VolumeUnit.ml;
+      case 'l':
+        return VolumeUnit.l;
+      case 'mg':
+        return MassUnit.mg;
+      case 'g':
+        return MassUnit.g;
       case 'μg':
       case 'microg':
-      case 'mikrog': return MassUnit.microg;
-      case 'E':    return UnitUnit.E;
-      case 'FE':   return UnitUnit.E;
-      case 'mE':   return UnitUnit.mE;
-      default: throw Exception('Felaktig enhet: $unit');
+      case 'mikrog':
+        return MassUnit.microg;
+      case 'E':
+        return UnitUnit.E;
+      case 'FE':
+        return UnitUnit.E;
+      case 'mE':
+        return UnitUnit.mE;
+      default:
+        throw Exception('Felaktig enhet: $unit');
     }
   }
 
-    static List<SubstanceUnit> get allUnits => [
-        ...MassUnit.values,
-        ...MolarUnit.values,
-        ...VolumeUnit.values,
-      ];
+  static List<SubstanceUnit> get allUnits => [
+    ...MassUnit.values,
+    ...MolarUnit.values,
+    ...VolumeUnit.values,
+  ];
 
-@override 
+  @override
   String toString();
 }
 
@@ -97,16 +103,15 @@ enum MolarUnit with CandidateFinderMixin implements SubstanceUnit {
   @override
   List<SubstanceUnit> get candidates => MolarUnit.values;
 
-
   @override
   String get unitType => 'molar';
 
   @override
   String toString() => name;
 }
-enum WeightUnit implements Unit
-{
- kg;
+
+enum WeightUnit implements Unit {
+  kg;
 
   @override
   String toString() => name;
@@ -120,7 +125,6 @@ enum WeightUnit implements Unit
     }
   }
 }
-
 
 enum VolumeUnit with CandidateFinderMixin implements SubstanceUnit {
   ml(1000),
@@ -142,9 +146,8 @@ enum VolumeUnit with CandidateFinderMixin implements SubstanceUnit {
   @override
   String get unitType => 'volume';
 
-
- @override
- List<SubstanceUnit> get candidates => VolumeUnit.values;
+  @override
+  List<SubstanceUnit> get candidates => VolumeUnit.values;
 
   @override
   String toString() => name;
@@ -152,8 +155,7 @@ enum VolumeUnit with CandidateFinderMixin implements SubstanceUnit {
 
 enum UnitUnit with CandidateFinderMixin implements SubstanceUnit {
   E(1),
-  mE(1000),;
-
+  mE(1000);
 
   @override
   double conversionFactor(SubstanceUnit unit) {
@@ -169,7 +171,7 @@ enum UnitUnit with CandidateFinderMixin implements SubstanceUnit {
   const UnitUnit(this.factor);
 
   @override
-  List<SubstanceUnit> get candidates =>  UnitUnit.values;
+  List<SubstanceUnit> get candidates => UnitUnit.values;
 
   @override
   String get unitType => 'unit';
@@ -188,7 +190,6 @@ enum UnitUnit with CandidateFinderMixin implements SubstanceUnit {
     }
   }
 }
-
 
 enum MassUnit with CandidateFinderMixin implements SubstanceUnit {
   mg(1000),
@@ -213,7 +214,7 @@ enum MassUnit with CandidateFinderMixin implements SubstanceUnit {
 
   @override
   String get unitType => 'mass';
-  
+
   @override
   String toString() {
     return this == MassUnit.microg ? "μg" : name;
@@ -251,14 +252,11 @@ enum DiluentUnit implements Unit {
 }
 
 enum TimeUnit implements Unit {
-
-
   h(factor: 24),
   min(factor: 1440),
   d(factor: 1);
 
   final int factor;
-
 
   const TimeUnit({required this.factor});
 

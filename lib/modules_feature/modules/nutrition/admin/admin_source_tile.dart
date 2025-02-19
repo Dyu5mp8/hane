@@ -10,12 +10,13 @@ class AdminSourceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AdminNutritionEditview(source: source),
-        ),
-      ),
+      onTap:
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AdminNutritionEditview(source: source),
+            ),
+          ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Row(
@@ -30,7 +31,9 @@ class AdminSourceTile extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   SizedBox(height: 4),
-                  ...source.displayContents.map((string) => Text(string)).toList(),
+                  ...source.displayContents
+                      .map((string) => Text(string))
+                      .toList(),
                 ],
               ),
             ),

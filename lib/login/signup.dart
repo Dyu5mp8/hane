@@ -22,7 +22,6 @@ class _SignUpPageState extends State<SignUpPage> {
   String? errorMessage;
   bool _isLoading = false; // To manage loading state
 
-
   void showErrorMessage(String message) async {
     setState(() {
       errorMessage = message;
@@ -35,8 +34,11 @@ class _SignUpPageState extends State<SignUpPage> {
     });
   }
 
-  Widget _entryField(String title, TextEditingController controller,
-      {bool isPassword = false}) {
+  Widget _entryField(
+    String title,
+    TextEditingController controller, {
+    bool isPassword = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -62,19 +64,20 @@ class _SignUpPageState extends State<SignUpPage> {
       ],
     );
   }
-void _onSuccessfulRegistration() {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text("Du är nu registrerad!")),
-  );
-  
-  Navigator.pushAndRemoveUntil(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const InitializerWidget(firstLogin: true),
-    ),
-    (Route<dynamic> route) => false, // Removes all the previous routes
-  );
-}
+
+  void _onSuccessfulRegistration() {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Du är nu registrerad!")));
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const InitializerWidget(firstLogin: true),
+      ),
+      (Route<dynamic> route) => false, // Removes all the previous routes
+    );
+  }
 
   void _onFailedRegistration(FirebaseAuthException e) {
     String message;
@@ -125,8 +128,9 @@ void _onSuccessfulRegistration() {
 
     try {
       // Check if email is already in use
-      List<String> signInMethods =
-          await _auth.fetchSignInMethodsForEmail(email);
+      List<String> signInMethods = await _auth.fetchSignInMethodsForEmail(
+        email,
+      );
       if (signInMethods.isNotEmpty) {
         showErrorMessage('E-postadressen är redan registrerad.');
         return;
@@ -198,9 +202,7 @@ void _onSuccessfulRegistration() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.black87,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         padding: const EdgeInsets.symmetric(vertical: 15),
         minimumSize: const Size(double.infinity, 45), // Full width button
       ),
@@ -208,14 +210,15 @@ void _onSuccessfulRegistration() {
         // Validate inputs and proceed
         _validateAndProceed();
       },
-      child: _isLoading
-          ? const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            )
-          : const Text(
-              'Registrera dig nu',
-              style: TextStyle(fontSize: 18, color: Colors.white),
-            ),
+      child:
+          _isLoading
+              ? const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              )
+              : const Text(
+                'Registrera dig nu',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
     );
   }
 
@@ -223,7 +226,9 @@ void _onSuccessfulRegistration() {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const LoginPage()));
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
       },
       child: const Padding(
         padding: EdgeInsets.all(10),
@@ -238,9 +243,10 @@ void _onSuccessfulRegistration() {
             Text(
               'Logga in',
               style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color:  Colors.indigo,),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.indigo,
+              ),
             ),
           ],
         ),
@@ -259,22 +265,17 @@ void _onSuccessfulRegistration() {
 
   @override
   Widget build(BuildContext context) {
-
     return Theme(
       data: appTheme,
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-        ),
+        appBar: AppBar(backgroundColor: Colors.white, elevation: 0),
         body: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-      
-              const Logo(size: 30,),
+              const Logo(size: 30),
               _title(),
               const SizedBox(height: 50),
               _emailPasswordWidget(),
@@ -282,10 +283,7 @@ void _onSuccessfulRegistration() {
               _submitButton(),
               const SizedBox(height: 20),
               if (errorMessage != null)
-                Text(
-                  errorMessage!,
-                  style: const TextStyle(color: Colors.red),
-                ),
+                Text(errorMessage!, style: const TextStyle(color: Colors.red)),
               const SizedBox(height: 40),
               _loginAccountLabel(),
             ],
@@ -299,7 +297,10 @@ void _onSuccessfulRegistration() {
     return const Text(
       'Registrera dig',
       style: TextStyle(
-          fontSize: 28, fontWeight: FontWeight.w700, color: Colors.black87),
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        color: Colors.black87,
+      ),
     );
   }
 
@@ -310,4 +311,3 @@ void _onSuccessfulRegistration() {
     super.dispose();
   }
 }
-

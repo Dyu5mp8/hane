@@ -23,8 +23,6 @@ class _ForgotScreenState extends State<ForgotScreen> {
     super.dispose();
   }
 
-  
-
   /// This method sends the password reset email using Firebase Auth
   Future<void> _sendPasswordResetEmail(String email) async {
     try {
@@ -32,21 +30,22 @@ class _ForgotScreenState extends State<ForgotScreen> {
       // If successful, show a confirmation
       showDialog(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Check your email'),
-          content: const Text('A password reset link has been sent to your email.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('OK'),
+        builder:
+            (ctx) => AlertDialog(
+              title: const Text('Check your email'),
+              content: const Text(
+                'A password reset link has been sent to your email.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     } on FirebaseAuthException catch (e) {
-      
       setState(() {
-
         _errorMessage = e.message ?? 'Hoppsan, något gick fel.';
       });
     } catch (e) {
@@ -65,10 +64,8 @@ class _ForgotScreenState extends State<ForgotScreen> {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text.trim();
 
-    
-        await _sendPasswordResetEmail(email);
-      }
-    
+      await _sendPasswordResetEmail(email);
+    }
 
     setState(() {
       _isLoading = false;
@@ -80,52 +77,51 @@ class _ForgotScreenState extends State<ForgotScreen> {
     return Theme(
       data: appTheme,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Glömt lösenord'),
-        ),
+        appBar: AppBar(title: const Text('Glömt lösenord')),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        const Text(
-                          'Ange din e-postadress för att återställa ditt lösenord',
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            labelText: 'E-postadress',
-                            border: OutlineInputBorder(),
+            child:
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Ange din e-postadress för att återställa ditt lösenord',
+                            textAlign: TextAlign.center,
                           ),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'Ange en e-postadress';
-                            }
-                            // Add more email validation if needed
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: _onSubmit,
-                          child: const Text('Skicka återställningslänk'),
-                        ),
-                        const SizedBox(height: 16),
-                        if (_errorMessage.isNotEmpty)
-                          Text(
-                            _errorMessage,
-                            style: const TextStyle(color: Colors.red),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(
+                              labelText: 'E-postadress',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Ange en e-postadress';
+                              }
+                              // Add more email validation if needed
+                              return null;
+                            },
                           ),
-                      ],
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _onSubmit,
+                            child: const Text('Skicka återställningslänk'),
+                          ),
+                          const SizedBox(height: 16),
+                          if (_errorMessage.isNotEmpty)
+                            Text(
+                              _errorMessage,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
           ),
         ),
       ),

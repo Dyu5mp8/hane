@@ -39,8 +39,9 @@ class _ScrollIndicatorState extends State<ScrollIndicator>
   void _initialVisibilityCheck() {
     if (!widget.scrollController.hasClients) {
       // The scrollController is not attached yet, schedule another frame
-      WidgetsBinding.instance
-          .addPostFrameCallback((_) => _initialVisibilityCheck());
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _initialVisibilityCheck(),
+      );
       return;
     }
 
@@ -97,10 +98,7 @@ class _ScrollIndicatorState extends State<ScrollIndicator>
 
     return SlideTransition(
       position: _animationController.drive(
-        Tween<Offset>(
-          begin: const Offset(0, 0),
-          end: const Offset(0, 0.4),
-        ),
+        Tween<Offset>(begin: const Offset(0, 0), end: const Offset(0, 0.4)),
       ),
       child: IconButton(
         icon: Icon(
@@ -110,9 +108,10 @@ class _ScrollIndicatorState extends State<ScrollIndicator>
         ),
         onPressed: () {
           widget.scrollController.animateTo(
-              widget.scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.fastLinearToSlowEaseIn);
+            widget.scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastLinearToSlowEaseIn,
+          );
         },
       ),
     );

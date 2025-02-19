@@ -3,7 +3,6 @@ import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/nutri
 import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/range_getter.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-
 class TotalEnergyScaleRadial extends StatelessWidget with RangeGetter {
   final double requirementValue = 2000; // e.g., fixed nutritional requirement
 
@@ -56,7 +55,6 @@ class TotalEnergyScaleRadial extends StatelessWidget with RangeGetter {
               //   markerWidth: 14,
               //   markerHeight: 14,
               // ),
-
               NeedlePointer(
                 enableDragging: true,
                 value: vm.totalKcalPerDay(),
@@ -68,12 +66,11 @@ class TotalEnergyScaleRadial extends StatelessWidget with RangeGetter {
                 knobStyle: const KnobStyle(knobRadius: 0.08),
                 animationType: AnimationType.ease, // Smooth animation type
                 animationDuration: 2000, // Duration f
-              )
+              ),
 
               // Primary marker pointer at the exact value
             ],
             annotations: [
-             
               GaugeAnnotation(
                 widget: Container(
                   child: Column(

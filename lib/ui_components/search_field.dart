@@ -24,9 +24,7 @@ class SearchField extends StatelessWidget {
         placeholder: placeholder,
         style: Theme.of(context).textTheme.bodyLarge,
         decoration: BoxDecoration(
-          border: Border.all(
-            color: const Color.fromARGB(148, 76, 78, 95),
-          ),
+          border: Border.all(color: const Color.fromARGB(148, 76, 78, 95)),
           borderRadius: BorderRadius.circular(10),
         ),
         onChanged: onChanged,

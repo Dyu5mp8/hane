@@ -48,21 +48,22 @@ class _CommitDialogState extends State<CommitDialog> {
               ),
               const SizedBox(height: 8),
               Column(
-                children: widget.reviewers.entries.map((entry) {
-                  return CheckboxListTile(
-                    title: Text(entry.value),
-                    value: _selectedReviewerUIDs.containsKey(entry.key),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value == true) {
-                          _selectedReviewerUIDs[entry.key] = entry.value;
-                        } else {
-                          _selectedReviewerUIDs.remove(entry.key);
-                        }
-                      });
-                    },
-                  );
-                }).toList(),
+                children:
+                    widget.reviewers.entries.map((entry) {
+                      return CheckboxListTile(
+                        title: Text(entry.value),
+                        value: _selectedReviewerUIDs.containsKey(entry.key),
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value == true) {
+                              _selectedReviewerUIDs[entry.key] = entry.value;
+                            } else {
+                              _selectedReviewerUIDs.remove(entry.key);
+                            }
+                          });
+                        },
+                      );
+                    }).toList(),
               ),
             ],
           ),

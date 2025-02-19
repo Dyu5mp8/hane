@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class LetterIcon extends StatelessWidget {
-
   final String letter;
   final Color? color;
 
-  const LetterIcon({super.key, required this.letter, this.color}) : assert(letter.length == 1, 'Letter must be a single character');
+  const LetterIcon({super.key, required this.letter, this.color})
+    : assert(letter.length == 1, 'Letter must be a single character');
 
   @override
   Widget build(BuildContext context) {

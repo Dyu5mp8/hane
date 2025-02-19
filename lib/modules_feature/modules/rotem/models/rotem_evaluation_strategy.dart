@@ -10,10 +10,10 @@ abstract class RotemEvaluationStrategy {
   List<FieldConfig> getRequiredFields();
 
   int getTotalSectionsForStrategy() {
-  final requiredFields = getRequiredFields();
-  final distinctSections = requiredFields.map((fc) => fc.section).toSet();
-  return distinctSections.length;
-}
+    final requiredFields = getRequiredFields();
+    final distinctSections = requiredFields.map((fc) => fc.section).toSet();
+    return distinctSections.length;
+  }
 
   /// Global validation logic that checks multiple fields together.
   /// Return a string with an error message if invalid, or null if all good.
@@ -26,6 +26,6 @@ abstract class RotemEvaluationStrategy {
       (config.maxValue != null && value > config.maxValue!);
 
   bool isValueOutOfRange(FieldConfig config, double value) {
-  return (config.result(value) == Result.normal);
+    return (config.result(value) == Result.normal);
   }
 }

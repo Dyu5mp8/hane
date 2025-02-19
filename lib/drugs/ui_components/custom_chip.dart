@@ -4,11 +4,7 @@ class CustomChip extends StatelessWidget {
   final String label;
   final VoidCallback? onDeleted;
 
-  const CustomChip({
-    super.key,
-    required this.label,
-    this.onDeleted,
-  });
+  const CustomChip({super.key, required this.label, this.onDeleted});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +21,9 @@ class CustomChip extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       backgroundColor: chipTheme.backgroundColor, // Use theme color
       padding: const EdgeInsets.symmetric(
-          horizontal: 8, vertical: 4), // Smaller padding
+        horizontal: 8,
+        vertical: 4,
+      ), // Smaller padding
       deleteIcon: Icon(
         Icons.cancel,
         size: 16, // Smaller delete icon

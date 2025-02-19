@@ -44,7 +44,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   List<bool?> _stepValidity = [];
   bool _shouldShowSummary = false;
   final Map<RotemField, String> _inputValues = {};
-   List<FocusNode> get _allFocusNodes => _fieldFocusNodes.values.toList();
+  List<FocusNode> get _allFocusNodes => _fieldFocusNodes.values.toList();
 
   // Unique key for the Stepper to force rebuild when steps count changes.
   Key _stepperKey = UniqueKey();
@@ -56,7 +56,6 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
     _formKeys = List.generate(_totalSteps, (_) => GlobalKey<FormState>());
     _stepValidity = List.filled(_totalSteps, null);
   }
-  
 
   @override
   void dispose() {
@@ -70,9 +69,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ROTEM guide'),
-      ),
+      appBar: AppBar(title: const Text('ROTEM guide')),
       body: KeyboardActions(
         config: _buildKeyboardActionsConfig(),
         child: Stack(
@@ -80,11 +77,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
             SingleChildScrollView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.only(bottom: 100),
-              child: Column(
-                children: [
-                  _buildStepperContent(),
-                ],
-              ),
+              child: Column(children: [_buildStepperContent()]),
             ),
             if (_shouldShowSummary)
               Positioned(
@@ -99,7 +92,7 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
                     if (evaluator.strategy?.validateAll(_inputValues) == null)
                       ElevatedButton(
                         onPressed: () {
-                                evaluator.parseAndSet(_inputValues);
+                          evaluator.parseAndSet(_inputValues);
                           showResultsModal();
                         },
                         child: const Text('Gå till resultat'),
@@ -142,20 +135,22 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   }
 
   List<Step> _buildSteps() {
-    final stepStyle =   StepStyle(
-          color: Theme.of(context).colorScheme.tertiaryFixed);
-        
+    final stepStyle = StepStyle(
+      color: Theme.of(context).colorScheme.tertiaryFixed,
+    );
+
     // Always start with the strategy picker step.
     List<Step> steps = [
       Step(
         stepStyle: stepStyle,
         title: const Text('Välj kontext'),
-        subtitle: evaluator.strategy == null
-            ? null
-            : Text(
-                'Vald klinisk kontext: ${evaluator.strategy!.name}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+        subtitle:
+            evaluator.strategy == null
+                ? null
+                : Text(
+                  'Vald klinisk kontext: ${evaluator.strategy!.name}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
         isActive: _currentStep == 0,
         state: _stepState(0),
         content: Align(
@@ -195,19 +190,23 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
               title: Text(section.name.toUpperCase()),
               isActive: _currentStep == stepIndex,
               state: _stepState(stepIndex),
-              stepStyle: stepStyle  ,
+              stepStyle: stepStyle,
               content: Align(
                 alignment: Alignment.centerLeft,
                 child: Form(
-                  key: _formKeys.length > stepIndex
-                      ? _formKeys[stepIndex]
-                      : GlobalKey<FormState>(),
+                  key:
+                      _formKeys.length > stepIndex
+                          ? _formKeys[stepIndex]
+                          : GlobalKey<FormState>(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: fields.map((fieldConfig) {
-                      return _buildNumField(
-                          fieldConfig.label, fieldConfig.field);
-                    }).toList(),
+                    children:
+                        fields.map((fieldConfig) {
+                          return _buildNumField(
+                            fieldConfig.label,
+                            fieldConfig.field,
+                          );
+                        }).toList(),
                   ),
                 ),
               ),
@@ -243,10 +242,11 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           _shouldShowSummary = false;
 
           // After selecting a strategy, determine the number of unique sections.
-          final sections = selectedStrategy!
-              .getRequiredFields()
-              .map((fc) => fc.section)
-              .toSet();
+          final sections =
+              selectedStrategy!
+                  .getRequiredFields()
+                  .map((fc) => fc.section)
+                  .toSet();
           _totalSteps =
               1 + sections.length; // 1 for strategy picker + one per section
 
@@ -273,8 +273,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
     late final FieldConfig fieldConfig;
     try {
-      fieldConfig =
-          strategy.getRequiredFields().firstWhere((cfg) => cfg.field == field);
+      fieldConfig = strategy.getRequiredFields().firstWhere(
+        (cfg) => cfg.field == field,
+      );
     } on StateError {
       return const SizedBox.shrink();
     }
@@ -290,28 +291,30 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           textAlign: TextAlign.left,
           keyboardType: TextInputType.number,
           textInputAction: TextInputAction.done,
-          
-          
+
           decoration: InputDecoration(
             labelStyle: Theme.of(context).textTheme.bodyLarge,
-            label: fieldConfig.isRequired
-                ? RichText(
-                    text: TextSpan(
-                      text: '$label ',
-                      
-                      style: Theme.of(context).textTheme.bodyLarge,
-                      children: [
-                        const TextSpan(
-                          text: '*',
-                          style: TextStyle(color: Colors.red, fontSize: 20),
-                        ),
-                      ],
-                    ),
-                  )
-                : Text(label),
+            label:
+                fieldConfig.isRequired
+                    ? RichText(
+                      text: TextSpan(
+                        text: '$label ',
+
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        children: [
+                          const TextSpan(
+                            text: '*',
+                            style: TextStyle(color: Colors.red, fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    )
+                    : Text(label),
             border: const OutlineInputBorder(),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 6,
+              vertical: 4,
+            ),
           ),
           style: const TextStyle(fontSize: 12),
           validator: (value) {
@@ -338,8 +341,6 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
                 formState.save();
               }
             });
-
-  
           },
         ),
       ),
@@ -348,8 +349,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
 
   void _onStepTapped(int step) {
     if (evaluator.strategy == null && step > 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Välj en strategi först')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Välj en strategi först')));
       setState(() => _currentStep = 0);
       return;
     }
@@ -362,9 +364,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
   void _onStepContinue() {
     if (_currentStep == 0) {
       if (evaluator.strategy == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Välj en strategi först')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Välj en strategi först')));
         return;
       }
       setState(() {
@@ -391,16 +393,17 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       if (globalError != null) {
         showDialog(
           context: context,
-          builder: (_) => AlertDialog(
-            title: const Text('Felaktig inmatning'),
-            content: Text(globalError),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
+          builder:
+              (_) => AlertDialog(
+                title: const Text('Felaktig inmatning'),
+                content: Text(globalError),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
+                  ),
+                ],
               ),
-            ],
-          ),
         );
         _stepValidity[_currentStep] = false;
         setState(() {});
@@ -414,9 +417,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       showResultsModal();
 
       // Optionally show a snackbar or perform other UI updates
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Inmatningen är färdig')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Inmatningen är färdig')));
     } else {
       setState(() => _currentStep += 1);
     }
@@ -429,8 +432,9 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
       context: context,
       builder: (BuildContext context) {
         return EvaluationResult(
-            actions: evaluator.evaluate(),
-            strategyName: evaluator.strategy!.name);
+          actions: evaluator.evaluate(),
+          strategyName: evaluator.strategy!.name,
+        );
       },
     );
   }
@@ -443,50 +447,54 @@ class _RotemWizardScreenState extends State<RotemWizardScreen> {
           : StepState.indexed;
     }
 
-   if (_currentStep == stepIndex) {
+    if (_currentStep == stepIndex) {
       return StepState.editing;
     } else {
       return StepState.indexed;
     }
   }
-KeyboardActionsConfig _buildKeyboardActionsConfig() {
-  return KeyboardActionsConfig(
-    keyboardActionsPlatform: !kIsWeb 
-        ? KeyboardActionsPlatform.ALL 
-        : KeyboardActionsPlatform.IOS,
-    keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
-    actions: _allFocusNodes.map((node) {
-      return KeyboardActionsItem(
-        displayArrows: false,
-        focusNode: node,
-        toolbarButtons: [
-          (node) {
-            return TextButton(
-              onPressed: () {
-                // Use FocusScope to move to the next field
-                FocusScope.of(context).nextFocus();
 
-                // Optionally save the current field's form state
-                final currentContext = node.context;
-                if (currentContext != null) {
-                  final formState = Form.of(currentContext);
-                  if (formState != null) {
-                    formState.save();
-                  }
-                }
-              },
-              child: Row(
-                children: [
-                  Text("Nästa", style: Theme.of(context).textTheme.bodyLarge),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward),
-                ],
-              ),
+  KeyboardActionsConfig _buildKeyboardActionsConfig() {
+    return KeyboardActionsConfig(
+      keyboardActionsPlatform:
+          !kIsWeb ? KeyboardActionsPlatform.ALL : KeyboardActionsPlatform.IOS,
+      keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
+      actions:
+          _allFocusNodes.map((node) {
+            return KeyboardActionsItem(
+              displayArrows: false,
+              focusNode: node,
+              toolbarButtons: [
+                (node) {
+                  return TextButton(
+                    onPressed: () {
+                      // Use FocusScope to move to the next field
+                      FocusScope.of(context).nextFocus();
+
+                      // Optionally save the current field's form state
+                      final currentContext = node.context;
+                      if (currentContext != null) {
+                        final formState = Form.of(currentContext);
+                        if (formState != null) {
+                          formState.save();
+                        }
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          "Nästa",
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.arrow_forward),
+                      ],
+                    ),
+                  );
+                },
+              ],
             );
-          }
-        ],
-      );
-    }).toList(),
-  );
-}
+          }).toList(),
+    );
+  }
 }

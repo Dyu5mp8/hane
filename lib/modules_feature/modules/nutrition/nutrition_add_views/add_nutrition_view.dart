@@ -17,7 +17,8 @@ class AddNutritionView extends StatefulWidget {
   _AddNutritionViewState createState() => _AddNutritionViewState();
 }
 
-class _AddNutritionViewState extends State<AddNutritionView> with SourceFirestoreHandler {
+class _AddNutritionViewState extends State<AddNutritionView>
+    with SourceFirestoreHandler {
   late Future<Map<SourceType, List<Source>>> _futureSources;
   String _searchQuery = '';
 
@@ -38,7 +39,8 @@ class _AddNutritionViewState extends State<AddNutritionView> with SourceFirestor
 
   // Filter sources based on search query
   Map<SourceType, List<Source>> _filterSources(
-      Map<SourceType, List<Source>> groupedSources) {
+    Map<SourceType, List<Source>> groupedSources,
+  ) {
     if (_searchQuery.isEmpty) {
       return groupedSources;
     }
@@ -47,21 +49,24 @@ class _AddNutritionViewState extends State<AddNutritionView> with SourceFirestor
 
     return {
       for (var entry in groupedSources.entries)
-        entry.key: entry.value
-            .where((source) =>
-                source.name.toLowerCase().contains(lowerCaseQuery) ||
-                source.displayContents
-                    .any((content) => content.toLowerCase().contains(lowerCaseQuery)))
-            .toList(),
+        entry.key:
+            entry.value
+                .where(
+                  (source) =>
+                      source.name.toLowerCase().contains(lowerCaseQuery) ||
+                      source.displayContents.any(
+                        (content) =>
+                            content.toLowerCase().contains(lowerCaseQuery),
+                      ),
+                )
+                .toList(),
     };
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Lägg till nutritionskälla"),
-      ),
+      appBar: AppBar(title: const Text("Lägg till nutritionskälla")),
       body: Column(
         children: [
           // Search Bar
@@ -106,30 +111,35 @@ class _AddNutritionViewState extends State<AddNutritionView> with SourceFirestor
                           width: double.infinity,
                           color: Theme.of(context).scaffoldBackgroundColor,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
+                            horizontal: 16.0,
+                            vertical: 8.0,
+                          ),
                           child: Text(
                             type.displayName,
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
                         content: Column(
-                          children: sources.map((source) {
-                            return SourceCard(source: source);
-                          }).toList(),
+                          children:
+                              sources.map((source) {
+                                return SourceCard(source: source);
+                              }).toList(),
                         ),
                       ),
                     );
                   });
 
                   if (listItems.isEmpty) {
-                    return const Center(child: Text("Inga resultat matchade sökningen."));
+                    return const Center(
+                      child: Text("Inga resultat matchade sökningen."),
+                    );
                   }
 
                   return ListView.separated(
                     itemCount: listItems.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 8.0),
+                    separatorBuilder:
+                        (context, index) => const SizedBox(height: 8.0),
                     itemBuilder: (context, index) {
                       return listItems[index];
                     },
@@ -153,63 +163,59 @@ class SourceCard extends StatelessWidget {
 
   void _handleAddNutrition(NutritionViewModel vm) {
     if (source is IntermittentSource) {
-              vm.addNutrition(Intermittent(intermittentSource: source as IntermittentSource,
-                quantity: 1,
-              ));
-            } else if (source is ContinousSource) {
-              ContinousSource c = source as ContinousSource;
-              vm.addNutrition(Continuous(continuousSource: c, mlPerHour: c.rateRangeMin ?? 20)
-          
-              );
-   
-            }
+      vm.addNutrition(
+        Intermittent(
+          intermittentSource: source as IntermittentSource,
+          quantity: 1,
+        ),
+      );
+    } else if (source is ContinousSource) {
+      ContinousSource c = source as ContinousSource;
+      vm.addNutrition(
+        Continuous(continuousSource: c, mlPerHour: c.rateRangeMin ?? 20),
+      );
+    }
     // Handle add nutrition event
   }
+
   @override
   Widget build(BuildContext context) {
-     final viewModel = Provider.of<NutritionViewModel>(context);
+    final viewModel = Provider.of<NutritionViewModel>(context);
     return Card(
-      margin:
-          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-  
         title: Text(
           source.name,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: source.displayContents.map((content) {
-            return Text(
-              content,
-              style: Theme.of(context).textTheme.bodySmall,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            );
-          }).toList(),
+          children:
+              source.displayContents.map((content) {
+                return Text(
+                  content,
+                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                );
+              }).toList(),
         ),
         trailing: IconButton(
           icon: const Icon(Icons.add),
           onPressed: () {
-           
-            
             _handleAddNutrition(viewModel);
             Navigator.pop(context);
-            
+
             // Handle add nutrition event
           },
         ),
         onTap: () {
-
-             
-            _handleAddNutrition(viewModel);
-            Navigator.pop(context);
+          _handleAddNutrition(viewModel);
+          Navigator.pop(context);
           // Handle tap event, e.g., navigate to detail or add nutrition
         },
       ),

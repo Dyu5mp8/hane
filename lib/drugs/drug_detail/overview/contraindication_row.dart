@@ -6,16 +6,18 @@ import 'package:hane/ui_components/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-
 class ContraindicationRow extends StatelessWidget {
   const ContraindicationRow({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final drug =
-        Provider.of<Drug>(context); // Access the drug from the Provider
-    final editMode = Provider.of<EditModeProvider>(context)
-        .editMode; // Access editMode from the Provider
+    final drug = Provider.of<Drug>(
+      context,
+    ); // Access the drug from the Provider
+    final editMode =
+        Provider.of<EditModeProvider>(
+          context,
+        ).editMode; // Access editMode from the Provider
 
     return Container(
       width: MediaQuery.sizeOf(context).width,
@@ -25,17 +27,20 @@ class ContraindicationRow extends StatelessWidget {
           if (drug.expandedContraindication?.isNotEmpty ?? false) {
             showDialog(
               context: context,
-              builder: (context) => ExpandedDialog(
-                text: drug.expandedContraindication!,
-              ),
+              builder:
+                  (context) =>
+                      ExpandedDialog(text: drug.expandedContraindication!),
             );
           }
         },
         child: Row(
           children: [
             Badge(
-              label: Icon(Icons.info,
-                  size: 17, color: Theme.of(context).colorScheme.tertiary),
+              label: Icon(
+                Icons.info,
+                size: 17,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
               backgroundColor: Colors.transparent,
               offset: const Offset(4, -10),
               isLabelVisible:
@@ -50,16 +55,16 @@ class ContraindicationRow extends StatelessWidget {
             const SizedBox(width: 15),
             drug.contraindication != null
                 ? Flexible(
-                    child: AbsorbPointer(
-                      absorbing: !editMode,
-                      child: EditableRow(
-                        text: drug.contraindication!,
-                        textStyle: const TextStyle(fontSize: 14),
-                        editDialog: EditContraindicationsDialog(drug: drug),
-                        isEditMode: editMode,
-                      ),
+                  child: AbsorbPointer(
+                    absorbing: !editMode,
+                    child: EditableRow(
+                      text: drug.contraindication!,
+                      textStyle: const TextStyle(fontSize: 14),
+                      editDialog: EditContraindicationsDialog(drug: drug),
+                      isEditMode: editMode,
                     ),
-                  )
+                  ),
+                )
                 : const Text('Ingen angedd kontraindikation'),
           ],
         ),

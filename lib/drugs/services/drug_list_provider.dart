@@ -9,8 +9,6 @@ import 'package:hane/drawers/user_feedback.dart';
 import 'package:hane/login/user_status.dart';
 export 'package:provider/provider.dart';
 
-
-
 class DrugListProvider with ChangeNotifier {
   String _masterUID = "master";
   String? _user;
@@ -29,26 +27,20 @@ class DrugListProvider with ChangeNotifier {
   }
 
   Future<UserMode?> _determineUserMode(User user) async {
-          final idTokenResult = await user.getIdTokenResult();
-      if (idTokenResult.claims?['admin'] == true) {
-        return UserMode.isAdmin;
-      }
-      else if (idTokenResult.claims?['reviewer'] == true) {
-        return UserMode.reviewer;
-      }
-      if (await getIsSyncedModeFromFirestore()== null) {
-        return null;
-      }
-      else if (await getIsSyncedModeFromFirestore() == true) {
-        return UserMode.syncedMode;
-      } else {
-        return UserMode.customMode;
-      }
-
+    final idTokenResult = await user.getIdTokenResult();
+    if (idTokenResult.claims?['admin'] == true) {
+      return UserMode.isAdmin;
+    } else if (idTokenResult.claims?['reviewer'] == true) {
+      return UserMode.reviewer;
+    }
+    if (await getIsSyncedModeFromFirestore() == null) {
+      return null;
+    } else if (await getIsSyncedModeFromFirestore() == true) {
+      return UserMode.syncedMode;
+    } else {
+      return UserMode.customMode;
+    }
   }
-
-
-
 
   bool get isReviewer => _isReviewer;
 
@@ -76,12 +68,9 @@ class DrugListProvider with ChangeNotifier {
       _isSyncedMode = false;
       writeIsSyncedMode();
     }
-    
+
     updateUserBehavior();
-
   }
-
- 
 
   Future<void> _checkIfUserIsReviewer(User user) async {
     try {
@@ -118,11 +107,7 @@ class DrugListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
   void updateUserBehavior() {
-
-   
-
     if (_user == null) {
       return;
     }
@@ -133,9 +118,10 @@ class DrugListProvider with ChangeNotifier {
       setUserBehavior(SyncedUserBehavior(user: _user!, masterUID: _masterUID));
     } else if (_userMode == UserMode.customMode) {
       setUserBehavior(CustomUserBehavior(user: _user!, masterUID: _masterUID));
-    }
-    else if (_userMode == UserMode.reviewer) {
-      setUserBehavior(ReviewerUserBehavior(user: _user!, masterUID: _masterUID));
+    } else if (_userMode == UserMode.reviewer) {
+      setUserBehavior(
+        ReviewerUserBehavior(user: _user!, masterUID: _masterUID),
+      );
     }
   }
 
@@ -208,7 +194,8 @@ class DrugListProvider with ChangeNotifier {
       await (userBehavior as CustomUserBehavior).copyMasterToUser();
     } else {
       throw Exception(
-          "Copying master drugs is not supported for this user mode.");
+        "Copying master drugs is not supported for this user mode.",
+      );
     }
   }
 
@@ -217,7 +204,8 @@ class DrugListProvider with ChangeNotifier {
       return (userBehavior as CustomUserBehavior).getDrugNamesFromMaster();
     } else {
       throw Exception(
-          "Getting drug names from master is not supported for this user mode.");
+        "Getting drug names from master is not supported for this user mode.",
+      );
     }
   }
 
@@ -226,7 +214,8 @@ class DrugListProvider with ChangeNotifier {
       await (userBehavior as CustomUserBehavior).addDrugsFromMaster(drugNames);
     } else {
       throw Exception(
-          "Adding drugs from master is not supported for this user mode.");
+        "Adding drugs from master is not supported for this user mode.",
+      );
     }
   }
 
@@ -235,7 +224,8 @@ class DrugListProvider with ChangeNotifier {
       return await (userBehavior as CustomUserBehavior).getDataStatus();
     } else {
       throw Exception(
-          "Getting data status is not supported for this user mode.");
+        "Getting data status is not supported for this user mode.",
+      );
     }
   }
 
@@ -252,7 +242,7 @@ class DrugListProvider with ChangeNotifier {
         .snapshots();
   }
 
-  Future<void> sendChatMessage(String drugId , ChatMessage chatMessage) async {
+  Future<void> sendChatMessage(String drugId, ChatMessage chatMessage) async {
     final db = FirebaseFirestore.instance;
 
     DocumentReference drugDocRef = db
@@ -263,31 +253,29 @@ class DrugListProvider with ChangeNotifier {
 
     CollectionReference chatCollection = drugDocRef.collection('chat');
 
-      
-      // The chatMessage doesn't have an id, create a new document
-      DocumentReference docRef = await chatCollection.add(chatMessage.toMap());
-      // Set the generated id back to the chatMessage object
-      chatMessage.id = docRef.id;
+    // The chatMessage doesn't have an id, create a new document
+    DocumentReference docRef = await chatCollection.add(chatMessage.toMap());
+    // Set the generated id back to the chatMessage object
+    chatMessage.id = docRef.id;
 
-      drugDocRef.set({
-
-        'lastMessageTimestamp': chatMessage.timestamp,
-      }, SetOptions(merge: true));
-
-      
-    
+    drugDocRef.set({
+      'lastMessageTimestamp': chatMessage.timestamp,
+    }, SetOptions(merge: true));
   }
 
-  Future<void> markMessageSolvedStatus(String drugId, ChatMessage chatMessage) async {
+  Future<void> markMessageSolvedStatus(
+    String drugId,
+    ChatMessage chatMessage,
+  ) async {
     final db = FirebaseFirestore.instance;
-      CollectionReference chatCollection = db
+    CollectionReference chatCollection = db
         .collection('users')
         .doc(masterUID)
         .collection('drugs')
         .doc(drugId)
         .collection('chat');
 
-     if (chatMessage.id != null && chatMessage.id!.isNotEmpty) {
+    if (chatMessage.id != null && chatMessage.id!.isNotEmpty) {
       // The chatMessage has an id
       DocumentReference docRef = chatCollection.doc(chatMessage.id);
       DocumentSnapshot<Map<String, dynamic>> snapshot =
@@ -296,57 +284,48 @@ class DrugListProvider with ChangeNotifier {
       if (snapshot.exists) {
         // Document exists, update it
         await docRef.update(chatMessage.toMap());
-  
+      } else {
+        return;
+      }
     } else {
-     return ;
+      return;
     }
-
-     }
-     else {
-      return ;
-  }
   }
 
   Future<bool?> getIsSyncedModeFromFirestore() async {
-    
-      var db = FirebaseFirestore.instance;
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
+    var db = FirebaseFirestore.instance;
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentSnapshot userDoc = await db.collection('users').doc(userId).get();
 
-      if (userDoc.exists) {
-        // Set private variable directly to avoid calling setter
-        return
-            (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'];
-      } 
-      else {
-        return null;
-      }
-    
+    if (userDoc.exists) {
+      // Set private variable directly to avoid calling setter
+      return (userDoc.data() as Map<String, dynamic>?)?['preferSyncedMode'];
+    } else {
+      return null;
+    }
   }
 
-  Future<void> updateHasReviewed(String drugId, Map<String, String> hasReviewed) async {
+  Future<void> updateHasReviewed(
+    String drugId,
+    Map<String, String> hasReviewed,
+  ) async {
     if (!_isReviewer) {
       throw Exception("User is not a reviewer.");
     }
     try {
-   
       await FirebaseFirestore.instance
           .collection('users')
           .doc(masterUID)
           .collection('drugs')
           .doc(drugId)
-          .set({
-        'hasReviewedUIDs': hasReviewed,
-
-      }, SetOptions(merge: true));
+          .set({'hasReviewedUIDs': hasReviewed}, SetOptions(merge: true));
     } catch (e) {
       print("Failed to add reviewUID: $e");
       rethrow;
     }
   }
 
-
-  Future<Map<String,String>> getPossibleReviewerUIDs() async {
+  Future<Map<String, String>> getPossibleReviewerUIDs() async {
     try {
       var db = FirebaseFirestore.instance;
       DocumentSnapshot masterDoc =
@@ -354,9 +333,7 @@ class DrugListProvider with ChangeNotifier {
       if (masterDoc.exists) {
         Map<String, dynamic>? data = masterDoc.data() as Map<String, dynamic>?;
         if (data != null && data.containsKey('reviewers')) {
-          return
-              Map<String, String>.from(data['reviewers'] as Map);
-        
+          return Map<String, String>.from(data['reviewers'] as Map);
         } else {
           return {};
         }
@@ -422,9 +399,7 @@ class DrugListProvider with ChangeNotifier {
 
   Future<void> updateLastReadTimestamp(String drugId) async {
     await FirebaseFirestore.instance.collection('users').doc(_user).set({
-      'lastReadTimestamps': {
-        drugId: Timestamp.now(),
-      },
+      'lastReadTimestamps': {drugId: Timestamp.now()},
     }, SetOptions(merge: true));
   }
 
@@ -436,14 +411,12 @@ class DrugListProvider with ChangeNotifier {
 
       for (var drug in drugs) {
         if (drug.id != null) {
-          DocumentReference drugDocRef =
-              masterDocRef.collection('drugs').doc(drug.id);
-          batch.set(
-              drugDocRef,
-              {
-                'hasReviewedUIDs': drug.shouldReviewUIDs,
-              },
-              SetOptions(merge: true));
+          DocumentReference drugDocRef = masterDocRef
+              .collection('drugs')
+              .doc(drug.id);
+          batch.set(drugDocRef, {
+            'hasReviewedUIDs': drug.shouldReviewUIDs,
+          }, SetOptions(merge: true));
         }
       }
 
@@ -486,59 +459,51 @@ class DrugListProvider with ChangeNotifier {
   }
 
   Future<void> sendFeedback(String feedback) async {
+    var db = FirebaseFirestore.instance;
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    DocumentReference userDocRef = db.collection('appUserFeedback').doc();
 
-      var db = FirebaseFirestore.instance;
-      String userId = FirebaseAuth.instance.currentUser!.uid;
-      DocumentReference userDocRef = db.collection('appUserFeedback').doc();
-
-  await userDocRef.set({
-    'id': userDocRef.id,
-    'feedback': feedback,
-    'userId': FirebaseAuth.instance.currentUser!.email,
-    'timestamp': Timestamp.now(),
-    'master': masterUID,
-  }, SetOptions(merge: true));
-
-    
+    await userDocRef.set({
+      'id': userDocRef.id,
+      'feedback': feedback,
+      'userId': FirebaseAuth.instance.currentUser!.email,
+      'timestamp': Timestamp.now(),
+      'master': masterUID,
+    }, SetOptions(merge: true));
   }
 
-final userFeedbackQuery = FirebaseFirestore.instance
-    .collection('appUserFeedback')
-    .orderBy('timestamp', descending: true);
-Future<int> getUserFeedbackCount() async {
-  // Fetch user document
-  final userDoc = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(_user)
-      .get();
-
-  final userData = userDoc.data();
-  // If lastReadFeedback is not available or not a Timestamp, use current time
-  final Timestamp lastReadFeedback = (userData != null && userData['lastReadFeedback'] is Timestamp)
-      ? userData['lastReadFeedback']
-      : Timestamp.now();
-
-  // Create a query to get feedback after lastReadFeedback
-  final query = FirebaseFirestore.instance
+  final userFeedbackQuery = FirebaseFirestore.instance
       .collection('appUserFeedback')
-      .where('timestamp', isGreaterThan: lastReadFeedback)
       .orderBy('timestamp', descending: true);
+  Future<int> getUserFeedbackCount() async {
+    // Fetch user document
+    final userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(_user).get();
 
-  // Get the aggregated count of unread feedback
-  final snapshot = await query.count().get();
-  return snapshot.count ?? 0;
-}
+    final userData = userDoc.data();
+    // If lastReadFeedback is not available or not a Timestamp, use current time
+    final Timestamp lastReadFeedback =
+        (userData != null && userData['lastReadFeedback'] is Timestamp)
+            ? userData['lastReadFeedback']
+            : Timestamp.now();
 
-Future<void> markFeedbackAsRead() async {
-  // Update the user document with the current time
-  await FirebaseFirestore.instance
-    .collection('users')
-    .doc(_user)
-    .set({
+    // Create a query to get feedback after lastReadFeedback
+    final query = FirebaseFirestore.instance
+        .collection('appUserFeedback')
+        .where('timestamp', isGreaterThan: lastReadFeedback)
+        .orderBy('timestamp', descending: true);
+
+    // Get the aggregated count of unread feedback
+    final snapshot = await query.count().get();
+    return snapshot.count ?? 0;
+  }
+
+  Future<void> markFeedbackAsRead() async {
+    // Update the user document with the current time
+    await FirebaseFirestore.instance.collection('users').doc(_user).set({
       'lastReadFeedback': Timestamp.now(),
     }, SetOptions(merge: true));
 
     notifyListeners();
-}
-
+  }
 }

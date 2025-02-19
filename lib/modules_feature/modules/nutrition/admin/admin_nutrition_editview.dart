@@ -13,7 +13,8 @@ class AdminNutritionEditview extends StatefulWidget {
   State<AdminNutritionEditview> createState() => _AdminNutritionEditviewState();
 }
 
-class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with SourceFirestoreHandler {
+class _AdminNutritionEditviewState extends State<AdminNutritionEditview>
+    with SourceFirestoreHandler {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers for form fields
@@ -22,7 +23,8 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
   // Controllers for intermittent nutrition
   final TextEditingController _mlPerUnitController = TextEditingController();
   final TextEditingController _kcalPerUnitController = TextEditingController();
-  final TextEditingController _proteinPerUnitController = TextEditingController();
+  final TextEditingController _proteinPerUnitController =
+      TextEditingController();
   final TextEditingController _lipidPerUnitController = TextEditingController();
 
   // Controllers for continuous nutrition
@@ -32,7 +34,6 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
   final TextEditingController _rateRangeMinController = TextEditingController();
   final TextEditingController _rateRangeMaxController = TextEditingController();
 
-
   // Existing state variables
   String? _selectedFlow; // "intermittent" or "continuous"
   SourceType? _selectedSourceType;
@@ -41,9 +42,10 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
   void initState() {
     super.initState();
     if (widget.source != null) {
-      _selectedFlow = widget.source is IntermittentSource ? 'intermittent' : 'continuous';
+      _selectedFlow =
+          widget.source is IntermittentSource ? 'intermittent' : 'continuous';
       _selectedSourceType = widget.source!.type;
-      
+
       // Initialize the name field
       _nameController.text = widget.source!.name;
 
@@ -81,56 +83,55 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
   }
 
   double sanitizeDouble(String value) {
+    String trimmed = value.trim();
 
+    String decimalFixed = trimmed.replaceAll(",", ".");
 
-  String trimmed = value.trim();
-  
-  String decimalFixed = trimmed.replaceAll(",", ".");
-  
-   return double.parse(decimalFixed);
-}
-
-
-  
+    return double.parse(decimalFixed);
+  }
 
   Future<void> _submitForm() async {
-
     try {
-    if (_formKey.currentState!.validate() &&
-        _selectedFlow != null &&
-        _selectedSourceType != null) {
+      if (_formKey.currentState!.validate() &&
+          _selectedFlow != null &&
+          _selectedSourceType != null) {
+        String? id = widget.source?.id;
 
-    String? id = widget.source?.id;
+        Source source;
 
-      Source source;
+        if (_selectedFlow == "intermittent") {
+          source = IntermittentSource(
+            id: id,
+            name: _nameController.text.trim(),
+            type: _selectedSourceType!,
+            mlPerUnit: sanitizeDouble(_mlPerUnitController.text.trim()),
+            kcalPerUnit: sanitizeDouble(_kcalPerUnitController.text.trim()),
+            proteinPerUnit: sanitizeDouble(
+              _proteinPerUnitController.text.trim(),
+            ),
+            lipidsPerUnit: sanitizeDouble(_lipidPerUnitController.text.trim()),
+          );
+        } else if (_selectedFlow == "continuous") {
+          source = ContinousSource(
+            id: id,
+            name: _nameController.text.trim(),
+            type: _selectedSourceType!,
+            kcalPerMl: sanitizeDouble(_kcalPerMlController.text.trim()),
+            proteinPerMl: sanitizeDouble(_proteinPerMlController.text.trim()),
+            lipidsPerMl: sanitizeDouble(_lipidPerMlController.text.trim()),
+            rateRangeMin:
+                _rateRangeMinController.text.isNotEmpty
+                    ? sanitizeDouble(_rateRangeMinController.text.trim())
+                    : null,
+            rateRangeMax:
+                _rateRangeMaxController.text.isNotEmpty
+                    ? sanitizeDouble(_rateRangeMaxController.text.trim())
+                    : null,
+          );
+        } else {
+          return;
+        }
 
-
-      if (_selectedFlow == "intermittent") {
-        source = IntermittentSource(
-          id: id,
-          name: _nameController.text.trim(),
-          type: _selectedSourceType!,
-          mlPerUnit: sanitizeDouble(_mlPerUnitController.text.trim()),
-          kcalPerUnit: sanitizeDouble(_kcalPerUnitController.text.trim()),
-          proteinPerUnit: sanitizeDouble(_proteinPerUnitController.text.trim()),
-          lipidsPerUnit: sanitizeDouble(_lipidPerUnitController.text.trim()),
-        );
-      } else if (_selectedFlow == "continuous") {
-        source = ContinousSource(
-          id: id,
-          name: _nameController.text.trim(),
-          type: _selectedSourceType!,
-          kcalPerMl: sanitizeDouble(_kcalPerMlController.text.trim()),
-          proteinPerMl: sanitizeDouble(_proteinPerMlController.text.trim()),
-          lipidsPerMl: sanitizeDouble(_lipidPerMlController.text.trim()),
-          rateRangeMin: _rateRangeMinController.text.isNotEmpty ? sanitizeDouble(_rateRangeMinController.text.trim()) : null,
-          rateRangeMax: _rateRangeMaxController.text.isNotEmpty ? sanitizeDouble(_rateRangeMaxController.text.trim()) : null,
-        );
-      } else {
-        return;
-      }
-
-      
         await addDocument(collectionPath: 'nutritions', source: source);
         _resetForm();
         if (mounted) {
@@ -138,14 +139,14 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
             SnackBar(content: Text('Nutrition sparad framgångsrikt!')),
           );
         }
-      }} catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Fel när datan skulle sparas: $e')),
-          );
-        }
       }
-    
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Fel när datan skulle sparas: $e')),
+        );
+      }
+    }
   }
 
   void _resetForm() {
@@ -165,7 +166,6 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
       _lipidPerMlController.clear();
       _rateRangeMinController.clear();
       _rateRangeMaxController.clear();
-      
     });
   }
 
@@ -191,7 +191,7 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
           controller: _lipidPerUnitController,
           label: 'Gram lipider per enhet',
         ),
-      ] 
+      ],
     );
   }
 
@@ -213,12 +213,23 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
           label: 'Gram lipider per mL',
         ),
         const SizedBox(height: 12),
-        Row(children: [
-
-          Expanded(child: _buildNumberField(label: "Reglage minimum", controller: _rateRangeMinController)),
-          const SizedBox(width: 4),
-          Expanded(child: _buildNumberField(label: "Reglage maximum", controller: _rateRangeMaxController)),
-        ],)
+        Row(
+          children: [
+            Expanded(
+              child: _buildNumberField(
+                label: "Reglage minimum",
+                controller: _rateRangeMinController,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              child: _buildNumberField(
+                label: "Reglage maximum",
+                controller: _rateRangeMaxController,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -234,10 +245,11 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
         labelText: label,
       ),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-   
+
       validator: (value) {
         if (value == null || value.isEmpty) return 'Ange $label';
-        if (double.tryParse(value.replaceAll(",", ".")) == null) return 'Ange ett giltigt tal';
+        if (double.tryParse(value.replaceAll(",", ".")) == null)
+          return 'Ange ett giltigt tal';
         return null;
       },
     );
@@ -247,52 +259,63 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.source != null ? 'Redigera Nutrition' : 'Lägg till Nutrition'),
-        actions:   [
+        title: Text(
+          widget.source != null ? 'Redigera Nutrition' : 'Lägg till Nutrition',
+        ),
+        actions: [
           IconButton(
-            icon: (widget.source == null) ? const Icon(Icons.clear): const Icon(Icons.delete),
+            icon:
+                (widget.source == null)
+                    ? const Icon(Icons.clear)
+                    : const Icon(Icons.delete),
             onPressed: () {
               if (widget.source == null) {
                 _resetForm();
                 return;
-              }
-              else{
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Bekräfta'),
-                    content: const Text('Ta bort nutritionskälla?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Avbryt'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          try {
-                          deleteDocument(collectionPath: "nutritions", source: widget.source!);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Nutritionskälla borttagen')),
-                          );
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Fel när datan skulle tas bort: $e')),
-                            );
-                          }
-                        },
-                        child: const Text('Ta bort'),
-                      ),
-                    ],
-                  );
-                },
-              );
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Bekräfta'),
+                      content: const Text('Ta bort nutritionskälla?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Avbryt'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            try {
+                              deleteDocument(
+                                collectionPath: "nutritions",
+                                source: widget.source!,
+                              );
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Nutritionskälla borttagen'),
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Fel när datan skulle tas bort: $e',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('Ta bort'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               }
             },
-          
-
           ),
         ],
       ),
@@ -301,7 +324,9 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
         child: ListView(
           children: [
             Text(
-              widget.source != null ? 'Redigera nutrition' : 'Lägg till ny nutrition',
+              widget.source != null
+                  ? 'Redigera nutrition'
+                  : 'Lägg till ny nutrition',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 12),
@@ -312,7 +337,9 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
                 side: BorderSide(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.4),
                   width: 0.4,
                 ),
               ),
@@ -333,11 +360,17 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
                             label: Text('Kontinuerlig'),
                           ),
                         ],
-                        selected: _selectedFlow != null ? {_selectedFlow!} : <String>{},
+                        selected:
+                            _selectedFlow != null
+                                ? {_selectedFlow!}
+                                : <String>{},
                         emptySelectionAllowed: true,
                         onSelectionChanged: (Set<String> newSelection) {
                           setState(() {
-                            _selectedFlow = newSelection.isNotEmpty ? newSelection.first : null;
+                            _selectedFlow =
+                                newSelection.isNotEmpty
+                                    ? newSelection.first
+                                    : null;
                             _resetControllersBasedOnFlow();
                           });
                         },
@@ -349,16 +382,19 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
                           labelText: 'Typ av källa',
                         ),
                         value: _selectedSourceType,
-                        items: SourceType.values.map((type) {
-                          return DropdownMenuItem(
-                            value: type,
-                            child: Text(type.displayName),
-                          );
-                        }).toList(),
-                        validator: (val) => val == null ? 'Välj en källtyp' : null,
-                        onChanged: (val) => setState(() {
-                          _selectedSourceType = val;
-                        }),
+                        items:
+                            SourceType.values.map((type) {
+                              return DropdownMenuItem(
+                                value: type,
+                                child: Text(type.displayName),
+                              );
+                            }).toList(),
+                        validator:
+                            (val) => val == null ? 'Välj en källtyp' : null,
+                        onChanged:
+                            (val) => setState(() {
+                              _selectedSourceType = val;
+                            }),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -367,12 +403,17 @@ class _AdminNutritionEditviewState extends State<AdminNutritionEditview> with So
                           border: OutlineInputBorder(),
                           labelText: 'Namn',
                         ),
-                        validator: (val) =>
-                            val == null || val.isEmpty ? 'Ange ett namn' : null,
+                        validator:
+                            (val) =>
+                                val == null || val.isEmpty
+                                    ? 'Ange ett namn'
+                                    : null,
                       ),
                       const SizedBox(height: 12),
-                      if (_selectedFlow == "intermittent") _buildIntermittentFields(),
-                      if (_selectedFlow == "continuous") _buildContinuousFields(),
+                      if (_selectedFlow == "intermittent")
+                        _buildIntermittentFields(),
+                      if (_selectedFlow == "continuous")
+                        _buildContinuousFields(),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,

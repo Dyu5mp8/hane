@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class Logo extends StatelessWidget {
-
   final Color accentColor = const Color.fromARGB(255, 41, 51, 81);
   final double? size;
 
@@ -18,18 +17,18 @@ class Logo extends StatelessWidget {
           TextSpan(
             text: 'Anestesi',
             style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-              
-                  fontSize: size,
-                ),
+              fontWeight: FontWeight.bold,
+
+              fontSize: size,
+            ),
           ),
           TextSpan(
             text: 'H',
             style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.tertiaryFixed,
-                  fontSize: size,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.tertiaryFixed,
+              fontSize: size,
+            ),
           ),
         ],
       ),

@@ -6,8 +6,6 @@ import 'package:hane/ui_components/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/drugs/services/drug_list_provider.dart';
 
-
-
 class BasicInfoRow extends StatelessWidget {
   const BasicInfoRow({super.key});
 
@@ -21,12 +19,12 @@ class BasicInfoRow extends StatelessWidget {
 
         Widget buildSubtitle(BuildContext context, {preferGeneric = false}) {
           List<dynamic>? brandNames;
-          brandNames =
-              drug.preferredSecondaryNames(preferGeneric: preferGeneric);
+          brandNames = drug.preferredSecondaryNames(
+            preferGeneric: preferGeneric,
+          );
           // Check if brandNames is null or empty
           if (brandNames == null || brandNames.isEmpty) {
-            return const SizedBox
-                .shrink(); // No brand names, return empty widget
+            return const SizedBox.shrink(); // No brand names, return empty widget
           }
           // Construct the rich text for brand names
           List<TextSpan> textSpans = [];
@@ -34,13 +32,15 @@ class BasicInfoRow extends StatelessWidget {
           if (preferGeneric == true) {
             // Apply the specified TextStyle to all names
             for (var name in brandNames) {
-              textSpans.add(TextSpan(
-                text: name,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontStyle: FontStyle.italic,
+              textSpans.add(
+                TextSpan(
+                  text: name,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
-              ));
+              );
 
               // Add a comma separator if it's not the last item
               if (name != brandNames.last) {
@@ -52,19 +52,22 @@ class BasicInfoRow extends StatelessWidget {
             String? genericName = drug.genericName;
             // Assuming `genericName` is in Drug class
             for (var name in brandNames) {
-              textSpans.add(TextSpan(
-                text: name,
-                style: name == genericName
-                    ? const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
-                        fontStyle: FontStyle.italic,
-                      )
-                    : const TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 11,
-                      ),
-              ));
+              textSpans.add(
+                TextSpan(
+                  text: name,
+                  style:
+                      name == genericName
+                          ? const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
+                          )
+                          : const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 11,
+                          ),
+                ),
+              );
 
               // Add a comma separator if it's not the last item
               if (name != brandNames.last) {
@@ -73,11 +76,7 @@ class BasicInfoRow extends StatelessWidget {
             }
           }
 
-          return Text.rich(
-            TextSpan(
-              children: textSpans,
-            ),
-          );
+          return Text.rich(TextSpan(children: textSpans));
         }
 
         return Container(
@@ -92,31 +91,39 @@ class BasicInfoRow extends StatelessWidget {
                   children: [
                     if (drug.categories != null)
                       Row(
-                        children: drug.categories!
-                            .map((dynamic category) => Text(
-                                  "#$category ",
-                                  style:
-                                      Theme.of(context).textTheme.displaySmall,
-                                ))
-                            .toList(),
+                        children:
+                            drug.categories!
+                                .map(
+                                  (dynamic category) => Text(
+                                    "#$category ",
+                                    style:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.displaySmall,
+                                  ),
+                                )
+                                .toList(),
                       ),
                     Consumer<EditModeProvider>(
                       builder: (context, editModeProvider, child) {
                         return EditableRow(
-                            text: drug.preferredDisplayName(
-                                preferGeneric: provider.preferGeneric),
-                            editDialog: EditNameDialog(drug: drug),
-                            isEditMode: editModeProvider.editMode,
-                            textStyle:
-                                Theme.of(context).textTheme.headlineLarge?.copyWith(
-                                      fontSize: 22
-                                    ));
+                          text: drug.preferredDisplayName(
+                            preferGeneric: provider.preferGeneric,
+                          ),
+                          editDialog: EditNameDialog(drug: drug),
+                          isEditMode: editModeProvider.editMode,
+                          textStyle: Theme.of(
+                            context,
+                          ).textTheme.headlineLarge?.copyWith(fontSize: 22),
+                        );
                       },
                     ),
                     if (drug.brandNames != null)
                       Flexible(
-                        child: buildSubtitle(context,
-                            preferGeneric: provider.preferGeneric),
+                        child: buildSubtitle(
+                          context,
+                          preferGeneric: provider.preferGeneric,
+                        ),
                       ),
                   ],
                 ),

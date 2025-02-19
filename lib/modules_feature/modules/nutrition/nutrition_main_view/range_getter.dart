@@ -4,9 +4,7 @@ import 'package:hane/modules_feature/modules/nutrition/nutrition_main_view/scale
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 mixin RangeGetter {
-
-
-    Color getRangeColor(ScaleZoneColor color) {
+  Color getRangeColor(ScaleZoneColor color) {
     switch (color) {
       case ScaleZoneColor.red:
         return const Color.fromARGB(255, 228, 107, 13);

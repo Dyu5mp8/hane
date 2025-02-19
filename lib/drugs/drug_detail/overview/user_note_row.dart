@@ -50,13 +50,13 @@ class _UserNoteRowState extends State<UserNoteRow> {
     try {
       final value = _controller.text;
       // Update the user notes in the provider
-      Provider.of<DrugListProvider>(context, listen: false)
-          .addUserNotes(drug!.id!, value);
+      Provider.of<DrugListProvider>(
+        context,
+        listen: false,
+      ).addUserNotes(drug!.id!, value);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Kunde inte spara anteckningar"),
-        ),
+        const SnackBar(content: Text("Kunde inte spara anteckningar")),
       );
     }
   }
@@ -80,9 +80,7 @@ class _UserNoteRowState extends State<UserNoteRow> {
         decoration: const InputDecoration(
           border: InputBorder.none, // Remove borders
           labelText: "Egna anteckningar",
-          labelStyle: TextStyle(
-            fontSize: 15,
-          ),
+          labelStyle: TextStyle(fontSize: 15),
           isDense: true, // Reduce height
           contentPadding: EdgeInsets.zero, // Remove padding
         ),

@@ -4,7 +4,6 @@ import "package:hane/drugs/models/units.dart";
 
 import "package:hane/utils/validation_exception.dart";
 
-
 String? validateConcentrationUnit(SubstanceUnit? value) {
   if (value == null) {
     print("Ange en giltig substansenhet");
@@ -18,14 +17,13 @@ String? validateConcentrationAmount(String? value) {
   if (value == null || value.isEmpty) {
     return 'Ange en giltig koncentration';
   }
-    var s = value.replaceAll(',', '.'); // Replace comma with dot
+  var s = value.replaceAll(',', '.'); // Replace comma with dot
 
   // Try parsing it as double
   try {
     double.parse(s);
     return null;
-  }
-  catch (e) {
+  } catch (e) {
     return 'Ange en giltig koncentration';
   }
 }

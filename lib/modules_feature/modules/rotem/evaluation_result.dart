@@ -5,10 +5,9 @@ import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_evaluator.dart';
 import 'package:hane/ui_components/dosage_snippet.dart';
 
-
 class EvaluationResult extends StatelessWidget {
-final Map<String, List<RotemAction>> actions;
-final String strategyName;
+  final Map<String, List<RotemAction>> actions;
+  final String strategyName;
 
   const EvaluationResult({
     Key? key,
@@ -18,10 +17,14 @@ final String strategyName;
 
   @override
   Widget build(BuildContext context) {
-
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 40),
+        padding: const EdgeInsets.only(
+          top: 20,
+          left: 16,
+          right: 16,
+          bottom: 40,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,9 +35,11 @@ final String strategyName;
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
-            const Text('Överväg dessa åtgärder i kombination med klinisk bedömning:'),
+            const Text(
+              'Överväg dessa åtgärder i kombination med klinisk bedömning:',
+            ),
             const SizedBox(height: 6),
-      
+
             // If there are no actions, show a placeholder text
             if (actions.isEmpty)
               const Text('Inga föreslagna åtgärder utifrån givna resultat.')
@@ -45,10 +50,9 @@ final String strategyName;
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
-               
-                
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,17 +69,15 @@ final String strategyName;
                       // List all associated dosages, with "ELLER" in between
                       for (int i = 0; i < entry.value.length; i++) ...[
                         ChangeNotifierProvider(
-                          create: (_) => DosageViewHandler(
-                            dosage: entry.value[i].dosage,
-                            availableConcentrations: entry.value[i].availableConcentrations,
-                            onDosageDeleted: () {},
-                            onDosageUpdated: (updatedDosage) {
-                            },
-                                                  
-                          ),
-                          child: DosageSnippet(
-                           
-                          ),
+                          create:
+                              (_) => DosageViewHandler(
+                                dosage: entry.value[i].dosage,
+                                availableConcentrations:
+                                    entry.value[i].availableConcentrations,
+                                onDosageDeleted: () {},
+                                onDosageUpdated: (updatedDosage) {},
+                              ),
+                          child: DosageSnippet(),
                         ),
                         if (i < entry.value.length - 1)
                           Padding(
@@ -88,7 +90,9 @@ final String strategyName;
                                   child: Text(
                                     'ELLER',
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontStyle: FontStyle.italic),
+                                    style: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
                                 ),
                                 Expanded(child: Divider()),

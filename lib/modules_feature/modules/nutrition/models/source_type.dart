@@ -15,7 +15,7 @@ enum SourceType {
     );
   }
 
-    String get displayName {
+  String get displayName {
     switch (this) {
       case SourceType.parenteral:
         return 'Total parenteral nutrition';
@@ -29,6 +29,4 @@ enum SourceType {
         return 'Glukos';
     }
   }
-  }
-
-
+}

@@ -6,15 +6,12 @@ class CivaStandardDialysisPreset implements DialysisPreset {
   @override
   final String label;
 
-@override
+  @override
   void setWeight(double value) {
     weight = value;
   }
 
-  CivaStandardDialysisPreset({
-    required this.weight,
-    required this.label,
-  });
+  CivaStandardDialysisPreset({required this.weight, required this.label});
 
   @override
   double suggestedBloodFlow() {
@@ -32,7 +29,7 @@ class CivaStandardDialysisPreset implements DialysisPreset {
 
   @override
   suggestedDialysateFlow() {
-      switch (weight) {
+    switch (weight) {
       case var w when w < 70:
         return 500;
       case var w when w >= 70 && w < 90:
@@ -51,17 +48,13 @@ class CivaStandardDialysisPreset implements DialysisPreset {
     return 0;
   }
 
-  @override 
-double suggestedPostdilutionFlow() {
-   return 500;
-}
-
- 
+  @override
+  double suggestedPostdilutionFlow() {
+    return 500;
+  }
 
   @override
   suggestedPredilutionFlow() {
     return suggestedBloodFlow() * 10;
-    }
   }
-  
-
+}

@@ -11,8 +11,6 @@ import 'package:hane/login/login_page.dart';
 import 'package:hane/onboarding/onboarding_screen.dart';
 import 'package:hane/legal/disclaimer.dart';
 
-
-
 abstract class MenuDrawer extends StatelessWidget {
   final Set<String>? userDrugNames;
   const MenuDrawer({super.key, this.userDrugNames});
@@ -31,8 +29,10 @@ abstract class MenuDrawer extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
-                Provider.of<DrugListProvider>(context, listen: false)
-                    .clearProvider();
+                Provider.of<DrugListProvider>(
+                  context,
+                  listen: false,
+                ).clearProvider();
                 await FirebaseAuth.instance.signOut();
                 // Clear the navigation stack
                 if (context.mounted) {
@@ -54,9 +54,9 @@ abstract class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Provider.of<DrugListProvider>(context)
-          .getDrugNamesFromMaster()
-          .timeout(const Duration(seconds: 1)),
+      future: Provider.of<DrugListProvider>(
+        context,
+      ).getDrugNamesFromMaster().timeout(const Duration(seconds: 1)),
       builder: (context, snapshot) {
         return Drawer(
           child: ListView(
@@ -64,10 +64,10 @@ abstract class MenuDrawer extends StatelessWidget {
             children: <Widget>[
               const CustomDrawerHeader(),
               const DrugNameChoiceTile(),
-             ...buildUserSpecificTiles(context),  
+              ...buildUserSpecificTiles(context),
 
               buildTutorialTile(context), // Added tutorial tile
-              const ThemeModeTile(), // Added theme mode tile 
+              const ThemeModeTile(), // Added theme mode tile
 
               buildAboutTile(context), // Added about tile
               buildLogoutTile(context), // Common logout tile
@@ -118,8 +118,7 @@ abstract class MenuDrawer extends StatelessWidget {
             applicationLegalese: '${DateTime.now().year}',
             aboutBoxChildren: const [
               SizedBox(height: 5),
-              Text(
-                 disclaimer),
+              Text(disclaimer),
               SizedBox(height: 10),
               Text(
                 'Om du har några frågor eller upptäcker något fel med appen, maila vichy576@gmail.com',
@@ -165,14 +164,18 @@ class _DrugNameChoiceTileState extends State<DrugNameChoiceTile> {
       trailing: Switch(
         value: Provider.of<DrugListProvider>(context).preferGeneric,
         onChanged: (value) {
-          Provider.of<DrugListProvider>(context, listen: false)
-              .setPreferGeneric(value);
+          Provider.of<DrugListProvider>(
+            context,
+            listen: false,
+          ).setPreferGeneric(value);
           setState(() {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(value
-                    ? 'Ändrat: Generiska namn visas först'
-                    : 'Ändrat: Generiska namn visas under i fetstil'),
+                content: Text(
+                  value
+                      ? 'Ändrat: Generiska namn visas först'
+                      : 'Ändrat: Generiska namn visas under i fetstil',
+                ),
               ),
             );
           });
@@ -201,7 +204,7 @@ class _SyncedModeTileState extends State<SyncedModeTile> {
         value: drugListProvider.isSyncedMode,
         onChanged: (value) {
           if (value) {
-            drugListProvider.userMode = UserMode.syncedMode;  
+            drugListProvider.userMode = UserMode.syncedMode;
           } else {
             drugListProvider.userMode = UserMode.customMode;
           }
@@ -209,9 +212,11 @@ class _SyncedModeTileState extends State<SyncedModeTile> {
           // Show a SnackBar for feedback
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(value
-                  ? 'Ändrat: Synkat läge aktiverat'
-                  : 'Ändrat: Eget läge aktiverat'),
+              content: Text(
+                value
+                    ? 'Ändrat: Synkat läge aktiverat'
+                    : 'Ändrat: Eget läge aktiverat',
+              ),
             ),
           );
         },
@@ -252,7 +257,12 @@ class _ThemeModeTileState extends State<ThemeModeTile> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Välj tema', style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)),
+              title: Text(
+                'Välj tema',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -316,48 +326,52 @@ class SendReviewTile extends StatefulWidget {
 
 class SendReviewTileState extends State<SendReviewTile> {
   @override
- Widget build(BuildContext context) {
-  return ListTile(
-    leading: const Icon(Icons.feedback),
-    title: const Text('Skicka feedback'),
-    onTap: () {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Skicka feedback'),
-            content: SubmitFeedbackDialog(
-              onFeedbackSaved: (String feedback) async {
-                try {
-                  // Timeout added to prevent long waits in case of issues
-                  await Provider.of<DrugListProvider>(context, listen: false)
-                      .sendFeedback(feedback)
-                      .timeout(const Duration(seconds: 5));
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.feedback),
+      title: const Text('Skicka feedback'),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text('Skicka feedback'),
+              content: SubmitFeedbackDialog(
+                onFeedbackSaved: (String feedback) async {
+                  try {
+                    // Timeout added to prevent long waits in case of issues
+                    await Provider.of<DrugListProvider>(context, listen: false)
+                        .sendFeedback(feedback)
+                        .timeout(const Duration(seconds: 5));
 
-                  if (!context.mounted) return; // Check if the widget is still in the tree
+                    if (!context.mounted)
+                      return; // Check if the widget is still in the tree
 
-                  // Show success message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Tack för din feedback! Eventuella svar skickas till din mail'),
-                    ),
-                  );
-                } catch (e) {
-                  if (!context.mounted) return; // Check if the widget is still in the tree
+                    // Show success message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Tack för din feedback! Eventuella svar skickas till din mail',
+                        ),
+                      ),
+                    );
+                  } catch (e) {
+                    if (!context.mounted)
+                      return; // Check if the widget is still in the tree
 
-                  // Show error message if something goes wrong
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Något gick fel. Försök igen senare'),
-                    ),
-                  );
-                }
-              },
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+                    // Show error message if something goes wrong
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Något gick fel. Försök igen senare'),
+                      ),
+                    );
+                  }
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }

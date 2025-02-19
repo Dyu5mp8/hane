@@ -50,7 +50,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
       setState(() {
         final newConcentration = Concentration(
           amount: double.parse(
-              concentrationAmountController.text.replaceAll(',', '.')),
+            concentrationAmountController.text.replaceAll(',', '.'),
+          ),
           substance: selectedUnit!,
           diluent: DiluentUnit.ml,
           mixingInstructions: mixingInstructionsController.text,
@@ -136,8 +137,10 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Lägg till eller redigera koncentration',
-                style: Theme.of(context).textTheme.headlineLarge),
+            Text(
+              'Lägg till eller redigera koncentration',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
             const SizedBox(height: 12),
             Card(
               color: Theme.of(context).colorScheme.surface,
@@ -146,7 +149,9 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
                 side: BorderSide(
-                    color: Theme.of(context).colorScheme.onSurface, width: 0.4),
+                  color: Theme.of(context).colorScheme.onSurface,
+                  width: 0.4,
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -165,12 +170,15 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 16),
+                                  vertical: 12,
+                                  horizontal: 16,
+                                ),
                                 labelText: 'Värde',
                                 hintText: 't.ex. 10',
                                 hintStyle: TextStyle(
-                                    fontSize: 14,
-                                    color: Color.fromARGB(139, 158, 158, 158)),
+                                  fontSize: 14,
+                                  color: Color.fromARGB(139, 158, 158, 158),
+                                ),
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
                                 errorMaxLines: 2,
@@ -178,7 +186,8 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                               validator: val.validateConcentrationAmount,
                               keyboardType:
                                   const TextInputType.numberWithOptions(
-                                      decimal: true),
+                                    decimal: true,
+                                  ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -190,26 +199,27 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                                 border: OutlineInputBorder(),
 
                                 contentPadding: EdgeInsets.symmetric(
-                                    vertical: 10,
-                                    horizontal:
-                                        12), // Adjusted padding to fit content
+                                  vertical: 10,
+                                  horizontal: 12,
+                                ), // Adjusted padding to fit content
                                 labelText: 'Enhet',
                                 floatingLabelBehavior:
                                     FloatingLabelBehavior.always,
                                 errorMaxLines: 2,
                                 suffixIconConstraints: BoxConstraints(
-                                    minWidth: 0,
-                                    minHeight:
-                                        0), // Ensures /ml suffix fits better
+                                  minWidth: 0,
+                                  minHeight: 0,
+                                ), // Ensures /ml suffix fits better
                                 suffixText: '/ml',
                               ),
                               value: selectedUnit,
-                              items: SubstanceUnit.allUnits.map((unit) {
-                                return DropdownMenuItem<SubstanceUnit>(
-                                  value: unit,
-                                  child: Text(unit.toString()),
-                                );
-                              }).toList(),
+                              items:
+                                  SubstanceUnit.allUnits.map((unit) {
+                                    return DropdownMenuItem<SubstanceUnit>(
+                                      value: unit,
+                                      child: Text(unit.toString()),
+                                    );
+                                  }).toList(),
                               onChanged: (SubstanceUnit? newValue) {
                                 setState(() {
                                   selectedUnit = newValue;
@@ -227,11 +237,11 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                         decoration: InputDecoration(
                           labelText: 'Blandningsinstruktioner',
                           hintStyle: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.2)),
+                            fontSize: 14,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.2),
+                          ),
                           hintText:
                               '(valfritt) T.ex.  "Nipruss 60 mg + Glukos 50 mg/ml 60 ml i ljusskyddad spruta ger 1mg/ml."',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -247,11 +257,11 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                         decoration: InputDecoration(
                           labelText: 'Alternativ benämning',
                           hintStyle: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.2)),
+                            fontSize: 14,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.2),
+                          ),
                           hintText: '(valfritt) T.ex. "3%", "1:1000" etc',
                           floatingLabelBehavior: FloatingLabelBehavior.always,
                           errorMaxLines: 2,
@@ -263,12 +273,13 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                       Row(
                         children: [
                           Checkbox(
-                              value: isStockSolution,
-                              onChanged: (value) {
-                                setState(() {
-                                  isStockSolution = value ?? false;
-                                });
-                              }),
+                            value: isStockSolution,
+                            onChanged: (value) {
+                              setState(() {
+                                isStockSolution = value ?? false;
+                              });
+                            },
+                          ),
                           const Text('Stamlösning'),
                           Expanded(child: SizedBox()),
                           Row(
@@ -303,8 +314,10 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
               ),
             ),
             const SizedBox(height: 16),
-            Text('Koncentrationer',
-                style: Theme.of(context).textTheme.headlineLarge),
+            Text(
+              'Koncentrationer',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
             const SizedBox(height: 12),
             // Display Concentrations as ListTiles inside Cards
             ListView.builder(
@@ -320,21 +333,23 @@ class _EditConcentrationsDialogState extends State<EditConcentrationsDialog> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                     side: BorderSide(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        width: 0.4),
+                      color: Theme.of(context).colorScheme.onSurface,
+                      width: 0.4,
+                    ),
                   ),
                   child: ListTile(
                     title: Text(
                       '$concentration${concentration.getSecondaryRepresentation() != null ? ' (${concentration.getSecondaryRepresentation()})' : ''}',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: concentration.mixingInstructions != null &&
-                            concentration.mixingInstructions!.isNotEmpty
-                        ? Text(
-                            concentration.mixingInstructions!,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          )
-                        : null,
+                    subtitle:
+                        concentration.mixingInstructions != null &&
+                                concentration.mixingInstructions!.isNotEmpty
+                            ? Text(
+                              concentration.mixingInstructions!,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            )
+                            : null,
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () => removeConcentration(concentration),

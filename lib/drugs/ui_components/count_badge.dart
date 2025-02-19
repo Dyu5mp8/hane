@@ -42,13 +42,7 @@ class CountBadge extends StatelessWidget {
         }
 
         // If count > 0, display the built-in Badge widget
-        return Badge(
-          label: Text(
-            count.toString(),
-
-          ),
-          child: child,
-        );
+        return Badge(label: Text(count.toString()), child: child);
       },
     );
   }

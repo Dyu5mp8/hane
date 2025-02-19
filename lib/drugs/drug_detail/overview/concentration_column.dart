@@ -5,13 +5,13 @@ import 'package:hane/ui_components/editable_row.dart';
 import 'package:hane/drugs/models/drug.dart';
 import 'package:hane/ui_components/letter_icon.dart';
 
-
 class ConcentrationColumn extends StatelessWidget {
   final List<Concentration> concentrations;
   final Drug drug;
   final bool isEditMode;
 
-  const ConcentrationColumn({super.key, 
+  const ConcentrationColumn({
+    super.key,
     required this.concentrations,
     required this.drug,
     required this.isEditMode,
@@ -19,8 +19,6 @@ class ConcentrationColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    
     Widget content = Column(
       children: [
         EditableRow(
@@ -29,20 +27,29 @@ class ConcentrationColumn extends StatelessWidget {
           editDialog: EditConcentrationsDialog(drug: drug),
           isEditMode: isEditMode,
         ),
-        ...concentrations.map((conc) => Row(
-    children: [
-Text(
-  "${conc.isStockSolution == true ? '● ' : ''}${conc.getSecondaryRepresentation() ?? conc}",
-  style: TextStyle(
-    color: (conc.mixingInstructions?.isEmpty ?? true) ? null : Colors.blue,
-  ),
-),
-      
-      const SizedBox(width: 2),
-      if (conc.mixingInstructions?.isNotEmpty ?? false)
-        const Icon(Icons.arrow_forward_ios_outlined ,color: Colors.blue, size: 8),
-    ],
-  )),
+        ...concentrations.map(
+          (conc) => Row(
+            children: [
+              Text(
+                "${conc.isStockSolution == true ? '● ' : ''}${conc.getSecondaryRepresentation() ?? conc}",
+                style: TextStyle(
+                  color:
+                      (conc.mixingInstructions?.isEmpty ?? true)
+                          ? null
+                          : Colors.blue,
+                ),
+              ),
+
+              const SizedBox(width: 2),
+              if (conc.mixingInstructions?.isNotEmpty ?? false)
+                const Icon(
+                  Icons.arrow_forward_ios_outlined,
+                  color: Colors.blue,
+                  size: 8,
+                ),
+            ],
+          ),
+        ),
       ],
     );
 
@@ -51,17 +58,25 @@ Text(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 100),
         child: FittedBox(
-          child: (!isEditMode && concentrations.any((conc) =>
-                  (conc.mixingInstructions != null &&
-                      conc.mixingInstructions!.isNotEmpty)))
-              ? GestureDetector(
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        ConcentrationDetailView(concentrations),
-                  )),
-                  child: content,
-                )
-              : content,
+          child:
+              (!isEditMode &&
+                      concentrations.any(
+                        (conc) =>
+                            (conc.mixingInstructions != null &&
+                                conc.mixingInstructions!.isNotEmpty),
+                      ))
+                  ? GestureDetector(
+                    onTap:
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    ConcentrationDetailView(concentrations),
+                          ),
+                        ),
+                    child: content,
+                  )
+                  : content,
         ),
       ),
     );

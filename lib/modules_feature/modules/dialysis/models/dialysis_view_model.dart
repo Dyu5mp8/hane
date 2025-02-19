@@ -9,7 +9,6 @@ class DialysisViewModel extends ChangeNotifier {
     loadDialysispreset(StandardDialysisPreset(weight: 70, label: 'Standard'));
   }
 
-
   // Example parameters:
   final DialysisParameter citrateParam = DialysisParameter(
     initialValue: 3.0,
@@ -131,7 +130,8 @@ class DialysisViewModel extends ChangeNotifier {
             (10.0 / 3.0) * citrateParam.value * bloodFlowParam.value;
       } else {
         if (bloodFlowParam.value != 0) {
-          citrateParam.value = preDilutionFlowParam.value /
+          citrateParam.value =
+              preDilutionFlowParam.value /
               ((10.0 / 3.0) * bloodFlowParam.value);
         } else {
           citrateParam.value = 0.0;
@@ -189,7 +189,8 @@ class DialysisViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-    double get bmi => weight / (patientLength * patientLength / 10000);
+
+  double get bmi => weight / (patientLength * patientLength / 10000);
 
   double get patientLength => _length;
   set patientLength(double val) {
@@ -232,10 +233,12 @@ class DialysisViewModel extends ChangeNotifier {
   double get dose {
     final bfPerHour = bloodFlowParam.value * 60;
     final plasmaFraction = 1 - _hematocritLevel;
-    final dilutionFactor = (bfPerHour * plasmaFraction) /
+    final dilutionFactor =
+        (bfPerHour * plasmaFraction) /
         (bfPerHour * plasmaFraction + preDilutionFlowParam.value);
 
-    final numerator = (preDilutionFlowParam.value +
+    final numerator =
+        (preDilutionFlowParam.value +
             dialysateFlowParam.value +
             postDilutionFlowParam.value +
             fluidRemovalParam.value) *
@@ -248,7 +251,8 @@ class DialysisViewModel extends ChangeNotifier {
 
   double get filtrationFraction {
     final qpl = bloodFlowParam.value * 60 * (1 - _hematocritLevel);
-    final quf = preDilutionFlowParam.value +
+    final quf =
+        preDilutionFlowParam.value +
         postDilutionFlowParam.value +
         fluidRemovalParam.value;
 

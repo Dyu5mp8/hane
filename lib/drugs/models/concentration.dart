@@ -24,8 +24,8 @@ class Concentration extends Equatable {
     this.mixingInstructions,
     this.isStockSolution,
     this.aliasUnit,
-  })  : substance = SubstanceUnit.fromString(unit.split('/')[0]),
-        diluent = DiluentUnit.fromString(unit.split('/')[1]);
+  }) : substance = SubstanceUnit.fromString(unit.split('/')[0]),
+       diluent = DiluentUnit.fromString(unit.split('/')[1]);
 
   factory Concentration.fromMap(Map<String, dynamic> map) {
     num amount = map['amount'] as num;
@@ -56,13 +56,13 @@ class Concentration extends Equatable {
 
   @override
   List<Object?> get props => [
-        amount,
-        substance,
-        diluent,
-        mixingInstructions,
-        isStockSolution,
-        aliasUnit
-      ];
+    amount,
+    substance,
+    diluent,
+    mixingInstructions,
+    isStockSolution,
+    aliasUnit,
+  ];
 
   set amount(double newAmount) {
     if (amount != newAmount) {

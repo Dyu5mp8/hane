@@ -11,10 +11,13 @@ class NoteRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final drug =
-        Provider.of<Drug>(context); // Access the drug from the Provider
-    final editMode = Provider.of<EditModeProvider>(context)
-        .editMode; // Access editMode from the Provider
+    final drug = Provider.of<Drug>(
+      context,
+    ); // Access the drug from the Provider
+    final editMode =
+        Provider.of<EditModeProvider>(
+          context,
+        ).editMode; // Access editMode from the Provider
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -23,25 +26,27 @@ class NoteRow extends StatelessWidget {
           if ((drug.expandedNotes?.isNotEmpty ?? false) && !editMode) {
             showDialog(
               context: context,
-              builder: (context) => ExpandedDialog(
-                text: drug.expandedNotes!,
-              ),
+              builder: (context) => ExpandedDialog(text: drug.expandedNotes!),
             );
           }
         },
         child: Row(
           children: [
             Badge(
-                label: Icon(Icons.info,
-                    size: 17, color: Theme.of(context).colorScheme.tertiary),
-                offset: const Offset(5, -8),
-                backgroundColor: Colors.transparent,
-                isLabelVisible: (drug.expandedNotes?.isNotEmpty ?? false),
-                child: Icon(
-                  Bootstrap.chat_square_text_fill,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 25,
-                )),
+              label: Icon(
+                Icons.info,
+                size: 17,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+              offset: const Offset(5, -8),
+              backgroundColor: Colors.transparent,
+              isLabelVisible: (drug.expandedNotes?.isNotEmpty ?? false),
+              child: Icon(
+                Bootstrap.chat_square_text_fill,
+                color: Theme.of(context).colorScheme.primary,
+                size: 25,
+              ),
+            ),
             const SizedBox(width: 15),
             Flexible(
               child: AbsorbPointer(
@@ -53,11 +58,10 @@ class NoteRow extends StatelessWidget {
                   textStyle: const TextStyle(fontSize: 14),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 }
-

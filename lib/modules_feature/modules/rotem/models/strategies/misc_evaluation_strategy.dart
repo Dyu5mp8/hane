@@ -6,7 +6,8 @@ import 'package:hane/modules_feature/modules/rotem/models/field_config.dart';
 import 'package:hane/modules_feature/modules/rotem/models/rotem_action.dart';
 
 class MiscEvaluationStrategy extends RotemEvaluationStrategy {
-  @override String get name => "Trauma/övrigt";
+  @override
+  String get name => "Trauma/övrigt";
 
   @override
   Map<String, List<RotemAction>> evaluate(RotemEvaluator evaluator) {
@@ -25,40 +26,41 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     final a10Extem = evaluator.a10Extem;
     final mlExtem = evaluator.mlExtem;
 
-  if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high &&
+    if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high &&
         configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
-      actions['Högt CT EXTEM/INTEM'] = [RotemAction(
-        dosage: Dosage(
-          administrationRoute: AdministrationRoute  .iv,
-          instruction: "Ge plasma",
-          lowerLimitDose: Dose.fromString(10, "ml/kg"),
-          higherLimitDose: Dose.fromString(15, "ml/kg"),
+      actions['Högt CT EXTEM/INTEM'] = [
+        RotemAction(
+          dosage: Dosage(
+            administrationRoute: AdministrationRoute.iv,
+            instruction: "Ge plasma",
+            lowerLimitDose: Dose.fromString(10, "ml/kg"),
+            higherLimitDose: Dose.fromString(15, "ml/kg"),
+          ),
         ),
-      )];
+      ];
     }
-
     // 1) PCC/FFP if CT EXTEM above max OR CT INTEM above max
     else if (configs[RotemField.ctExtem]?.result(ctExtem) == Result.high) {
-      actions['Högt CT EXTEM'] = [RotemAction(
-        dosage: Dosage(
-          administrationRoute: AdministrationRoute.iv,
-          instruction: "Ge Ocplex",
-          dose: Dose.fromString(10, "E/kg"),
-     
-    
+      actions['Högt CT EXTEM'] = [
+        RotemAction(
+          dosage: Dosage(
+            administrationRoute: AdministrationRoute.iv,
+            instruction: "Ge Ocplex",
+            dose: Dose.fromString(10, "E/kg"),
+          ),
         ),
-      )];
-    }
-
-    else if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
-      actions['Högt CT INTEM'] = [RotemAction(
-         dosage: Dosage(
-          administrationRoute: AdministrationRoute.iv,
-          instruction: "Ge plasma",
-          lowerLimitDose: Dose.fromString(10, "ml/kg"),
-          higherLimitDose: Dose.fromString(15, "ml/kg"),
+      ];
+    } else if (configs[RotemField.ctIntem]?.result(ctIntem) == Result.high) {
+      actions['Högt CT INTEM'] = [
+        RotemAction(
+          dosage: Dosage(
+            administrationRoute: AdministrationRoute.iv,
+            instruction: "Ge plasma",
+            lowerLimitDose: Dose.fromString(10, "ml/kg"),
+            higherLimitDose: Dose.fromString(15, "ml/kg"),
+          ),
         ),
-      )];
+      ];
     }
 
     // 2) Fibrinogen if (A5 Fibtem below min) or (A10 Fibtem below min)
@@ -67,14 +69,16 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         (configs[RotemField.a10Fibtem]?.result(a10Fibtem)) == Result.low;
 
     if (fibtemBelowMin) {
-      actions['Fibrinogen'] = [RotemAction(
-        dosage: Dosage(
-          administrationRoute: AdministrationRoute.iv,
-          instruction: "Ge fibrinogen",
-          lowerLimitDose: Dose.fromString(2, "g"),
-          higherLimitDose: Dose.fromString(4, "g"),
+      actions['Fibrinogen'] = [
+        RotemAction(
+          dosage: Dosage(
+            administrationRoute: AdministrationRoute.iv,
+            instruction: "Ge fibrinogen",
+            lowerLimitDose: Dose.fromString(2, "g"),
+            higherLimitDose: Dose.fromString(4, "g"),
+          ),
         ),
-      )];
+      ];
     }
 
     // 3) Platelets if EXTEM is low but FIBTEM is OK
@@ -85,35 +89,43 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
     final fibtemOk = !fibtemBelowMin; // "OK" if not below min
 
     if (extemLow && fibtemOk) {
-      actions['Trombocyter'] = [RotemAction(
-        dosage: Dosage(
-          administrationRoute: AdministrationRoute.iv,
-          instruction: "Ge trombocyter",
-          dose: Dose.fromString(1, "E"),
+      actions['Trombocyter'] = [
+        RotemAction(
+          dosage: Dosage(
+            administrationRoute: AdministrationRoute.iv,
+            instruction: "Ge trombocyter",
+            dose: Dose.fromString(1, "E"),
+          ),
         ),
-      )];
+      ];
     }
 
     // 4) Tranexamsyra if ML EXTEM above max
     if (configs[RotemField.mlExtem]?.result(mlExtem) == Result.high) {
-      actions['Tranexamsyra'] = [RotemAction(
-        dosage: Dosage(
-          administrationRoute: AdministrationRoute.iv,
-          instruction: "Ge tranexamsyra",
-          dose: Dose.fromString(2, "g"),
+      actions['Tranexamsyra'] = [
+        RotemAction(
+          dosage: Dosage(
+            administrationRoute: AdministrationRoute.iv,
+            instruction: "Ge tranexamsyra",
+            dose: Dose.fromString(2, "g"),
+          ),
         ),
-      )];
+      ];
     }
 
     // 5) Protamin if CT INTEM > CT HEPTEM
-    if (ctIntem != null && ctHeptem != null && ctIntem / ctHeptem > heptemCutoff) {
-      actions['Protamin'] = [RotemAction(
-        dosage: Dosage(
-          administrationRoute: AdministrationRoute.iv,
-          instruction: "Ge protamin",
-          dose: Dose.fromString(50, "mg"),
+    if (ctIntem != null &&
+        ctHeptem != null &&
+        ctIntem / ctHeptem > heptemCutoff) {
+      actions['Protamin'] = [
+        RotemAction(
+          dosage: Dosage(
+            administrationRoute: AdministrationRoute.iv,
+            instruction: "Ge protamin",
+            dose: Dose.fromString(50, "mg"),
+          ),
         ),
-      )];
+      ];
     }
 
     return actions;
@@ -122,7 +134,7 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
   @override
   List<FieldConfig> getRequiredFields() {
     return [
-            const FieldConfig(
+      const FieldConfig(
         label: "A5 FIBTEM",
         field: RotemField.a5Fibtem,
         section: RotemSection.fibtem,
@@ -140,7 +152,7 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         field: RotemField.ctIntem,
         section: RotemSection.intem,
         maxValue: 240,
-        isRequired: false
+        isRequired: false,
       ),
 
       const FieldConfig(
@@ -155,24 +167,28 @@ class MiscEvaluationStrategy extends RotemEvaluationStrategy {
         field: RotemField.a5Extem,
         section: RotemSection.extem,
         minValue: 34,
-        isRequired: false
-
+        isRequired: false,
       ),
       const FieldConfig(
         label: "A10 EXTEM",
         field: RotemField.a10Extem,
         section: RotemSection.extem,
         minValue: 43,
-        isRequired: false
+        isRequired: false,
       ),
       const FieldConfig(
         label: "ML EXTEM",
         field: RotemField.mlExtem,
         section: RotemSection.extem,
         maxValue: 15,
-        isRequired: false
+        isRequired: false,
       ),
-      const FieldConfig(label: "CT HEPTEM", field: RotemField.ctHeptem, section: RotemSection.heptem, isRequired: false),
+      const FieldConfig(
+        label: "CT HEPTEM",
+        field: RotemField.ctHeptem,
+        section: RotemSection.heptem,
+        isRequired: false,
+      ),
     ];
   }
 

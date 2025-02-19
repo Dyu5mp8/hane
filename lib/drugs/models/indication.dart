@@ -13,15 +13,15 @@ class Indication with EquatableMixin {
     required this.isPediatric,
     this.dosages,
     String? notes,
-  })  : _name = name,
-        _notes = notes;
+  }) : _name = name,
+       _notes = notes;
 
   Indication.from(Indication indication)
-      : _name = indication.name,
-        dosages =
-            indication.dosages?.map((dosage) => Dosage.from(dosage)).toList(),
-        _notes = indication.notes,
-        isPediatric = indication.isPediatric;
+    : _name = indication.name,
+      dosages =
+          indication.dosages?.map((dosage) => Dosage.from(dosage)).toList(),
+      _notes = indication.notes,
+      isPediatric = indication.isPediatric;
 
   @override
   List<Object?> get props => [_name, dosages, _notes, isPediatric];
@@ -58,11 +58,15 @@ class Indication with EquatableMixin {
   factory Indication.fromFirestore(Map<String, dynamic> map) {
     return Indication(
       name: map['name'] as String,
-      dosages: map['dosages'] != null
-          ? (map['dosages'] as List)
-              .map((item) => Dosage.fromFirestore(item as Map<String, dynamic>))
-              .toList()
-          : null,
+      dosages:
+          map['dosages'] != null
+              ? (map['dosages'] as List)
+                  .map(
+                    (item) =>
+                        Dosage.fromFirestore(item as Map<String, dynamic>),
+                  )
+                  .toList()
+              : null,
       notes: map['notes'] as String?,
       isPediatric: map['isPediatric'] ?? false,
     );

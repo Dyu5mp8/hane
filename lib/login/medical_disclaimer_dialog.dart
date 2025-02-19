@@ -13,10 +13,7 @@ class MedicalDisclaimerDialog extends StatelessWidget {
       content: const SingleChildScrollView(
         child: ListBody(
           children: [
-            Text(
-              disclaimer,
-              style: TextStyle(fontSize: 15),
-            ),
+            Text(disclaimer, style: TextStyle(fontSize: 15)),
             SizedBox(height: 10),
             Text(
               'Genom att skapa ett konto bekräftar du att du är legitimerad '
@@ -36,13 +33,14 @@ class MedicalDisclaimerDialog extends StatelessWidget {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(10), // Consistent border radius
-              ),
-              backgroundColor: const Color.fromARGB(255, 51, 77, 97)
-              // Padding to match your app's buttons
-              ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(
+                10,
+              ), // Consistent border radius
+            ),
+            backgroundColor: const Color.fromARGB(255, 51, 77, 97),
+            // Padding to match your app's buttons
+          ),
           onPressed: () {
             onAccepted(); // Proceed with registration
           },
