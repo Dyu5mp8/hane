@@ -20,19 +20,41 @@ class _AddNutritionViewState extends State<AddNutritionView>
   late Future<Map<SourceType, List<Source>>> _futureSources;
   String _searchQuery = '';
 
+
+  final List<SourceType> orderedSourceTypes = [
+  SourceType.glucose,
+  SourceType.enteral,
+  SourceType.oral,
+  SourceType.parenteral,
+  SourceType.medication
+];
+
   @override
   void initState() {
     super.initState();
     _futureSources = fetchSourcesGroupedByType();
   }
+  
 
-  // Fetch data from Firestore
+  // Fetch data from Firestore and group them by type
   Future<Map<SourceType, List<Source>>> fetchSourcesGroupedByType() async {
     final sources = await fetchAllDocuments(collectionPath: 'nutritions');
-    return {
-      for (var type in SourceType.values)
-        type: sources.where((s) => s.type == type).toList(),
+    // Initialize the map with empty lists for each type
+    final Map<SourceType, List<Source>> groupedSources = {
+      for (var type in orderedSourceTypes) type: [],
     };
+
+    // Group sources by their type
+    for (var source in sources) {
+      groupedSources[source.type]?.add(source);
+    }
+
+    // Sort the sources in each group (e.g., alphabetically by name)
+    groupedSources.forEach((type, sourceList) {
+      sourceList.sort((a, b) => a.name.compareTo(b.name));
+    });
+
+    return groupedSources;
   }
 
   // Filter sources based on search query

@@ -83,7 +83,7 @@ class TotalEnergyScaleRadial extends StatelessWidget with RangeGetter {
                         ),
                       ),
                       Text(
-                        "▼ Beräknat mål:\n ${needs.toStringAsFixed(0)} kcal",
+                        "Beräknat mål:\n ${needs.toStringAsFixed(0)} kcal",
                         style: const TextStyle(fontSize: 13),
                         textAlign: TextAlign.center,
                       ),

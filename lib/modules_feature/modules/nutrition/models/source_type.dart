@@ -17,16 +17,19 @@ enum SourceType {
 
   String get displayName {
     switch (this) {
-      case SourceType.parenteral:
-        return 'Total parenteral nutrition';
-      case SourceType.medication:
-        return 'Läkemedel';
-      case SourceType.enteral:
+           case SourceType.glucose:
+        return 'Glukos';
+         case SourceType.enteral:
         return 'Enteral nutrition';
+          
       case SourceType.oral:
         return 'Peroral nutrition';
-      case SourceType.glucose:
-        return 'Glukos';
+ 
+      case SourceType.parenteral:
+        return 'Parenteral nutrition';
+      case SourceType.medication:
+        return 'Läkemedel';
+
     }
   }
 }

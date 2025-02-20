@@ -28,7 +28,7 @@ class PatientDataWidget extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        _showEditDialog(context, vm, weightText, lengthText, idealWeightText);
+        _showEditModal(context, vm, weightText, lengthText, idealWeightText);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -129,58 +129,63 @@ class PatientDataWidget extends StatelessWidget {
       ),
     );
   }
+void _showEditModal(
+  BuildContext context,
+  NutritionViewModel vm,
+  String weightText,
+  String lengthText,
+  String idealWeightText,
+) {
+  final formKey = GlobalKey<FormState>();
 
-  void _showEditDialog(
-    BuildContext context,
-    NutritionViewModel vm,
-    String weightText,
-    String lengthText,
-    String idealWeightText,
-  ) {
-    final formKey = GlobalKey<FormState>();
+  // Controllers
+  final TextEditingController weightController = TextEditingController(
+    text: weightText != 'N/A' ? weightText : '',
+  );
+  final TextEditingController lengthController = TextEditingController(
+    text: lengthText != 'N/A' ? lengthText : '',
+  );
+  final TextEditingController dayController = TextEditingController(
+    text: vm.day.toString(),
+  );
 
-    // Controllers
-    final TextEditingController weightController = TextEditingController(
-      text: weightText != 'N/A' ? weightText : '',
-    );
-    final TextEditingController lengthController = TextEditingController(
-      text: lengthText != 'N/A' ? lengthText : '',
-    );
-    final TextEditingController dayController = TextEditingController(
-      text: vm.day.toString(),
-    );
+  // FocusNodes for KeyboardActions
+  final FocusNode weightFocus = FocusNode();
+  final FocusNode lengthFocus = FocusNode();
+  final FocusNode dayFocus = FocusNode();
 
-    // FocusNodes for KeyboardActions
-    final FocusNode weightFocus = FocusNode();
-    final FocusNode lengthFocus = FocusNode();
-    final FocusNode dayFocus = FocusNode();
+  // Save form method
+  void saveForm() {
+    if (formKey.currentState?.validate() ?? false) {
+      final double newWeight = double.parse(weightController.text.trim());
+      final double newLength = double.parse(lengthController.text.trim());
+      final int newDay = int.parse(dayController.text.trim());
 
-    // Save form method
-    void saveForm() {
-      if (formKey.currentState?.validate() ?? false) {
-        final double newWeight = double.parse(weightController.text.trim());
-        final double newLength = double.parse(lengthController.text.trim());
-        final int newDay = int.parse(dayController.text.trim());
+      // Update the ViewModel
+      vm.setNewWeight(newWeight);
+      vm.setNewLength(newLength);
+      vm.setNewDay(newDay);
 
-        // Update the ViewModel
-        vm.setNewWeight(newWeight);
-        vm.setNewLength(newLength);
-        vm.setNewDay(newDay);
-
-        // Close the dialog
-        Navigator.of(context).pop();
-      }
+      // Close the modal bottom sheet
+      Navigator.of(context).pop();
     }
+  }
 
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return KeyboardActions(
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext modalContext) {
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(modalContext).viewInsets.bottom,
+          left: 16,
+          right: 16,
+          top: 16,
+        ),
+        child: KeyboardActions(
           config: KeyboardActionsConfig(
-            keyboardActionsPlatform:
-                !kIsWeb
-                    ? KeyboardActionsPlatform.ALL
-                    : KeyboardActionsPlatform.IOS,
+            keyboardActionsPlatform: !kIsWeb
+                ? KeyboardActionsPlatform.ALL
+                : KeyboardActionsPlatform.IOS,
             keyboardBarColor: Theme.of(context).colorScheme.surfaceBright,
             actions: [
               KeyboardActionsItem(
@@ -248,90 +253,107 @@ class PatientDataWidget extends StatelessWidget {
               ),
             ],
           ),
-          child: AlertDialog(
-            title: const Text('Redigera patientdata'),
-            content: SingleChildScrollView(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Vikt (Weight)
-                    TextFormField(
-                      focusNode: weightFocus,
-                      controller: weightController,
-                      decoration: const InputDecoration(
-                        labelText: 'Vikt (kg)',
-                        hintText: 'Ange vikt',
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Redigera patientdata',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Vikt är obligatoriskt';
-                        }
-                        final number = double.tryParse(value);
-                        if (number == null || number <= 0) {
-                          return 'Ange ett giltigt positivt tal';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    // Längd (Length)
-                    TextFormField(
-                      focusNode: lengthFocus,
-                      controller: lengthController,
-                      decoration: const InputDecoration(
-                        labelText: 'Längd (cm)',
-                        hintText: 'Ange längd',
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Längd är obligatoriskt';
-                        }
-                        final number = double.tryParse(value);
-                        if (number == null || number <= 0) {
-                          return 'Ange ett giltigt positivt tal';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    // Vårddygn (Day)
-                    TextFormField(
-                      focusNode: dayFocus,
-                      controller: dayController,
-                      decoration: const InputDecoration(
-                        labelText: 'Vårddygn',
-                        hintText: 'Ange antal vårddygn',
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Vårddygn är obligatoriskt';
-                        }
-                        final number = int.tryParse(value);
-                        if (number == null || number < 0) {
-                          return 'Ange ett giltigt icke-negativt heltal';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
                 ),
-              ),
+                const SizedBox(height: 16),
+                Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      // Vikt (Weight)
+                      TextFormField(
+                        focusNode: weightFocus,
+                        controller: weightController,
+                        decoration: const InputDecoration(
+                          labelText: 'Vikt (kg)',
+                          hintText: 'Ange vikt',
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Vikt är obligatoriskt';
+                          }
+                          final number = double.tryParse(value);
+                          if (number == null || number <= 0) {
+                            return 'Ange ett giltigt positivt tal';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      // Längd (Length)
+                      TextFormField(
+                        focusNode: lengthFocus,
+                        controller: lengthController,
+                        decoration: const InputDecoration(
+                          labelText: 'Längd (cm)',
+                          hintText: 'Ange längd',
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Längd är obligatoriskt';
+                          }
+                          final number = double.tryParse(value);
+                          if (number == null || number <= 0) {
+                            return 'Ange ett giltigt positivt tal';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      // Vårddygn (Day)
+                      TextFormField(
+                        focusNode: dayFocus,
+                        controller: dayController,
+                        decoration: const InputDecoration(
+                          labelText: 'Vårddygn',
+                          hintText: 'Ange antal vårddygn',
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Vårddygn är obligatoriskt';
+                          }
+                          final number = int.tryParse(value);
+                          if (number == null || number < 0) {
+                            return 'Ange ett giltigt icke-negativt heltal';
+                          }
+                          return null;
+                        },
+                      ),  
+                      const SizedBox(height: 80),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            child: const Text('Avbryt'),
+                            onPressed: () => Navigator.of(modalContext).pop(),
+                          ),
+                          ElevatedButton(
+                            onPressed: saveForm,
+                            child: const Text('Spara'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            actions: [
-              TextButton(
-                child: const Text('Avbryt'),
-                onPressed: () => Navigator.of(dialogContext).pop(),
-              ),
-              ElevatedButton(onPressed: saveForm, child: const Text('Spara')),
-            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 }
